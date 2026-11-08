@@ -1,119 +1,167 @@
-# MuseBridge: Local Demo Design
+# MuseBridge Local Demo Design
 
-Status: Draft for review by A, B, and C.
+This is the stage-one design for the local demo. It records the project's agreed direction and the implementation defaults selected for the first build. [plan.md](plan.md) tracks the work and review checkpoints. [api-contract.md](api-contract.md) defines the wire formats and error codes.
 
-This document explains the current stage and how the three contributors work together. It distinguishes existing project decisions from proposals that still need agreement. It does not describe completed implementation or a finalized API contract.
+## Purpose
 
-## 1. Stage Goal and Scope
+MuseBridge is a mobile museum guide. A visitor scans a QR code for an artwork and can immediately ask about the piece in front of them. The long-term goal is to support multilingual, evidence-backed conversation in the gallery.
 
-Build a local demonstration for two artworks:
+Stage one verifies the path from a real phone to actual museum evidence. The visitor opens an artwork, submits a question, sees a clearly labeled fixture response with sources when available, and asks a follow-up within the same artwork conversation. The fixed response adapter lets the team test the application before connecting the cloud model.
 
-**Scan a QR code -> open the artwork page -> ask a question -> retrieve real museum evidence -> display a test answer and its sources -> ask a follow-up question.**
+### Agreed project direction
 
-The purpose of this stage is to verify the complete application flow and the boundaries between the frontend, backend, and retrieval module.
+- Deliver a local demo for two Art Institute of Chicago works with phone entry points, actual museum evidence and visibly labeled fixture answers.
+- A owns the mobile frontend, B owns the Go API and orchestration, and C owns the Python retrieval service and source data.
+- Keep one artwork per conversation. Carry relevant context forward for the scripted follow-up examples and render citations from evidence returned for the current question.
 
-| Included in this stage | Expected behavior |
+### Stage-one defaults
+
+Use the defaults below for the first build. The team reviews the contract and shared cases together before implementation branches diverge. Later questions about cloud hosting, broader language coverage and persistent storage can be resolved after this integration.
+
+| Area | Local demo behavior |
 | --- | --- |
-| Two artwork pages | Each QR code opens the correct page with basic artwork information and a question entry point. |
-| Artwork-specific conversations | Each conversation belongs to one artwork. The backend stores messages and supplies relevant history to downstream components. |
-| Real museum material and retrieval | Questions retrieve actual source passages associated with the current artwork. |
-| Test generation | A replaceable generation adapter returns clearly labeled test responses until real generation is connected. |
-| Evidence display | The frontend displays source information and links that resolve to the retrieved evidence. |
-| Failure handling | The application preserves user input and supports agreed behavior for unavailable services, timeouts, and retries. |
-| Reproducible local setup | Another team member can follow the startup instructions and run the same flow. Phone access must be verified separately from computer access. |
+| Visitor interface | React and TypeScript, mobile-first artwork pages, synchronous chat submission, and a visible fixture label on each test response. |
+| Artwork and release | The Bedroom uses `aic-28560`, and Woman at Her Toilette uses `aic-11723`. Each ID is also the URL slug under `/a/`. The immutable seed release is `aic-seed-v0.1`. |
+| State | Go holds anonymous visitor and conversation state in memory. A conversation has a fixed 24-hour lifetime from creation and can be restored until it expires or B restarts. |
+| Catalog and evidence | B and C read the same released JSON data. B serves the artwork metadata. C reads and indexes the evidence. |
+| Retrieval | B calls C at private `POST /retrieve`. C searches the released JSON seed with deterministic keyword matching and filters by artwork before ranking. B pins the release for each conversation and sends C the prepared query, scope and result limit. |
+| Generation | B runs an in-process fixture adapter. It returns reviewed, scripted answers when their required evidence is present and reports known gaps or unsupported questions explicitly. |
+| Languages | The visitor can request an answer in English or Simplified Chinese. C tests the supported keyword coverage for each language. Source passages retain their original language. |
+| Local runtime | Use a phone-reachable frontend origin with the Go API behind the same origin. B reaches C over the private service network. Compose can provide the common local startup path. |
 
-Real cloud GPU generation and expansion to approximately 6-10 artworks belong to the later core release. Search, cross-artwork comparison, shared conversations, and a museum administration interface are outside this local demo stage.
-
-Passing this stage does not establish answer accuracy or semantic understanding of follow-up questions. Fixed test responses cannot validate those capabilities.
-
-## 2. Visitor Flow
-
-1. **Open an artwork.** The visitor scans a QR code or follows an artwork link, such as `/a/{artworkSlug}`. The page shows the artwork title, artist, and available introductory information.
-2. **Start a conversation.** The frontend obtains a conversation bound to that artwork. The visitor does not need to register. Anonymous identity and conversation recovery rules remain open decisions.
-3. **Ask a question.** The frontend sends the question to the Go backend. The backend checks the conversation and determines the artwork from the stored conversation binding.
-4. **Retrieve evidence.** The backend obtains relevant conversation history and calls C's retrieval entry point. Retrieval prioritizes the current artwork and may include relevant exhibition background.
-5. **Prepare the response.** The backend passes the question, necessary history, requested answer language, and retrieved evidence to the generation adapter. The local demo uses a test implementation.
-6. **Show the answer and sources.** The backend validates referenced evidence identifiers and resolves source details from trusted retrieval data. The frontend displays the test label, answer, and sources.
-7. **Continue the conversation.** Follow-up questions use the same artwork conversation. Messages from other artwork conversations are not included automatically.
-8. **Handle incomplete results or failures.** The interface distinguishes insufficient evidence from technical failures. Test-only outcomes must be identifiable as simulated. Retry behavior must avoid duplicate questions and answers.
-
-Switching to another artwork uses a separate conversation. Preserving the previous conversation and restoring it on return or refresh is the current proposal, pending agreement on identity, expiry, and recovery behavior.
-
-Basic artwork information should remain readable when the question-answering service is unavailable.
-
-## 3. Modules and Responsibilities
+## System boundaries
 
 ```mermaid
 flowchart LR
-    Visitor[Visitor on a phone] --> A[A: Mobile web interface]
-    A <--> B[B: Go API and orchestration]
-    B <--> C[C: Retrieval entry point]
-    C --> Evidence[Published artwork evidence]
-    B <--> Generation[Generation adapter: test implementation first]
-    B <--> History[Conversation and message storage]
+    Visitor[Phone browser] --> Frontend[A · Mobile artwork page]
+    Frontend -->|Public API| Backend[B · Go API]
+    Backend -->|Private POST /retrieve| Retrieval[C · Python retrieval]
+    Backend --> Catalog[Shared JSON · catalog and provenance]
+    Retrieval --> Corpus[Shared JSON · published evidence]
+    Backend --> State[Anonymous visitor and conversation state]
+    Backend --> Generator[Fixture generation adapter]
 ```
 
-The diagram shows logical responsibilities. Retrieval transport, database schema ownership, and storage access boundaries still need agreement.
-
-| Owner | Responsibilities | Handoff to other contributors |
+| Owner | Responsibilities | Handoff |
 | --- | --- | --- |
-| A: Frontend | Mobile artwork pages, QR-code routes, chat interface, source display, waiting and error states, and retry interaction. | Calls B's public APIs; displays the agreed response shapes; provides phone-based walkthroughs. |
-| B: Go backend and integration | Artwork APIs, conversation ownership and validity, ordered message history, retrieval orchestration, generation adapter, citation validation, request tracing, timeouts, and duplicate-submission handling. | Provides public APIs to A; calls C's retrieval entry point; assembles and stores the response returned to A. |
-| C: Artwork data and retrieval | Selects the two artworks, checks source usage conditions, prepares and imports source material, chunks and embeds text, and verifies retrieval quality. | Supplies stable artwork metadata, evidence identifiers, source metadata, a repeatable import process, and a retrieval entry point B can call. |
+| A | Render artwork, conversation, answer, sources and recovery states. Generate QR targets from the phone-reachable base URL. Retain the question and message ID across retryable failures. | Build against B's public examples and demonstrate both entry points on a phone. |
+| B | Serve the catalog, bind conversations to artworks, validate ownership, process messages in order, prepare retrieval queries, enforce deadlines, run the fixture adapter and validate citations. | Expose the public API to A, call C through its private contract, and provide integration fixtures and request traces. |
+| C | Review source use, maintain the seed, preserve source references, split evidence into stable chunks, and implement artwork-scoped keyword retrieval. | Publish the two artwork records, reviewed passages, supported question examples and expected evidence IDs. Expose deterministic retrieval behavior to B. |
 
-B and C jointly define how artwork metadata becomes available to the Go API, who maintains shared migrations, and which component performs each retrieval operation. Their implementations should follow one agreed retrieval path.
+B reads catalog and provenance records from the shared release and obtains ranked evidence through C. C owns the evidence format and is the only service that performs retrieval. Both services validate the same read-only release at startup. C runs keyword retrieval entirely within Python over JSON, with no model dependency. Go keeps conversation state in memory. Cloud inference, embeddings and database migrations belong to later releases.
 
-The initial technology direction is React and TypeScript for A, Go for B, Python for C's data processing and retrieval work, PostgreSQL with pgvector for storage, and Docker Compose for local integration. Detailed service boundaries and model choices remain subject to agreement and validation.
+### Local request path
 
-## 4. How the Team Integrates
+1. The visitor scans the QR code or opens the same artwork link directly. A takes the slug from the URL and calls `GET /api/artworks/{slug}`.
+2. A shows the artwork as soon as its metadata is available. Starting the chat calls `POST /api/conversations` with the canonical `artwork_id` from B. The response includes the conversation and whether it was created.
+3. A loads `GET /api/conversations/{conversation_id}/messages` when it restores a conversation. It shows only the history for the active artwork.
+4. A submits `POST /api/conversations/{conversation_id}/messages` with a client-generated UUID, a question and the requested answer language. B checks ownership and uses the conversation's artwork binding.
+5. B reserves the logical request, prepares a query from the current question and any supported same-conversation context, then calls C with the pinned dataset version.
+6. C filters to the requested artwork, ranks matching chunks and returns the most relevant evidence, or an empty list when no chunk matches.
+7. B runs the fixture adapter against the returned evidence. It resolves citation references from that evidence and commits the completed turn.
+8. A displays the fixture label, response and applicable sources. A follow-up uses the same conversation ID. Switching artwork resolves a different conversation.
 
-Before implementing across module boundaries, agree on shared examples and document the public API and internal retrieval contract in `docs/api-contract.md`.
+Keep C on the private service network during phone tests. The QR URL uses the host address or hostname reachable by the phone. A loopback URL is appropriate only for tests on the host itself. Basic artwork details stay usable while chat or retrieval is unavailable.
 
-1. **Choose common inputs.** C prepares two artwork records and a small question set with expected evidence, source links, and known coverage gaps. A, B, and C use the same artwork and evidence identifiers.
-2. **Connect A to B.** B initially exposes the agreed public API using sample artwork and retrieval data plus test generation. A builds the complete page and conversation flow against those responses.
-3. **Connect B to C.** B replaces sample retrieval with C's real retrieval entry point. The team checks artwork filtering, evidence identity, source display, history transfer, and retrieval failure behavior.
-4. **Run the local demo together.** Verify both QR codes on phones and exercise follow-ups, insufficient-evidence scenarios, and timeout retries. Label any simulated behavior.
-5. **Connect real generation later.** Replace the test generation implementation through the same adapter boundary, then separately evaluate factual accuracy, citation support, and follow-up understanding.
+## Data release and retrieval
 
-A shared example should trace one question from the frontend request through retrieval evidence to the displayed response. Cross-module behavior changes require updates to the contract and coordination with the affected contributors.
+### Published seed
 
-## 5. Confirmed Project Decisions
+C prepares the `aic-seed-v0.1` JSON release for the two selected artwork IDs. The release links artwork records, source records and evidence chunks. A source record identifies the institution, title, original URL, language, and documented terms for the material actually used. C tracks image rights separately from metadata and text rights. A work may use a text-only page if its image is unavailable for this release. The source review records the basis for reusing a field or passage, including required attribution. [Art Institute of Chicago API documentation](https://api.artic.edu/docs/).
 
-These record the existing project direction. This draft still requires team review.
+Each chunk has a stable ID, source reference, artwork association, original language, excerpt and source locator. A locator can point to a section or named field when no page number exists. Keep the original source URL alongside the locator so that a reviewer can find the passage. Treat source excerpts as evidence throughout the pipeline, including when the real generator is connected.
 
-- The product is a museum artwork guide accessed through QR codes and mobile web pages.
-- A owns the frontend, B owns the Go application backend and integration, and C owns artwork material and retrieval.
-- The local demo starts with two artworks, real source material, real retrieval, and explicitly labeled test generation.
-- Each conversation is bound to one artwork. Changing the frontend page must not reassign an existing conversation to another artwork.
-- The backend stores conversation history and makes relevant history available to retrieval and generation.
-- The initial public API surface covers artwork lookup, conversation creation, message history, and question submission. Detailed behavior is not yet frozen.
-- Initial question submission uses synchronous JSON responses, with questions handled in order within a conversation.
-- Displayed citations must resolve to evidence retrieved for that question. The backend resolves source links from trusted evidence metadata.
-- Insufficient evidence is a valid question-answering outcome and must be distinguished from a service error. A retrieval match alone does not prove that the question is answerable.
+The shipped dataset is immutable. A content change that alters evidence or metadata produces a new version. B pins `aic-seed-v0.1` in this local demo, persists the version on each conversation and records it on every completed turn. This keeps a saved fixture result traceable even if a later release changes the source passages.
 
-## 6. Open Decisions for Team Review
+### C retrieval
 
-| Question | Current proposal or point to resolve | Contributors |
+`POST /retrieve` takes `artwork_id`, `query`, `dataset_version` and optional `top_k`. C uses two results by default and accepts up to five. The response identifies the dataset version and provides an ordered list of evidence. See [api-contract.md](api-contract.md) for the required fields and validation rules.
+
+C first validates the artwork and exact dataset version, then limits candidates to chunks for that artwork. It normalizes the query and uses one documented bilingual alias dictionary across both works. For example, `材料`, `材质`, `material` and `medium` map to the material topic. `笔触`, `brushstroke` and `brushwork` map to brushwork. C scores each eligible chunk by how many distinct query topics match its published tags. It discards zero-score chunks and breaks ties by ascending chunk ID. Fixture IDs, complete questions and expected chunk IDs stay in evaluation or B's fixture registry. C returns excerpts in their original language. The local demo verifies the declared keyword coverage and artwork filter. Broader cross-language retrieval is a later evaluation task.
+
+C returns HTTP 200 with an empty evidence list for a valid query that has no match. Before passing evidence to the fixture adapter, B checks the response schema, version, artwork and chunk identity, then compares each returned record with the corresponding chunk and source in its own read-only seed. This catches incorrect provenance or altered excerpts even when a returned chunk ID is valid. An unavailable service, an expired deadline or a response that violates the retrieval contract follows the API error path.
+
+### Follow-up handling
+
+B owns conversation binding and query preparation. In the first build, it recognizes the documented follow-up patterns for material and brushwork. A pattern rewrites to its standalone query only when a completed turn already exists in the active conversation. The current question determines the topic. Earlier turns establish that this is a follow-up within the same artwork conversation.
+
+C receives the prepared query and scope fields. Visitor identity and chat history stay with B. Every follow-up gets fresh retrieval, and any citations come from that result. Opening another work creates or restores that artwork's own history. The stored conversation binding governs the scope of every question.
+
+## Visitor state and request lifecycle
+
+### Anonymous recovery
+
+The initial conversation request obtains a random, opaque visitor cookie. The cookie is host-only, `HttpOnly` and `SameSite=Lax`. B uses `Secure` under HTTPS. The documented phone-access configuration may use local LAN HTTP for the demo.
+
+B atomically creates or restores the conversation for the visitor and artwork. `POST /api/conversations` returns HTTP 200 with `conversation` and `created`. The conversation includes `conversation_id`, `artwork_id`, `dataset_version`, `created_at` and `expires_at`. The 24-hour lifetime is measured from creation.
+
+Within that window, the same browser can refresh, switch artworks and return to its earlier history. B checks the visitor cookie on both message endpoints. An unknown, expired or unowned conversation is unavailable to that caller. A can resolve the artwork again and start a valid conversation. A new browser, loss of the cookie or a Go process restart can result in a new conversation with empty history.
+
+### Submission and retry
+
+The browser creates a `client_message_id` UUID when the visitor submits a new question. B trims the question once and accepts 1 to 500 Unicode code points. `answer_language` is `en` or `zh-CN`. The logical request key combines the conversation ID and client message ID. The normalized question and requested language are part of the identity of that request.
+
+B reserves one in-flight request per conversation, then calls its dependencies within the attempt deadline. A replay with the same key and normalized payload returns the original completed turn. A reused key with changed input or a conflicting in-flight request returns HTTP 409. A keeps the original question and UUID for a retry, including after losing the HTTP response. Retry works independently of whether the browser received the first result.
+
+Successful completion appends one turn with a server-assigned `sequence`. On a technical failure, B retains the attempt as a failed pending request so A can retry with the same key. Accepting a different key supersedes the prior failed key. History returns the conversation, its ordered completed turns and the current `pending_request`. After a reload, A reconciles the pending request with history and recovers its original question and UUID when a retry is available. A matches each response to the active conversation before rendering it, especially when a visitor switches artworks while an earlier request is pending.
+
+| Budget | Value | Purpose |
 | --- | --- | --- |
-| Which two artworks and sources? | Agree on stable identifiers, slugs, usable source material, image permissions, and shared examples. | C leads; A and B review. |
-| How are conversations recovered? | Use an anonymous cookie and create or restore a valid conversation for the visitor and artwork. Confirm switching, return, refresh, expiry, and history-retention behavior. | B leads; A reviews. |
-| What is the public API contract? | Define paths, field names, required values, message ordering, answer states, citation structure, and errors for the four public entry points. | A and B; C reviews evidence fields. |
-| How do retries work? | Identify a logical question by conversation ID and client message ID. Agree on repeated inputs, conflicting inputs, in-progress requests, and retryable failures. | B leads; A reviews. |
-| How does B call C? | Internal HTTP is a proposed option. Confirm request and evidence formats, timeouts, and the distinction between empty results and retrieval failure. | B and C. |
-| Who handles follow-up references? | B supplies history. Decide whether B rewrites the retrieval query or C receives history and resolves references. Validate semantics separately from history transfer. | B and C. |
-| Who owns shared data definitions? | Assign ownership of artwork tables, knowledge tables, migrations, seed imports, and the metadata read by B. | B and C. |
-| How are language and evidence sufficiency handled? | Confirm English and Simplified Chinese coverage. Keep question, source, and answer languages distinct. Assign responsibility for full, partial, and insufficient-evidence outcomes. | A, B, and C. |
-| How are data versions used? | Define a consistent evidence release for each question and decide whether a conversation stays on one release. | B and C. |
-| How is the system run locally? | Agree on startup commands, ports, configuration, sample data, and the phone-access procedure. Keep credentials on the backend. | B coordinates; A and C supply module setup. |
+| C retrieval | 3 seconds | Bound a call to the private service. |
+| Fixture adapter | 2 seconds | Keep a separate generation boundary with a predictable deadline. |
+| B question attempt | 8 seconds | Bound the accepted attempt from reservation through dependency calls and response assembly. |
+| Browser wait | 12 seconds | Give B time to return a structured result before the client gives up. |
 
-## 7. Stage Completion Checks
+B reports an unavailable dependency as HTTP 503, an expired dependency or request deadline as HTTP 504, and an invalid downstream response as HTTP 502. Examples of contract violations include a malformed retrieval body, a mismatched dataset version or evidence assigned to the wrong artwork. A keeps the question visible and uses the response's retry guidance. Retry and history recovery leave at most one completed turn per logical request.
 
-- Both QR codes open the correct artwork page on a phone.
-- A submitted question reaches C's real retrieval implementation, and displayed sources trace to the returned evidence.
-- Follow-up messages stay in the correct artwork conversation, with relevant history passed downstream.
-- Insufficient-evidence and technical-failure states can be demonstrated; simulated outcomes are labeled.
-- A timeout and retry leave one logical question and at most one completed answer in the conversation.
-- If conversation recovery is included in the agreed scope, switching artworks, returning, and refreshing restore the correct history without mixing conversations.
-- Another team member can reproduce the local flow from the startup instructions.
+## Fixture answers and citations
 
-These checks verify the local integration. Real generation quality and complete multi-turn understanding require additional evaluation after a real model is connected.
+The generator boundary takes the question, requested answer language, prepared same-artwork context and validated current evidence. It returns the answer and the IDs it wants to cite. In stage one, B runs a deterministic fixture implementation through that boundary. Each fixture is tied to an artwork, a reviewed question or supported follow-up, an answer language and the evidence IDs required for its text.
+
+| Completed status | Behavior |
+| --- | --- |
+| `answered` | Use the reviewed fixture when every required evidence ID is in the current result. Resolve citation text and links from those records. |
+| `insufficient` | Explain the coverage gap when a valid retrieval is empty, the question is a reviewed source gap, or an applicable fixture's required evidence is missing. A reviewed gap can still return keyword hits. |
+| `unsupported_question` | Explain that this question is outside the scripted coverage when there is a retrieval match but no applicable answer fixture. A match alone provides no basis for a factual answer. |
+
+Completed turns expose the answer status, `mode: "fixture"`, text and a citation list. The UI visibly labels all fixture outcomes. B builds citations from validated chunks in the same request, artwork and dataset version. Insufficient and unsupported responses display a coverage message and an empty citation list. Service failures use the API error path, separate from the three completed answer statuses.
+
+## Local integration and diagnostics
+
+Start A, B and C from the same checked-out revision and mount the same seed release for both services that consume it. C validates its evidence before serving retrieval. B validates its catalog and provenance records at startup. A loads artwork metadata through B so QR routing, displayed artwork IDs and conversation creation use the same data.
+
+The first build can proceed with the defaults in this design and the API contract. Before a phone walkthrough, set the actual LAN origin in the web, QR and Go configuration and verify that the phone can reach it. Local startup instructions list that origin, B's internal retrieval URL, the seed path and the network steps for reproducing the demo.
+
+For a question attempt, B should record a request ID, the artwork ID, the dataset version, retrieval and fixture durations, the result category and the returned evidence IDs. These fields are enough to trace an integration example without putting visitor text or cookie values in routine logs. A retry can produce a new attempt trace for the same logical message. Replaying a completed turn should log the replay and skip both downstream calls.
+
+Use the real retrieval service for the final walkthrough. B can use a contract-shaped C stub while A builds its screens, and the team can use a deliberately failing or delayed stub to make the error paths reproducible. Keep the fixture label visible throughout the live walkthrough so the audience can tell which parts of the flow it is testing.
+
+## What proves the demo works
+
+- **Phone flow.** Each QR opens the correct artwork page on a phone. The visitor can reach chat from either entry point and can still read the artwork information during an induced chat failure.
+- **Evidence trace.** For a reviewed question on each artwork, compare the displayed citation with the actual C response, source URL, locator and pinned version. Test an English question and a Simplified Chinese question. Include a Simplified Chinese question that retrieves an English source passage.
+- **Scope isolation.** Ask similar questions in the two artwork conversations, switch back to the first, and submit a supported follow-up. Check that B derives the artwork from the conversation, C returns only that artwork's evidence, and A shows the matching history even when responses arrive after a switch.
+- **Three answer outcomes.** Use real retrieval for an answered fixture, an empty retrieval and an off-script query with hits. Use a controlled C stub to supply a related passage for a reviewed source gap and check that B still returns `insufficient`. Check the fixture label and the distinct fallback messages.
+- **Failure and recovery.** Induce an unavailable dependency, a deadline and an invalid downstream response. Verify that the original question and UUID survive retry, a replay after a lost success response reuses the original turn, and competing requests preserve at most one completed turn per logical request.
+- **Repeatable startup.** A teammate starts the project with the same seed, follows the phone instructions and runs the same checks without credentials for a model or a database.
+
+The stage verifies routing, retrieval, evidence provenance, fixture output and the supported follow-up flow. Accuracy, open-ended follow-up understanding and real multilingual generation require separate evaluation when the cloud adapter is connected. [Delivery plan and acceptance checklist](plan.md).
+
+## After the local demo
+
+The next core release connects a real model running on cloud GPU infrastructure through B's generator boundary. It expands the reviewed collection toward 6–10 artworks and evaluates retrieval with broader bilingual queries. The team can compare keyword retrieval with multilingual embeddings, and consider PostgreSQL and pgvector when persistent sessions or a larger index justify the work. The course demo should link a phone-originated request to model-service records and actual GPU execution evidence.
+
+Evaluate the visitor workflow and answer quality separately. Compare time to the first useful answer and task completion in the product experience. Use the same questions and comparable evidence for answer-quality comparisons with general assistants, and assess source support, multilingual answers, follow-ups and evidence gaps. Comparison with a museum guide depends on access to a suitable product and equivalent tasks.
+
+Search, cross-artwork comparison, shared conversations and staff publishing are later product choices. Museum interviews can test who would use the guide, who could buy it, and what evidence would justify a pilot. Source and pilot permissions, willingness to pay, and course deliverables remain inputs to the later roadmap.
+
+### Decisions for later stages
+
+These decisions have owners and review points. The local implementation uses the defaults above while the team gathers the information needed for later stages.
+
+| Decision | Owner | When needed |
+| --- | --- | --- |
+| GPU provider, inference model and budget | B, with the team reviewing | Before stage two. Confirm GPU access, the cost limit and the evidence the course accepts for a real inference request. |
+| Persistent session storage and retrieval index | B and C | After stage one. Use the larger corpus and measured retrieval needs to decide when a database or vector index is warranted. |
+| Course rubric, submission deadlines and interview or recording requirements | B coordinates with A and C | Confirm early, before scheduling recordings, recruiting interviewees or committing to a cloud deployment. |
+| Evaluation participants, language reviewers and comparison access | A and C, with B preparing traces | Confirm early, before recruiting or finalizing tasks. Check participant access and whether reviewers can assess both languages. |
