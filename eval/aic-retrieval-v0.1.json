@@ -1,0 +1,595 @@
+{
+  "suite_id": "aic-retrieval-v0.1",
+  "dataset_version": "aic-seed-v0.1",
+  "description": "A bilingual evidence-retrieval evaluation with 24 paired questions for the two-artwork seed. The gold labels are based on the four published chunks and the active artwork scope.",
+  "cases": [
+    {
+      "case_id": "paraphrase-01-en",
+      "pair_id": "paraphrase-01",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Is this work oil on canvas or something else?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "rationale": "The Bedroom medium record identifies the paint and support as oil on canvas."
+    },
+    {
+      "case_id": "paraphrase-01-zh-cn",
+      "pair_id": "paraphrase-01",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这件作品是布面油画，还是用了别的媒介？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "rationale": "The Bedroom medium record identifies the paint and support as oil on canvas."
+    },
+    {
+      "case_id": "paraphrase-02-en",
+      "pair_id": "paraphrase-02",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How does the museum describe the lines that give the room perspective?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The Bedroom description characterizes the lines as sharply receding."
+    },
+    {
+      "case_id": "paraphrase-02-zh-cn",
+      "pair_id": "paraphrase-02",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "馆方怎样形容让房间显出透视感的线条？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The Bedroom description characterizes the lines as sharply receding."
+    },
+    {
+      "case_id": "paraphrase-03-en",
+      "pair_id": "paraphrase-03",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What medium does the museum list for this painting?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "rationale": "Woman at Her Toilette has its own medium record identifying oil on canvas."
+    },
+    {
+      "case_id": "paraphrase-03-zh-cn",
+      "pair_id": "paraphrase-03",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "馆方在目录里给这幅画标了什么媒介？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "rationale": "Woman at Her Toilette has its own medium record identifying oil on canvas."
+    },
+    {
+      "case_id": "paraphrase-04-en",
+      "pair_id": "paraphrase-04",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "How does the brushwork suggest the floral pattern in the background?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description connects soft, feathery brushstrokes to the suggestion of a floral-patterned bedspread and wallpaper."
+    },
+    {
+      "case_id": "paraphrase-04-zh-cn",
+      "pair_id": "paraphrase-04",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "背景的花卉图案是怎样通过笔触表现出来的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description connects soft, feathery brushstrokes to the suggestion of a floral-patterned bedspread and wallpaper."
+    },
+    {
+      "case_id": "semantic-gap-01-en",
+      "pair_id": "semantic-gap-01",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What is this picture painted on?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "rationale": "The Bedroom medium record names canvas as the painting support."
+    },
+    {
+      "case_id": "semantic-gap-01-zh-cn",
+      "pair_id": "semantic-gap-01",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画是画在什么上面的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "rationale": "The Bedroom medium record names canvas as the painting support."
+    },
+    {
+      "case_id": "semantic-gap-02-en",
+      "pair_id": "semantic-gap-02",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Which visual details might make the room feel unsettling, according to the museum?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The description says the colors, brushwork and receding lines might suggest nervous energy. The answer should preserve that qualification."
+    },
+    {
+      "case_id": "semantic-gap-02-zh-cn",
+      "pair_id": "semantic-gap-02",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "馆方觉得，哪些画面细节可能让这个房间显得不安？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The description says the colors, brushwork and receding lines might suggest nervous energy. The answer should preserve that qualification."
+    },
+    {
+      "case_id": "semantic-gap-03-en",
+      "pair_id": "semantic-gap-03",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Do the painter's marks behind the figure look hard-edged or delicate?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description characterizes the background brushstrokes as soft and feathery."
+    },
+    {
+      "case_id": "semantic-gap-03-zh-cn",
+      "pair_id": "semantic-gap-03",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "人物身后那些画痕看起来是偏硬朗，还是偏柔和？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description characterizes the background brushstrokes as soft and feathery."
+    },
+    {
+      "case_id": "semantic-gap-04-en",
+      "pair_id": "semantic-gap-04",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What objects do the flower-like shapes behind her seem to suggest?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description identifies a bedspread and wallpaper as suggested objects in the background."
+    },
+    {
+      "case_id": "semantic-gap-04-zh-cn",
+      "pair_id": "semantic-gap-04",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "她身后的那些花形，看起来像是什么物件？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description identifies a bedspread and wallpaper as suggested objects in the background."
+    },
+    {
+      "case_id": "multi-topic-01-en",
+      "pair_id": "multi-topic-01",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What medium is this, and what effect might the bold colors and receding lines have?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium",
+        "aic-28560-description-01"
+      ],
+      "rationale": "The medium record supports oil on canvas. The description links the colors and receding lines, along with the brushwork, to possible nervous energy."
+    },
+    {
+      "case_id": "multi-topic-01-zh-cn",
+      "pair_id": "multi-topic-01",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画用的是什么媒介？鲜明的色彩和向纵深收缩的线条可能带来什么感觉？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium",
+        "aic-28560-description-01"
+      ],
+      "rationale": "The medium record supports oil on canvas. The description links the colors and receding lines, along with the brushwork, to possible nervous energy."
+    },
+    {
+      "case_id": "multi-topic-02-en",
+      "pair_id": "multi-topic-02",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What medium did Van Gogh use, and how many days did it take him to finish?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "rationale": "The medium record identifies oil on canvas. Neither released excerpt states the number of days spent on the work."
+    },
+    {
+      "case_id": "multi-topic-02-zh-cn",
+      "pair_id": "multi-topic-02",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "梵高用的是什么媒介？他花了多少天才画完？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "rationale": "The medium record identifies oil on canvas. Neither released excerpt states the number of days spent on the work."
+    },
+    {
+      "case_id": "multi-topic-03-en",
+      "pair_id": "multi-topic-03",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What paint and surface are listed, and how does the museum describe the brushwork?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium",
+        "aic-11723-description-01"
+      ],
+      "rationale": "The medium record identifies the paint and support. The description characterizes the brushwork in the background."
+    },
+    {
+      "case_id": "multi-topic-03-zh-cn",
+      "pair_id": "multi-topic-03",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "馆方记录了什么颜料和底材，又是怎样形容笔触的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium",
+        "aic-11723-description-01"
+      ],
+      "rationale": "The medium record identifies the paint and support. The description characterizes the brushwork in the background."
+    },
+    {
+      "case_id": "multi-topic-04-en",
+      "pair_id": "multi-topic-04",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What do the flower patterns in the background suggest, and who is the woman?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description suggests a floral-patterned bedspread and wallpaper. It does not identify the woman."
+    },
+    {
+      "case_id": "multi-topic-04-zh-cn",
+      "pair_id": "multi-topic-04",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "背景的花纹看起来像哪些物件？画中的女子是谁？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The description suggests a floral-patterned bedspread and wallpaper. It does not identify the woman."
+    },
+    {
+      "case_id": "lexical-confusion-01-en",
+      "pair_id": "lexical-confusion-01",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What kind of oil was used to mix the paint for this picture?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The medium record identifies oil paint, but neither excerpt specifies the oil used in the paint mixture."
+    },
+    {
+      "case_id": "lexical-confusion-01-zh-cn",
+      "pair_id": "lexical-confusion-01",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅油画里的颜料是用哪种油调的？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The medium record identifies oil paint, but neither excerpt specifies the oil used in the paint mixture."
+    },
+    {
+      "case_id": "lexical-confusion-02-en",
+      "pair_id": "lexical-confusion-02",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Was the canvas cut down after Van Gogh finished the painting?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The medium record names the support. Neither excerpt provides the canvas's alteration or treatment history."
+    },
+    {
+      "case_id": "lexical-confusion-02-zh-cn",
+      "pair_id": "lexical-confusion-02",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "梵高画完后，这块画布有没有被裁小过？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The medium record names the support. Neither excerpt provides the canvas's alteration or treatment history."
+    },
+    {
+      "case_id": "lexical-confusion-03-en",
+      "pair_id": "lexical-confusion-03",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Did Morisot use a small or large brush for those brushstrokes?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description characterizes the appearance of the strokes. It does not identify the brush size."
+    },
+    {
+      "case_id": "lexical-confusion-03-zh-cn",
+      "pair_id": "lexical-confusion-03",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "莫里索画那些笔触时，用的是小画笔还是大画笔？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description characterizes the appearance of the strokes. It does not identify the brush size."
+    },
+    {
+      "case_id": "lexical-confusion-04-en",
+      "pair_id": "lexical-confusion-04",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Did Morisot copy the floral wallpaper from a real room?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description suggests wallpaper in the depicted scene. It does not establish whether Morisot copied wallpaper from a real room."
+    },
+    {
+      "case_id": "lexical-confusion-04-zh-cn",
+      "pair_id": "lexical-confusion-04",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "画里的花卉墙纸，是莫里索照着某个真实房间里的墙纸画的吗？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description suggests wallpaper in the depicted scene. It does not establish whether Morisot copied wallpaper from a real room."
+    },
+    {
+      "case_id": "scope-confusion-01-en",
+      "pair_id": "scope-confusion-01",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What does the museum say about the brushwork in Morisot's Woman at Her Toilette?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The question refers only to Woman at Her Toilette. The active artwork is The Bedroom, so the Morisot evidence is outside the allowed scope."
+    },
+    {
+      "case_id": "scope-confusion-01-zh-cn",
+      "pair_id": "scope-confusion-01",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "馆方怎样形容莫里索《梳妆的女子》里的笔触？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The question refers only to Woman at Her Toilette. The active artwork is The Bedroom, so the Morisot evidence is outside the allowed scope."
+    },
+    {
+      "case_id": "scope-confusion-02-en",
+      "pair_id": "scope-confusion-02",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What material did Van Gogh use for The Bedroom?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The question refers only to The Bedroom. Although the active Morisot work has the same recorded medium, its record is not evidence about Van Gogh's work."
+    },
+    {
+      "case_id": "scope-confusion-02-zh-cn",
+      "pair_id": "scope-confusion-02",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "梵高的《卧室》用了什么材料？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The question refers only to The Bedroom. Although the active Morisot work has the same recorded medium, its record is not evidence about Van Gogh's work."
+    },
+    {
+      "case_id": "scope-confusion-03-en",
+      "pair_id": "scope-confusion-03",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How does the brushwork in this painting differ from that in Morisot's Woman at Her Toilette?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The Bedroom description supports the local side of the comparison. The Morisot work is outside the active artwork scope."
+    },
+    {
+      "case_id": "scope-confusion-03-zh-cn",
+      "pair_id": "scope-confusion-03",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画的笔触和莫里索《梳妆的女子》里的笔触有什么不同？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The Bedroom description supports the local side of the comparison. The Morisot work is outside the active artwork scope."
+    },
+    {
+      "case_id": "scope-confusion-04-en",
+      "pair_id": "scope-confusion-04",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "How does the background here differ from how space is shown in Van Gogh's The Bedroom?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The Morisot description supports the local account of the background. The Bedroom's treatment of space is outside the active artwork scope."
+    },
+    {
+      "case_id": "scope-confusion-04-zh-cn",
+      "pair_id": "scope-confusion-04",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这幅画处理背景的方式，和梵高《卧室》表现空间的方式有什么不同？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The Morisot description supports the local account of the background. The Bedroom's treatment of space is outside the active artwork scope."
+    },
+    {
+      "case_id": "evidence-gap-01-en",
+      "pair_id": "evidence-gap-01",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How wide is this painting?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "Neither The Bedroom excerpt includes a measurement."
+    },
+    {
+      "case_id": "evidence-gap-01-zh-cn",
+      "pair_id": "evidence-gap-01",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画有多宽？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "Neither The Bedroom excerpt includes a measurement."
+    },
+    {
+      "case_id": "evidence-gap-02-en",
+      "pair_id": "evidence-gap-02",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Did Van Gogh say that he wanted viewers to feel nervous when they looked at this painting?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description offers a qualified interpretation of the painting's effect. It contains no statement from Van Gogh about his intentions."
+    },
+    {
+      "case_id": "evidence-gap-02-zh-cn",
+      "pair_id": "evidence-gap-02",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "梵高有没有说过，他想让观众看这幅画时感到紧张？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description offers a qualified interpretation of the painting's effect. It contains no statement from Van Gogh about his intentions."
+    },
+    {
+      "case_id": "evidence-gap-03-en",
+      "pair_id": "evidence-gap-03",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Who owned this painting before the museum acquired it?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "Neither Woman at Her Toilette excerpt provides an ownership history."
+    },
+    {
+      "case_id": "evidence-gap-03-zh-cn",
+      "pair_id": "evidence-gap-03",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "博物馆收藏这幅画之前，它归谁所有？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "Neither Woman at Her Toilette excerpt provides an ownership history."
+    },
+    {
+      "case_id": "evidence-gap-04-en",
+      "pair_id": "evidence-gap-04",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Which gallery is this painting in today?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "Neither Woman at Her Toilette excerpt establishes its current display status or location."
+    },
+    {
+      "case_id": "evidence-gap-04-zh-cn",
+      "pair_id": "evidence-gap-04",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这幅画今天在哪个展厅展出？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "Neither Woman at Her Toilette excerpt establishes its current display status or location."
+    }
+  ]
+}

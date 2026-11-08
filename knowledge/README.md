@@ -174,6 +174,16 @@ The suite covers seed loading and malformed data, all six frozen cases, both var
 
 The suite also starts real loopback HTTP servers to verify request framing, body limits, status codes, request IDs, liveness/readiness, concurrent artwork isolation and safe errors. Subprocess checks verify startup failure and configuration precedence. Use the HTTP smoke tests above to check a separately started service.
 
+## Broader retrieval evaluation
+
+The [retrieval evaluation guide](../eval/README.md) documents 48 additional English/Chinese questions, reviewed evidence labels, a standalone runner and recorded top-1/top-2 baselines. The cases cover paraphrases, multiple topics, misleading keywords, artwork scope and missing evidence.
+
+```bash
+python3 -m eval.retrieval_eval --top-k 2
+```
+
+This command measures evidence retrieval with the existing keyword baseline. It needs no model or B service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
+
 ## Released data
 
 - [Seed JSON](data/aic-seed-v0.1.json): two artworks, two sources and four reviewed chunks.

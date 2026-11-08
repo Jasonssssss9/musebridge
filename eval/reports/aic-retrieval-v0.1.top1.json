@@ -1,0 +1,1466 @@
+{
+  "suite_id": "aic-retrieval-v0.1",
+  "dataset_version": "aic-seed-v0.1",
+  "top_k": 1,
+  "summary": {
+    "case_count": 48,
+    "valid_case_count": 48,
+    "invalid_case_count": 0,
+    "positive_case_count": 28,
+    "negative_case_count": 20,
+    "hit_rate_at_k": 0.7142857142857143,
+    "precision_at_k": 0.7142857142857143,
+    "recall_at_k": 0.6428571428571429,
+    "mrr_at_k": 0.7142857142857143,
+    "all_relevant_retrieved_rate_at_k": 0.5714285714285714,
+    "positive_returned_precision": 1.0,
+    "negative_false_positive_count": 14,
+    "negative_false_positive_rate": 0.7,
+    "scope_violation_count": 0
+  },
+  "results": [
+    {
+      "case_id": "paraphrase-01-en",
+      "pair_id": "paraphrase-01",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Is this work oil on canvas or something else?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "paraphrase-01-zh-cn",
+      "pair_id": "paraphrase-01",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这件作品是布面油画，还是用了别的媒介？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "paraphrase-02-en",
+      "pair_id": "paraphrase-02",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How does the museum describe the lines that give the room perspective?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "paraphrase-02-zh-cn",
+      "pair_id": "paraphrase-02",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "馆方怎样形容让房间显出透视感的线条？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "paraphrase-03-en",
+      "pair_id": "paraphrase-03",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What medium does the museum list for this painting?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "paraphrase-03-zh-cn",
+      "pair_id": "paraphrase-03",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "馆方在目录里给这幅画标了什么媒介？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "paraphrase-04-en",
+      "pair_id": "paraphrase-04",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "How does the brushwork suggest the floral pattern in the background?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "paraphrase-04-zh-cn",
+      "pair_id": "paraphrase-04",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "背景的花卉图案是怎样通过笔触表现出来的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-01-en",
+      "pair_id": "semantic-gap-01",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What is this picture painted on?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-01-zh-cn",
+      "pair_id": "semantic-gap-01",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画是画在什么上面的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-02-en",
+      "pair_id": "semantic-gap-02",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Which visual details might make the room feel unsettling, according to the museum?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-02-zh-cn",
+      "pair_id": "semantic-gap-02",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "馆方觉得，哪些画面细节可能让这个房间显得不安？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-03-en",
+      "pair_id": "semantic-gap-03",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Do the painter's marks behind the figure look hard-edged or delicate?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-03-zh-cn",
+      "pair_id": "semantic-gap-03",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "人物身后那些画痕看起来是偏硬朗，还是偏柔和？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-04-en",
+      "pair_id": "semantic-gap-04",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What objects do the flower-like shapes behind her seem to suggest?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "semantic-gap-04-zh-cn",
+      "pair_id": "semantic-gap-04",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "她身后的那些花形，看起来像是什么物件？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 0,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "reciprocal_rank": 0.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-01-en",
+      "pair_id": "multi-topic-01",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What medium is this, and what effect might the bold colors and receding lines have?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium",
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "missed_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-01-zh-cn",
+      "pair_id": "multi-topic-01",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画用的是什么媒介？鲜明的色彩和向纵深收缩的线条可能带来什么感觉？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-medium",
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "missed_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-02-en",
+      "pair_id": "multi-topic-02",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What medium did Van Gogh use, and how many days did it take him to finish?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-02-zh-cn",
+      "pair_id": "multi-topic-02",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "梵高用的是什么媒介？他花了多少天才画完？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-03-en",
+      "pair_id": "multi-topic-03",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What paint and surface are listed, and how does the museum describe the brushwork?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium",
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-03-zh-cn",
+      "pair_id": "multi-topic-03",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "馆方记录了什么颜料和底材，又是怎样形容笔触的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium",
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 0.5,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": false
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-04-en",
+      "pair_id": "multi-topic-04",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What do the flower patterns in the background suggest, and who is the woman?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "multi-topic-04-zh-cn",
+      "pair_id": "multi-topic-04",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "背景的花纹看起来像哪些物件？画中的女子是谁？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "lexical-confusion-01-en",
+      "pair_id": "lexical-confusion-01",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What kind of oil was used to mix the paint for this picture?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "lexical-confusion-01-zh-cn",
+      "pair_id": "lexical-confusion-01",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅油画里的颜料是用哪种油调的？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "lexical-confusion-02-en",
+      "pair_id": "lexical-confusion-02",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Was the canvas cut down after Van Gogh finished the painting?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "lexical-confusion-02-zh-cn",
+      "pair_id": "lexical-confusion-02",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "梵高画完后，这块画布有没有被裁小过？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "lexical-confusion-03-en",
+      "pair_id": "lexical-confusion-03",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Did Morisot use a small or large brush for those brushstrokes?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "lexical-confusion-03-zh-cn",
+      "pair_id": "lexical-confusion-03",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "莫里索画那些笔触时，用的是小画笔还是大画笔？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "lexical-confusion-04-en",
+      "pair_id": "lexical-confusion-04",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Did Morisot copy the floral wallpaper from a real room?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "lexical-confusion-04-zh-cn",
+      "pair_id": "lexical-confusion-04",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "画里的花卉墙纸，是莫里索照着某个真实房间里的墙纸画的吗？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "scope-confusion-01-en",
+      "pair_id": "scope-confusion-01",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What does the museum say about the brushwork in Morisot's Woman at Her Toilette?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "scope-confusion-01-zh-cn",
+      "pair_id": "scope-confusion-01",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "馆方怎样形容莫里索《梳妆的女子》里的笔触？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "scope-confusion-02-en",
+      "pair_id": "scope-confusion-02",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What material did Van Gogh use for The Bedroom?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "scope-confusion-02-zh-cn",
+      "pair_id": "scope-confusion-02",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "梵高的《卧室》用了什么材料？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "scope-confusion-03-en",
+      "pair_id": "scope-confusion-03",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How does the brushwork in this painting differ from that in Morisot's Woman at Her Toilette?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "scope-confusion-03-zh-cn",
+      "pair_id": "scope-confusion-03",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画的笔触和莫里索《梳妆的女子》里的笔触有什么不同？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "scope-confusion-04-en",
+      "pair_id": "scope-confusion-04",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "How does the background here differ from how space is shown in Van Gogh's The Bedroom?",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "scope-confusion-04-zh-cn",
+      "pair_id": "scope-confusion-04",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这幅画处理背景的方式，和梵高《卧室》表现空间的方式有什么不同？",
+      "answerability": "partial",
+      "relevant_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "retrieved_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "matched_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": {
+        "hit_at_k": 1,
+        "precision_at_k": 1.0,
+        "recall_at_k": 1.0,
+        "reciprocal_rank": 1.0,
+        "all_relevant_found": true
+      },
+      "negative_false_positive": null
+    },
+    {
+      "case_id": "evidence-gap-01-en",
+      "pair_id": "evidence-gap-01",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How wide is this painting?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": false
+    },
+    {
+      "case_id": "evidence-gap-01-zh-cn",
+      "pair_id": "evidence-gap-01",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画有多宽？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": false
+    },
+    {
+      "case_id": "evidence-gap-02-en",
+      "pair_id": "evidence-gap-02",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Did Van Gogh say that he wanted viewers to feel nervous when they looked at this painting?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "evidence-gap-02-zh-cn",
+      "pair_id": "evidence-gap-02",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "梵高有没有说过，他想让观众看这幅画时感到紧张？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": true
+    },
+    {
+      "case_id": "evidence-gap-03-en",
+      "pair_id": "evidence-gap-03",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Who owned this painting before the museum acquired it?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": false
+    },
+    {
+      "case_id": "evidence-gap-03-zh-cn",
+      "pair_id": "evidence-gap-03",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "博物馆收藏这幅画之前，它归谁所有？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": false
+    },
+    {
+      "case_id": "evidence-gap-04-en",
+      "pair_id": "evidence-gap-04",
+      "category": "evidence_gap",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Which gallery is this painting in today?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": false
+    },
+    {
+      "case_id": "evidence-gap-04-zh-cn",
+      "pair_id": "evidence-gap-04",
+      "category": "evidence_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这幅画今天在哪个展厅展出？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "retrieved_chunk_ids": [],
+      "matched_chunk_ids": [],
+      "missed_chunk_ids": [],
+      "unexpected_chunk_ids": [],
+      "scope_violation_chunk_ids": [],
+      "issues": [],
+      "metrics": null,
+      "negative_false_positive": false
+    }
+  ],
+  "by_language": {
+    "en": {
+      "case_count": 24,
+      "valid_case_count": 24,
+      "invalid_case_count": 0,
+      "positive_case_count": 14,
+      "negative_case_count": 10,
+      "hit_rate_at_k": 0.7142857142857143,
+      "precision_at_k": 0.7142857142857143,
+      "recall_at_k": 0.6428571428571429,
+      "mrr_at_k": 0.7142857142857143,
+      "all_relevant_retrieved_rate_at_k": 0.5714285714285714,
+      "positive_returned_precision": 1.0,
+      "negative_false_positive_count": 7,
+      "negative_false_positive_rate": 0.7,
+      "scope_violation_count": 0
+    },
+    "zh-CN": {
+      "case_count": 24,
+      "valid_case_count": 24,
+      "invalid_case_count": 0,
+      "positive_case_count": 14,
+      "negative_case_count": 10,
+      "hit_rate_at_k": 0.7142857142857143,
+      "precision_at_k": 0.7142857142857143,
+      "recall_at_k": 0.6428571428571429,
+      "mrr_at_k": 0.7142857142857143,
+      "all_relevant_retrieved_rate_at_k": 0.5714285714285714,
+      "positive_returned_precision": 1.0,
+      "negative_false_positive_count": 7,
+      "negative_false_positive_rate": 0.7,
+      "scope_violation_count": 0
+    }
+  },
+  "by_category": {
+    "evidence_gap": {
+      "case_count": 8,
+      "valid_case_count": 8,
+      "invalid_case_count": 0,
+      "positive_case_count": 0,
+      "negative_case_count": 8,
+      "hit_rate_at_k": null,
+      "precision_at_k": null,
+      "recall_at_k": null,
+      "mrr_at_k": null,
+      "all_relevant_retrieved_rate_at_k": null,
+      "positive_returned_precision": null,
+      "negative_false_positive_count": 2,
+      "negative_false_positive_rate": 0.25,
+      "scope_violation_count": 0
+    },
+    "lexical_confusion": {
+      "case_count": 8,
+      "valid_case_count": 8,
+      "invalid_case_count": 0,
+      "positive_case_count": 0,
+      "negative_case_count": 8,
+      "hit_rate_at_k": null,
+      "precision_at_k": null,
+      "recall_at_k": null,
+      "mrr_at_k": null,
+      "all_relevant_retrieved_rate_at_k": null,
+      "positive_returned_precision": null,
+      "negative_false_positive_count": 8,
+      "negative_false_positive_rate": 1.0,
+      "scope_violation_count": 0
+    },
+    "multi_topic": {
+      "case_count": 8,
+      "valid_case_count": 8,
+      "invalid_case_count": 0,
+      "positive_case_count": 8,
+      "negative_case_count": 0,
+      "hit_rate_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "recall_at_k": 0.75,
+      "mrr_at_k": 1.0,
+      "all_relevant_retrieved_rate_at_k": 0.5,
+      "positive_returned_precision": 1.0,
+      "negative_false_positive_count": 0,
+      "negative_false_positive_rate": null,
+      "scope_violation_count": 0
+    },
+    "paraphrase": {
+      "case_count": 8,
+      "valid_case_count": 8,
+      "invalid_case_count": 0,
+      "positive_case_count": 8,
+      "negative_case_count": 0,
+      "hit_rate_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "recall_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "all_relevant_retrieved_rate_at_k": 1.0,
+      "positive_returned_precision": 1.0,
+      "negative_false_positive_count": 0,
+      "negative_false_positive_rate": null,
+      "scope_violation_count": 0
+    },
+    "scope_confusion": {
+      "case_count": 8,
+      "valid_case_count": 8,
+      "invalid_case_count": 0,
+      "positive_case_count": 4,
+      "negative_case_count": 4,
+      "hit_rate_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "recall_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "all_relevant_retrieved_rate_at_k": 1.0,
+      "positive_returned_precision": 1.0,
+      "negative_false_positive_count": 4,
+      "negative_false_positive_rate": 1.0,
+      "scope_violation_count": 0
+    },
+    "semantic_gap": {
+      "case_count": 8,
+      "valid_case_count": 8,
+      "invalid_case_count": 0,
+      "positive_case_count": 8,
+      "negative_case_count": 0,
+      "hit_rate_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "recall_at_k": 0.0,
+      "mrr_at_k": 0.0,
+      "all_relevant_retrieved_rate_at_k": 0.0,
+      "positive_returned_precision": null,
+      "negative_false_positive_count": 0,
+      "negative_false_positive_rate": null,
+      "scope_violation_count": 0
+    }
+  },
+  "by_answerability": {
+    "full": {
+      "case_count": 20,
+      "valid_case_count": 20,
+      "invalid_case_count": 0,
+      "positive_case_count": 20,
+      "negative_case_count": 0,
+      "hit_rate_at_k": 0.6,
+      "precision_at_k": 0.6,
+      "recall_at_k": 0.5,
+      "mrr_at_k": 0.6,
+      "all_relevant_retrieved_rate_at_k": 0.4,
+      "positive_returned_precision": 1.0,
+      "negative_false_positive_count": 0,
+      "negative_false_positive_rate": null,
+      "scope_violation_count": 0
+    },
+    "none": {
+      "case_count": 20,
+      "valid_case_count": 20,
+      "invalid_case_count": 0,
+      "positive_case_count": 0,
+      "negative_case_count": 20,
+      "hit_rate_at_k": null,
+      "precision_at_k": null,
+      "recall_at_k": null,
+      "mrr_at_k": null,
+      "all_relevant_retrieved_rate_at_k": null,
+      "positive_returned_precision": null,
+      "negative_false_positive_count": 14,
+      "negative_false_positive_rate": 0.7,
+      "scope_violation_count": 0
+    },
+    "partial": {
+      "case_count": 8,
+      "valid_case_count": 8,
+      "invalid_case_count": 0,
+      "positive_case_count": 8,
+      "negative_case_count": 0,
+      "hit_rate_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "recall_at_k": 1.0,
+      "mrr_at_k": 1.0,
+      "all_relevant_retrieved_rate_at_k": 1.0,
+      "positive_returned_precision": 1.0,
+      "negative_false_positive_count": 0,
+      "negative_false_positive_rate": null,
+      "scope_violation_count": 0
+    }
+  },
+  "provenance": {
+    "python_version": "3.12.3",
+    "unicode_version": "15.0.0",
+    "seed_sha256": "3703fd4c9fcefb8e9fba20f23a5cb70e612c62ef7cb3f594a15d319ebc18d6ac",
+    "suite_sha256": "5e65a350d562126fec09f70108e15cfb7700423e1ce720eb392f2edbde835bd9",
+    "retrieval_sha256": "63ed814a88f999ced929b607587d470ae7b34a19386af2ac9154231320ac0ece",
+    "loader_sha256": "0eafc7fb7cbddd4f0101b3f3846d1dec983dcce1b5f7b509b391e1da0e75c7a6",
+    "evaluator_sha256": "befdb32c62aac4e5f1a48a5d9ff9f9fc5462229a831d74779007bfe85519be94"
+  }
+}

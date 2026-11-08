@@ -17,3 +17,4 @@ These commands need only the Python standard library.
 - [System design](docs/design.md)
 - [API and data contract](docs/api-contract.md)
 - [Implementation plan](docs/plan.md)
+- [Retrieval evaluation and recorded baselines](eval/README.md)
