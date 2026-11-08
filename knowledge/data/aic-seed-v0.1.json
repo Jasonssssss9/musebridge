@@ -1,0 +1,115 @@
+{
+  "dataset_version": "aic-seed-v0.1",
+  "artworks": [
+    {
+      "artwork_id": "aic-28560",
+      "slug": "aic-28560",
+      "title": "The Bedroom",
+      "artist": "Vincent van Gogh",
+      "date_display": "1889",
+      "museum": "Art Institute of Chicago",
+      "museum_record_id": 28560,
+      "accession_number": "1926.417",
+      "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+      "image_url": null,
+      "dataset_version": "aic-seed-v0.1"
+    },
+    {
+      "artwork_id": "aic-11723",
+      "slug": "aic-11723",
+      "title": "Woman at Her Toilette",
+      "artist": "Berthe Morisot",
+      "date_display": "1875–80",
+      "museum": "Art Institute of Chicago",
+      "museum_record_id": 11723,
+      "accession_number": "1924.127",
+      "source_url": "https://api.artic.edu/api/v1/artworks/11723",
+      "image_url": null,
+      "dataset_version": "aic-seed-v0.1"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "aic-api-28560",
+      "artwork_id": "aic-28560",
+      "source_title": "The Bedroom — Art Institute of Chicago API record",
+      "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+      "source_language": "en",
+      "institution": "Art Institute of Chicago",
+      "retrieved_at": "2026-11-08T02:53:29Z",
+      "terms_url": "https://www.artic.edu/terms"
+    },
+    {
+      "source_id": "aic-api-11723",
+      "artwork_id": "aic-11723",
+      "source_title": "Woman at Her Toilette — Art Institute of Chicago API record",
+      "source_url": "https://api.artic.edu/api/v1/artworks/11723",
+      "source_language": "en",
+      "institution": "Art Institute of Chicago",
+      "retrieved_at": "2026-11-08T02:53:30Z",
+      "terms_url": "https://www.artic.edu/terms"
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "aic-28560-medium",
+      "artwork_id": "aic-28560",
+      "source_id": "aic-api-28560",
+      "source_locator": "data.medium_display",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Art Institute of Chicago",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "aic-28560-description-01",
+      "artwork_id": "aic-28560",
+      "source_id": "aic-api-28560",
+      "source_locator": "data.description, paragraph 1",
+      "excerpt": "With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Art Institute of Chicago",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "brushwork",
+        "energy",
+        "color",
+        "perspective"
+      ]
+    },
+    {
+      "chunk_id": "aic-11723-medium",
+      "artwork_id": "aic-11723",
+      "source_id": "aic-api-11723",
+      "source_locator": "data.medium_display",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Art Institute of Chicago",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "aic-11723-description-01",
+      "artwork_id": "aic-11723",
+      "source_id": "aic-api-11723",
+      "source_locator": "data.description, paragraph 1",
+      "excerpt": "In the background, Morisot’s soft, feathery brushstrokes suggest a floral-patterned bedspread and wallpaper.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Art Institute of Chicago",
+      "normalization": "HTML removed; whitespace normalized; the source's split floral ligature normalized to floral.",
+      "topics": [
+        "brushwork",
+        "background"
+      ]
+    }
+  ]
+}

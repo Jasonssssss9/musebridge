@@ -1,0 +1,93 @@
+{
+  "dataset_version": "aic-seed-v0.1",
+  "cases": [
+    {
+      "case_id": "bedroom-q1",
+      "artwork_id": "aic-28560",
+      "question": "这件作品用了什么材料？",
+      "answer_language": "zh-CN",
+      "expected_status": "answered",
+      "expected_chunk_ids": [
+        "aic-28560-medium"
+      ],
+      "rationale": "The museum's medium field supports the material answer."
+    },
+    {
+      "case_id": "bedroom-q2",
+      "artwork_id": "aic-28560",
+      "question": "馆方认为，画面里的哪些元素可能让人感到紧张？",
+      "answer_language": "zh-CN",
+      "expected_status": "answered",
+      "expected_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The museum links the colors, brushwork and receding lines to a possible sense of nervous energy. Preserve that qualified interpretation."
+    },
+    {
+      "case_id": "bedroom-q3",
+      "artwork_id": "aic-28560",
+      "question": "梵高画完芝加哥收藏的这一版，实际花了多少小时？",
+      "answer_language": "zh-CN",
+      "expected_status": "insufficient",
+      "expected_chunk_ids": [],
+      "rationale": "The released evidence does not state the number of hours spent painting this version. An empty expected set means no sufficient support, even if retrieval returns related material."
+    },
+    {
+      "case_id": "toilette-q1",
+      "artwork_id": "aic-11723",
+      "question": "这件作品用了什么材料？",
+      "answer_language": "zh-CN",
+      "expected_status": "answered",
+      "expected_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "rationale": "This artwork's own medium field supports the answer. The matching medium of the other work does not make its chunk an acceptable substitute."
+    },
+    {
+      "case_id": "toilette-q2",
+      "artwork_id": "aic-11723",
+      "question": "馆方如何描述这件作品的笔触？",
+      "answer_language": "zh-CN",
+      "expected_status": "answered",
+      "expected_chunk_ids": [
+        "aic-11723-description-01"
+      ],
+      "rationale": "The museum's description of the brushstrokes and suggested background objects supports an answer about this work's brushwork."
+    },
+    {
+      "case_id": "toilette-q3",
+      "artwork_id": "aic-11723",
+      "question": "画中女子的真实姓名是什么？",
+      "answer_language": "zh-CN",
+      "expected_status": "insufficient",
+      "expected_chunk_ids": [],
+      "rationale": "The released evidence does not establish the woman's real name. An empty expected set means no sufficient support, even if retrieval returns related material."
+    }
+  ],
+  "cross_artwork_checks": [
+    {
+      "check_id": "same-query-brushwork",
+      "query": "馆方如何描述这件作品的笔触？",
+      "top_k": 2,
+      "require_all_results_match_artwork_id": true,
+      "variants": [
+        {
+          "artwork_id": "aic-28560",
+          "expected_status": "answered",
+          "expected_chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "expected_first_chunk_id": "aic-28560-description-01"
+        },
+        {
+          "artwork_id": "aic-11723",
+          "expected_status": "answered",
+          "expected_chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "expected_first_chunk_id": "aic-11723-description-01"
+        }
+      ]
+    }
+  ]
+}
