@@ -472,6 +472,16 @@ C uses the common error envelope, with its own or forwarded request ID.
 
 B does not forward arbitrary upstream messages. A configuration or contract defect is not repaired by user retry; `retrieval_invalid_response` has `retryable: false`. Retrieval unavailability and deadlines have `retryable: true`.
 
+### 4.5 Local C transport profile
+
+C's local HTTP implementation requires a single decimal `Content-Length` and accepts at most 8,192 body bytes. Missing, invalid or duplicate length headers, or any `Transfer-Encoding`, return `400 invalid_request`. Send the JSON as a byte buffer with a known length. Chunked bodies are outside this local transport profile. Compressed request bodies return `415 unsupported_media_type`.
+
+Use a single `Content-Type: application/json` header, optionally with `charset=utf-8`. Duplicate content-type headers, other charsets and unknown media-type parameters return `415 unsupported_media_type`. Every response includes `Content-Length`, `X-Request-ID` and `Connection: close`. C also sends `Cache-Control: no-store`. A HEAD request receives the applicable status and headers without a response body, as required by HTTP.
+
+C echoes one nonblank printable ASCII `X-Request-ID` value of up to 128 characters; missing, invalid or duplicate values cause C to generate a new ID. The error body's `request_id` always matches the response header.
+
+The local server bounds socket reads to five seconds and rejects incomplete bodies as `400 invalid_request` when a response is still possible. B's separate three-second retrieval deadline remains authoritative for its call. No automatic upstream retry, content fetch or model inference occurs in C.
+
 ## 5. Versioned source release and evaluation data
 
 ### 5.1 Seed ownership and file schema

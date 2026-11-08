@@ -1,0 +1,13 @@
+# This allowlist is relative to the repository-root build context.
+**
+!knowledge/
+knowledge/**
+!knowledge/__init__.py
+!knowledge/__main__.py
+!knowledge/dataset.py
+!knowledge/errors.py
+!knowledge/http_service.py
+!knowledge/retrieval.py
+!knowledge/data/
+knowledge/data/**
+!knowledge/data/aic-seed-v0.1.json
