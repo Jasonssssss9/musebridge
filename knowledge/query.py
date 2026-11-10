@@ -107,20 +107,56 @@ _DESCRIPTION_OF_REFERENCE = re.compile(
     rf"|\b{_ASPECT_PRONOUN}\s+(?:look|appear|seem)\b"
     rf"|\bwhat (?:is|are|was|were) {_ASPECT_PRONOUN}\s+like\b"
     r"|(?:描述|形容)(?:一?下)?(?:它(?:们)?|这些|那些)(?:的?样子|呢|吗|$)"
-    r"|(?:它(?:们)?|这些|那些)(?:看起来|是?(?:什么样|怎样的)|给人什么感觉)", re.I,
+    r"|\b(?:describe|characteri[sz]e|what (?:is|was))\s+(?:its|their)\s+"
+    r"(?:(?:overall|general|visual)\s+)?(?:look|appearance|character|qualities)\b"
+    r"|(?:它(?:们)?|这些|那些)(?:看起来|是?(?:什么样|怎样的)|有(?:什么|何)特点|给人什么感觉)",
+    re.I,
 )
 _LINE_MOVEMENT = (
     r"\b(?:recede|receding|go back(?!\s+to\b|\s+in time\b)|run back|extend into"
     r"|(?:run|go|extend|angle|lead|draw) (?:toward(?:s)?|into) (?:the )?(?:back|distance|depth)"
     r"|lead (?:the |your )?eye)\b"
-    r"|(?:向|往|朝)(?:里|远处|深处|纵深)(?:延伸|收缩|收拢|收|退|伸|斜)"
+    r"|(?:向|往|朝)(?:(?:房间|画面)?(?:里|远处|深处|纵深)|后)(?:延伸|收缩|收拢|收|退|伸|斜)"
     r"|(?:视线|目光)(?:引|带)(?:向|往)(?:画面|房间)?(?:纵深|深处|远处|里面)"
 )
 _RECESSION = re.compile(_LINE_MOVEMENT, re.I)
 _MARK_SUGGESTION = re.compile(r"\b(?:suggest|depict|represent|evoke)\b|暗示|联想到", re.I)
+_NONPAINT_MARKS = re.compile(
+    r"\b(?:handwritten|inventory|stamped) marks?\b"
+    r"|\bmarks?\s+on\s+(?:(?:the|its) )?(?:back|reverse|frame)\b"
+    r"|(?:画背|背面|画框)(?:上)?(?:的)?(?:印记|记号|标记)", re.I,
+)
 _STROKE_DESCRIPTION = re.compile(
     r"\b(?:describe|characteri[sz]e)\b.{0,60}\b(?:brushwork|brush[- ]?strokes?|strokes?|marks?)\b"
+    r"|\b(?:what|how)\b.{0,18}\b(?:marks?|strokes?)\b.{0,25}\b(?:look|appear|seem)\b"
+    r"(?!\s+like\s+(?:they|it)\b)"
+    r"|\b(?:look|appearance) of (?:the |those |these )?(?:brush |paint )?(?:marks|strokes)\b"
     r"|(?:描述|形容).{0,22}(?:笔触|画痕|笔法)|(?:笔触|画痕|笔法).{0,18}(?:什么样|什么特点|看起来怎样)",
+    re.I,
+)
+# Exclude attributive phrases such as "flower motif" and "flower-shaped" from the entity cue.
+_FLOWER_EN = (
+    r"\b(?:flowers?|blossoms?|blooms?|plants?)\b"
+    r"(?!(?:-like|-shaped|[- ](?:patterns?|prints?|motifs?|designs?)))"
+)
+_FLOWER_ZH = (
+    r"(?:花(?:朵|卉|儿)|植物|花(?!朵|卉|儿))"
+    r"(?!纹|样|形|色|边|盆|瓶|费|了|时间|图案|图样|装饰|设计)"
+)
+_FLOWER_MENTION = re.compile(rf"{_FLOWER_EN}|{_FLOWER_ZH}", re.I)
+_FLORAL_MOTIF = re.compile(
+    r"\b(?:floral|flower(?:[- ](?:like|shaped))?) (?:patterns?|motifs?|designs?|prints?)\b"
+    r"|花(?:卉)?(?:纹样|纹|形|图案)|植物(?:图案|纹样)", re.I,
+)
+_BOTANICAL_DETAIL = re.compile(
+    r"\b(?:species|genera|genus|cultivars?|botanical (?:identification|name)|scientific name)\b"
+    r"|品种|物种|花名|学名|属种", re.I,
+)
+_IDENTITY_OF_REFERENCE = re.compile(
+    rf"\b(?:identify|name|recognize|recognise)\s+{_ASPECT_PRONOUN}\b"
+    rf"|\bwhat (?:are|were|is|was) {_ASPECT_PRONOUN}\s+(?:called|known as)\b"
+    r"|(?:辨认|认出|识别)(?:出)?(?:它(?:们)?|这些|那些)(?:吗|呢|$)"
+    r"|(?:它(?:们)?|这些|那些)(?:叫(?:做)?什么(?:名字)?|是(?:哪(?:一)?种|什么品种))",
     re.I,
 )
 # Nominal mentions can introduce a referent in a statement without becoming requests.
@@ -130,7 +166,7 @@ _ASPECT_NOUNS = {
         r"\b(?:brushwork|brush[- ]?strokes?|(?:brush|paint) marks?|strokes)\b|笔触|画痕|笔痕|笔法",
         re.I,
     ),
-    "color_appearance": re.compile(r"\b(?:colou?rs?|palette)\b|颜色|色彩|用色", re.I),
+    "color_appearance": re.compile(r"\b(?:colou?rs?|palette)\b|颜色|色彩|用色|色调|配色", re.I),
     "background_objects": re.compile(r"\b(?:wallpaper|bedspread|floral pattern)\b|墙纸|床罩|花纹", re.I),
     "visual_effect": re.compile(r"\b(?:mood|atmosphere|nervous energy)\b|氛围|观感|紧张的", re.I),
 }
@@ -199,8 +235,7 @@ _SUPPORTED = {
         r"\b(?:marks?|strokes?) (?:from|left by|made (?:with|by)) (?:the |a |her |his )?brush\b",
         r"\b(?:describe|characteri[sz]e)\b.{0,64}\b(?:appl(?:y|ies|ied)|la(?:y|id) down|put down)"
         r"\b.{0,14}\bpaint\b",
-        r"\b(?:what|how)\b.{0,18}\b(?:marks?|strokes?)\b.{0,25}\b(?:look|appear|seem)\b"
-        r"|画笔(?:留下|画出|造成).{0,8}(?:痕迹|笔迹).{0,10}(?:什么样|看起来|怎样|如何)",
+        r"画笔(?:留下|画出|造成).{0,8}(?:痕迹|笔迹).{0,10}(?:什么样|看起来|怎样|如何)",
     ),
     "color_appearance": (_ASPECT_NOUNS["color_appearance"].pattern,),
     "line_recession": (
@@ -247,11 +282,17 @@ _UNSUPPORTED = {
         r"|消失点|灭点|汇聚点|线条.{0,12}(?:交于|交汇|汇聚到)",
     ),
     "flower_species": (
-        r"\b(?:what|which) (?:kind |type |sort |species )?(?:of )?flowers?\b|\bflower species\b"
+        rf"\b(?:what|which) (?:exact |specific )?(?:(?:kinds?|types?|sorts?|variet(?:y|ies)) of )?{_FLOWER_EN}"
+        rf"|\b(?:what|which) (?:kind|type|sort|variety) (?:is|are|was|were|do|does) "
+        rf"(?:the |these |those )?{_FLOWER_EN}"
+        rf"|\b(?:identify|name|recogni[sz]e) (?:the |these |those )?{_FLOWER_EN}"
+        r"|\bbotanical (?:name|identity|identification)\b|植物学名"
+        rf"|{_FLOWER_EN}.{{0,36}}\b(?:called|known as|identified as)\b"
         r"|\b(?:are|is|were) (?:those|these|they|that|this|the flowers?) "
         r"(?:roses?|tulips?|daisy|daisies|lily|lilies|peon(?:y|ies)|violets?|orchids?)\b"
-        r"|花(?:的)?品种|花卉品种|(?:什么|哪(?:一)?种|哪些种类的)花(?:呢|吗|$)|花种"
-        r"|花(?:卉|朵)?(?:是|属于)(?:什么|哪(?:一)?种)(?:呢|吗|$)"
+        rf"|(?:什么|哪(?:一)?种|哪些种类的){_FLOWER_ZH}|花种|花名"
+        rf"|{_FLOWER_ZH}(?:是|属于)(?:什么|哪(?:一)?种)(?:呢|吗|$)"
+        rf"|{_FLOWER_ZH}.{{0,12}}叫(?:做)?什么(?:名字)?"
         r"|(?:是不是|是)(?:玫瑰|月季|郁金香|雏菊|百合|牡丹|紫罗兰)(?:花|吗|呢|还是|$)",
     ),
     "painting_process": (
@@ -310,7 +351,7 @@ _EFFECT_REQUEST = re.compile(
     r"|\b(?:what|which)\b.{0,25}\b(?:gives?|makes?|creates?)\b.{0,28}"
     r"\b(?:room|scene|painting|picture|image|composition)\b.{0,24}"
     r"\b(?:uneasy|unease|tense|tension|nervous|unsettling)\b"
-    r"|(?:画面|房间|场景|构图|整幅画).{0,32}(?:给人|让人|令人|带来|传达).{0,10}"
+    r"|(?:画面|房间|场景|构图|整幅画).{0,32}(?:给(?:人|观众|看画的人)|让人|令人|带来|传达).{0,10}"
     r"(?:什么(?:样的)?|怎样的)(?:感觉|感受|情绪|气氛|氛围|气息|观感)"
     r"|(?:色彩|线条).{0,26}什么感觉|哪些.{0,18}(?:感觉|不安|紧张)", re.I,
 )
@@ -325,7 +366,8 @@ _SCENE_VIEW_QUESTION = re.compile(
 )
 _OPEN_MARK_SUGGESTION = re.compile(
     r"^\s*(?:(?:and|also)\s+)?what (?:do|does|did)\b.{0,24}\b(?:suggest|depict|represent|evoke)"
-    r"(?: (?:is|was|might be) there)?\s*$"
+    r"(?: (?:is|was|might be|could be) (?:there|(?:back|further back) there|further back"
+    r"|in the background|behind (?:her|the (?:sitter|figure))))?\s*$"
     r"|(?:它(?:们)?|这些|那些)(?:让人)?(?:联想到|暗示(?:了)?|描绘(?:了)?)什么\s*$", re.I,
 )
 _LOCATIVE_PREFIX = re.compile(
@@ -418,6 +460,10 @@ def _facets(text, visual_marks_context, inherited_aspect=None):
         facet for facet, patterns in _UNSUPPORTED_PATTERNS.items()
         if any(pattern.search(text) for pattern in patterns)
     }
+    if inherited_aspect == "flower_species" or (
+        _BOTANICAL_DETAIL.search(text) and (_FLOWER_MENTION.search(text) or _FLORAL_MOTIF.search(text))
+    ):
+        unsupported.add("flower_species")
     if _PALETTE_COMPOSITION.search(text) or (
         inherited_aspect == "color_appearance" and _REFERENT_COMPOSITION.search(text)
     ):
@@ -444,7 +490,8 @@ def _facets(text, visual_marks_context, inherited_aspect=None):
     elif supported.intersection(("paint_medium", "painting_support")):
         supported.discard("medium")
 
-    if _MARKS.search(text) and _APPEARANCE.search(text) and (
+    visible_marks = not _NONPAINT_MARKS.search(text)
+    if visible_marks and _MARKS.search(text) and _APPEARANCE.search(text) and (
         _BEHIND.search(text) or visual_marks_context or _COMPARISON.search(text)
     ):
         supported.add("brushwork_appearance")
@@ -455,7 +502,7 @@ def _facets(text, visual_marks_context, inherited_aspect=None):
     if _OBJECT_REQUEST.search(text) or (visual_marks_context and _MARKS.search(text) and _MARK_SUGGESTION.search(text)):
         supported.add("background_objects")
         supported.discard("brushwork_appearance")
-    elif _STROKE_DESCRIPTION.search(text):
+    elif visible_marks and _STROKE_DESCRIPTION.search(text):
         supported.add("brushwork_appearance")
         supported.discard("background_objects")
     if _EFFECT_REQUEST.search(text):
@@ -480,12 +527,21 @@ def _references(text):
 
 
 def _mentioned_aspects(text):
-    return {aspect for aspect, pattern in _ASPECT_NOUNS.items() if pattern.search(text)}
+    aspects = {aspect for aspect, pattern in _ASPECT_NOUNS.items() if pattern.search(text)}
+    if _FLOWER_MENTION.search(text):
+        aspects.add("flower_species")
+    return aspects
 
 
 def _inherited_aspect(text, mentioned, earlier, recent):
-    if not _ASPECT_REFERENCE.search(text):
+    describes_reference = _DESCRIPTION_OF_REFERENCE.search(text)
+    if not (_ASPECT_REFERENCE.search(text) or describes_reference):
         return None
+    if "flower_species" in earlier and (
+        _BOTANICAL_DETAIL.search(text)
+        or (recent == {"flower_species"} and _IDENTITY_OF_REFERENCE.search(text))
+    ):
+        return "flower_species"
     if "line_recession" in earlier and _RECESSION.search(text):
         return "line_recession"
     if "brushwork_appearance" in earlier and (
@@ -494,7 +550,7 @@ def _inherited_aspect(text, mentioned, earlier, recent):
         return "brushwork_appearance"
     if not mentioned and len(recent) == 1:
         aspect = next(iter(recent))
-        if _DESCRIPTION_OF_REFERENCE.search(text) or (
+        if (aspect in _ASPECT_NOUNS and describes_reference) or (
             aspect == "color_appearance" and _REFERENT_COMPOSITION.search(text)
         ):
             return aspect

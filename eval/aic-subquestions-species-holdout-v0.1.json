@@ -1,0 +1,459 @@
+{
+  "suite_id": "musebridge-species-holdout-v0.1",
+  "dataset_version": "aic-seed-v0.1",
+  "description": "Held-out bilingual questions about depicted flowers, background motifs, artwork scope, and neighboring evidence facets, labeled against the four released seed excerpts.",
+  "cases": [
+    {
+      "case_id": "species-01-en",
+      "pair_id": "species-01",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Is the bedspread decorated with flowers, and can you tell which plants the design depicts?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "Is the bedspread decorated with flowers",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "Is the bedspread in Morisot’s Woman at Her Toilette decorated with a floral design?",
+          "rationale": "The description identifies a floral-patterned bedspread."
+        },
+        {
+          "request_id": "r2",
+          "text": "can you tell which plants the design depicts",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Which plants are depicted in the bedspread design in Morisot’s Woman at Her Toilette?",
+          "rationale": "The excerpt describes a floral pattern without identifying the plants."
+        }
+      ]
+    },
+    {
+      "case_id": "species-01-zh-CN",
+      "pair_id": "species-01",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "床罩上有花卉图案吗？能看出来图案里画的是哪种植物吗？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "床罩上有花卉图案吗",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "莫里索《梳妆的女人》里的床罩上有花卉图案吗？",
+          "rationale": "The description identifies a floral-patterned bedspread."
+        },
+        {
+          "request_id": "r2",
+          "text": "能看出来图案里画的是哪种植物吗",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "莫里索《梳妆的女人》里，床罩图案画的是哪种植物？",
+          "rationale": "The excerpt describes a floral pattern without identifying the plants."
+        }
+      ]
+    },
+    {
+      "case_id": "species-02-en",
+      "pair_id": "species-02",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What kind of design can you make out on the wallpaper?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "What kind of design can you make out on the wallpaper",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "What kind of wallpaper design is suggested in Morisot’s Woman at Her Toilette?",
+          "rationale": "The museum describes the wallpaper as floral-patterned."
+        }
+      ]
+    },
+    {
+      "case_id": "species-02-zh-CN",
+      "pair_id": "species-02",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "墙纸上依稀能看出是哪一类图案？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "墙纸上依稀能看出是哪一类图案",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "莫里索《梳妆的女人》里的墙纸依稀呈现出哪类图案？",
+          "rationale": "The museum describes the wallpaper as floral-patterned."
+        }
+      ]
+    },
+    {
+      "case_id": "species-03-en",
+      "pair_id": "species-03",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What kind of flower is repeated across the wallpaper?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "What kind of flower is repeated across the wallpaper",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What flower is depicted in the wallpaper design in Morisot’s Woman at Her Toilette?",
+          "rationale": "The word floral does not identify a flower."
+        }
+      ]
+    },
+    {
+      "case_id": "species-03-zh-CN",
+      "pair_id": "species-03",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "墙纸上反复出现的是什么花？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "墙纸上反复出现的是什么花",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "莫里索《梳妆的女人》里的墙纸图案画的是什么花？",
+          "rationale": "The word floral does not identify a flower."
+        }
+      ]
+    },
+    {
+      "case_id": "species-04-en",
+      "pair_id": "species-04",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "The bedspread and wallpaper look floral. Could those blossoms be roses? How does the museum describe Morisot’s brushwork in that area?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "Could those blossoms be roses",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Does the museum description identify the flowers on the bedspread and wallpaper in Morisot’s Woman at Her Toilette as roses?",
+          "rationale": "The excerpt does not distinguish roses from other flowers."
+        },
+        {
+          "request_id": "r2",
+          "text": "How does the museum describe Morisot’s brushwork in that area",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "How does the museum describe the appearance of Morisot’s background brushstrokes in Woman at Her Toilette?",
+          "rationale": "The description calls those brushstrokes soft and feathery."
+        }
+      ]
+    },
+    {
+      "case_id": "species-04-zh-CN",
+      "pair_id": "species-04",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "床罩和墙纸看起来都有花卉图案。那些花会不会是玫瑰？博物馆是怎么形容莫里索在那一块的笔触的？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "那些花会不会是玫瑰",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "博物馆有没有说莫里索《梳妆的女人》里床罩和墙纸上的花是玫瑰？",
+          "rationale": "The excerpt does not distinguish roses from other flowers."
+        },
+        {
+          "request_id": "r2",
+          "text": "博物馆是怎么形容莫里索在那一块的笔触的",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "博物馆是怎么形容莫里索《梳妆的女人》里背景部分的笔触的？",
+          "rationale": "The description calls those brushstrokes soft and feathery."
+        }
+      ]
+    },
+    {
+      "case_id": "species-05-en",
+      "pair_id": "species-05",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "I’m curious about the flowers on the wallpaper in Morisot’s Woman at Her Toilette. Can you tell what they are? Back in The Bedroom, how do the lines recede into the room?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "Can you tell what they are",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "Can you tell which flowers are depicted on the wallpaper in Morisot’s Woman at Her Toilette?",
+          "rationale": "The pronoun refers to flowers in the named Morisot, while The Bedroom is active."
+        },
+        {
+          "request_id": "r2",
+          "text": "Back in The Bedroom, how do the lines recede into the room",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How do the lines recede into the room in Van Gogh’s The Bedroom?",
+          "rationale": "The description calls the lines sharply receding."
+        }
+      ]
+    },
+    {
+      "case_id": "species-05-zh-CN",
+      "pair_id": "species-05",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "我想问莫里索《梳妆的女人》里墙纸上的花。能看出那些是什么花吗？再说回《卧室》，画里的线条是怎么向远处延伸的？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "能看出那些是什么花吗",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "能看出莫里索《梳妆的女人》里墙纸上画的是什么花吗？",
+          "rationale": "The pronoun refers to flowers in the named Morisot, while The Bedroom is active."
+        },
+        {
+          "request_id": "r2",
+          "text": "再说回《卧室》，画里的线条是怎么向远处延伸的",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "梵高《卧室》里，线条是怎么向远处延伸的？",
+          "rationale": "The description calls the lines sharply receding."
+        }
+      ]
+    },
+    {
+      "case_id": "species-06-en",
+      "pair_id": "species-06",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "I was just looking at The Bedroom. In that painting, how does the brushwork look? Coming back to this one, what in the background carries the floral pattern?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "In that painting, how does the brushwork look",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "How does Van Gogh’s brushwork look in The Bedroom?",
+          "rationale": "That painting refers to the named Van Gogh, while Woman at Her Toilette is active."
+        },
+        {
+          "request_id": "r2",
+          "text": "Coming back to this one, what in the background carries the floral pattern",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "Which objects in the background of Morisot’s Woman at Her Toilette have a floral pattern?",
+          "rationale": "Returning to the active work makes the bedspread and wallpaper the relevant objects."
+        }
+      ]
+    },
+    {
+      "case_id": "species-06-zh-CN",
+      "pair_id": "species-06",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "刚才看了《卧室》。那幅画的笔触看起来怎么样？再看眼前这幅，背景里哪些东西带有花卉图案？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "那幅画的笔触看起来怎么样",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "梵高《卧室》的笔触看起来怎么样？",
+          "rationale": "That painting refers to the named Van Gogh, while Woman at Her Toilette is active."
+        },
+        {
+          "request_id": "r2",
+          "text": "再看眼前这幅，背景里哪些东西带有花卉图案",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "莫里索《梳妆的女人》背景里，哪些东西带有花卉图案？",
+          "rationale": "Returning to the active work makes the bedspread and wallpaper the relevant objects."
+        }
+      ]
+    },
+    {
+      "case_id": "species-07-en",
+      "pair_id": "species-07",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What kind of paint did Morisot use, oil or watercolor? Do we know what fiber the canvas was woven from?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "What kind of paint did Morisot use, oil or watercolor",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "Did Morisot paint Woman at Her Toilette in oil or watercolor?",
+          "rationale": "The medium excerpt identifies the paint as oil."
+        },
+        {
+          "request_id": "r2",
+          "text": "Do we know what fiber the canvas was woven from",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What fiber was the canvas of Morisot’s Woman at Her Toilette woven from?",
+          "rationale": "Canvas identifies the support without specifying its fiber."
+        }
+      ]
+    },
+    {
+      "case_id": "species-07-zh-CN",
+      "pair_id": "species-07",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "莫里索用的是哪种画材，油彩还是水彩？画布是用哪种纤维织成的，有记载吗？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "莫里索用的是哪种画材，油彩还是水彩",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "莫里索画《梳妆的女人》用的是油彩还是水彩？",
+          "rationale": "The medium excerpt identifies the paint as oil."
+        },
+        {
+          "request_id": "r2",
+          "text": "画布是用哪种纤维织成的，有记载吗",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "莫里索《梳妆的女人》的画布是用哪种纤维织成的？",
+          "rationale": "Canvas identifies the support without specifying its fiber."
+        }
+      ]
+    },
+    {
+      "case_id": "species-08-en",
+      "pair_id": "species-08",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How wide is the canvas, and does the museum describe the colors as bold or muted?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "How wide is the canvas",
+          "artwork_id": "aic-28560",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "How wide is the canvas of Van Gogh’s The Bedroom?",
+          "rationale": "Neither released excerpt gives the canvas width."
+        },
+        {
+          "request_id": "r2",
+          "text": "does the museum describe the colors as bold or muted",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "Does the museum describe the colors in Van Gogh’s The Bedroom as bold or muted?",
+          "rationale": "The description calls the colors bold."
+        }
+      ]
+    },
+    {
+      "case_id": "species-08-zh-CN",
+      "pair_id": "species-08",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画的画布有多宽？按博物馆的描述，色彩是浓烈的还是偏柔和的？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "这幅画的画布有多宽",
+          "artwork_id": "aic-28560",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "梵高《卧室》的画布有多宽？",
+          "rationale": "Neither released excerpt gives the canvas width."
+        },
+        {
+          "request_id": "r2",
+          "text": "按博物馆的描述，色彩是浓烈的还是偏柔和的",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "按博物馆的描述，梵高《卧室》的色彩是浓烈的还是偏柔和的？",
+          "rationale": "The description calls the colors bold."
+        }
+      ]
+    }
+  ]
+}

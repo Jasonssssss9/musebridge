@@ -265,6 +265,28 @@ python3 -m eval.subquestion_eval --suite eval/aic-subquestions-context-confirmat
 python3 -m eval.subquestion_eval --suite eval/aic-subquestions-context-confirmation-v0.1.json --mode isolated
 ```
 
+## Botanical identity and visual references
+
+Questions that ask for a flower's identity, species, or scientific name require botanical evidence. The released description of Woman at Her Toilette supports the impression of floral patterns on objects. It gives no species. The parser recognizes identification phrasing with an explicit botanical subject or a compatible antecedent. Appearance of the pattern remains a separate request. Mark appearance likewise stays separate from the objects the marks suggest. When a visual follow-up relies on a pronoun or a possessive, the parser uses the scoped antecedent and the requested visual property.
+
+All scores use the four released excerpts at Top-2 and compare against `1ee4445`. The [species holdout](aic-subquestions-species-holdout-v0.1.json) contains eight English and Chinese pairs. It was authored independently and first scored after the final parser was frozen.
+
+| Suite and mode | Supported requests with all required evidence | Negative requests returning evidence | Unresolved negative requests | Strict query pass |
+| --- | ---: | ---: | ---: | ---: |
+| Prior confirmation, full | 14/18 → 18/18 | 0/14 → 0/14 | 4/14 → 0/14 | 5/12 → 12/12 |
+| Prior confirmation, isolated | 16/18 → 18/18 | 2/14 → 0/14 | 0/14 → 0/14 | 9/12 → 12/12 |
+| Species holdout, full | 14/14 → 14/14 | 0/14 → 0/14 | 6/14 → 4/14 | 10/16 → 12/16 |
+| Species holdout, isolated | 14/14 → 14/14 | 3/14 → 0/14 | 0/14 → 0/14 | 13/16 → 16/16 |
+
+The four prior full-query negative failures already returned empty evidence. The parser now binds the two species requests and the color-tone request to insufficient evidence, and the other artwork's marks to out of scope. In the new full-query suite, unresolved negatives include a tentative named-flower identification, elliptical identification across an artwork switch, and a Chinese question split at a comma before a follow-up about what the label records. All older full-query subquestion suites and whole-query diagnostics retain their previous results. All runs had zero invalid responses and zero foreign evidence records.
+
+Reproduce the new suite from the repository root. For the before result, run the same commands from a checkout of `1ee4445` with an absolute fixture path.
+
+```bash
+python3 -m eval.subquestion_eval --suite eval/aic-subquestions-species-holdout-v0.1.json
+python3 -m eval.subquestion_eval --suite eval/aic-subquestions-species-holdout-v0.1.json --mode isolated
+```
+
 ## Reproducibility and future comparisons
 
 CLI reports record Python and Unicode versions plus SHA-256 hashes of the seed, suite, retriever, query parser, loader and evaluator. They omit timestamps and timing measurements. Repeating a run with identical inputs, code and runtime produces the same JSON; use the provenance fields to explain differences.

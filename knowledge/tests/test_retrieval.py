@@ -590,6 +590,149 @@ class RetrievalTests(unittest.TestCase):
         result = self.search(BEDROOM, "How are the colors described in the picture with a frame made from wood?")
         self.assertEqual(chunk_ids(result), [BEDROOM_DESCRIPTION])
 
+    def test_botanical_identity_does_not_retrieve_the_floral_pattern(self):
+        for query in (
+            "Can you tell which genus the blossoms in the wallpaper belong to?",
+            "墙纸上的花朵能辨认出具体品种吗？",
+        ):
+            with self.subTest(query=query):
+                self.assertEqual(chunk_ids(self.search(TOILETTE, query)), [])
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=TOILETTE, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [])
+                self.assertEqual(
+                    [(r["facet"], r["status"], r["chunk_ids"]) for r in trace["requests"]],
+                    [("flower_species", "insufficient_evidence", [])],
+                )
+
+    def test_compound_query_separates_floral_motif_from_species(self):
+        for query in (
+            "What objects in the background have a floral pattern, "
+            "and does the label give the botanical name of the flowers?",
+            "背景里哪些东西有花卉图案？这些花朵的学名是什么？",
+        ):
+            with self.subTest(query=query):
+                self.assertEqual(chunk_ids(self.search(TOILETTE, query)), [TOILETTE_DESCRIPTION])
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=TOILETTE, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [TOILETTE_DESCRIPTION])
+                self.assertEqual(
+                    [(r["facet"], r["status"], r["chunk_ids"]) for r in trace["requests"]],
+                    [
+                        ("background_objects", "supported", [TOILETTE_DESCRIPTION]),
+                        ("flower_species", "insufficient_evidence", []),
+                    ],
+                )
+
+    def test_botanical_identity_follow_up_needs_a_plant_referent(self):
+        for query, facet, status in (
+            (
+                "I noticed the flowers in the wallpaper design. Which species are they?",
+                "flower_species", "insufficient_evidence",
+            ),
+            (
+                "墙纸纹样中的花朵很醒目。它们属于什么品种？",
+                "flower_species", "insufficient_evidence",
+            ),
+            (
+                "The blossoms are quite distinct. Can the label identify them?",
+                "flower_species", "insufficient_evidence",
+            ),
+            (
+                "画里的花朵很醒目。能辨认出它们吗？",
+                "flower_species", "insufficient_evidence",
+            ),
+            (
+                "The flowers and brush marks catch my eye. Can you identify them?",
+                "unknown", "unknown_intent",
+            ),
+            (
+                "花朵和笔触都很醒目。能辨认出它们吗？",
+                "unknown", "unknown_intent",
+            ),
+            (
+                "I noticed the shapes in the wallpaper design. Which species are they?",
+                "unknown", "unknown_intent",
+            ),
+            (
+                "墙纸纹样中的图形很醒目。它们属于什么品种？",
+                "unknown", "unknown_intent",
+            ),
+        ):
+            with self.subTest(query=query):
+                self.assertEqual(chunk_ids(self.search(TOILETTE, query)), [])
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=TOILETTE, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [])
+                self.assertEqual(
+                    [(r["facet"], r["status"], r["chunk_ids"]) for r in trace["requests"]],
+                    [(facet, status, [])],
+                )
+
+    def test_generic_pattern_and_material_type_are_not_botanical_identity(self):
+        for query, facet, evidence_id in (
+            ("What type of motif appears on the wallpaper?", "background_objects", TOILETTE_DESCRIPTION),
+            ("墙纸上是什么样的纹样？", "background_objects", TOILETTE_DESCRIPTION),
+            ("What kind of paint was used on this canvas?", "paint_medium", TOILETTE_MEDIUM),
+            ("用的是哪一类绘画颜料？", "paint_medium", TOILETTE_MEDIUM),
+        ):
+            with self.subTest(query=query):
+                self.assertEqual(chunk_ids(self.search(TOILETTE, query)), [evidence_id])
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=TOILETTE, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [evidence_id])
+                self.assertEqual(
+                    [(r["facet"], r["status"], r["chunk_ids"]) for r in trace["requests"]],
+                    [(facet, "supported", [evidence_id])],
+                )
+
+    def test_mark_appearance_and_implied_objects_have_separate_bindings(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,
+            query="What do the marks behind the sitter look like, and what do they suggest might be further back?",
+        )
+        self.assertEqual(chunk_ids(result), [TOILETTE_DESCRIPTION])
+        self.assertEqual(
+            [(r["facet"], r["chunk_ids"]) for r in trace["requests"]],
+            [
+                ("brushwork_appearance", [TOILETTE_DESCRIPTION]),
+                ("background_objects", [TOILETTE_DESCRIPTION]),
+            ],
+        )
+
+    def test_referential_appearance_requires_a_relevant_antecedent(self):
+        for artwork, query in (
+            (BEDROOM, "The colors catch my eye. I noticed the frame too. How does the museum describe its appearance?"),
+            (TOILETTE, "What does the appearance of the marks on the reverse tell us?"),
+            (TOILETTE, "I notice brushstrokes behind the sitter. Do they suggest she worked quickly?"),
+            (TOILETTE, "这幅画上有花卉纹样。能认出它们吗？"),
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=artwork, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [])
+                self.assertEqual([r["facet"] for r in trace["requests"]], ["unknown"])
+
+    def test_taxonomic_detail_in_a_floral_motif_has_no_species_evidence(self):
+        for query in (
+            "Does the label give the genus depicted in the floral motif?",
+            "墙纸的花卉图案画的是哪个属种？",
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=TOILETTE, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [])
+                self.assertEqual(
+                    [(r["facet"], r["status"]) for r in trace["requests"]],
+                    [("flower_species", "insufficient_evidence")],
+                )
+
     def test_equal_medium_can_compare_an_explicit_title_to_the_current_work(self):
         result, trace = retrieve_with_trace(
             self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,
