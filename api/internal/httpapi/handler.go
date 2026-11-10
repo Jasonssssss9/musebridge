@@ -12,14 +12,17 @@ import (
 	"time"
 
 	"github.com/Jasonssssss9/musebridge/api/internal/catalog"
+	"github.com/Jasonssssss9/musebridge/api/internal/chat"
 	"github.com/Jasonssssss9/musebridge/api/internal/conversation"
+	"github.com/Jasonssssss9/musebridge/api/internal/fixture"
 )
 
 type handler struct {
-	dataset  *catalog.Dataset
-	logger   *slog.Logger
-	settings Settings
-	sessions *conversation.Store
+	dataset   *catalog.Dataset
+	logger    *slog.Logger
+	settings  Settings
+	sessions  *conversation.Store
+	questions *chat.Service
 }
 
 // Settings carries the browser profile validated by the application config.
@@ -28,19 +31,17 @@ type Settings struct {
 	CookieSecure  bool
 }
 
-type apiError struct {
-	Code      string `json:"code"`
-	Message   string `json:"message"`
-	Retryable bool   `json:"retryable"`
-}
+type apiError = conversation.Error
 
-// New serves artwork lookup, conversation recovery and private health checks.
+// New serves the public artwork/conversation API and private health checks.
 // A nil dataset exposes liveness but reports that local state is not ready.
-func New(dataset *catalog.Dataset, logger *slog.Logger, settings Settings) http.Handler {
+func New(dataset *catalog.Dataset, logger *slog.Logger, settings Settings, retriever chat.Retriever) http.Handler {
 	if logger == nil {
 		logger = slog.New(slog.NewJSONHandler(io.Discard, nil))
 	}
-	return &handler{dataset: dataset, logger: logger, settings: settings, sessions: conversation.New(nil)}
+	sessions := conversation.New(nil)
+	return &handler{dataset: dataset, logger: logger, settings: settings, sessions: sessions,
+		questions: chat.New(sessions, dataset, retriever, fixture.Adapter{}, logger)}
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +65,7 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.writeJSON(w, r, status, struct {
 			RequestID string   `json:"request_id"`
 			Error     apiError `json:"error"`
-		}{requestID, apiError{code, message, retryable}})
+		}{requestID, apiError{Code: code, Message: message, Retryable: retryable}})
 	}
 	path := r.URL.Path
 	isHealth := path == "/healthz" || path == "/readyz"
@@ -87,7 +88,11 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if isCreate {
 		allowed = http.MethodPost
 	}
-	if r.Method != allowed {
+	if isHistory {
+		allowed = "GET, POST"
+	}
+	methodAllowed := r.Method == http.MethodGet && !isCreate || r.Method == http.MethodPost && (isCreate || isHistory)
+	if !methodAllowed {
 		w.Header().Set("Allow", allowed)
 		fail(http.StatusMethodNotAllowed, "method_not_allowed", "The HTTP method is not supported for this route.", false)
 		return
@@ -109,6 +114,8 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		var err *requestFailure
 		if isCreate {
 			payload, artworkID, err = h.createConversation(w, r)
+		} else if r.Method == http.MethodPost {
+			payload, artworkID, err = h.submitMessage(w, r, conversationID, requestID)
 		} else {
 			payload, artworkID, err = h.conversationHistory(r, conversationID)
 		}

@@ -32,7 +32,7 @@ func call(handler http.Handler, method, target string) *httptest.ResponseRecorde
 }
 
 func TestArtworkResponses(t *testing.T) {
-	handler := New(testDataset(t), nil, Settings{})
+	handler := New(testDataset(t), nil, Settings{}, nil)
 	for slug, title := range map[string]string{"aic-28560": "The Bedroom", "aic-11723": "Woman at Her Toilette"} {
 		recorder := call(handler, http.MethodGet, "/api/artworks/"+slug)
 		if recorder.Code != http.StatusOK {
@@ -60,7 +60,7 @@ func TestArtworkResponses(t *testing.T) {
 }
 
 func TestErrorsAndMethods(t *testing.T) {
-	handler := New(testDataset(t), nil, Settings{})
+	handler := New(testDataset(t), nil, Settings{}, nil)
 	cases := []struct {
 		method, target, code string
 		status               int
@@ -107,7 +107,7 @@ func TestLocalReadinessDoesNotDependOnRetrieval(t *testing.T) {
 		if loaded {
 			dataset = testDataset(t)
 		}
-		handler := New(dataset, nil, Settings{})
+		handler := New(dataset, nil, Settings{}, nil)
 		live := call(handler, http.MethodGet, "/healthz")
 		if live.Code != 200 {
 			t.Fatal("liveness depends on a loaded dataset")
@@ -128,7 +128,7 @@ func TestLocalReadinessDoesNotDependOnRetrieval(t *testing.T) {
 
 func TestLogsOmitUntrustedInput(t *testing.T) {
 	var logs bytes.Buffer
-	handler := New(testDataset(t), slog.New(slog.NewJSONHandler(&logs, nil)), Settings{})
+	handler := New(testDataset(t), slog.New(slog.NewJSONHandler(&logs, nil)), Settings{}, nil)
 	request := httptest.NewRequest("GET", "/api/artworks/aic-28560?secret-question=private-text", nil)
 	request.Header.Set("Cookie", "musebridge_visitor=private-cookie")
 	request.Header.Set("X-Request-ID", "private-client-id")
@@ -142,7 +142,7 @@ func TestLogsOmitUntrustedInput(t *testing.T) {
 }
 
 func TestConcurrentArtworkIsolation(t *testing.T) {
-	handler := New(testDataset(t), nil, Settings{})
+	handler := New(testDataset(t), nil, Settings{}, nil)
 	var wait sync.WaitGroup
 	var lock sync.Mutex
 	seen := make(map[string]bool)

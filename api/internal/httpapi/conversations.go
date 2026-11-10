@@ -27,48 +27,64 @@ func reject(status int, code, message string) *requestFailure {
 	return &requestFailure{status, apiError{Code: code, Message: message}}
 }
 
-func (h *handler) createConversation(w http.ResponseWriter, r *http.Request) (any, string, *requestFailure) {
+func (h *handler) readPublicPOST(w http.ResponseWriter, r *http.Request, required ...string) (map[string]string, *requestFailure) {
 	origins := r.Header.Values("Origin")
 	if h.settings.PublicBaseURL == "" || len(origins) != 1 || origins[0] != h.settings.PublicBaseURL {
-		return nil, "", reject(http.StatusForbidden, "origin_not_allowed", "The request origin is not allowed.")
+		return nil, reject(http.StatusForbidden, "origin_not_allowed", "The request origin is not allowed.")
 	}
 	contentTypes := r.Header.Values("Content-Type")
 	if len(contentTypes) != 1 {
-		return nil, "", reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
+		return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
 	}
 	mediaType, parameters, err := mime.ParseMediaType(contentTypes[0])
 	if err != nil || mediaType != "application/json" {
-		return nil, "", reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
+		return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
 	}
 	for name, value := range parameters {
 		if name != "charset" || !strings.EqualFold(value, "utf-8") {
-			return nil, "", reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
+			return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
 		}
 	}
 	if r.ContentLength > maxPostBytes {
-		return nil, "", reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
+		return nil, reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
 	}
 	if r.Body == nil {
-		return nil, "", reject(http.StatusBadRequest, "invalid_request", "Provide an artwork_id in a JSON object.")
+		return nil, reject(http.StatusBadRequest, "invalid_request", "Provide a JSON object.")
 	}
 	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxPostBytes))
 	if err != nil {
 		var tooLarge *http.MaxBytesError
 		if errors.As(err, &tooLarge) {
-			return nil, "", reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
+			return nil, reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
 		}
-		return nil, "", reject(http.StatusBadRequest, "invalid_request", "The request body could not be read.")
+		return nil, reject(http.StatusBadRequest, "invalid_request", "The request body could not be read.")
 	}
 	if err := jsonwire.Validate(body); err != nil {
-		return nil, "", reject(http.StatusBadRequest, "invalid_request", "Provide one valid UTF-8 JSON object.")
+		return nil, reject(http.StatusBadRequest, "invalid_request", "Provide one valid UTF-8 JSON object.")
 	}
 	var fields map[string]json.RawMessage
-	var artworkID string
-	if err := json.Unmarshal(body, &fields); err != nil || len(fields) != 1 {
-		return nil, "", reject(http.StatusBadRequest, "invalid_request", "Provide only the required artwork_id field.")
+	if err := json.Unmarshal(body, &fields); err != nil || len(fields) != len(required) {
+		return nil, reject(http.StatusBadRequest, "invalid_request", "Provide exactly the required request fields.")
 	}
-	value, exists := fields["artwork_id"]
-	if !exists || json.Unmarshal(value, &artworkID) != nil || strings.TrimSpace(artworkID) == "" {
+	values := make(map[string]string, len(required))
+	for _, name := range required {
+		raw, found := fields[name]
+		var value string
+		if !found || strings.TrimSpace(string(raw)) == "null" || json.Unmarshal(raw, &value) != nil {
+			return nil, reject(http.StatusBadRequest, "invalid_request", "Required fields must be non-null strings.")
+		}
+		values[name] = value
+	}
+	return values, nil
+}
+
+func (h *handler) createConversation(w http.ResponseWriter, r *http.Request) (any, string, *requestFailure) {
+	fields, failure := h.readPublicPOST(w, r, "artwork_id")
+	if failure != nil {
+		return nil, "", failure
+	}
+	artworkID := fields["artwork_id"]
+	if strings.TrimSpace(artworkID) == "" {
 		return nil, "", reject(http.StatusBadRequest, "invalid_request", "artwork_id must be a nonempty string.")
 	}
 	if _, found := h.dataset.ArtworkBySlug(artworkID); !found {

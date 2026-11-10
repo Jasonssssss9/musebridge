@@ -16,6 +16,7 @@ import (
 	"github.com/Jasonssssss9/musebridge/api/internal/catalog"
 	"github.com/Jasonssssss9/musebridge/api/internal/config"
 	"github.com/Jasonssssss9/musebridge/api/internal/httpapi"
+	"github.com/Jasonssssss9/musebridge/api/internal/retrieval"
 )
 
 func main() {
@@ -35,6 +36,11 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	retriever, err := retrieval.New(cfg.RetrievalBaseURL, dataset)
+	if err != nil {
+		return err
+	}
+	defer retriever.CloseIdleConnections()
 	listener, err := net.Listen("tcp", cfg.Address())
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
@@ -42,7 +48,7 @@ func run(logger *slog.Logger) error {
 	server := &http.Server{
 		Handler: httpapi.New(dataset, logger, httpapi.Settings{
 			PublicBaseURL: cfg.PublicBaseURL, CookieSecure: cfg.CookieSecure,
-		}),
+		}, retriever),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second, WriteTimeout: 15 * time.Second,
 		IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16 << 10,

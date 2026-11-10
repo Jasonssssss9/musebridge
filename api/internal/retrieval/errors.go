@@ -1,7 +1,7 @@
 package retrieval
 
 // Error carries the safe public classification of a failed retrieval call.
-// HTTPStatus is for the future question handler; this package serves no routes.
+// HTTPStatus is used by question orchestration; this package serves no routes.
 type Error struct {
 	Code       string `json:"code"`
 	Message    string `json:"message"`

@@ -48,8 +48,19 @@ type PendingRequest struct {
 	LastError       *Error `json:"last_error"`
 }
 
-// History is an atomic snapshot. Message submission will populate turns and
-// pending state in the next implementation slice; new conversations are empty.
+type Submission struct {
+	ClientMessageID string `json:"client_message_id"`
+	Question        string `json:"question"`
+	AnswerLanguage  string `json:"answer_language"`
+}
+
+// Failure combines a safe wire error with its public HTTP status.
+type Failure struct {
+	Status int
+	Error
+}
+
+// History is an atomic snapshot of completed turns and the current pending key.
 type History struct {
 	Conversation   Conversation    `json:"conversation"`
 	Turns          []Turn          `json:"turns"`

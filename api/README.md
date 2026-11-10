@@ -2,7 +2,7 @@
 
 Owner: Jinqing Zhang (Go backend and system integration).
 
-This implements the Go artwork service, anonymous conversation recovery and validating retrieval client. The Go and Python services load the same immutable seed. Artwork cards and conversation recovery remain available independently of retrieval, and a separate Go diagnostic command can call the retrieval service.
+This implements the Go artwork service, anonymous conversations, bounded question orchestration, reviewed fixture answers and validating retrieval client. The Go and Python services load the same immutable seed. Artwork cards and conversation recovery remain available independently of retrieval, and a separate Go diagnostic command can call the retrieval service.
 
 Implemented routes:
 
@@ -11,14 +11,15 @@ Implemented routes:
 | `GET /api/artworks/{slug}` | Return the local artwork card, or `404 artwork_not_found`. |
 | `POST /api/conversations` | Create or restore the visitor's artwork conversation; set or refresh the visitor cookie. |
 | `GET /api/conversations/{conversation_id}/messages` | Read the owning visitor's conversation and its current history. |
+| `POST /api/conversations/{conversation_id}/messages` | Submit or retry a question, retrieve real evidence, and return a completed fixture turn. |
 | `GET /healthz` | Private process liveness and the loaded dataset version. |
 | `GET /readyz` | Private local readiness; it does not depend on the retrieval service being reachable. |
 
-The B2 conversation/history slice includes visitor cookies, POST origin checks, fixed expiry and ownership validation. Histories currently contain `turns: []` and `pending_request: null`. Message submission, fixture generation and replay are subsequent slices. `POST` on the messages path currently returns `405 method_not_allowed` with `Allow: GET`; it does not accept or save a question. Retrieval remains available through the Go client and diagnostic command below. The full target behavior is defined in [the API contract](../docs/api-contract.md).
+The B2 public routes and B3 retrieval/fixture answer path are implemented. History exposes completed turns in sequence and the current processing or failed pending request. Submission also implements the server-side reservation, replay and recovery semantics needed by the public contract. Answers remain fixed test responses in `mode: fixture`; cloud model generation, Compose packaging and physical-phone acceptance are later work. See [the API contract](../docs/api-contract.md) for the wire format.
 
 ## Run locally
 
-Use Go 1.27 or later. This module has no third-party dependencies. From the repository root:
+Use Go 1.27 or later. The module uses the standard library and the Go-maintained [`golang.org/x/text/unicode/norm`](https://pkg.go.dev/golang.org/x/text/unicode/norm) package for contract-required NFKC normalization. The first build downloads the version pinned in `go.mod` and verified by `go.sum`. From the repository root:
 
 ```bash
 cd api
@@ -79,7 +80,35 @@ curl -fsS -b /tmp/musebridge-cookies.txt \
 
 The visitor token appears only in the host-only `HttpOnly; SameSite=Lax` cookie, with a 24-hour `Max-Age`. HTTPS configuration adds `Secure`. Creation/restoration refreshes the cookie but never extends a conversation's fixed 24-hour lifetime. The two artworks have separate conversations. Concurrent creation with an established cookie restores one conversation for the same artwork and dataset version.
 
-Missing, foreign, unknown, expired or pre-restart identity/history returns the same `404 conversation_not_found`. Malformed UUID text returns `400 invalid_request`; uppercase canonical UUID text is accepted. State lives in one Go process and is lost on restart. Expired records are removed when the store is accessed. See [the conversation contract](../docs/api-contract.md#22-create-or-restore-a-conversation) for the target wire format and remaining message behavior.
+Missing, foreign, unknown, expired or pre-restart identity/history returns the same `404 conversation_not_found`. Malformed UUID text returns `400 invalid_request`; uppercase canonical UUID text is accepted. State lives in one Go process and is lost on restart. Expired records are removed when the store is accessed. See [the conversation contract](../docs/api-contract.md#22-create-or-restore-a-conversation) for the wire format.
+
+## Submit a question
+
+Start the Python service as described below and keep Go running. Replace `CONVERSATION_ID` with the conversation returned above, and send the same cookie:
+
+```bash
+curl -fsS -b /tmp/musebridge-cookies.txt \
+  -H 'Origin: http://localhost:8080' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"client_message_id":"0dd2a1f3-8e81-4266-926a-cbe04584ee84","question":"What material is this artwork made of?","answer_language":"en"}' \
+  http://127.0.0.1:8000/api/conversations/CONVERSATION_ID/messages
+```
+
+The response contains one `turn`, including the original trimmed question, contiguous sequence, pinned version, requested language, fixed answer and current evidence citations. Use a new UUID for each new question. Repeating the original UUID and normalized payload returns the exact stored turn without another retrieval or generation call. Changing the question or language under that UUID returns `409 idempotency_conflict`.
+
+The fixture registry accepts the reviewed material, brushwork, nervous-energy and known-gap questions in [contract section 6](../docs/api-contract.md#6-query-preparation-and-generation-boundary). Both `en` and `zh-CN` answers are available. Matching applies NFKC, Latin case normalization and whitespace/punctuation rules; that matching normalization never changes the stored question or its idempotency identity. With a completed turn in this artwork's conversation, the two declared material/brushwork follow-ups are rewritten to standalone retrieval queries. Other wording is passed through unchanged.
+
+After successful evidence validation:
+
+- Known gaps and empty evidence produce `insufficient`. A supported fixture also requires its exact chunk IDs; related evidence alone does not satisfy it.
+- Supported fixtures with the required evidence produce `answered`. Citation IDs resolve only to this question's validated evidence; the adapter cannot invent source records or URLs.
+- Other questions with evidence produce `unsupported_question`. Every completed status has `mode: fixture`; the two fallbacks have empty citation arrays.
+
+A conversation permits one processing request at a time. An active duplicate returns `409 request_in_progress`, and a different UUID returns `409 conversation_busy`. A technical failure appends no turn and preserves a failed `pending_request` with its original question, language, UUID and safe error. Retry that UUID after resolving the fault. Accepting a new UUID supersedes the old failed key, which subsequently returns `409 request_superseded`. History is an atomic snapshot and never presents the same request as both completed and pending.
+
+Each accepted attempt has an independent eight-second budget, with three seconds for retrieval and two seconds for the fixture adapter. Browser disconnection does not cancel an accepted attempt. Expiry is checked again before commit, and an attempt token prevents a late callback from committing after failure or retry. Timeout/failure injection uses replaceable dependencies in Go tests; it is not a public runtime control.
+
+Retrieval errors map to `502 retrieval_invalid_response`, `503 retrieval_unavailable` or `504 retrieval_timeout`. Generation errors have corresponding `generation_*` codes; the total budget maps to `504 request_timeout`. Technical failures remain non-2xx errors and are never saved as insufficient-evidence answers.
 
 ## Query retrieval through the Go client
 
@@ -116,18 +145,18 @@ go build -o /tmp/musebridge-retrieve ./cmd/retrieve
 - Every evidence record must match the requested artwork and the Go API's complete trusted chunk/source projection, including excerpt, URL, locator, language, license, attribution and normalization. An invalid record rejects the entire response; no partial result is returned.
 - Returned evidence preserves the retrieval service's order and contains no shared mutable catalog state. The result does not make an evidence-sufficiency judgment.
 
-`retrieval.Error` exposes `Code`, `Message`, `Retryable` and the future public `HTTPStatus`. It never copies an upstream response body or network diagnostic into its safe message.
+`retrieval.Error` exposes `Code`, `Message`, `Retryable` and the public `HTTPStatus`. It never copies an upstream response body or network diagnostic into its safe message.
 
-| Condition | Client result | Future public mapping |
+| Condition | Client result | Public mapping |
 | --- | --- | --- |
-| Valid evidence, including an empty array | Successful `Result` | Later answer logic decides the answer status. |
+| Valid evidence, including an empty array | Successful `Result` | Fixture logic decides the completed answer status. |
 | Connection failure or valid retrieval error with status `500`/`503` | `retrieval_unavailable`, retryable | 503 |
 | Retrieval service's request deadline or a transport timeout | `retrieval_timeout`, retryable | 504 |
 | Invalid evidence, framing/content, redirect or valid retrieval error with status `400`/`404`/`409` | `retrieval_invalid_response`, not retryable | 502 |
 | Invalid local query/request ID or unknown artwork | Rejected before contacting the retrieval service | 400 or 404 |
-| Parent context cancelled or expired | Original context error, with no result | The later question orchestrator owns cancellation and its total-attempt timeout. |
+| Parent context cancelled or expired | Original context error, with no result | The question orchestrator owns cancellation and its total-attempt timeout. |
 
-The existing HTTP server does not yet return these retrieval errors, because message submission is still pending.
+The message endpoint returns these safe classifications and retains the failed pending request for recovery.
 
 ## Configuration
 
@@ -148,8 +177,8 @@ go run ./cmd/server
 | `COOKIE_SECURE` | Inferred from the public URL scheme | Controls the visitor cookie. Must be `false` for the local HTTP profile and `true` for HTTPS. |
 | `DATASET_VERSION` | `aic-seed-v0.1` | Exact version required in the seed and its artwork records. |
 | `SEED_PATH` | `../knowledge/data/aic-seed-v0.1.json` | Shared seed file. |
-| `RETRIEVAL_BASE_URL` | `http://127.0.0.1:8001` | Retrieval service's private origin, used by the retrieval diagnostic/client. The artwork HTTP server makes no retrieval calls. |
-| `GENERATION_MODE` | `fixture` | Only supported local mode; the adapter will be implemented later. |
+| `RETRIEVAL_BASE_URL` | `http://127.0.0.1:8001` | Private origin used by question submission and the retrieval diagnostic. Artwork and conversation reads make no retrieval calls. |
+| `GENERATION_MODE` | `fixture` | Reviewed in-process test answers; the only supported local mode. |
 
 Do not set `GOROOT` or `GOPATH` to the repository. Go modules locate this project through `go.mod`. Host-specific environment files belong outside version control.
 
@@ -159,9 +188,11 @@ The seed loader checks exact field names, required/null fields, JSON types, dupl
 
 Structural validation does not authenticate a passage. The startup log records the SHA-256 of the actual loaded file so Jinqing Zhang and Jason Zichen He can compare release identity. The current released SHA-256 is `3703fd4c9fcefb8e9fba20f23a5cb70e612c62ef7cb3f594a15d319ebc18d6ac`.
 
-HTTP replies are UTF-8 JSON with `Cache-Control: no-store` and a server-generated `X-Request-ID`. Error bodies include the same request ID, a stable error code, safe English message and retry flag. Unknown routes and unsupported methods use JSON errors; method errors include the route's current `Allow: GET` or `Allow: POST`. HEAD requests omit the body of their applicable method error. Query parameters are rejected on implemented routes.
+HTTP replies are UTF-8 JSON with `Cache-Control: no-store` and a server-generated `X-Request-ID`. Error bodies include the same request ID, a stable error code, safe English message and retry flag. Unknown routes and unsupported methods use JSON errors; method errors include the route's `Allow: GET`, `Allow: POST` or `Allow: GET, POST`. HEAD requests omit the body of their applicable method error. Query parameters are rejected on implemented routes.
 
 Structured request logs include the request ID, result code, known artwork ID, dataset version and elapsed time. They omit request URLs, question text, client-supplied IDs and cookies. Startup errors can include local configuration paths for the developer; public error responses do not expose them.
+
+Question-attempt logs additionally record retrieval/generation durations and validated evidence chunk IDs. A completed replay has its own trace event and skips both dependencies. Source excerpts, answers and visitor payloads are excluded from routine logs.
 
 The health routes are private service endpoints. During later web integration, proxy only the intended `/api` routes and keep health endpoints off the public proxy.
 
@@ -178,24 +209,28 @@ Tests cover the published seed, invalid data and provenance, configuration profi
 
 Conversation checks cover browser cookie attributes, exact origins, strict request bodies, ownership, separate artwork/release scopes, concurrent creation, uppercase UUID lookup, fixed expiry and process restart. A controlled clock verifies the exact 24-hour boundary without waiting. Errors and history reads never establish or refresh visitor identity.
 
+Message checks cover the reviewed bilingual fixture set, NFKC input, missing required chunks, exact provenance, isolated adapter inputs, scoped follow-ups, bounded recent context, concurrent submissions, completed replay, supersession and recovery after dependency failure. Controlled deadlines verify retrieval, generation and total-attempt errors. Late results cannot append a turn, and an accepted attempt can complete after browser cancellation.
+
 The simulated servers return valid evidence, empty results, individual corrupted fields, foreign records, duplicates, invalid JSON/Unicode, wrong versions, error statuses, oversized or truncated bodies, redirects, and delays before headers or during body reads. Tests also check one-attempt behavior, parent cancellation and safe error text. Test-only deadlines are shorter; production calls retain their three-second limit.
 
 To test against a separately running real Python retrieval service, start Python as shown above and run from `api/`:
 
 ```bash
 RETRIEVAL_BASE_URL=http://127.0.0.1:8001 \
-  go test -race -tags=integration ./internal/retrieval \
-  -run TestPythonServiceIntegration -count=1 -v
+  go test -race -tags=integration ./internal/retrieval ./internal/httpapi \
+  -run 'TestPython(Service|Answer)Integration' -count=1 -v
 ```
 
-The opt-in integration test skips when `RETRIEVAL_BASE_URL` is absent. It uses the six frozen questions, both brushwork isolation calls, an English material question and a valid no-hit query. It verifies retrieval and provenance only; expected answer statuses are for the later fixture adapter. It neither starts nor stops the configured Python service.
+The opt-in tests skip when `RETRIEVAL_BASE_URL` is absent. The retrieval check covers the six frozen questions, brushwork isolation, English wording and no-hit behavior. The public-answer check adds reviewed statuses/citations, replay, both languages, scoped follow-ups, fullwidth input and a fresh conversation without context. Neither test starts or stops the configured Python service.
 
 The source layout follows the request path:
 
 - `cmd/server`: startup, listener and graceful shutdown.
 - `cmd/retrieve`: direct Go-to-Python retrieval diagnostic.
 - `internal/config`: environment defaults and validation.
-- `internal/conversation`: process-local visitor identity, conversation recovery, expiry and history wire models.
+- `internal/conversation`: process-local identity, conversation recovery, request reservations, replay, expiry and atomic history.
+- `internal/chat`: bounded question orchestration, dependency errors and safe attempt traces.
+- `internal/fixture`: reviewed bilingual answers, limited query preparation and output/citation validation.
 - `internal/catalog`: immutable seed loading, artwork lookup and trusted evidence projection.
 - `internal/jsonwire`: shared strict JSON integrity checks.
 - `internal/httpapi`: implemented HTTP routes and shared response formatting.

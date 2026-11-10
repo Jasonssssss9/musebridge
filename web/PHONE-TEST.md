@@ -1,6 +1,6 @@
 # Phone test steps
 
-A repeatable check of the visitor flow on a real phone. Week 2 runs it against the mock API (`npm run dev`); repeat it against the full stack once the Go conversation endpoints and Compose startup exist.
+A repeatable check of the visitor flow on a real phone. Run the UI scenarios against the mock API (`npm run dev`), then repeat the applicable journey against Go and Python using `npm run dev:live`. Compose packaging is still planned; the services can currently be started separately.
 
 ## Setup
 
@@ -9,6 +9,8 @@ A repeatable check of the visitor flow on a real phone. Week 2 runs it against t
 3. Note the "Network" address Vite prints, for example `http://192.168.1.20:8080`.
 4. On the computer, open `<network address>/qr`. Print the page or leave it on screen.
 5. On the phone, type `<network address>` into the browser first. If the computer loads it and the phone does not, the problem is the network or the computer's firewall, not the app.
+
+For live mode, start Python and Go using the [setup guide](../docs/getting-started.md), set Go's `PUBLIC_BASE_URL` to the exact network origin and run `npm run dev:live` instead. The Mock API controls in steps 11–13 are available only in mock mode. Record live dependency failures separately using the integration plan; changing a mock setting does not change the real services.
 
 ## Checks
 

@@ -16,7 +16,7 @@ Use the [design](design.md) for architectural decisions and the [API contract](a
 
 Task IDs retain their original prefixes for continuity: `A1`–`A7` belong to Jeremiah Lim, `B1`–`B8` to Jinqing Zhang, and `C1`–`C6` to Jason Zichen He. The owner column names the contributor responsible for each task or acceptance check.
 
-Current implementation checkpoint: B2 includes artwork lookup, anonymous conversation creation/restoration, ownership checks, fixed 24-hour expiry and empty history reads. Its message-submission portion remains pending with the B3 fixture answer path and B4 request lifecycle. The validating retrieval client from B3 is already implemented. The frontend can use the real artwork/conversation routes while its full chat demonstration continues to use mock replies.
+Current implementation checkpoint: B2 public routes and B3 retrieval/fixture answers are implemented, including scoped follow-ups, bilingual reviewed text, current-evidence citations and stored completed turns. The server-side B4 lifecycle is also implemented and tested: reservations, UUID replay/conflicts, recoverable pending failures, supersession and rejection of late results. Automated real-Python checks cover both retrieval and public answers. Browser acceptance, the physical phone walkthrough and Compose packaging remain pending; the frontend provides both mock and live modes.
 
 ## Parallel course track
 

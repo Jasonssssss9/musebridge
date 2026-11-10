@@ -23,6 +23,9 @@ type visitor struct {
 type record struct {
 	owner        string
 	conversation Conversation
+	turns        []Turn
+	requests     map[string]*request
+	pending      string
 }
 
 // Store is private to a handler/process. It is safe for concurrent requests.
@@ -31,7 +34,7 @@ type Store struct {
 	mu            sync.Mutex
 	now           func() time.Time
 	visitors      map[string]*visitor
-	conversations map[string]record
+	conversations map[string]*record
 }
 
 func New(now func() time.Time) *Store {
@@ -39,7 +42,7 @@ func New(now func() time.Time) *Store {
 		now = time.Now
 	}
 	return &Store{
-		now: now, visitors: make(map[string]*visitor), conversations: make(map[string]record),
+		now: now, visitors: make(map[string]*visitor), conversations: make(map[string]*record),
 	}
 }
 
@@ -68,7 +71,9 @@ func (s *Store) Open(token, artworkID, datasetVersion string) (string, Conversat
 		ConversationID: newUUID(), ArtworkID: artworkID, DatasetVersion: datasetVersion,
 		CreatedAt: now, ExpiresAt: now.Add(Lifetime),
 	}
-	s.conversations[conversation.ConversationID] = record{token, conversation}
+	s.conversations[conversation.ConversationID] = &record{
+		owner: token, conversation: conversation, requests: make(map[string]*request),
+	}
 	v.conversations[key] = conversation.ConversationID
 	return token, conversation, true
 }
@@ -83,7 +88,18 @@ func (s *Store) History(token, id string) (History, bool) {
 	if !ok || s.visitors[token] == nil || item.owner != token {
 		return History{}, false
 	}
-	return History{Conversation: item.conversation, Turns: make([]Turn, 0)}, true
+	history := History{Conversation: item.conversation, Turns: cloneTurns(item.turns)}
+	if pending := item.requests[item.pending]; pending != nil {
+		history.PendingRequest = &PendingRequest{
+			ClientMessageID: pending.submission.ClientMessageID, Question: pending.submission.Question,
+			AnswerLanguage: pending.submission.AnswerLanguage, State: pending.state,
+		}
+		if pending.state == "failed" {
+			value := pending.lastError
+			history.PendingRequest.LastError = &value
+		}
+	}
+	return history, true
 }
 
 // expire runs under the lock and removes expired entries from both indexes.

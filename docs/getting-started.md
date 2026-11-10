@@ -1,6 +1,6 @@
 # Getting started
 
-This guide covers the currently runnable local components: the shared two-artwork dataset, Python evidence retrieval, the Go artwork and conversation/history APIs, the validating Go retrieval client, and a mobile frontend with sample replies. Message submission and answer generation in Go are not implemented yet.
+This guide covers the currently runnable local components: the shared two-artwork dataset, Python evidence retrieval, the Go artwork/conversation/message APIs, reviewed fixture answers, and a mobile frontend with mock and live modes. The local answer path uses actual museum evidence and labeled fixed responses.
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@ This guide covers the currently runnable local components: the shared two-artwor
 - Node.js 20 or later and npm when running the optional frontend.
 - A local checkout of this repository.
 
-The backend commands use only the Python and Go standard libraries. They do not require Node.js, a model, API key or database. The frontend uses Node.js to run Vite and build React/TypeScript assets. Docker is optional for the standalone retrieval service; full-stack Compose startup is planned.
+Python uses its standard library. Go uses its standard library and the pinned `golang.org/x/text` package for Unicode normalization; the first build downloads that module. The backend does not require Node.js, a model, API key or database. The frontend uses Node.js to run Vite and build React/TypeScript assets. Docker is optional for the standalone retrieval service; full-stack Compose startup is planned.
 
 Start each terminal in the repository root unless a command explicitly changes directories. Both services use the immutable `knowledge/data/aic-seed-v0.1.json` release.
 
@@ -23,7 +23,7 @@ python3 -m knowledge.http_service --host 127.0.0.1
 
 The service listens on `http://127.0.0.1:8001`. It loads and validates the dataset before serving requests. See the [retrieval guide](../knowledge/README.md) for configuration, direct queries, source provenance and Docker instructions.
 
-## Start the Go artwork API
+## Start the Go application API
 
 In a second terminal:
 
@@ -43,7 +43,7 @@ curl -fsS http://127.0.0.1:8000/api/artworks/aic-11723
 
 The health endpoints are private development/operations routes. Future frontend proxy configuration must keep them outside the public visitor API.
 
-The [Go backend guide](../api/README.md#create-and-restore-a-conversation) includes cookie-aware commands for creating/restoring an artwork conversation and reading its empty history. These routes do not require Python. A conversation expires 24 hours after creation; restarting Go clears all anonymous visitor and conversation state.
+The [Go backend guide](../api/README.md#create-and-restore-a-conversation) includes cookie-aware commands for creating/restoring an artwork conversation and reading history. These routes do not require Python. Its [question example](../api/README.md#submit-a-question) runs real retrieval, selects a reviewed fixture answer, validates citations and saves the completed turn. Question submission requires Python to be available at `RETRIEVAL_BASE_URL`. A conversation expires 24 hours after creation; restarting Go clears all anonymous visitor and conversation state.
 
 ## Run the optional web interface
 
@@ -55,7 +55,7 @@ npm ci
 npm run dev
 ```
 
-The default frontend uses a mock API and can demonstrate the full interface independently. Use `npm run dev:live` to load artwork and establish real conversations against Go. Live question submission remains unavailable until the Go message/answer path is implemented. For phone access, set Go's `PUBLIC_BASE_URL` to the exact LAN origin used in the browser. See the [web guide](../web/README.md) for QR cards and mock scenarios.
+The default frontend uses a mock API and can demonstrate the full interface independently. With Go and Python running, use `npm run dev:live` to load artwork, restore conversations and submit questions through the real backend. Answers are still labeled fixed test responses. For phone access, set Go's `PUBLIC_BASE_URL` to the exact LAN origin used in the browser. See the [web guide](../web/README.md) for QR cards and mock scenarios. Browser and physical-phone acceptance remain separate from the automated backend checks.
 
 ## Run a Go-to-Python retrieval query
 

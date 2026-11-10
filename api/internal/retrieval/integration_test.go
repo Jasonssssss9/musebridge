@@ -11,7 +11,7 @@ import (
 )
 
 // TestPythonServiceIntegration requires a separately running real C service.
-// It exercises retrieval only; gold answer statuses belong to B's later adapter.
+// It exercises retrieval only; gold answer statuses belong to the answer adapter.
 func TestPythonServiceIntegration(t *testing.T) {
 	baseURL := os.Getenv("RETRIEVAL_BASE_URL")
 	if baseURL == "" {

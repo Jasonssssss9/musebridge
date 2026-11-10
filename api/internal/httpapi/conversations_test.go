@@ -74,7 +74,7 @@ func requireSessionError(t *testing.T, w *httptest.ResponseRecorder, status int,
 
 func TestConversationBrowserFlow(t *testing.T) {
 	var logs bytes.Buffer
-	h := New(testDataset(t), slog.New(slog.NewJSONHandler(&logs, nil)), Settings{PublicBaseURL: browserOrigin})
+	h := New(testDataset(t), slog.New(slog.NewJSONHandler(&logs, nil)), Settings{PublicBaseURL: browserOrigin}, nil)
 	first, cookie, created := openSession(t, h, "aic-28560", nil)
 	if !created || first.ArtworkID != "aic-28560" || first.DatasetVersion != "aic-seed-v0.1" || first.ConversationID == "" {
 		t.Fatal("new conversation has incorrect metadata")
@@ -110,7 +110,7 @@ func TestConversationBrowserFlow(t *testing.T) {
 }
 
 func TestConversationOwnershipAndRestart(t *testing.T) {
-	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin})
+	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}, nil)
 	current, owner, _ := openSession(t, h, "aic-28560", nil)
 	_, otherVisitor, _ := openSession(t, h, "aic-28560", nil)
 	path := "/api/conversations/" + current.ConversationID + "/messages"
@@ -128,7 +128,7 @@ func TestConversationOwnershipAndRestart(t *testing.T) {
 	if err := requireSessionError(t, sessionCall(h, "GET", unknown, "", owner), 404, "conversation_not_found"); err != expected {
 		t.Fatal("unknown conversation has a distinguishable error")
 	}
-	restarted := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin})
+	restarted := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}, nil)
 	requireSessionError(t, sessionCall(restarted, "GET", path, "", owner), 404, "conversation_not_found")
 	next, nextCookie, created := openSession(t, restarted, current.ArtworkID, owner)
 	if !created || next.ConversationID == current.ConversationID || nextCookie.Value == owner.Value {
@@ -138,7 +138,7 @@ func TestConversationOwnershipAndRestart(t *testing.T) {
 
 func TestConversationExpiry(t *testing.T) {
 	now := time.Date(2026, 11, 10, 0, 0, 0, 0, time.UTC)
-	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}).(*handler)
+	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}, nil).(*handler)
 	h.sessions = conversation.New(func() time.Time { return now })
 	current, cookie, _ := openSession(t, h, "aic-28560", nil)
 	now = now.Add(23 * time.Hour)
@@ -156,7 +156,7 @@ func TestConversationExpiry(t *testing.T) {
 }
 
 func TestConversationOriginsAndSecureCookie(t *testing.T) {
-	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin})
+	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}, nil)
 	for _, origin := range []string{"", "null", "http://127.0.0.1:8080", browserOrigin + "/", "https://localhost:8080", "http://localhost:8081"} {
 		r := httptest.NewRequest("POST", "/api/conversations", strings.NewReader(`{"artwork_id":"aic-28560"}`))
 		if origin != "" {
@@ -171,7 +171,7 @@ func TestConversationOriginsAndSecureCookie(t *testing.T) {
 	for _, emptySettings := range []bool{false, true} {
 		r := httptest.NewRequest("POST", "/api/conversations", strings.NewReader(`{"artwork_id":"aic-28560"}`))
 		if emptySettings {
-			h = New(testDataset(t), nil, Settings{})
+			h = New(testDataset(t), nil, Settings{}, nil)
 			r.Header.Set("Origin", "")
 		} else {
 			r.Header.Add("Origin", browserOrigin)
@@ -182,7 +182,7 @@ func TestConversationOriginsAndSecureCookie(t *testing.T) {
 		requireSessionError(t, w, 403, "origin_not_allowed")
 	}
 	secureOrigin := "https://museum.example:9443"
-	h = New(testDataset(t), nil, Settings{PublicBaseURL: secureOrigin, CookieSecure: true})
+	h = New(testDataset(t), nil, Settings{PublicBaseURL: secureOrigin, CookieSecure: true}, nil)
 	r := httptest.NewRequest("POST", "/api/conversations", strings.NewReader(`{"artwork_id":"aic-28560"}`))
 	r.Header.Set("Origin", secureOrigin)
 	r.Header.Set("Content-Type", "application/json; charset=UTF-8")
@@ -194,7 +194,7 @@ func TestConversationOriginsAndSecureCookie(t *testing.T) {
 }
 
 func TestConversationRequestValidation(t *testing.T) {
-	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin})
+	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}, nil)
 	for _, tc := range []struct {
 		name, body, contentType, code string
 		status                        int
@@ -241,7 +241,7 @@ func TestConversationRequestValidation(t *testing.T) {
 }
 
 func TestConversationRouteBoundaries(t *testing.T) {
-	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin})
+	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}, nil)
 	current, cookie, _ := openSession(t, h, "aic-28560", nil)
 	path := "/api/conversations/" + current.ConversationID + "/messages"
 	for _, tc := range []struct {
@@ -250,7 +250,7 @@ func TestConversationRouteBoundaries(t *testing.T) {
 	}{
 		{"GET", "/api/conversations", "method_not_allowed", "POST", 405},
 		{"OPTIONS", "/api/conversations", "method_not_allowed", "POST", 405},
-		{"POST", path, "method_not_allowed", "GET", 405},
+		{"DELETE", path, "method_not_allowed", "GET, POST", 405},
 		{"GET", "/api/conversations/not-a-uuid/messages", "invalid_request", "", 400},
 		{"GET", path + "?debug=true", "invalid_request", "", 400},
 		{"POST", "/api/conversations?", "invalid_request", "", 400},
@@ -265,7 +265,7 @@ func TestConversationRouteBoundaries(t *testing.T) {
 	if w := sessionCall(h, "HEAD", path, "", cookie); w.Code != 405 || w.Body.Len() != 0 || w.Header().Get("Content-Length") == "" {
 		t.Fatal("HEAD did not retain error headers while omitting the body")
 	}
-	unready := New(nil, nil, Settings{PublicBaseURL: browserOrigin})
+	unready := New(nil, nil, Settings{PublicBaseURL: browserOrigin}, nil)
 	w := sessionCall(unready, "POST", "/api/conversations", `{"artwork_id":"aic-28560"}`)
 	if w.Code != 503 || w.Header().Get("Set-Cookie") != "" {
 		t.Fatal("uninitialized local state created a conversation")
@@ -273,7 +273,7 @@ func TestConversationRouteBoundaries(t *testing.T) {
 }
 
 func TestConcurrentConversationCreation(t *testing.T) {
-	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin})
+	h := New(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin}, nil)
 	_, cookie, _ := openSession(t, h, "aic-28560", nil)
 	var createdCount atomic.Int32
 	var wait sync.WaitGroup
