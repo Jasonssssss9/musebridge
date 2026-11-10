@@ -1,6 +1,8 @@
 # Retrieval evaluation
 
-This directory separates the frozen demo fixtures from broader retrieval diagnostics. The diagnostics exercise C's current keyword retriever without a model, embedding service or backend B. They measure returned evidence, not generated answers.
+Owner: Jason Zichen He (retrieval evaluation).
+
+This directory separates the frozen demo fixtures from broader retrieval diagnostics. The diagnostics exercise the current Python keyword retriever without a model, embedding service or Go backend. They measure returned evidence, not generated answers.
 
 ## Files and scope
 
@@ -75,7 +77,7 @@ Every case records an English rationale explaining its gold choice. Gold is base
 
 For example, medium plus days spent painting is `partial`: the medium chunk helps with the first part, but contains no duration. A comparison can likewise be `partial` when the current artwork's description supports its side only. A query solely about the other named artwork is `none`, even if both works happen to share the same medium. The Bedroom excerpt's possible nervous effect does not establish the artist's intention.
 
-These are offline annotations, not additional C API fields and not replacements for B's public `answered`, `insufficient` or `unsupported_question` statuses. Retrieving all gold for a `partial` case still does not make the entire question answerable. An empty gold list does not claim that the current retriever will return no related chunks.
+These are offline annotations, not additional retrieval API fields and not replacements for the Go API's public `answered`, `insufficient` or `unsupported_question` statuses. Retrieving all gold for a `partial` case still does not make the entire question answerable. An empty gold list does not claim that the current retriever will return no related chunks.
 
 ## Suite schema
 
@@ -156,4 +158,4 @@ CLI reports record Python and Unicode versions plus SHA-256 hashes of the seed, 
 
 Keep these reports as the original keyword baseline. For a future retriever change, run the same suite into a new report path, compare aggregate scores and inspect the changed case IDs. Do not adjust gold to match implementation output. If a question, label or evidence scope needs correction, review the change, release a new suite version and retain enough history to explain the comparison.
 
-This is a small authored diagnostic set over four excerpts. It is not held-out evaluation, production accuracy, a representative visitor study, latency measurement or generated-answer assessment. It exposes useful weaknesses before B or a model is available; broader corpus coverage and independently collected questions remain future work.
+This is a small authored diagnostic set over four excerpts. It is not held-out evaluation, production accuracy, a representative visitor study, latency measurement or generated-answer assessment. It exposes useful weaknesses independently of the Go API or a model; broader corpus coverage and independently collected questions remain future work.

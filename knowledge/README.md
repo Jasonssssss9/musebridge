@@ -1,6 +1,8 @@
 # Artwork data and keyword retrieval
 
-This package implements C's seed loader, deterministic keyword retriever and private HTTP service for `aic-seed-v0.1`. It uses the Python standard library and serves evidence from the local seed without fetching museum content at runtime.
+Owner: Jason Zichen He (source data, retrieval and evaluation).
+
+This package implements the seed loader, deterministic keyword retriever and private HTTP service for `aic-seed-v0.1`. It uses the Python standard library and serves evidence from the local seed without fetching museum content at runtime.
 
 Use Python 3.10 or later. Development checks run on Python 3.12 in WSL. Run the commands below from the repository root.
 
@@ -34,13 +36,13 @@ The default seed path is resolved relative to the package, not the current direc
 
 ## Run the private retrieval service
 
-From the repository root, start C on loopback for local testing.
+From the repository root, start the retrieval service on loopback for local testing.
 
 ```bash
 python3 -m knowledge.http_service --host 127.0.0.1
 ```
 
-C loads and validates the seed before binding. An invalid configuration, unreadable seed, invalid seed or version mismatch exits with a nonzero status. Check the diagnostic on stderr before trying to connect.
+The retrieval service loads and validates the seed before binding. An invalid configuration, unreadable seed, invalid seed or version mismatch exits with a nonzero status. Check the diagnostic on stderr before trying to connect.
 
 | Environment variable | CLI override | Default |
 | --- | --- | --- |
@@ -49,11 +51,11 @@ C loads and validates the seed before binding. An invalid configuration, unreada
 | `SEED_PATH` | `--seed` | `data/aic-seed-v0.1.json` relative to the `knowledge` package |
 | `DATASET_VERSION` | `--dataset-version` | `aic-seed-v0.1` |
 
-CLI flags take precedence over environment variables. `HOST=0.0.0.0` lets other containers reach C on the private service network. Use the loopback command above when testing a native Python process on the same host.
+CLI flags take precedence over environment variables. `HOST=0.0.0.0` lets other containers reach the retrieval service on the private service network. Use the loopback command above when testing a native Python process on the same host.
 
-The local transport requires one `Content-Length` header and an uncompressed UTF-8 JSON body of at most 8 KiB. Chunked transfer is not supported in this demo. Curl's `--data-raw` and Go requests created from a byte buffer supply a known body length. Each response closes its connection. A five-second socket timeout bounds incomplete request reads; B still enforces its own three-second retrieval deadline.
+The local transport requires one `Content-Length` header and an uncompressed UTF-8 JSON body of at most 8 KiB. Chunked transfer is not supported in this demo. Curl's `--data-raw` and Go requests created from a byte buffer supply a known body length. Each response closes its connection. A five-second socket timeout bounds incomplete request reads; the Go API still enforces its own three-second retrieval deadline.
 
-A single printable ASCII `X-Request-ID` of at most 128 characters is echoed. An absent, blank, malformed or duplicated request ID is replaced with a generated one. No visitor cookie or browser Origin header is required on C's private endpoints.
+A single printable ASCII `X-Request-ID` of at most 128 characters is echoed. An absent, blank, malformed or duplicated request ID is replaced with a generated one. No visitor cookie or browser Origin header is required on the retrieval service's private endpoints.
 
 The service uses Python's standard-library HTTP server for the private local demo. Keep it on the internal service network; choose the hosted HTTP runtime during the later deployment review.
 
@@ -75,7 +77,7 @@ curl -sS -i http://127.0.0.1:8001/retrieve \
   --data-raw '{"artwork_id":"aic-28560","query":"What material is this artwork made of?","top_k":2,"dataset_version":"aic-seed-v0.1"}'
 ```
 
-The response is HTTP 200 with `dataset_version: "aic-seed-v0.1"` and the `aic-28560-medium` evidence record. For a valid query with no topic match, C also returns HTTP 200, with `evidence: []`.
+The response is HTTP 200 with `dataset_version: "aic-seed-v0.1"` and the `aic-28560-medium` evidence record. For a valid query with no topic match, the retrieval service also returns HTTP 200, with `evidence: []`.
 
 An incorrect version returns HTTP 409 with `error.code: "dataset_version_mismatch"`. Keep `-i` to see the status and JSON error body.
 
@@ -86,9 +88,9 @@ curl -sS -i http://127.0.0.1:8001/retrieve \
   --data-raw '{"artwork_id":"aic-28560","query":"material","top_k":2,"dataset_version":"wrong-version"}'
 ```
 
-See [the retrieval contract](../docs/api-contract.md#4-b--c-retrieval-contract) for validation, status codes and the exact evidence fields.
+See [the retrieval contract](../docs/api-contract.md#4-go-api-and-retrieval-service-retrieval-contract) for validation, status codes and the exact evidence fields.
 
-### Run C in Docker
+### Run the retrieval service in Docker
 
 Build from the repository root. The image uses the [official Python 3.12 slim base](https://hub.docker.com/_/python), the service package and the released seed. The service runs as UID/GID 10001. Its container health check calls `/readyz` on the configured port.
 
@@ -99,7 +101,7 @@ docker run --rm --read-only \
   musebridge-retrieval:local
 ```
 
-Run the same curl commands from the Docker host. The published address is loopback for local integration. To test with the same on-disk seed that B will read, mount the file read-only at C's default seed path.
+Run the same curl commands from the Docker host. The published address is loopback for local integration. To test with the same on-disk seed that the Go API will read, mount the file read-only at the retrieval service's default seed path.
 
 ```bash
 docker run --rm --read-only \
@@ -110,11 +112,11 @@ docker run --rm --read-only \
 
 Stop the first container before starting the second on the same host port. For a different container port, set `PORT` in the container environment and update the publish mapping so the health check uses the same port as the service.
 
-### B integration handoff
+### Go API integration handoff
 
-- For B running on the same host as the standalone C process or the Docker loopback port, set `RETRIEVAL_BASE_URL=http://127.0.0.1:8001`. In the planned Compose deployment, B calls `http://retrieval:8001` on the private network. The browser calls B's public API.
-- Send `POST /retrieve` with `artwork_id`, `query`, `dataset_version` and `top_k: 2`. Forward B's `X-Request-ID`, allow up to three seconds for the call, and validate every returned evidence record against the same immutable seed mounted by B.
-- Distinguish a successful empty list from a technical failure. C only returns ranked evidence. B decides the fixture answer status and owns the public error mapping.
+- For the Go API running on the same host as the standalone retrieval process or the Docker loopback port, set `RETRIEVAL_BASE_URL=http://127.0.0.1:8001`. In the planned Compose deployment, the Go API calls `http://retrieval:8001` on the private network. The browser calls the public Go API.
+- Send `POST /retrieve` with `artwork_id`, `query`, `dataset_version` and `top_k: 2`. Forward the Go API's `X-Request-ID`, allow up to three seconds for the call, and validate every returned evidence record against the same immutable seed mounted by the Go API.
+- Distinguish a successful empty list from a technical failure. The retrieval service only returns ranked evidence. The Go API decides the fixture answer status and owns the public error mapping.
 
 ## Call the Python API
 
@@ -162,7 +164,7 @@ The implementation follows [API contract section 4.3](../docs/api-contract.md#43
 
 The query normalization never rewrites stored museum excerpts. No hit in the current artwork causes an empty result, with no fallback to the other work. Source records are joined from the loaded seed; retrieval never fetches a URL.
 
-The retriever returns evidence only. B owns the final `answered`, `insufficient` and `unsupported_question` decisions. An empty `expected_chunk_ids` in an insufficient evaluation case means that no seed evidence sufficiently answers the question; it is not a general assertion that retrieval must return zero related chunks.
+The retriever returns evidence only. The Go API owns the final `answered`, `insufficient` and `unsupported_question` decisions. An empty `expected_chunk_ids` in an insufficient evaluation case means that no seed evidence sufficiently answers the question; it is not a general assertion that retrieval must return zero related chunks.
 
 ## Run the checks
 
@@ -182,7 +184,7 @@ The [retrieval evaluation guide](../eval/README.md) documents 48 additional Engl
 python3 -m eval.retrieval_eval --top-k 2
 ```
 
-This command measures evidence retrieval with the existing keyword baseline. It needs no model or B service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
+This command measures evidence retrieval with the existing keyword baseline. It needs no model or Go service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
 
 ## Released data
 
