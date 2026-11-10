@@ -217,6 +217,13 @@ class RetrievalTests(unittest.TestCase):
                 [BEDROOM_DESCRIPTION, BEDROOM_MEDIUM],
             ),
             (TOILETTE, "她身后那些花纹看着像什么？", [TOILETTE_DESCRIPTION]),
+            (BEDROOM, "Was the image painted on linen rather than paper?", [BEDROOM_MEDIUM]),
+            (TOILETTE, "Do the marks left by the brush look delicate?", [TOILETTE_DESCRIPTION]),
+            (
+                TOILETTE,
+                "Which objects in the scene seem to carry floral designs?",
+                [TOILETTE_DESCRIPTION],
+            ),
         )
         for artwork, query, expected in cases:
             with self.subTest(artwork=artwork, query=query):
@@ -250,12 +257,85 @@ class RetrievalTests(unittest.TestCase):
                     {"dataset_version": VERSION, "evidence": []},
                 )
 
-    def test_mentioning_another_artwork_does_not_override_scope(self):
+    def test_explicit_work_references_preserve_the_selected_scope(self):
         for artwork, query, expected in (
-            (BEDROOM, "Describe the brushwork in Woman at Her Toilette.", BEDROOM_DESCRIPTION),
-            (TOILETTE, "Describe the brushwork in The Bedroom.", TOILETTE_DESCRIPTION),
+            (BEDROOM, "Describe the brushwork in Woman at Her Toilette.", []),
+            (TOILETTE, "Describe the brushwork in The Bedroom.", []),
+            (
+                BEDROOM,
+                "What is the medium of Woman at Her Toilette, and how does its brushwork look?",
+                [],
+            ),
+            (TOILETTE, "《卧室》的媒材是什么？那幅画的笔触呢？", []),
+            (TOILETTE, "《卧室》的笔触是什么样的？", []),
+            (TOILETTE, "Can you describe the wallpaper in the bedroom?", [TOILETTE_DESCRIPTION]),
+            (TOILETTE, "Describe the brushwork in Woman at Her Toilette.", [TOILETTE_DESCRIPTION]),
+            (
+                BEDROOM,
+                "How do the strokes in this painting compare with the brushwork in Woman at Her Toilette?",
+                [BEDROOM_DESCRIPTION],
+            ),
+            (
+                TOILETTE,
+                "这幅作品的笔触和《卧室》的笔触有何区别？",
+                [TOILETTE_DESCRIPTION],
+            ),
+            (
+                BEDROOM,
+                "Describe the brushwork in Woman at Her Toilette. What is the medium here?",
+                [BEDROOM_MEDIUM],
+            ),
         ):
-            with self.subTest(artwork=artwork):
+            with self.subTest(artwork=artwork, query=query):
+                response = self.search(artwork, query)
+                self.assert_scoped_evidence(response, artwork)
+                self.assertEqual(chunk_ids(response), expected)
+
+    def test_unsupported_details_do_not_promote_context_words(self):
+        for artwork, query in (
+            (BEDROOM, "Which oil did the painter mix with the pigments?"),
+            (BEDROOM, "这幅油画的颜料，是用什么油调的？"),
+            (BEDROOM, "Was the canvas relined during conservation?"),
+            (BEDROOM, "What is the actual size of the canvas?"),
+            (TOILETTE, "Did she use a narrow brush for this brushwork?"),
+            (TOILETTE, "画出这些笔触的时候，画笔的尺寸是多少？"),
+            (TOILETTE, "Did she model the wallpaper on an actual room?"),
+            (TOILETTE, "她是不是等颜料干透之后，才画的墙纸？"),
+            (BEDROOM, "Did Van Gogh intend the colors to make visitors uneasy?"),
+            (BEDROOM, "Do the receding lines reproduce the room's exact dimensions?"),
+            (BEDROOM, "How many marks left by the brush look broken?"),
+            (TOILETTE, "When was it painted on paper before it was moved to cloth?"),
+        ):
+            with self.subTest(artwork=artwork, query=query):
+                self.assertEqual(chunk_ids(self.search(artwork, query)), [])
+
+    def test_supported_parts_survive_unsupported_questions_on_the_same_topic(self):
+        for artwork, query, expected in (
+            (
+                BEDROOM,
+                "What is the medium and was the canvas later trimmed?",
+                BEDROOM_MEDIUM,
+            ),
+            (
+                BEDROOM,
+                "这幅画用了什么材料，画布后来有裁过吗？",
+                BEDROOM_MEDIUM,
+            ),
+            (BEDROOM, "What are the medium and actual dimensions?", BEDROOM_MEDIUM),
+            (BEDROOM, "What are the actual dimensions and medium of this artwork?", BEDROOM_MEDIUM),
+            (BEDROOM, "Are those thick brush marks?", BEDROOM_DESCRIPTION),
+            (
+                TOILETTE,
+                "馆方怎么形容这些笔触，又是用大画笔还是小画笔画出这些笔触的呢？",
+                TOILETTE_DESCRIPTION,
+            ),
+            (
+                TOILETTE,
+                "Which objects seem to carry the floral pattern in this scene, and when was the pattern painted?",
+                TOILETTE_DESCRIPTION,
+            ),
+        ):
+            with self.subTest(artwork=artwork, query=query):
                 response = self.search(artwork, query)
                 self.assert_scoped_evidence(response, artwork)
                 self.assertEqual(chunk_ids(response), [expected])

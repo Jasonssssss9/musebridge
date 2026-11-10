@@ -440,14 +440,18 @@ The retrieval service uses a reviewed bilingual topic dictionary and contextual 
 
 Index the published `topics` attached to each chunk. Medium chunks carry `material` even though the source field need not contain that word. This is how a material question can retrieve the catalog's medium value without an embedding model.
 
-For query matching, apply Unicode NFKC normalization, lowercase Latin text, trim and collapse whitespace. Match English words or phrases with word boundaries and Chinese aliases as substrings. The retriever also checks for these cues within punctuation-delimited clauses:
+For query matching, apply Unicode NFKC normalization, trim and collapse whitespace, and lowercase text for topic matching. Preserve title casing when checking artwork references. Match English words or phrases with word boundaries and Chinese aliases as substrings. The retriever also checks for these cues within punctuation-delimited clauses:
 
-- Painting support questions and joint requests for paint and surface map to `material`.
-- References to an artist's or painter's marks map to `brushwork`.
+- Painting support questions, contrasts between possible painting surfaces, and joint requests for paint and surface map to `material`.
+- References to an artist's or painter's marks and questions about the appearance of marks left by a brush map to `brushwork`.
 - A room or scene described as feeling or looking unsettling maps to `energy`.
-- References to depicted patterns or shapes behind a figure map to `background`.
+- Questions about depicted patterns or shapes behind a figure or about objects that appear to carry floral patterns map to `background`.
 
-The rules use literal cues and bounded patterns, with no stemming or fuzzy matching. Keep topics found across clauses so a compound query can contribute more than one topic. Each topic counts at most once. Compute score as the number of distinct query topics present in the chunk's topics; discard score-zero chunks, sort by descending score, then lexicographically ascending `chunk_id`, and take `top_k`. Preserve source excerpts unchanged by query normalization.
+Split compound queries at sentence boundaries and recognizable question restarts. Keep a comma with its surrounding question unless both fragments carry question cues. A question about only a recognized artwork outside the selected scope contributes no topics. Pronoun continuations keep that subject until an explicit local reference or a new independent question. Comparisons that refer to the selected work may contribute topics for the selected work alone.
+
+Within each question, suppress topic matches driven by unsupported details such as oil composition, canvas treatment, brush size, wallpaper provenance or painting sequence, physical dimensions, or the artist's stated intentions. A separate question can still contribute the same topic. For example, a request for medium followed by a question about canvas trimming retains the medium evidence. The guards cover recognized expressions, and the Go API still owns the answer decision.
+
+The rules use literal cues and bounded patterns, with no stemming or fuzzy matching. Combine the surviving topics across questions. Each topic counts at most once. Compute score as the number of distinct query topics present in the chunk's topics; discard score-zero chunks, sort by descending score, then lexicographically ascending `chunk_id`, and take `top_k`. Preserve source excerpts unchanged by query normalization.
 
 The four chunks are topic-tagged as follows:
 

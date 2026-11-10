@@ -156,8 +156,8 @@ The function requires explicit artwork and version arguments. It does not accept
 The implementation follows [API contract section 4.3](../docs/api-contract.md#43-deterministic-keyword-baseline):
 
 1. Validate the query and scope.
-2. Normalize the query with Unicode NFKC, lowercase and collapsed whitespace.
-3. Identify topics using the English/Chinese alias dictionary and contextual phrase rules. English aliases use word boundaries and Chinese aliases use substring matching. Contextual cues must appear within the same clause.
+2. Normalize the query with Unicode NFKC and collapsed whitespace. Separate recognizable subquestions and check for explicitly named artworks.
+3. Match topics in each eligible question using lowercase text, bilingual aliases, and contextual phrases. Suppress topics tied to recognized unsupported details in that question, then combine the surviving topics across the request.
 4. Consider only chunks assigned to the selected artwork.
 5. Score each chunk by the number of distinct matching topics. Repeated words or multiple aliases for the same topic do not increase the score.
 6. Exclude zero scores, sort by descending score and then ascending chunk ID, and return up to `top_k` records.
@@ -184,7 +184,7 @@ The [retrieval evaluation guide](../eval/README.md) documents 48 additional Engl
 python3 -m eval.retrieval_eval --top-k 2
 ```
 
-This command measures the current keyword retriever. The evaluation guide preserves the original baseline and compares it with the contextual revision and independently authored questions. It needs no model or Go service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
+This command measures the current keyword retriever. The evaluation guide preserves the original baseline and compares both retrieval revisions on the original and independently authored suites. It needs no model or Go service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
 
 ## Released data
 

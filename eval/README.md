@@ -19,7 +19,7 @@ The new suite contains 48 utterances organized as 24 English/Chinese pairs. Each
 
 The seed remains [aic-seed-v0.1](../knowledge/data/aic-seed-v0.1.json): The Bedroom (`aic-28560`) and Woman at Her Toilette (`aic-11723`), with two chunks per artwork. Each artwork has a medium chunk and a short museum description chunk. Labels use only those four released excerpts. Full museum pages, artwork metadata outside the chunks and general art knowledge are outside this evaluation's evidence scope.
 
-The recorded reports preserve the original keyword baseline. The first retrieval revision below keeps the seed, frozen fixtures, and original diagnostic labels fixed. The runtime service does not import the evaluation suites or use their gold labels.
+The recorded reports preserve the original keyword baseline. The retrieval revisions below keep the seed, frozen fixtures, and evaluation labels fixed. The runtime service does not import the evaluation suites or use their gold labels.
 
 ## Run the evaluation
 
@@ -188,6 +188,26 @@ python3 -m eval.retrieval_eval --suite eval/aic-retrieval-independent-v0.1.json 
 ```
 
 For the independent before result, run the second command from a separate checkout of `c072b65`, passing the absolute path to the independent suite from this checkout. The original JSON baseline reports remain unchanged.
+
+## Second revision: evidence relevance guards
+
+Compared with `575e45f` at `top_k=2`, using the same seed and both unchanged suites. Four original negative utterances named only the other artwork and still got a local hit. Ten other original negatives and four supplemental negatives asked for unsupported details. Those details included paint mixtures, canvas treatment, brush size, wallpaper sources or painting order, real-world dimensions, and artist intent.
+
+The revision applies scope and detail rules per question. It keeps supported requests in a compound question, even when another request uses the same topic word. It also recognizes more questions about brush marks, alternative painting surfaces, and the depicted objects that appear to carry floral patterns.
+
+| Top-2 metric | Original 48 before | Original 48 after | Supplemental 12 before | Supplemental 12 after |
+| --- | ---: | ---: | ---: | ---: |
+| Positives with at least one relevant chunk | 28/28 (100%) | 28/28 (100%) | 3/6 (50%) | 6/6 (100%) |
+| Positives with all gold chunks | 28/28 (100%) | 28/28 (100%) | 1/6 (16.67%) | 6/6 (100%) |
+| Mean evidence recall | 100% | 100% | 33.33% | 100% |
+| Negatives returning any evidence | 14/20 (70%) | 0/20 (0%) | 4/6 (66.67%) | 0/6 (0%) |
+| Foreign evidence records / invalid responses | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+
+All 28 original positive results retained their evidence IDs and order. The supplemental suite recovered three complete misses and two cases that previously returned only the medium. Tests also cover mixed supported and unsupported requests, comparisons, pronoun continuations after an explicit foreign title, and questions with commas within a single request.
+
+Both suites informed this revision and now serve as regression checks. The zero observed negative returns apply to these cases. For example, “Why did Van Gogh choose oil on canvas?” can still retrieve the medium even though it does not establish a reason. The Go API must continue to judge whether the evidence supports the answer.
+
+Re-run the commands above with fresh output paths to measure the current retriever. Use a checkout of `575e45f` for the before results. The recorded baseline reports and both suites remain unchanged.
 
 ## Reproducibility and future comparisons
 
