@@ -12,7 +12,10 @@ _TOPIC_ALIASES = {
         "material", "materials", "medium", "made of", "oil", "canvas",
         "材料", "材质", "媒介", "油画", "画布",
     ),
-    "brushwork": ("brushwork", "brushstroke", "brushstrokes", "笔触"),
+    "brushwork": (
+        "brushwork", "brushstroke", "brushstrokes", "brush stroke", "brush strokes",
+        "brush-stroke", "brush-strokes", "笔触",
+    ),
     "energy": ("nervous", "energy", "紧张"),
     "color": ("color", "colors", "colour", "colours", "颜色", "色彩"),
     "perspective": ("perspective", "receding lines", "透视"),

@@ -47,7 +47,14 @@ ALIASES = (
         BEDROOM_MEDIUM,
         TOILETTE_MEDIUM,
     ),
-    (("brushwork", "brushstroke", "brushstrokes", "笔触"), BEDROOM_DESCRIPTION, TOILETTE_DESCRIPTION),
+    (
+        (
+            "brushwork", "brushstroke", "brushstrokes", "brush stroke", "brush strokes",
+            "brush-stroke", "brush-strokes", "笔触",
+        ),
+        BEDROOM_DESCRIPTION,
+        TOILETTE_DESCRIPTION,
+    ),
     (("nervous", "energy", "紧张"), BEDROOM_DESCRIPTION, None),
     (("color", "colors", "colour", "colours", "颜色", "色彩"), BEDROOM_DESCRIPTION, None),
     (("perspective", "receding lines", "透视"), BEDROOM_DESCRIPTION, None),
