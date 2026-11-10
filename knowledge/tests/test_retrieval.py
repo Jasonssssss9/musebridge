@@ -473,6 +473,123 @@ class RetrievalTests(unittest.TestCase):
             [("color_appearance", [BEDROOM_DESCRIPTION])],
         )
 
+    def test_typed_line_context_survives_an_intervening_medium_question(self):
+        for query in (
+            "The lines of perspective in The Bedroom caught my eye. "
+            "What is the medium? How steeply do they run into the distance?",
+            "我先注意到《卧室》里的透视线。媒材是什么？它们朝纵深延伸得有多急？",
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=BEDROOM, query=query, dataset_version=VERSION,
+                )
+                self.assertCountEqual(chunk_ids(result), [BEDROOM_MEDIUM, BEDROOM_DESCRIPTION])
+                self.assertEqual(
+                    [(r["facet"], r["chunk_ids"]) for r in trace["requests"]],
+                    [("medium", [BEDROOM_MEDIUM]), ("line_recession", [BEDROOM_DESCRIPTION])],
+                )
+
+    def test_generic_reference_abstains_when_more_than_one_aspect_could_fit(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=BEDROOM, dataset_version=VERSION,
+            query="The brushstrokes and palette both caught my attention. "
+                  "How does the curator describe them?",
+        )
+        self.assertEqual(chunk_ids(result), [])
+        self.assertEqual(
+            [(r["facet"], r["status"]) for r in trace["requests"]],
+            [("unknown", "unknown_intent")],
+        )
+
+    def test_explicit_current_scope_does_not_reuse_foreign_aspect_context(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,
+            query="The perspective lines in The Bedroom caught my eye. "
+                  "How do they run into the distance? "
+                  "How does the museum characterize them in this painting? "
+                  "How is the brushwork here described?",
+        )
+        self.assertEqual(chunk_ids(result), [TOILETTE_DESCRIPTION])
+        self.assertEqual(
+            [(r["artwork_id"], r["facet"], r["status"]) for r in trace["requests"]],
+            [
+                (BEDROOM, "line_recession", "out_of_scope"),
+                (TOILETTE, "unknown", "unknown_intent"),
+                (TOILETTE, "brushwork_appearance", "supported"),
+            ],
+        )
+
+    def test_pigment_identity_does_not_use_palette_or_medium_evidence(self):
+        for query in (
+            "Which actual pigments account for the visible colors?",
+            "画面这些颜色是用什么具体颜料调出来的？",
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=BEDROOM, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [])
+                self.assertEqual(
+                    [(r["facet"], r["status"]) for r in trace["requests"]],
+                    [("pigment_identity", "insufficient_evidence")],
+                )
+
+    def test_visible_colors_and_paint_family_survive_a_pigment_question(self):
+        for query in (
+            "How would you describe the colors, and which pigments account for them? "
+            "What kind of paint was used overall?",
+            "画里的色彩有什么特点？这些颜色是用什么具体颜料调出来的？"
+            "整幅画用的是哪种类型的绘画颜料？",
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=BEDROOM, query=query, dataset_version=VERSION,
+                )
+                self.assertCountEqual(chunk_ids(result), [BEDROOM_DESCRIPTION, BEDROOM_MEDIUM])
+                self.assertEqual(
+                    [(r["facet"], r["chunk_ids"]) for r in trace["requests"]],
+                    [
+                        ("color_appearance", [BEDROOM_DESCRIPTION]),
+                        ("pigment_identity", []),
+                        ("paint_medium", [BEDROOM_MEDIUM]),
+                    ],
+                )
+
+    def test_unqualified_premise_does_not_rebind_another_artwork(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=BEDROOM, dataset_version=VERSION,
+            query="I am looking at Woman at Her Toilette. The brushstrokes caught my eye. "
+                  "Can you describe them?",
+        )
+        self.assertEqual(chunk_ids(result), [])
+        self.assertEqual(
+            [(r["artwork_id"], r["facet"], r["status"]) for r in trace["requests"]],
+            [(TOILETTE, "brushwork_appearance", "out_of_scope")],
+        )
+
+    def test_typed_context_does_not_treat_history_as_spatial_recession(self):
+        result = self.search(BEDROOM, "The perspective lines caught my eye. Do they go back to 1888?")
+        self.assertEqual(chunk_ids(result), [])
+
+    def test_composition_predicate_can_refer_to_the_palette_but_not_to_the_frame(self):
+        for query in (
+            "The colors caught my attention. What were they made from?",
+            "画里的色彩很抢眼。它们是用什么调配出来的？",
+            "What are the colors made from?",
+            "画中的色彩是用什么调出来的？",
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=BEDROOM, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [])
+                self.assertEqual(
+                    [(r["facet"], r["status"]) for r in trace["requests"]],
+                    [("pigment_identity", "insufficient_evidence")],
+                )
+        result = self.search(BEDROOM, "How are the colors described in the picture with a frame made from wood?")
+        self.assertEqual(chunk_ids(result), [BEDROOM_DESCRIPTION])
+
     def test_equal_medium_can_compare_an_explicit_title_to_the_current_work(self):
         result, trace = retrieve_with_trace(
             self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,

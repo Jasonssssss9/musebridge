@@ -242,6 +242,29 @@ The first audit initially passed 4 of 16 whole queries and the challenge initial
 
 For the earlier whole-query diagnostics, both checked-in suites keep their previous Top-2 results. The separate 36-utterance round-two blind file is now a regression diagnostic. Compared with `c01ce96` on that file, hits rise from 15/18 to 18/18, all-required retrieval from 11/18 to 18/18, and negative returns fall from 12/18 to 0/18. Use the original saved suite as `--suite` in the legacy evaluator to reproduce that comparison. These union-level results do not measure correct subquestion attribution.
 
+## Compound references and pigment identity
+
+The parser now tracks which artwork and visual aspects a clause mentions. A typed follow-up can refer back past an unrelated request about the same work. A generic description requires a unique recent aspect. Context-only statements can introduce an antecedent, and an explicit artwork switch clears the prior context. Within a clause, requests for visual effect or depicted objects can use other details as context without requesting evidence for those details separately. Requests for specific pigment identities or palette composition remain distinct from questions about color appearance and the broad paint medium.
+
+The comparison below uses `44974d3` as the baseline, the same four reviewed excerpts, and the same Top-2 budget. It separates the first new set, which informed the second pass, from the final independent confirmation set.
+
+| Full-query input | Supported requests with all required evidence | Negative requests returning evidence | Unresolved negative requests | Strict query pass |
+| --- | ---: | ---: | ---: | ---: |
+| [Previous verification](aic-subquestions-blind-v0.1.json), now a regression set | 10/14 → 14/14 | 1/8 → 0/8 | 0/8 → 0/8 | 3/8 → 8/8 |
+| [First new diagnostic](aic-subquestions-context-holdout-v0.1.json), 8 bilingual pairs | 11/20 → 20/20 | 0/10 → 0/10 | 4/10 → 0/10 | 6/16 → 16/16 |
+| [Final independent confirmation](aic-subquestions-context-confirmation-v0.1.json), 6 bilingual pairs | 11/18 → 14/18 | 0/14 → 0/14 | 4/14 → 4/14 | 3/12 → 5/12 |
+
+The first new diagnostic was independently authored and reached 12/20 supported requests after the initial context change. Its errors informed the second pass on request heads and topic prefaces. The final independent confirmation was first scored with the parser frozen and did not inform any rule changes. Its isolated score rose from 15/18 to 16/18 on supported requests. Isolated negative false returns stayed at 2/14, both involving flower-species questions. In full mode, some pronoun and scene-object follow-ups still fail, and four negative requests lack a correct binding. No run returned foreign artwork evidence or an invalid response.
+
+The earlier development, first audit and challenge suites retain all 60 supported bindings and correctly empty results for all 48 negative requests. The three earlier whole-query diagnostics retain all evidence for 52/52 positive queries and 0/44 negative returns in total.
+
+Reproduce the confirmation from this checkout. To compare with the baseline, run the same commands from a checkout of `44974d3` with the absolute path to the confirmation fixture.
+
+```bash
+python3 -m eval.subquestion_eval --suite eval/aic-subquestions-context-confirmation-v0.1.json
+python3 -m eval.subquestion_eval --suite eval/aic-subquestions-context-confirmation-v0.1.json --mode isolated
+```
+
 ## Reproducibility and future comparisons
 
 CLI reports record Python and Unicode versions plus SHA-256 hashes of the seed, suite, retriever, query parser, loader and evaluator. They omit timestamps and timing measurements. Repeating a run with identical inputs, code and runtime produces the same JSON; use the provenance fields to explain differences.

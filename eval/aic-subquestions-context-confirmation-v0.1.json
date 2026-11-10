@@ -1,0 +1,471 @@
+{
+  "suite_id": "musebridge-context-confirmation-v0.1",
+  "dataset_version": "aic-seed-v0.1",
+  "description": "Independent bilingual confirmation of context, clause boundaries, and the distinction between appearance and materials over four museum excerpts.",
+  "cases": [
+    {
+      "case_id": "room-depth-and-mood-en",
+      "pair_id": "room-depth-and-mood",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Some of the lines run back into the room. How sharply do they recede, and what feeling might the whole scene give you?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "How sharply do they recede",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "In The Bedroom, how sharply do the lines recede into the room?",
+          "rationale": "The museum describes sharply receding lines."
+        },
+        {
+          "request_id": "r2",
+          "text": "what feeling might the whole scene give you",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "What feeling might The Bedroom convey to a viewer?",
+          "rationale": "The museum suggests the picture may convey nervous energy."
+        }
+      ]
+    },
+    {
+      "case_id": "room-depth-and-mood-zh-CN",
+      "pair_id": "room-depth-and-mood",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "画里有些线条往房间深处延伸。它们往后收得有多急？整幅画又可能给人什么感觉？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "它们往后收得有多急",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "在《The Bedroom》中，画面的线条往房间深处收得有多急？",
+          "rationale": "The museum describes sharply receding lines."
+        },
+        {
+          "request_id": "r2",
+          "text": "整幅画又可能给人什么感觉",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "《The Bedroom》的整个画面可能给观众什么感觉？",
+          "rationale": "The museum suggests the picture may convey nervous energy."
+        }
+      ]
+    },
+    {
+      "case_id": "behind-the-figure-en",
+      "pair_id": "behind-the-figure",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "What do the marks behind her look like, and what do they suggest is back there? Can you tell what species the flowers in that pattern are?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "What do the marks behind her look like",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "What do the background brushstrokes in Woman at Her Toilette look like?",
+          "rationale": "The museum describes the background brushstrokes as soft and feathery."
+        },
+        {
+          "request_id": "r2",
+          "text": "what do they suggest is back there",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "What objects do the background brushstrokes in Woman at Her Toilette suggest?",
+          "rationale": "The museum identifies a suggested floral-patterned bedspread and wallpaper."
+        },
+        {
+          "request_id": "r3",
+          "text": "Can you tell what species the flowers in that pattern are",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What species are the flowers in the background pattern in Woman at Her Toilette?",
+          "rationale": "The museum calls the pattern floral and gives no species identification."
+        }
+      ]
+    },
+    {
+      "case_id": "behind-the-figure-zh-CN",
+      "pair_id": "behind-the-figure",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "她身后的笔触看起来是什么样的，又让人隐约看出后面有哪些东西？图案里的花能辨认出是什么品种吗？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "她身后的笔触看起来是什么样的",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "《Woman at Her Toilette》中，女子身后的笔触看起来是什么样的？",
+          "rationale": "The museum describes the background brushstrokes as soft and feathery."
+        },
+        {
+          "request_id": "r2",
+          "text": "让人隐约看出后面有哪些东西",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "《Woman at Her Toilette》中的背景笔触让人隐约看出哪些东西？",
+          "rationale": "The museum identifies a suggested floral-patterned bedspread and wallpaper."
+        },
+        {
+          "request_id": "r3",
+          "text": "图案里的花能辨认出是什么品种吗",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "《Woman at Her Toilette》背景图案里的花是什么品种？",
+          "rationale": "The museum calls the pattern floral and gives no species identification."
+        }
+      ]
+    },
+    {
+      "case_id": "visible-color-and-ingredients-en",
+      "pair_id": "visible-color-and-ingredients",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "The colors jump out at me. How does the museum describe their overall look, and does it say what pigments Van Gogh used to get that effect?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "How does the museum describe their overall look",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How does the museum describe the overall appearance of the colors in The Bedroom?",
+          "rationale": "The museum describes the colors as bold."
+        },
+        {
+          "request_id": "r2",
+          "text": "does it say what pigments Van Gogh used to get that effect",
+          "artwork_id": "aic-28560",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Which pigments did Van Gogh use to achieve the colors in The Bedroom?",
+          "rationale": "The record identifies an oil medium and bold colors and supplies no pigment names."
+        }
+      ]
+    },
+    {
+      "case_id": "visible-color-and-ingredients-zh-CN",
+      "pair_id": "visible-color-and-ingredients",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画的色彩很抢眼。馆方是怎么形容这些颜色的整体观感的？有没有说梵高用了哪些颜料来画出这种效果？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "馆方是怎么形容这些颜色的整体观感的",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "馆方怎么形容《The Bedroom》里色彩的整体观感？",
+          "rationale": "The museum describes the colors as bold."
+        },
+        {
+          "request_id": "r2",
+          "text": "有没有说梵高用了哪些颜料来画出这种效果",
+          "artwork_id": "aic-28560",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "梵高用了哪些颜料来画出《The Bedroom》里的色彩？",
+          "rationale": "The record identifies an oil medium and bold colors and supplies no pigment names."
+        }
+      ]
+    },
+    {
+      "case_id": "paint-support-and-fibers-en",
+      "pair_id": "paint-support-and-fibers",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "For Morisot’s painting here, what kind of paint did she use, and what did she paint on? Does the record say what the canvas fibers are?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "what kind of paint did she use",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What kind of paint did Morisot use for Woman at Her Toilette?",
+          "rationale": "The medium entry identifies oil as the type of paint."
+        },
+        {
+          "request_id": "r2",
+          "text": "what did she paint on",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What support did Morisot paint Woman at Her Toilette on?",
+          "rationale": "The medium entry identifies canvas as the support."
+        },
+        {
+          "request_id": "r3",
+          "text": "Does the record say what the canvas fibers are",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What fibers is the canvas of Woman at Her Toilette made of?",
+          "rationale": "The medium entry says canvas and gives no fiber composition."
+        }
+      ]
+    },
+    {
+      "case_id": "paint-support-and-fibers-zh-CN",
+      "pair_id": "paint-support-and-fibers",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "莫里索画这幅画时用的是哪一类绘画颜料？她是画在什么底材上的？馆方有没有说明画布是用什么纤维织的？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "莫里索画这幅画时用的是哪一类绘画颜料",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "莫里索画《Woman at Her Toilette》时用的是哪一类绘画颜料？",
+          "rationale": "The medium entry identifies oil as the type of paint."
+        },
+        {
+          "request_id": "r2",
+          "text": "她是画在什么底材上的",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "莫里索的《Woman at Her Toilette》画在什么底材上？",
+          "rationale": "The medium entry identifies canvas as the support."
+        },
+        {
+          "request_id": "r3",
+          "text": "馆方有没有说明画布是用什么纤维织的",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "《Woman at Her Toilette》的画布是用什么纤维织的？",
+          "rationale": "The medium entry says canvas and gives no fiber composition."
+        }
+      ]
+    },
+    {
+      "case_id": "marks-tools-and-artwork-switch-en",
+      "pair_id": "marks-tools-and-artwork-switch",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Van Gogh’s brush marks catch my eye here. What are they like, and do we know what kind of brush he used? What about the look of the marks in Morisot’s Woman at Her Toilette?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "What are they like",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "What do Van Gogh’s brushstrokes in The Bedroom look like?",
+          "rationale": "The museum describes the brushwork as thick and broken."
+        },
+        {
+          "request_id": "r2",
+          "text": "do we know what kind of brush he used",
+          "artwork_id": "aic-28560",
+          "facet": "brush_tool",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What kind of brush did Van Gogh use for The Bedroom?",
+          "rationale": "The description characterizes the resulting marks and gives no brush type."
+        },
+        {
+          "request_id": "r3",
+          "text": "What about the look of the marks in Morisot’s Woman at Her Toilette",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "What do the brushstrokes in Morisot’s Woman at Her Toilette look like?",
+          "rationale": "The request switches from the active Bedroom record to Morisot’s painting."
+        }
+      ]
+    },
+    {
+      "case_id": "marks-tools-and-artwork-switch-zh-CN",
+      "pair_id": "marks-tools-and-artwork-switch",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画里，梵高的笔触挺醒目。它们有什么特点？能知道他用的是哪种画笔吗？莫里索的《Woman at Her Toilette》里的笔触看起来又是什么样的？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "它们有什么特点",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "梵高在《The Bedroom》里的笔触看起来有什么特点？",
+          "rationale": "The museum describes the brushwork as thick and broken."
+        },
+        {
+          "request_id": "r2",
+          "text": "能知道他用的是哪种画笔吗",
+          "artwork_id": "aic-28560",
+          "facet": "brush_tool",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "梵高画《The Bedroom》用的是哪种画笔？",
+          "rationale": "The description characterizes the resulting marks and gives no brush type."
+        },
+        {
+          "request_id": "r3",
+          "text": "莫里索的《Woman at Her Toilette》里的笔触看起来又是什么样的",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "莫里索的《Woman at Her Toilette》里的笔触看起来是什么样的？",
+          "rationale": "The request switches from the active Bedroom record to Morisot’s painting."
+        }
+      ]
+    },
+    {
+      "case_id": "caption-medium-and-color-en",
+      "pair_id": "caption-medium-and-color",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "I’m writing a caption for this one. What medium does the museum list? How would you describe its overall color palette, and are any of the pigments identified?",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "What medium does the museum list",
+          "artwork_id": "aic-11723",
+          "facet": "medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What medium does the museum list for Woman at Her Toilette?",
+          "rationale": "The museum’s complete medium entry is oil on canvas."
+        },
+        {
+          "request_id": "r2",
+          "text": "How would you describe its overall color palette",
+          "artwork_id": "aic-11723",
+          "facet": "color_appearance",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What is the overall appearance of the palette in Woman at Her Toilette?",
+          "rationale": "The excerpt describes brushstrokes and a pattern without characterizing the palette."
+        },
+        {
+          "request_id": "r3",
+          "text": "are any of the pigments identified",
+          "artwork_id": "aic-11723",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Does the museum identify any pigments used in Woman at Her Toilette?",
+          "rationale": "The record identifies oil on canvas and gives no pigment names."
+        }
+      ]
+    },
+    {
+      "case_id": "caption-medium-and-color-zh-CN",
+      "pair_id": "caption-medium-and-color",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "我想给这幅画写一条图注。馆方标注的媒材是什么？这幅画的整体色调可以怎么形容？有没有记录具体用了哪些颜料？",
+      "requests": [
+        {
+          "request_id": "r1",
+          "text": "馆方标注的媒材是什么",
+          "artwork_id": "aic-11723",
+          "facet": "medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "馆方为《Woman at Her Toilette》标注的媒材是什么？",
+          "rationale": "The museum’s complete medium entry is oil on canvas."
+        },
+        {
+          "request_id": "r2",
+          "text": "这幅画的整体色调可以怎么形容",
+          "artwork_id": "aic-11723",
+          "facet": "color_appearance",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "《Woman at Her Toilette》的整体色调可以怎么形容？",
+          "rationale": "The excerpt describes brushstrokes and a pattern without characterizing the palette."
+        },
+        {
+          "request_id": "r3",
+          "text": "有没有记录具体用了哪些颜料",
+          "artwork_id": "aic-11723",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "馆方有记录《Woman at Her Toilette》具体用了哪些颜料吗？",
+          "rationale": "The record identifies oil on canvas and gives no pigment names."
+        }
+      ]
+    }
+  ]
+}
