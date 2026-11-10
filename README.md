@@ -2,7 +2,7 @@
 
 MuseBridge is a museum guide designed to let visitors scan an artwork's QR code, ask questions on a mobile web page, and explore answers grounded in museum sources with traceable citations.
 
-The project combines a mobile frontend, a Go application backend, and a Python retrieval service. The local prototype focuses on two Art Institute of Chicago works. It currently includes a versioned source dataset, an artwork API, and a validated keyword-retrieval flow. Visitor conversations and answer generation are planned.
+The project combines a mobile frontend, a Go application backend, and a Python retrieval service. The local prototype focuses on two Art Institute of Chicago works. It currently includes a versioned source dataset, an artwork API, a validated keyword-retrieval flow, and a mobile web app that runs against sample replies. Conversation endpoints and answer generation in the Go API are planned.
 
 | Contributor | Responsibility |
 | --- | --- |
@@ -10,4 +10,4 @@ The project combines a mobile frontend, a Go application backend, and a Python r
 | Jinqing Zhang | Go backend and system integration |
 | Jason Zichen He | Source data, retrieval and evaluation |
 
-See the [documentation](docs/README.md) for setup, design, interfaces, implementation planning and evaluation.
+See the [documentation](docs/README.md) for setup, design, interfaces, implementation planning and evaluation, and the [web app guide](web/README.md) for running the frontend.
