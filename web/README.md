@@ -22,7 +22,7 @@ Open <http://localhost:8080/a/aic-28560> or <http://localhost:8080/a/aic-11723>.
 | `npm run dev:live` | **Live mode.** `/api` is proxied to the Go API at `http://127.0.0.1:8000` (override with `API_TARGET`). |
 | `npm run build` | Type-checks and builds the live app into `dist/`. |
 
-Live mode needs the conversation endpoints, which the Go API does not serve yet; until then only the artwork card loads and the chat shows "not available". The Go API must also be started with `PUBLIC_BASE_URL` set to the exact origin in the browser's address bar (for example `http://192.168.1.20:8080`), because it rejects POSTs from any other origin.
+Live mode can load the artwork, create or restore its real Go conversation, and read empty history. Go message submission and answer generation remain pending, so sending a live question currently returns `405 method_not_allowed`. Use mock mode for the complete chat demonstration until that path is implemented. The Go API must also be started with `PUBLIC_BASE_URL` set to the exact origin in the browser's address bar (for example `http://192.168.1.20:8080`), because it rejects POSTs from any other origin.
 
 ## QR cards and the phone test
 

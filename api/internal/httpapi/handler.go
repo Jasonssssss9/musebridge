@@ -12,11 +12,20 @@ import (
 	"time"
 
 	"github.com/Jasonssssss9/musebridge/api/internal/catalog"
+	"github.com/Jasonssssss9/musebridge/api/internal/conversation"
 )
 
 type handler struct {
-	dataset *catalog.Dataset
-	logger  *slog.Logger
+	dataset  *catalog.Dataset
+	logger   *slog.Logger
+	settings Settings
+	sessions *conversation.Store
+}
+
+// Settings carries the browser profile validated by the application config.
+type Settings struct {
+	PublicBaseURL string
+	CookieSecure  bool
 }
 
 type apiError struct {
@@ -25,13 +34,13 @@ type apiError struct {
 	Retryable bool   `json:"retryable"`
 }
 
-// New serves artwork lookup and private health checks without contacting C.
+// New serves artwork lookup, conversation recovery and private health checks.
 // A nil dataset exposes liveness but reports that local state is not ready.
-func New(dataset *catalog.Dataset, logger *slog.Logger) http.Handler {
+func New(dataset *catalog.Dataset, logger *slog.Logger, settings Settings) http.Handler {
 	if logger == nil {
 		logger = slog.New(slog.NewJSONHandler(io.Discard, nil))
 	}
-	return &handler{dataset: dataset, logger: logger}
+	return &handler{dataset: dataset, logger: logger, settings: settings, sessions: conversation.New(nil)}
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +70,12 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	isHealth := path == "/healthz" || path == "/readyz"
 	slug, isArtwork := strings.CutPrefix(path, "/api/artworks/")
 	isArtwork = isArtwork && slug != "" && !strings.Contains(slug, "/")
-	if !isHealth && !isArtwork {
+	isCreate := path == "/api/conversations"
+	conversationID, isHistory := strings.CutPrefix(path, "/api/conversations/")
+	isHistory = isHistory && strings.HasSuffix(conversationID, "/messages")
+	conversationID = strings.TrimSuffix(conversationID, "/messages")
+	isHistory = isHistory && conversationID != "" && !strings.Contains(conversationID, "/")
+	if !isHealth && !isArtwork && !isCreate && !isHistory {
 		fail(http.StatusNotFound, "route_not_found", "The requested route does not exist.", false)
 		return
 	}
@@ -69,8 +83,12 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		fail(http.StatusBadRequest, "invalid_request", "Query parameters and fragments are not supported.", false)
 		return
 	}
-	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
+	allowed := http.MethodGet
+	if isCreate {
+		allowed = http.MethodPost
+	}
+	if r.Method != allowed {
+		w.Header().Set("Allow", allowed)
 		fail(http.StatusMethodNotAllowed, "method_not_allowed", "The HTTP method is not supported for this route.", false)
 		return
 	}
@@ -84,6 +102,22 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if h.dataset == nil {
 		fail(http.StatusServiceUnavailable, "service_not_ready", "The API has not loaded its local dataset.", true)
+		return
+	}
+	if isCreate || isHistory {
+		var payload any
+		var err *requestFailure
+		if isCreate {
+			payload, artworkID, err = h.createConversation(w, r)
+		} else {
+			payload, artworkID, err = h.conversationHistory(r, conversationID)
+		}
+		if err != nil {
+			fail(err.status, err.Code, err.Message, err.Retryable)
+			return
+		}
+		status, code = http.StatusOK, "ok"
+		h.writeJSON(w, r, status, payload)
 		return
 	}
 	artwork, found := h.dataset.ArtworkBySlug(slug)

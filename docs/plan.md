@@ -16,6 +16,8 @@ Use the [design](design.md) for architectural decisions and the [API contract](a
 
 Task IDs retain their original prefixes for continuity: `A1`–`A7` belong to Jeremiah Lim, `B1`–`B8` to Jinqing Zhang, and `C1`–`C6` to Jason Zichen He. The owner column names the contributor responsible for each task or acceptance check.
 
+Current implementation checkpoint: B2 includes artwork lookup, anonymous conversation creation/restoration, ownership checks, fixed 24-hour expiry and empty history reads. Its message-submission portion remains pending with the B3 fixture answer path and B4 request lifecycle. The validating retrieval client from B3 is already implemented. The frontend can use the real artwork/conversation routes while its full chat demonstration continues to use mock replies.
+
 ## Parallel course track
 
 Jinqing Zhang starts the B8 course check at kickoff and carries it through submission. The handoff mentions at least twice as many interviewees as team members, which would mean six interviewees for this three-person team, and Saturday demo videos. Verify both against the current rubric, including who counts as an interviewee, which Saturdays apply, and the exact deadlines and submission destinations. Verify the GPU evidence requirement and what the team may record or quote. Keep these items provisional until the rubric is checked.

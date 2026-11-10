@@ -2,17 +2,19 @@
 
 Owner: Jinqing Zhang (Go backend and system integration).
 
-This implements the Go artwork service and validating retrieval client. Both load the same immutable seed as the retrieval service. Artwork cards remain available independently of retrieval, and a separate Go diagnostic command can call the retrieval service before conversation endpoints exist.
+This implements the Go artwork service, anonymous conversation recovery and validating retrieval client. The Go and Python services load the same immutable seed. Artwork cards and conversation recovery remain available independently of retrieval, and a separate Go diagnostic command can call the retrieval service.
 
 Implemented routes:
 
 | Method and path | Behavior |
 | --- | --- |
 | `GET /api/artworks/{slug}` | Return the local artwork card, or `404 artwork_not_found`. |
+| `POST /api/conversations` | Create or restore the visitor's artwork conversation; set or refresh the visitor cookie. |
+| `GET /api/conversations/{conversation_id}/messages` | Read the owning visitor's conversation and its current history. |
 | `GET /healthz` | Private process liveness and the loaded dataset version. |
 | `GET /readyz` | Private local readiness; it does not depend on the retrieval service being reachable. |
 
-Conversation creation, visitor cookies, POST origin checks, message submission, fixture generation and replay are subsequent slices. Their public routes are not implemented yet. The HTTP server still exposes only the routes above; retrieval is available through the Go client and diagnostic command below. The full behavior remains defined in [the API contract](../docs/api-contract.md).
+The B2 conversation/history slice includes visitor cookies, POST origin checks, fixed expiry and ownership validation. Histories currently contain `turns: []` and `pending_request: null`. Message submission, fixture generation and replay are subsequent slices. `POST` on the messages path currently returns `405 method_not_allowed` with `Allow: GET`; it does not accept or save a question. Retrieval remains available through the Go client and diagnostic command below. The full target behavior is defined in [the API contract](../docs/api-contract.md).
 
 ## Run locally
 
@@ -43,6 +45,41 @@ go build -o /tmp/musebridge-api ./cmd/server
 ```
 
 The default seed path is relative to the process working directory, so run these commands from `api/` or supply an absolute `SEED_PATH`.
+
+## Create and restore a conversation
+
+The default browser origin is `http://localhost:8080`. Every public POST must send the exact configured `PUBLIC_BASE_URL` as its `Origin`, including scheme and port. Missing, duplicate or mismatched origins return `403 origin_not_allowed`. The request body must be one UTF-8 JSON object containing only `artwork_id`, with a maximum size of 16 KiB.
+
+Create a conversation and save its anonymous visitor cookie:
+
+```bash
+curl -fsS -c /tmp/musebridge-cookies.txt \
+  -H 'Origin: http://localhost:8080' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"artwork_id":"aic-28560"}' \
+  http://127.0.0.1:8000/api/conversations
+```
+
+The response contains `conversation` and `created: true`. Repeat the request using the same cookie to restore that artwork's conversation:
+
+```bash
+curl -fsS -b /tmp/musebridge-cookies.txt -c /tmp/musebridge-cookies.txt \
+  -H 'Origin: http://localhost:8080' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{"artwork_id":"aic-28560"}' \
+  http://127.0.0.1:8000/api/conversations
+```
+
+A restore returns `created: false` and identical conversation metadata. Replace `CONVERSATION_ID` below with the returned UUID to read history. A GET does not require an Origin header and does not refresh the cookie.
+
+```bash
+curl -fsS -b /tmp/musebridge-cookies.txt \
+  http://127.0.0.1:8000/api/conversations/CONVERSATION_ID/messages
+```
+
+The visitor token appears only in the host-only `HttpOnly; SameSite=Lax` cookie, with a 24-hour `Max-Age`. HTTPS configuration adds `Secure`. Creation/restoration refreshes the cookie but never extends a conversation's fixed 24-hour lifetime. The two artworks have separate conversations. Concurrent creation with an established cookie restores one conversation for the same artwork and dataset version.
+
+Missing, foreign, unknown, expired or pre-restart identity/history returns the same `404 conversation_not_found`. Malformed UUID text returns `400 invalid_request`; uppercase canonical UUID text is accepted. State lives in one Go process and is lost on restart. Expired records are removed when the store is accessed. See [the conversation contract](../docs/api-contract.md#22-create-or-restore-a-conversation) for the target wire format and remaining message behavior.
 
 ## Query retrieval through the Go client
 
@@ -108,7 +145,7 @@ go run ./cmd/server
 | `HOST` | `127.0.0.1` | Listen interface; use `0.0.0.0` for a future container deployment. |
 | `PORT` | `8000` | Listen port, from 1 to 65535. |
 | `PUBLIC_BASE_URL` | `http://localhost:8080` | Exact frontend origin, with no path or trailing slash. Set the actual reachable LAN origin during browser integration. |
-| `COOKIE_SECURE` | Inferred from the public URL scheme | Must be `false` for the local HTTP profile and `true` for HTTPS. Validated now for later visitor state. |
+| `COOKIE_SECURE` | Inferred from the public URL scheme | Controls the visitor cookie. Must be `false` for the local HTTP profile and `true` for HTTPS. |
 | `DATASET_VERSION` | `aic-seed-v0.1` | Exact version required in the seed and its artwork records. |
 | `SEED_PATH` | `../knowledge/data/aic-seed-v0.1.json` | Shared seed file. |
 | `RETRIEVAL_BASE_URL` | `http://127.0.0.1:8001` | Retrieval service's private origin, used by the retrieval diagnostic/client. The artwork HTTP server makes no retrieval calls. |
@@ -122,7 +159,7 @@ The seed loader checks exact field names, required/null fields, JSON types, dupl
 
 Structural validation does not authenticate a passage. The startup log records the SHA-256 of the actual loaded file so Jinqing Zhang and Jason Zichen He can compare release identity. The current released SHA-256 is `3703fd4c9fcefb8e9fba20f23a5cb70e612c62ef7cb3f594a15d319ebc18d6ac`.
 
-HTTP replies are UTF-8 JSON with `Cache-Control: no-store` and a server-generated `X-Request-ID`. Error bodies include the same request ID, a stable error code, safe English message and retry flag. Unknown routes and unsupported methods use JSON errors; method errors include `Allow: GET`. HEAD requests omit the body of their applicable method error. Query parameters are rejected on implemented routes.
+HTTP replies are UTF-8 JSON with `Cache-Control: no-store` and a server-generated `X-Request-ID`. Error bodies include the same request ID, a stable error code, safe English message and retry flag. Unknown routes and unsupported methods use JSON errors; method errors include the route's current `Allow: GET` or `Allow: POST`. HEAD requests omit the body of their applicable method error. Query parameters are rejected on implemented routes.
 
 Structured request logs include the request ID, result code, known artwork ID, dataset version and elapsed time. They omit request URLs, question text, client-supplied IDs and cookies. Startup errors can include local configuration paths for the developer; public error responses do not expose them.
 
@@ -138,6 +175,8 @@ go vet ./...
 ```
 
 Tests cover the published seed, invalid data and provenance, configuration profiles, both artwork cards, common errors, readiness without the retrieval service, request IDs, log privacy and concurrent artwork isolation. HTTP handler tests run in process. Retrieval client tests start temporary loopback servers and need local socket access; they do not need Python, a model or an external network.
+
+Conversation checks cover browser cookie attributes, exact origins, strict request bodies, ownership, separate artwork/release scopes, concurrent creation, uppercase UUID lookup, fixed expiry and process restart. A controlled clock verifies the exact 24-hour boundary without waiting. Errors and history reads never establish or refresh visitor identity.
 
 The simulated servers return valid evidence, empty results, individual corrupted fields, foreign records, duplicates, invalid JSON/Unicode, wrong versions, error statuses, oversized or truncated bodies, redirects, and delays before headers or during body reads. Tests also check one-attempt behavior, parent cancellation and safe error text. Test-only deadlines are shorter; production calls retain their three-second limit.
 
@@ -156,6 +195,7 @@ The source layout follows the request path:
 - `cmd/server`: startup, listener and graceful shutdown.
 - `cmd/retrieve`: direct Go-to-Python retrieval diagnostic.
 - `internal/config`: environment defaults and validation.
+- `internal/conversation`: process-local visitor identity, conversation recovery, expiry and history wire models.
 - `internal/catalog`: immutable seed loading, artwork lookup and trusted evidence projection.
 - `internal/jsonwire`: shared strict JSON integrity checks.
 - `internal/httpapi`: implemented HTTP routes and shared response formatting.

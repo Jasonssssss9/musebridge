@@ -40,7 +40,9 @@ func run(logger *slog.Logger) error {
 		return fmt.Errorf("listen: %w", err)
 	}
 	server := &http.Server{
-		Handler:           httpapi.New(dataset, logger),
+		Handler: httpapi.New(dataset, logger, httpapi.Settings{
+			PublicBaseURL: cfg.PublicBaseURL, CookieSecure: cfg.CookieSecure,
+		}),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second, WriteTimeout: 15 * time.Second,
 		IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16 << 10,
