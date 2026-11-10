@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from knowledge import RetrievalError, load_dataset, retrieve
+from knowledge.retrieval import retrieve_with_trace
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -267,6 +268,11 @@ class RetrievalTests(unittest.TestCase):
                 [],
             ),
             (TOILETTE, "《卧室》的媒材是什么？那幅画的笔触呢？", []),
+            (
+                BEDROOM,
+                "Compare the brushwork in Woman at Her Toilette with Morisot's other works.",
+                [],
+            ),
             (TOILETTE, "《卧室》的笔触是什么样的？", []),
             (TOILETTE, "Can you describe the wallpaper in the bedroom?", [TOILETTE_DESCRIPTION]),
             (TOILETTE, "Describe the brushwork in Woman at Her Toilette.", [TOILETTE_DESCRIPTION]),
@@ -372,6 +378,123 @@ class RetrievalTests(unittest.TestCase):
             dataset = load_dataset(path)
             response = retrieve(dataset, artwork_id=BEDROOM, query=query, dataset_version=VERSION)
         self.assertEqual(chunk_ids(response), expected)
+
+    def test_request_trace_binds_medium_to_the_paint_question_only(self):
+        query = "这块画布有多大？上面用的是哪一类颜料？"
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=BEDROOM, query=query, dataset_version=VERSION,
+        )
+        self.assertEqual(result, self.search(BEDROOM, query))
+        self.assertEqual(chunk_ids(result), [BEDROOM_MEDIUM])
+        requests = {request["facet"]: request for request in trace["requests"]}
+        self.assertEqual(set(requests), {"dimensions", "paint_medium"})
+        self.assertEqual(requests["dimensions"]["chunk_ids"], [])
+        self.assertEqual(requests["dimensions"]["status"], "insufficient_evidence")
+        self.assertEqual(requests["paint_medium"]["chunk_ids"], [BEDROOM_MEDIUM])
+        self.assertEqual(requests["paint_medium"]["status"], "supported")
+        for name, expected in (("dimensions", "多大"), ("paint_medium", "颜料")):
+            request = requests[name]
+            self.assertIn(expected, trace["normalized_query"][request["start"]:request["end"]])
+
+    def test_trace_keeps_two_material_requests_but_one_evidence_record(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=TOILETTE,
+            query="What kind of paint and surface did the artist use?",
+            dataset_version=VERSION,
+        )
+        self.assertEqual(chunk_ids(result), [TOILETTE_MEDIUM])
+        self.assertEqual(
+            {r["facet"]: r["chunk_ids"] for r in trace["requests"]},
+            {"paint_medium": [TOILETTE_MEDIUM], "painting_support": [TOILETTE_MEDIUM]},
+        )
+
+    def test_trace_records_the_foreign_comparison_side_as_out_of_scope(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=TOILETTE,
+            query="How does the brushwork here compare with the brushwork in The Bedroom?",
+            dataset_version=VERSION,
+        )
+        self.assertEqual(chunk_ids(result), [TOILETTE_DESCRIPTION])
+        by_artwork = {r["artwork_id"]: r for r in trace["requests"]}
+        self.assertEqual(set(by_artwork), {TOILETTE, BEDROOM})
+        self.assertEqual(by_artwork[BEDROOM]["status"], "out_of_scope")
+        self.assertEqual(by_artwork[BEDROOM]["chunk_ids"], [])
+        self.assertEqual(by_artwork[TOILETTE]["chunk_ids"], [TOILETTE_DESCRIPTION])
+
+    def test_trace_keeps_indirect_request_but_does_not_query_its_premise(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,
+            query="The label says oil on canvas. I wonder if the layer was still wet",
+        )
+        self.assertEqual(chunk_ids(result), [])
+        self.assertEqual(
+            [(r["facet"], r["status"]) for r in trace["requests"]],
+            [("painting_process", "insufficient_evidence")],
+        )
+
+    def test_dependent_background_request_keeps_the_named_subject(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=BEDROOM, dataset_version=VERSION,
+            query="I was looking behind the sitter in Woman at Her Toilette. "
+                  "Do those brushstrokes look delicate?",
+        )
+        self.assertEqual(chunk_ids(result), [])
+        self.assertEqual(
+            [(r["artwork_id"], r["status"]) for r in trace["requests"]],
+            [(TOILETTE, "out_of_scope")],
+        )
+
+    def test_question_about_a_support_does_not_also_request_the_paint_family(self):
+        _, trace = retrieve_with_trace(
+            self.dataset, artwork_id=BEDROOM, dataset_version=VERSION,
+            query="What did the artist paint on?",
+        )
+        self.assertEqual([r["facet"] for r in trace["requests"]], ["painting_support"])
+
+    def test_equal_medium_comparison_preserves_both_requested_work_ids(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,
+            query="Is the medium the same in The Bedroom and Woman at Her Toilette?",
+        )
+        self.assertEqual(chunk_ids(result), [TOILETTE_MEDIUM])
+        self.assertEqual(
+            {(r["artwork_id"], r["facet"], r["status"]) for r in trace["requests"]},
+            {(BEDROOM, "medium", "out_of_scope"), (TOILETTE, "medium", "supported")},
+        )
+
+    def test_context_can_resolve_a_description_without_producing_its_own_request(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=BEDROOM, dataset_version=VERSION,
+            query="The palette caught my eye. How does the museum characterize it?",
+        )
+        self.assertEqual(chunk_ids(result), [BEDROOM_DESCRIPTION])
+        self.assertEqual(
+            [(r["facet"], r["chunk_ids"]) for r in trace["requests"]],
+            [("color_appearance", [BEDROOM_DESCRIPTION])],
+        )
+
+    def test_equal_medium_can_compare_an_explicit_title_to_the_current_work(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,
+            query="Is the medium the same for this picture and The Bedroom?",
+        )
+        self.assertEqual(chunk_ids(result), [TOILETTE_MEDIUM])
+        self.assertEqual(
+            {(r["artwork_id"], r["status"]) for r in trace["requests"]},
+            {(BEDROOM, "out_of_scope"), (TOILETTE, "supported")},
+        )
+
+    def test_trace_cannot_claim_a_chunk_discarded_by_the_global_limit(self):
+        result, trace = retrieve_with_trace(
+            self.dataset, artwork_id=BEDROOM, top_k=1,
+            query="What is the medium, and how does the museum describe the brushwork and colors?",
+            dataset_version=VERSION,
+        )
+        self.assertEqual(chunk_ids(result), [BEDROOM_DESCRIPTION])
+        by_facet = {r["facet"]: r["chunk_ids"] for r in trace["requests"]}
+        self.assertEqual(by_facet["medium"], [])
+        self.assertEqual(by_facet["brushwork_appearance"], [BEDROOM_DESCRIPTION])
+        self.assertEqual(by_facet["color_appearance"], [BEDROOM_DESCRIPTION])
 
     def test_dataset_collections_are_immutable(self):
         self.assertIsInstance(self.dataset.chunks, tuple)

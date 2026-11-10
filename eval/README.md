@@ -209,9 +209,42 @@ Both suites informed this revision and now serve as regression checks. The zero 
 
 Re-run the commands above with fresh output paths to measure the current retriever. Use a checkout of `575e45f` for the before results. The recorded baseline reports and both suites remain unchanged.
 
+## Subquestion evidence attribution
+
+The subquestion evaluator checks whether each requested fact gets the evidence that supports it. A whole-query list can contain the correct medium chunk even if the request about canvas size produced that hit and the actual paint question was missed. The request-level evaluator scores both errors separately.
+
+- [Development suite](aic-subquestions-v0.1.json) contains bilingual contrasts for size versus medium, quoted premises, context, comparisons and multiple facts sharing a chunk.
+- [First audit suite](aic-subquestions-audit-v0.1.json) and [challenge suite](aic-subquestions-challenge-v0.1.json) were independently authored before they were first scored. Their first runs exposed compound, description and scope errors. They are now regression sets.
+- [Final verification suite](aic-subquestions-blind-v0.1.json) was separately authored and reviewed against the four released excerpts. It was first scored after the final retrieval code was frozen. No retrieval rule changed in response to that score.
+
+A case labels each request with its normalized text span, requested artwork, fact facet, expected status and evidence IDs. Comparison sides can share a span and have distinct artwork IDs. A standalone wording resolves context for the isolated diagnostic without supplying the answer. A statement that sets context has no gold request.
+
+```bash
+python3 -m eval.subquestion_eval --suite eval/aic-subquestions-blind-v0.1.json \
+  --output /tmp/musebridge-request-blind-full.json
+python3 -m eval.subquestion_eval --suite eval/aic-subquestions-blind-v0.1.json \
+  --mode isolated --output /tmp/musebridge-request-blind-isolated.json
+```
+
+Full mode sends the complete question and aligns actual request bindings by normalized span, subject and facet. It counts a hit for evidence on a correctly attributed binding. An extra wrong binding still fails strict scoring. Unattributed or missing requests remain in the gold denominators. Report negative results as false returns, correctly empty, and unresolved, with insufficient evidence and out-of-scope requests separate. Strict success requires all requests and bindings to be correct, with no extras. Each case uses the same two-result budget and immutable seed. The trace stays in the local Python evaluation path.
+
+Isolated mode asks each reviewed standalone request within the original artwork scope. Its score diagnoses evidence selection after the wording and request boundary have been supplied. It does not measure how the system splits or resolves the original question, and the standalone rephrasing can itself affect matching. Each artwork has only two eligible chunks, so the combined budget remains at most two for this release.
+
+| Suite and mode | Positive requests hit / all required | Negative false returns | Negative unresolved | Strict whole-query pass |
+| --- | ---: | ---: | ---: | ---: |
+| Development, full (16 queries) | 20/20 / 20/20 | 0/12 | 0/12 | 16/16 |
+| First audit, full (16 queries) | 22/22 / 22/22 | 0/22 | 0/22 | 16/16 |
+| Challenge, full (12 queries) | 18/18 / 18/18 | 0/14 | 0/14 | 12/12 |
+| Final verification, full (8 queries) | 10/14 / 10/14 | 1/8 | 0/8 | 3/8 |
+| Final verification, isolated (8 queries) | 12/14 / 12/14 | 1/8 | 0/8 | 5/8 |
+
+The first audit initially passed 4 of 16 whole queries and the challenge initially passed 5 of 12. Subsequent changes addressed continuation scope, comparison operands, incidental terms and description references. The final verification still misses some ways of referring back to the perspective lines and asking about paint type. It also returns a color description for one request for exact pigments. Neither mode produced invalid responses or foreign artwork evidence. The final verification has four paired intents and measures transfer to those examples only.
+
+For the earlier whole-query diagnostics, both checked-in suites keep their previous Top-2 results. The separate 36-utterance round-two blind file is now a regression diagnostic. Compared with `c01ce96` on that file, hits rise from 15/18 to 18/18, all-required retrieval from 11/18 to 18/18, and negative returns fall from 12/18 to 0/18. Use the original saved suite as `--suite` in the legacy evaluator to reproduce that comparison. These union-level results do not measure correct subquestion attribution.
+
 ## Reproducibility and future comparisons
 
-CLI reports record Python and Unicode versions plus SHA-256 hashes of the seed, suite, retriever, loader and evaluator. They omit timestamps and timing measurements. Repeating a run with identical inputs, code and runtime produces the same JSON; use the provenance fields to explain differences.
+CLI reports record Python and Unicode versions plus SHA-256 hashes of the seed, suite, retriever, query parser, loader and evaluator. They omit timestamps and timing measurements. Repeating a run with identical inputs, code and runtime produces the same JSON; use the provenance fields to explain differences.
 
 Keep these reports as the original keyword baseline. For a future retriever change, run the same suite into a new report path, compare aggregate scores and inspect the changed case IDs. Do not adjust gold to match implementation output. If a question, label or evidence scope needs correction, review the change, release a new suite version and retain enough history to explain the comparison.
 

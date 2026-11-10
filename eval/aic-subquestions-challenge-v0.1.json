@@ -1,0 +1,471 @@
+{
+  "suite_id": "subquestion-final-blind",
+  "dataset_version": "aic-seed-v0.1",
+  "description": "Sealed bilingual holdout for binding independently scoreable museum visitor requests to the selected or explicitly referenced artwork.",
+  "cases": [
+    {
+      "case_id": "final-blind-01-en",
+      "pair_id": "final-blind-01",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "I’m making a note about the colors in this room. How does the museum describe them? And what kind of energy does it say the whole painting might give off?",
+      "requests": [
+        {
+          "request_id": "final-blind-01-en-r1",
+          "text": "How does the museum describe them?",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How does the museum describe the appearance of the colors in Van Gogh’s The Bedroom?",
+          "rationale": "The reviewed description characterizes the colors as bold."
+        },
+        {
+          "request_id": "final-blind-01-en-r2",
+          "text": "And what kind of energy does it say the whole painting might give off?",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "What kind of energy does the museum say Van Gogh’s The Bedroom might suggest?",
+          "rationale": "The reviewed description says the picture might suggest a nervous energy. The effect is tentative."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-01-zh",
+      "pair_id": "final-blind-01",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "我想记一下这间屋子的用色。馆方是怎么形容这些颜色的？它认为整幅画可能让人感到怎样的气息？",
+      "requests": [
+        {
+          "request_id": "final-blind-01-zh-r1",
+          "text": "馆方是怎么形容这些颜色的？",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "馆方是怎么形容梵高《卧室》的用色的？",
+          "rationale": "The reviewed description characterizes the colors as bold."
+        },
+        {
+          "request_id": "final-blind-01-zh-r2",
+          "text": "它认为整幅画可能让人感到怎样的气息？",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "馆方认为梵高的《卧室》可能让人感到怎样的气息？",
+          "rationale": "The reviewed description says the picture might suggest a nervous energy. The effect is tentative."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-02-en",
+      "pair_id": "final-blind-02",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "I’m trying to follow the perspective here. How does the museum describe the way the lines recede, and where exactly is the vanishing point?",
+      "requests": [
+        {
+          "request_id": "final-blind-02-en-r1",
+          "text": "How does the museum describe the way the lines recede",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How does the museum describe the recession of the lines in Van Gogh’s The Bedroom?",
+          "rationale": "The reviewed description characterizes the lines as sharply receding."
+        },
+        {
+          "request_id": "final-blind-02-en-r2",
+          "text": "where exactly is the vanishing point?",
+          "artwork_id": "aic-28560",
+          "facet": "vanishing_point",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Does the museum give a precise location for a vanishing point in Van Gogh’s The Bedroom?",
+          "rationale": "The reviewed excerpts do not locate any vanishing point."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-02-zh",
+      "pair_id": "final-blind-02",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "我有点看不懂这幅画的透视。馆方怎么描述线条往远处延伸的样子？消失点的确切位置在哪儿？",
+      "requests": [
+        {
+          "request_id": "final-blind-02-zh-r1",
+          "text": "馆方怎么描述线条往远处延伸的样子？",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "馆方怎么描述梵高《卧室》里线条往远处延伸的样子？",
+          "rationale": "The reviewed description characterizes the lines as sharply receding."
+        },
+        {
+          "request_id": "final-blind-02-zh-r2",
+          "text": "消失点的确切位置在哪儿？",
+          "artwork_id": "aic-28560",
+          "facet": "vanishing_point",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "馆方有没有指出梵高《卧室》里消失点的确切位置？",
+          "rationale": "The reviewed excerpts do not locate any vanishing point."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-03-en",
+      "pair_id": "final-blind-03",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What do the brush marks look like in this room, according to the museum? In Morisot’s Woman at Her Toilette, what do the strokes in the background suggest is there? And how does the label describe those strokes?",
+      "requests": [
+        {
+          "request_id": "final-blind-03-en-r1",
+          "text": "What do the brush marks look like in this room, according to the museum?",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How does the museum describe the appearance of the brushwork in Van Gogh’s The Bedroom?",
+          "rationale": "The reviewed description characterizes the brushwork as thick and broken."
+        },
+        {
+          "request_id": "final-blind-03-en-r2",
+          "text": "In Morisot’s Woman at Her Toilette, what do the strokes in the background suggest is there?",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "What objects does the museum say the background brushwork suggests in Morisot’s Woman at Her Toilette?",
+          "rationale": "The named Morisot painting is outside the selected artwork’s scope."
+        },
+        {
+          "request_id": "final-blind-03-en-r3",
+          "text": "And how does the label describe those strokes?",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "How does the museum describe the appearance of the brushstrokes in the background of Morisot’s Woman at Her Toilette?",
+          "rationale": "The continuation refers to the brushstrokes in the named Morisot painting, outside the selected artwork’s scope."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-03-zh",
+      "pair_id": "final-blind-03",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "眼前这间屋子的笔触，馆方说是什么样的？在莫里索的《梳妆的女人》（Woman at Her Toilette）里，背景的笔触让人依稀看出哪些东西？馆方又是怎么形容那部分笔触的？",
+      "requests": [
+        {
+          "request_id": "final-blind-03-zh-r1",
+          "text": "眼前这间屋子的笔触，馆方说是什么样的？",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "馆方说梵高《卧室》里的笔触是什么样的？",
+          "rationale": "The reviewed description characterizes the brushwork as thick and broken."
+        },
+        {
+          "request_id": "final-blind-03-zh-r2",
+          "text": "在莫里索的《梳妆的女人》（Woman at Her Toilette）里，背景的笔触让人依稀看出哪些东西？",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "馆方认为莫里索《梳妆的女人》（Woman at Her Toilette）里的背景笔触让人依稀看出哪些东西？",
+          "rationale": "The named Morisot painting is outside the selected artwork’s scope."
+        },
+        {
+          "request_id": "final-blind-03-zh-r3",
+          "text": "馆方又是怎么形容那部分笔触的？",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "馆方怎么形容莫里索《梳妆的女人》（Woman at Her Toilette）背景里的笔触？",
+          "rationale": "The continuation refers to the brushstrokes in the named Morisot painting, outside the selected artwork’s scope."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-04-en",
+      "pair_id": "final-blind-04",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Do the museum records list the same medium for this painting and Van Gogh’s The Bedroom? Also, what are the dimensions of the painting I’m looking at?",
+      "requests": [
+        {
+          "request_id": "final-blind-04-en-r1",
+          "text": "Do the museum records list the same medium for this painting and Van Gogh’s The Bedroom?",
+          "artwork_id": "aic-11723",
+          "facet": "medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What medium does the museum record for Morisot’s Woman at Her Toilette?",
+          "rationale": "The selected painting’s reviewed medium entry records oil on canvas."
+        },
+        {
+          "request_id": "final-blind-04-en-r2",
+          "text": "Do the museum records list the same medium for this painting and Van Gogh’s The Bedroom?",
+          "artwork_id": "aic-28560",
+          "facet": "medium",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "What medium does the museum record for Van Gogh’s The Bedroom?",
+          "rationale": "The comparison’s Van Gogh operand is outside the selected artwork’s scope."
+        },
+        {
+          "request_id": "final-blind-04-en-r3",
+          "text": "what are the dimensions of the painting I’m looking at?",
+          "artwork_id": "aic-11723",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What are the dimensions of Morisot’s Woman at Her Toilette according to the museum’s record?",
+          "rationale": "The selected painting’s reviewed excerpts give no dimensions."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-04-zh",
+      "pair_id": "final-blind-04",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "馆方给眼前这幅画和梵高的《卧室》标注的媒材一样吗？我现在看的这幅画有多大？",
+      "requests": [
+        {
+          "request_id": "final-blind-04-zh-r1",
+          "text": "馆方给眼前这幅画和梵高的《卧室》标注的媒材一样吗？",
+          "artwork_id": "aic-11723",
+          "facet": "medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "馆方给莫里索的《梳妆的女人》（Woman at Her Toilette）标注的媒材是什么？",
+          "rationale": "The selected painting’s reviewed medium entry records oil on canvas."
+        },
+        {
+          "request_id": "final-blind-04-zh-r2",
+          "text": "馆方给眼前这幅画和梵高的《卧室》标注的媒材一样吗？",
+          "artwork_id": "aic-28560",
+          "facet": "medium",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "馆方给梵高的《卧室》标注的媒材是什么？",
+          "rationale": "The comparison’s Van Gogh operand is outside the selected artwork’s scope."
+        },
+        {
+          "request_id": "final-blind-04-zh-r3",
+          "text": "我现在看的这幅画有多大？",
+          "artwork_id": "aic-11723",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "馆方记录的莫里索《梳妆的女人》（Woman at Her Toilette）的尺寸是多少？",
+          "rationale": "The selected painting’s reviewed excerpts give no dimensions."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-05-en",
+      "pair_id": "final-blind-05",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "The background is a little hard for me to make out. How does the museum describe the strokes back there, and what do they suggest is behind her? Does the description say what kind of flowers are in the pattern?",
+      "requests": [
+        {
+          "request_id": "final-blind-05-en-r1",
+          "text": "How does the museum describe the strokes back there",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "How does the museum describe the appearance of the background brushstrokes in Morisot’s Woman at Her Toilette?",
+          "rationale": "The reviewed description characterizes the brushstrokes as soft and feathery."
+        },
+        {
+          "request_id": "final-blind-05-en-r2",
+          "text": "what do they suggest is behind her?",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "What objects does the museum say the background brushstrokes suggest in Morisot’s Woman at Her Toilette?",
+          "rationale": "The reviewed description says the strokes suggest a floral-patterned bedspread and wallpaper."
+        },
+        {
+          "request_id": "final-blind-05-en-r3",
+          "text": "Does the description say what kind of flowers are in the pattern?",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Does the museum identify which kind of flowers the pattern depicts in Morisot’s Woman at Her Toilette?",
+          "rationale": "The reviewed description mentions a floral pattern without identifying the kind of flower."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-05-zh",
+      "pair_id": "final-blind-05",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这幅画的背景我有点看不清。馆方怎么形容背景里的笔触？这些笔触让人依稀看出她身后有哪些东西？馆方有没有说花纹上画的是哪种花？",
+      "requests": [
+        {
+          "request_id": "final-blind-05-zh-r1",
+          "text": "馆方怎么形容背景里的笔触？",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "馆方是怎么形容莫里索《梳妆的女人》（Woman at Her Toilette）背景里的笔触的？",
+          "rationale": "The reviewed description characterizes the brushstrokes as soft and feathery."
+        },
+        {
+          "request_id": "final-blind-05-zh-r2",
+          "text": "这些笔触让人依稀看出她身后有哪些东西？",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "馆方认为莫里索《梳妆的女人》（Woman at Her Toilette）背景里的笔触让人依稀看出哪些东西？",
+          "rationale": "The reviewed description says the strokes suggest a floral-patterned bedspread and wallpaper."
+        },
+        {
+          "request_id": "final-blind-05-zh-r3",
+          "text": "馆方有没有说花纹上画的是哪种花？",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "馆方有没有指出莫里索《梳妆的女人》（Woman at Her Toilette）的花纹里画的是哪种花？",
+          "rationale": "The reviewed description mentions a floral pattern without identifying the kind of flower."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-06-en",
+      "pair_id": "final-blind-06",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "I’m trying to fill in two fields on a worksheet. What type of paint did Morisot use, and what material did she paint on? Does the record also give the exact paint recipe?",
+      "requests": [
+        {
+          "request_id": "final-blind-06-en-r1",
+          "text": "What type of paint did Morisot use",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What type of paint does the museum record for Morisot’s Woman at Her Toilette?",
+          "rationale": "The reviewed medium entry specifies oil as the paint medium."
+        },
+        {
+          "request_id": "final-blind-06-en-r2",
+          "text": "what material did she paint on?",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What material served as the painting support for Morisot’s Woman at Her Toilette according to the museum?",
+          "rationale": "The reviewed medium entry specifies canvas as the support."
+        },
+        {
+          "request_id": "final-blind-06-en-r3",
+          "text": "Does the record also give the exact paint recipe?",
+          "artwork_id": "aic-11723",
+          "facet": "paint_formula",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Does the museum record an exact paint formulation for Morisot’s Woman at Her Toilette?",
+          "rationale": "The reviewed medium entry names the medium and support, and the excerpts give no formula."
+        }
+      ]
+    },
+    {
+      "case_id": "final-blind-06-zh",
+      "pair_id": "final-blind-06",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "我想把材料分开记。莫里索用的是哪一类颜料？她画在什么材料上？馆方的条目有没有给出具体的颜料配方？",
+      "requests": [
+        {
+          "request_id": "final-blind-06-zh-r1",
+          "text": "莫里索用的是哪一类颜料？",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "馆方记录的莫里索《梳妆的女人》（Woman at Her Toilette）使用的是哪一类颜料？",
+          "rationale": "The reviewed medium entry specifies oil as the paint medium."
+        },
+        {
+          "request_id": "final-blind-06-zh-r2",
+          "text": "她画在什么材料上？",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "馆方记录的莫里索《梳妆的女人》（Woman at Her Toilette）画在什么材料上？",
+          "rationale": "The reviewed medium entry specifies canvas as the support."
+        },
+        {
+          "request_id": "final-blind-06-zh-r3",
+          "text": "馆方的条目有没有给出具体的颜料配方？",
+          "artwork_id": "aic-11723",
+          "facet": "paint_formula",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "馆方有没有给出莫里索《梳妆的女人》（Woman at Her Toilette）使用的具体颜料配方？",
+          "rationale": "The reviewed medium entry names the medium and support, and the excerpts give no formula."
+        }
+      ]
+    }
+  ]
+}

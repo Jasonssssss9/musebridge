@@ -12,6 +12,7 @@ import unicodedata
 
 from knowledge import DatasetValidationError, load_dataset, retrieve
 from knowledge import dataset as dataset_module
+from knowledge import query as query_module
 from knowledge import retrieval as retrieval_module
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -308,7 +309,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         inputs = [args.seed, args.suite, Path(__file__),
-                  Path(retrieval_module.__file__), Path(dataset_module.__file__)]
+                  Path(retrieval_module.__file__), Path(dataset_module.__file__), Path(query_module.__file__)]
         if args.output and args.output.resolve() in {path.resolve() for path in inputs}:
             raise SuiteValidationError("The report path must not overwrite an input or implementation file.")
         dataset = load_dataset(args.seed)
@@ -320,6 +321,7 @@ def main(argv=None):
             "seed_sha256": _sha256(args.seed),
             "suite_sha256": _sha256(args.suite),
             "retrieval_sha256": _sha256(retrieval_module.__file__),
+            "query_sha256": _sha256(query_module.__file__),
             "loader_sha256": _sha256(dataset_module.__file__),
             "evaluator_sha256": _sha256(__file__),
         }

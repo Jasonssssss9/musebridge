@@ -2,7 +2,7 @@
 
 Owner: Jason Zichen He (source data, retrieval and evaluation).
 
-This package implements the seed loader, deterministic keyword retriever and private HTTP service for `aic-seed-v0.1`. It uses the Python standard library and serves evidence from the local seed without fetching museum content at runtime.
+This package implements the seed loader, deterministic evidence retriever and private HTTP service for `aic-seed-v0.1`. It uses the Python standard library and serves evidence from the local seed without fetching museum content at runtime.
 
 Use Python 3.10 or later. Development checks run on Python 3.12 in WSL. Run the commands below from the repository root.
 
@@ -153,14 +153,12 @@ The function requires explicit artwork and version arguments. It does not accept
 
 ## How ranking works
 
-The implementation follows [API contract section 4.3](../docs/api-contract.md#43-deterministic-keyword-baseline):
+The implementation follows [API contract section 4.3](../docs/api-contract.md#43-deterministic-evidence-selection):
 
-1. Validate the query and scope.
-2. Normalize the query with Unicode NFKC and collapsed whitespace. Separate recognizable subquestions and check for explicitly named artworks.
-3. Match topics in each eligible question using lowercase text, bilingual aliases, and contextual phrases. Suppress topics tied to recognized unsupported details in that question, then combine the surviving topics across the request.
-4. Consider only chunks assigned to the selected artwork.
-5. Score each chunk by the number of distinct matching topics. Repeated words or multiple aliases for the same topic do not increase the score.
-6. Exclude zero scores, sort by descending score and then ascending chunk ID, and return up to `top_k` records.
+1. Validate the query, artwork and dataset version.
+2. Normalize the query with Unicode NFKC and collapsed whitespace. Identify actual requests, context and known artwork references.
+3. Classify each request by the fact it asks for. Bind eligible evidence only if that fact is supported by a chunk's reviewed topic.
+4. Rank chunks in the selected artwork by distinct supporting topics. Sort ties by chunk ID and return up to `top_k` unique records.
 
 The query normalization never rewrites stored museum excerpts. No hit in the current artwork causes an empty result, with no fallback to the other work. Source records are joined from the loaded seed; retrieval never fetches a URL.
 
@@ -184,7 +182,15 @@ The [retrieval evaluation guide](../eval/README.md) documents 48 additional Engl
 python3 -m eval.retrieval_eval --top-k 2
 ```
 
-This command measures the current keyword retriever. The evaluation guide preserves the original baseline and compares both retrieval revisions on the original and independently authored suites. It needs no model or Go service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
+This command measures the current retriever's combined evidence list. The evaluation guide preserves the original baseline and compares both retrieval revisions on the original and independently authored suites. It needs no model or Go service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
+
+The subquestion evaluator checks the binding to each request as well as the combined evidence. It can distinguish a valid medium answer from a medium chunk incorrectly returned for a size question.
+
+```bash
+python3 -m eval.subquestion_eval --suite eval/aic-subquestions-v0.1.json
+```
+
+The trace is for local evaluation. The private HTTP contract continues to return only the evidence envelope.
 
 ## Released data
 

@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PORT=8001
 
 COPY knowledge/__init__.py knowledge/__main__.py knowledge/dataset.py knowledge/errors.py \
-     knowledge/http_service.py knowledge/retrieval.py ./knowledge/
+     knowledge/http_service.py knowledge/query.py knowledge/retrieval.py ./knowledge/
 COPY knowledge/data/aic-seed-v0.1.json ./knowledge/data/aic-seed-v0.1.json
 
 USER 10001:10001

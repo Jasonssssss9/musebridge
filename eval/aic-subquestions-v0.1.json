@@ -1,0 +1,511 @@
+{
+  "suite_id": "aic-subquestions-v0.1",
+  "dataset_version": "aic-seed-v0.1",
+  "description": "Development checks for request boundaries, evidence attribution, supported and unsupported facts, and selected-artwork scope. Paired English and Simplified Chinese cases use the same semantic gold.",
+  "cases": [
+    {
+      "case_id": "size-and-paint-en",
+      "pair_id": "size-and-paint",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How big is this canvas, and what kind of paint was used on it?",
+      "requests": [
+        {
+          "request_id": "size-and-paint-en-1",
+          "text": "How big is this canvas",
+          "artwork_id": "aic-28560",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "How big is this canvas?",
+          "rationale": "The excerpt names the support without measurements."
+        },
+        {
+          "request_id": "size-and-paint-en-2",
+          "text": "what kind of paint was used on it",
+          "artwork_id": "aic-28560",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "What kind of paint was used on this canvas?",
+          "rationale": "The medium field identifies oil as the paint family."
+        }
+      ]
+    },
+    {
+      "case_id": "size-and-paint-zh-cn",
+      "pair_id": "size-and-paint",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这块画布有多大？上面用的是哪一类颜料？",
+      "requests": [
+        {
+          "request_id": "size-and-paint-zh-cn-1",
+          "text": "这块画布有多大",
+          "artwork_id": "aic-28560",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "这块画布有多大？",
+          "rationale": "The excerpt names the support without measurements."
+        },
+        {
+          "request_id": "size-and-paint-zh-cn-2",
+          "text": "上面用的是哪一类颜料",
+          "artwork_id": "aic-28560",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "这块画布上用的是哪一类颜料？",
+          "rationale": "The medium field identifies oil as the paint family."
+        }
+      ]
+    },
+    {
+      "case_id": "size-only-en",
+      "pair_id": "size-only",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How big is this canvas?",
+      "requests": [
+        {
+          "request_id": "size-only-en-1",
+          "text": "How big is this canvas",
+          "artwork_id": "aic-28560",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "How big is this canvas?",
+          "rationale": "Canvas is a support type, not a measurement."
+        }
+      ]
+    },
+    {
+      "case_id": "size-only-zh-cn",
+      "pair_id": "size-only",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这块画布有多大？",
+      "requests": [
+        {
+          "request_id": "size-only-zh-cn-1",
+          "text": "这块画布有多大",
+          "artwork_id": "aic-28560",
+          "facet": "dimensions",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "这块画布有多大？",
+          "rationale": "Canvas is a support type, not a measurement."
+        }
+      ]
+    },
+    {
+      "case_id": "paint-only-en",
+      "pair_id": "paint-only",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What kind of paint was used on this canvas?",
+      "requests": [
+        {
+          "request_id": "paint-only-en-1",
+          "text": "What kind of paint was used on this canvas",
+          "artwork_id": "aic-28560",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "What kind of paint was used on this canvas?",
+          "rationale": "The medium field supports the paint family oil."
+        }
+      ]
+    },
+    {
+      "case_id": "paint-only-zh-cn",
+      "pair_id": "paint-only",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这块画布上用的是哪一类颜料？",
+      "requests": [
+        {
+          "request_id": "paint-only-zh-cn-1",
+          "text": "这块画布上用的是哪一类颜料",
+          "artwork_id": "aic-28560",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "这块画布上用的是哪一类颜料？",
+          "rationale": "The medium field supports the paint family oil."
+        }
+      ]
+    },
+    {
+      "case_id": "label-fiber-and-scene-en",
+      "pair_id": "label-fiber-and-scene",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "The label says oil on canvas. Is the canvas linen or cotton, and what objects do the brushstrokes behind the figure suggest?",
+      "requests": [
+        {
+          "request_id": "label-fiber-and-scene-en-1",
+          "text": "Is the canvas linen or cotton",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Is the canvas linen or cotton?",
+          "rationale": "The label statement is context. The medium does not identify the canvas fiber."
+        },
+        {
+          "request_id": "label-fiber-and-scene-en-2",
+          "text": "what objects do the brushstrokes behind the figure suggest",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "What objects do the brushstrokes behind the figure suggest?",
+          "rationale": "The description suggests a floral-patterned bedspread and wallpaper."
+        }
+      ]
+    },
+    {
+      "case_id": "label-fiber-and-scene-zh-cn",
+      "pair_id": "label-fiber-and-scene",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "展签写着布面油画。这块画布是亚麻还是棉？人物身后的笔触让人联想到哪些物件？",
+      "requests": [
+        {
+          "request_id": "label-fiber-and-scene-zh-cn-1",
+          "text": "这块画布是亚麻还是棉",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "这块画布是亚麻还是棉？",
+          "rationale": "The label statement is context. The medium does not identify the canvas fiber."
+        },
+        {
+          "request_id": "label-fiber-and-scene-zh-cn-2",
+          "text": "人物身后的笔触让人联想到哪些物件",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "人物身后的笔触让人联想到哪些物件？",
+          "rationale": "The description suggests a floral-patterned bedspread and wallpaper."
+        }
+      ]
+    },
+    {
+      "case_id": "paint-support-effect-en",
+      "pair_id": "paint-support-effect",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "What kind of paint did the artist use, what was it painted on, and what feeling does the museum say the picture might suggest?",
+      "requests": [
+        {
+          "request_id": "paint-support-effect-en-1",
+          "text": "What kind of paint did the artist use",
+          "artwork_id": "aic-28560",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "What kind of paint did the artist use?",
+          "rationale": "The medium field identifies oil."
+        },
+        {
+          "request_id": "paint-support-effect-en-2",
+          "text": "what was it painted on",
+          "artwork_id": "aic-28560",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "What was this picture painted on?",
+          "rationale": "The medium field identifies canvas as the support."
+        },
+        {
+          "request_id": "paint-support-effect-en-3",
+          "text": "what feeling does the museum say the picture might suggest",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "What feeling does the museum say this picture might suggest?",
+          "rationale": "The description says the visual features might suggest nervous energy."
+        }
+      ]
+    },
+    {
+      "case_id": "paint-support-effect-zh-cn",
+      "pair_id": "paint-support-effect",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画用的是哪类颜料、画在什么上？馆方说画面可能给人什么感觉？",
+      "requests": [
+        {
+          "request_id": "paint-support-effect-zh-cn-1",
+          "text": "这幅画用的是哪类颜料",
+          "artwork_id": "aic-28560",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "这幅画用的是哪类颜料？",
+          "rationale": "The medium field identifies oil."
+        },
+        {
+          "request_id": "paint-support-effect-zh-cn-2",
+          "text": "画在什么上",
+          "artwork_id": "aic-28560",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-medium"
+          ],
+          "standalone_query": "这幅画画在什么上？",
+          "rationale": "The medium field identifies canvas as the support."
+        },
+        {
+          "request_id": "paint-support-effect-zh-cn-3",
+          "text": "馆方说画面可能给人什么感觉",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "馆方说画面可能给人什么感觉？",
+          "rationale": "The description says the visual features might suggest nervous energy."
+        }
+      ]
+    },
+    {
+      "case_id": "comparison-and-support-en",
+      "pair_id": "comparison-and-support",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "How does the brushwork here compare with the brushwork in The Bedroom? What was this painting painted on?",
+      "requests": [
+        {
+          "request_id": "comparison-and-support-en-1",
+          "text": "brushwork here",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "How does the museum describe the brushwork of this painting?",
+          "rationale": "The selected work's background brushstrokes are soft and feathery."
+        },
+        {
+          "request_id": "comparison-and-support-en-2",
+          "text": "brushwork in The Bedroom",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "How does the museum describe the brushwork in The Bedroom?",
+          "rationale": "The other side of the comparison is outside the selected artwork."
+        },
+        {
+          "request_id": "comparison-and-support-en-3",
+          "text": "What was this painting painted on",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What was this painting painted on?",
+          "rationale": "The selected work's medium identifies canvas."
+        }
+      ]
+    },
+    {
+      "case_id": "comparison-and-support-zh-cn",
+      "pair_id": "comparison-and-support",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这幅画的笔触和《卧室》的相比有什么不同？这幅画是画在什么上的？",
+      "requests": [
+        {
+          "request_id": "comparison-and-support-zh-cn-1",
+          "text": "这幅画的笔触",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "馆方如何描述这件作品的笔触？",
+          "rationale": "The selected work's background brushstrokes are soft and feathery."
+        },
+        {
+          "request_id": "comparison-and-support-zh-cn-2",
+          "text": "《卧室》的",
+          "artwork_id": "aic-28560",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "馆方如何描述《卧室》的笔触？",
+          "rationale": "The other side of the comparison is outside the selected artwork."
+        },
+        {
+          "request_id": "comparison-and-support-zh-cn-3",
+          "text": "这幅画是画在什么上的",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "这幅画是画在什么上的？",
+          "rationale": "The selected work's medium identifies canvas."
+        }
+      ]
+    },
+    {
+      "case_id": "appearance-and-pigments-en",
+      "pair_id": "appearance-and-pigments",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "How does the museum describe the colors, and which pigments were used to achieve them?",
+      "requests": [
+        {
+          "request_id": "appearance-and-pigments-en-1",
+          "text": "How does the museum describe the colors",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How does the museum describe the colors?",
+          "rationale": "The excerpt characterizes the colors as bold."
+        },
+        {
+          "request_id": "appearance-and-pigments-en-2",
+          "text": "which pigments were used to achieve them",
+          "artwork_id": "aic-28560",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Which pigments were used to achieve the colors of this painting?",
+          "rationale": "Neither excerpt names the pigments that produced those colors."
+        }
+      ]
+    },
+    {
+      "case_id": "appearance-and-pigments-zh-cn",
+      "pair_id": "appearance-and-pigments",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "馆方怎样形容画面的色彩？这些色彩具体用了哪些颜料？",
+      "requests": [
+        {
+          "request_id": "appearance-and-pigments-zh-cn-1",
+          "text": "馆方怎样形容画面的色彩",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "馆方怎样形容画面的色彩？",
+          "rationale": "The excerpt characterizes the colors as bold."
+        },
+        {
+          "request_id": "appearance-and-pigments-zh-cn-2",
+          "text": "这些色彩具体用了哪些颜料",
+          "artwork_id": "aic-28560",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "画面色彩具体用了哪些颜料？",
+          "rationale": "Neither excerpt names the pigments that produced those colors."
+        }
+      ]
+    },
+    {
+      "case_id": "referent-and-process-en",
+      "pair_id": "referent-and-process",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "I can barely see what is behind the sitter. What do those marks suggest is there? Was the paint underneath still wet?",
+      "requests": [
+        {
+          "request_id": "referent-and-process-en-1",
+          "text": "What do those marks suggest is there",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "What objects do the marks behind the sitter suggest?",
+          "rationale": "The first sentence locates the marks. The description suggests a bedspread and wallpaper."
+        },
+        {
+          "request_id": "referent-and-process-en-2",
+          "text": "Was the paint underneath still wet",
+          "artwork_id": "aic-11723",
+          "facet": "painting_process",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Was the paint underneath those marks still wet?",
+          "rationale": "The description records visible strokes rather than the state of the underlying layer."
+        }
+      ]
+    },
+    {
+      "case_id": "referent-and-process-zh-cn",
+      "pair_id": "referent-and-process",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "我看不清人物身后的区域。那些画痕让人联想到什么物件？底层颜料当时还没干吗？",
+      "requests": [
+        {
+          "request_id": "referent-and-process-zh-cn-1",
+          "text": "那些画痕让人联想到什么物件",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "人物身后的画痕让人联想到什么物件？",
+          "rationale": "The first sentence locates the marks. The description suggests a bedspread and wallpaper."
+        },
+        {
+          "request_id": "referent-and-process-zh-cn-2",
+          "text": "底层颜料当时还没干吗",
+          "artwork_id": "aic-11723",
+          "facet": "painting_process",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "画这些画痕时，底层颜料还没干吗？",
+          "rationale": "The description records visible strokes rather than the state of the underlying layer."
+        }
+      ]
+    }
+  ]
+}

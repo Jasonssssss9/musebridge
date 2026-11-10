@@ -425,44 +425,28 @@ The Go API validates the response status, content type, JSON shape, size, versio
 
 Reject the whole response on any violation. Do not silently drop an invalid record and answer with the remainder. Return `502 retrieval_invalid_response` and create no completed turn. Valid empty evidence is the only no-hit representation.
 
-### 4.3 Deterministic keyword baseline
+### 4.3 Deterministic evidence selection
 
-The retrieval service uses a reviewed bilingual topic dictionary and contextual phrase rules across both artworks. These rules map query wording to the published topics. Full evaluation questions and case IDs remain in the evaluation fixtures.
+The retrieval service identifies factual requests within the query and checks them against the reviewed evidence capabilities. Normalize text with Unicode NFKC and collapsed whitespace. English and Chinese rules separate requests, identify known artwork references, and distinguish a request from context that only introduces a subject. A dependent request can use that context to resolve its reference. A context statement alone does not select a chunk.
 
-| Topic | Query aliases |
-| --- | --- |
-| `material` | `material`, `materials`, `medium`, `made of`, `oil`, `canvas`, `painting support`, `材料`, `材质`, `媒介`, `油画`, `画布`, `底材` |
-| `brushwork` | `brushwork`, `brushstroke`, `brushstrokes`, `brush stroke`, `brush strokes`, `brush-stroke`, `brush-strokes`, `brush mark`, `brush marks`, `paint mark`, `paint marks`, `笔触`, `画痕`, `笔痕` |
-| `energy` | `nervous`, `energy`, `紧张` |
-| `color` | `color`, `colors`, `colour`, `colours`, `颜色`, `色彩` |
-| `perspective` | `perspective`, `receding lines`, `透视` |
-| `background` | `background`, `wallpaper`, `bedspread`, `背景`, `墙纸`, `床罩` |
+The request artwork ID remains the hard evidence filter. A recognized question about another work has no eligible evidence in this request. For a comparison, a supported request about the selected side can still select local evidence.
 
-Index the published `topics` attached to each chunk. Medium chunks carry `material` even though the source field need not contain that word. This is how a material question can retrieve the catalog's medium value without an embedding model.
+The released topics support these request facets:
 
-For query matching, apply Unicode NFKC normalization, trim and collapse whitespace, and lowercase text for topic matching. Preserve title casing when checking artwork references. Match English words or phrases with word boundaries and Chinese aliases as substrings. The retriever also checks for these cues within punctuation-delimited clauses:
+| Published topic | Supported facet | Extent of support |
+| --- | --- | --- |
+| `material` | `medium`, `paint_medium`, `painting_support` | Catalog medium, paint family and support family. |
+| `brushwork` | `brushwork_appearance` | Appearance of the described strokes. |
+| `color` | `color_appearance` | The description's characterization of the colors. |
+| `perspective` | `line_recession` | Qualitative description of receding lines. |
+| `energy` | `visual_effect` | The museum's qualified account of the visual effect. |
+| `background` | `background_objects` | Objects suggested by the described background marks. |
 
-- Painting support questions, contrasts between possible painting surfaces, and joint requests for paint and surface map to `material`.
-- References to an artist's or painter's marks and questions about the appearance of marks left by a brush map to `brushwork`.
-- A room or scene described as feeling or looking unsettling maps to `energy`.
-- Questions about depicted patterns or shapes behind a figure or about objects that appear to carry floral patterns map to `background`.
+For example, the medium record can support the paint family and painting support in one query. It does not support dimensions, fiber or pigment identity. The description can support the appearance of brushwork without identifying the tool or the sequence in which paint was applied. Independent supported requests can still select evidence when another request lacks support.
 
-Split compound queries at sentence boundaries and recognizable question restarts. Keep a comma with its surrounding question unless both fragments carry question cues. A question about only a recognized artwork outside the selected scope contributes no topics. Pronoun continuations keep that subject until an explicit local reference or a new independent question. Comparisons that refer to the selected work may contribute topics for the selected work alone.
+Rank selected artwork chunks by the number of distinct published topics that support at least one request. Multiple requests that map to the same topic contribute one ranking vote. Discard zero-score chunks, sort by descending score and then ascending `chunk_id`, and keep at most `top_k`. Return the original reviewed excerpts and provenance fields.
 
-Within each question, suppress topic matches driven by unsupported details such as oil composition, canvas treatment, brush size, wallpaper provenance or painting sequence, physical dimensions, or the artist's stated intentions. A separate question can still contribute the same topic. For example, a request for medium followed by a question about canvas trimming retains the medium evidence. The guards cover recognized expressions, and the Go API still owns the answer decision.
-
-The rules use literal cues and bounded patterns, with no stemming or fuzzy matching. Combine the surviving topics across questions. Each topic counts at most once. Compute score as the number of distinct query topics present in the chunk's topics; discard score-zero chunks, sort by descending score, then lexicographically ascending `chunk_id`, and take `top_k`. Preserve source excerpts unchanged by query normalization.
-
-The four chunks are topic-tagged as follows:
-
-| Chunk | Topics |
-| --- | --- |
-| `aic-28560-medium` | `material` |
-| `aic-28560-description-01` | `brushwork`, `energy`, `color`, `perspective` |
-| `aic-11723-medium` | `material` |
-| `aic-11723-description-01` | `brushwork`, `background` |
-
-This baseline intentionally makes its coverage inspectable. The retrieval service must not load evaluation answers into the search index or use case IDs at runtime. A passing eight-call test set on four chunks establishes wiring and scope; it is not a claim of semantic retrieval accuracy. Add held-out wording and distractor chunks before making broader quality claims.
+The Python evaluation entry point can also return request bindings with normalized text offsets, scope, facet and selected chunk IDs. The private HTTP response retains only the dataset version and the deduplicated evidence list. The Go API still determines the answer status. Evaluation labels remain separate from runtime input.
 
 ### 4.4 Retrieval errors and Go API mapping
 

@@ -1,0 +1,327 @@
+{
+  "suite_id": "subquestion-verification-blind",
+  "dataset_version": "aic-seed-v0.1",
+  "description": "Independent paired English and Simplified Chinese verification cases with request-level evidence labels based on the four reviewed excerpts.",
+  "cases": [
+    {
+      "case_id": "verify-01-en",
+      "pair_id": "verify-01",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "I'm looking at the perspective lines in The Bedroom. How sharply do they recede, and what feeling might the painting as a whole give off?",
+      "requests": [
+        {
+          "request_id": "verify-01-en-r1",
+          "text": "How sharply do they recede",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How sharply do the perspective lines in The Bedroom recede?",
+          "rationale": "The excerpt describes sharply receding lines."
+        },
+        {
+          "request_id": "verify-01-en-r2",
+          "text": "what feeling might the painting as a whole give off",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "What feeling might The Bedroom as a whole give off?",
+          "rationale": "The excerpt suggests that the picture might convey a nervous energy."
+        }
+      ]
+    },
+    {
+      "case_id": "verify-01-zh-CN",
+      "pair_id": "verify-01",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "\u6211\u5728\u770b\u300a\u5367\u5ba4\u300b\u91cc\u7684\u900f\u89c6\u7ebf\u3002\u5b83\u4eec\u5411\u8fdc\u5904\u6536\u5f97\u6709\u591a\u6025\uff1f\u6574\u5e45\u753b\u53ef\u80fd\u7ed9\u4eba\u4ec0\u4e48\u611f\u53d7\uff1f",
+      "requests": [
+        {
+          "request_id": "verify-01-zh-CN-r1",
+          "text": "\u5b83\u4eec\u5411\u8fdc\u5904\u6536\u5f97\u6709\u591a\u6025",
+          "artwork_id": "aic-28560",
+          "facet": "line_recession",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "\u300a\u5367\u5ba4\u300b\u91cc\u7684\u900f\u89c6\u7ebf\u5411\u8fdc\u5904\u6536\u5f97\u6709\u591a\u6025\uff1f",
+          "rationale": "\u6458\u5f55\u63cf\u8ff0\u4e86\u6025\u5267\u5411\u8fdc\u5904\u6536\u62e2\u7684\u7ebf\u6761\u3002"
+        },
+        {
+          "request_id": "verify-01-zh-CN-r2",
+          "text": "\u6574\u5e45\u753b\u53ef\u80fd\u7ed9\u4eba\u4ec0\u4e48\u611f\u53d7",
+          "artwork_id": "aic-28560",
+          "facet": "visual_effect",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "\u300a\u5367\u5ba4\u300b\u6574\u5e45\u753b\u53ef\u80fd\u7ed9\u4eba\u4ec0\u4e48\u611f\u53d7\uff1f",
+          "rationale": "\u6458\u5f55\u63d0\u5230\uff0c\u8fd9\u5e45\u753b\u53ef\u80fd\u8ba9\u4eba\u611f\u5230\u4e00\u80a1\u7d27\u5f20\u7684\u6d3b\u529b\u3002"
+        }
+      ]
+    },
+    {
+      "case_id": "verify-02-en",
+      "pair_id": "verify-02",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "For Woman at Her Toilette, what kind of paint was used, what surface was it painted on, and what fiber was that surface made from?",
+      "requests": [
+        {
+          "request_id": "verify-02-en-r1",
+          "text": "what kind of paint was used",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What kind of paint was used in Woman at Her Toilette?",
+          "rationale": "The medium excerpt identifies the paint as oil."
+        },
+        {
+          "request_id": "verify-02-en-r2",
+          "text": "what surface was it painted on",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "What surface was Woman at Her Toilette painted on?",
+          "rationale": "The same medium excerpt identifies the painting support as canvas."
+        },
+        {
+          "request_id": "verify-02-en-r3",
+          "text": "what fiber was that surface made from",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "What fiber was the painting support of Woman at Her Toilette made from?",
+          "rationale": "The excerpts identify the support as canvas and give no fiber information."
+        }
+      ]
+    },
+    {
+      "case_id": "verify-02-zh-CN",
+      "pair_id": "verify-02",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u7528\u7684\u662f\u4ec0\u4e48\u7c7b\u578b\u7684\u7ed8\u753b\u989c\u6599\uff1f\u753b\u5728\u4ec0\u4e48\u6750\u6599\u4e0a\uff1f\u8fd9\u79cd\u6750\u6599\u662f\u7528\u4ec0\u4e48\u7ea4\u7ef4\u505a\u7684\uff1f",
+      "requests": [
+        {
+          "request_id": "verify-02-zh-CN-r1",
+          "text": "\u7528\u7684\u662f\u4ec0\u4e48\u7c7b\u578b\u7684\u7ed8\u753b\u989c\u6599",
+          "artwork_id": "aic-11723",
+          "facet": "paint_medium",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u7528\u7684\u662f\u4ec0\u4e48\u7c7b\u578b\u7684\u7ed8\u753b\u989c\u6599\uff1f",
+          "rationale": "\u5a92\u6750\u6458\u5f55\u6307\u51fa\uff0c\u753b\u5bb6\u7528\u7684\u662f\u6cb9\u753b\u989c\u6599\u3002"
+        },
+        {
+          "request_id": "verify-02-zh-CN-r2",
+          "text": "\u753b\u5728\u4ec0\u4e48\u6750\u6599\u4e0a",
+          "artwork_id": "aic-11723",
+          "facet": "painting_support",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-medium"
+          ],
+          "standalone_query": "\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u753b\u5728\u4ec0\u4e48\u6750\u6599\u4e0a\uff1f",
+          "rationale": "\u540c\u4e00\u6bb5\u5a92\u6750\u6458\u5f55\u8bf4\u660e\uff0c\u8fd9\u5e45\u753b\u753b\u5728\u753b\u5e03\u4e0a\u3002"
+        },
+        {
+          "request_id": "verify-02-zh-CN-r3",
+          "text": "\u8fd9\u79cd\u6750\u6599\u662f\u7528\u4ec0\u4e48\u7ea4\u7ef4\u505a\u7684",
+          "artwork_id": "aic-11723",
+          "facet": "canvas_fiber",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u7684\u7ed8\u753b\u5e95\u6750\u662f\u7528\u4ec0\u4e48\u7ea4\u7ef4\u505a\u7684\uff1f",
+          "rationale": "\u6458\u5f55\u53ea\u8bf4\u5e95\u6750\u662f\u753b\u5e03\uff0c\u6ca1\u6709\u8bf4\u660e\u7ea4\u7ef4\u6210\u5206\u3002"
+        }
+      ]
+    },
+    {
+      "case_id": "verify-03-en",
+      "pair_id": "verify-03",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "In Woman at Her Toilette, how would you describe the brushstrokes in the background, what objects do they suggest, and which species of flower does the pattern show?",
+      "requests": [
+        {
+          "request_id": "verify-03-en-r1",
+          "text": "how would you describe the brushstrokes in the background",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "How would you describe the background brushstrokes in Woman at Her Toilette?",
+          "rationale": "The description calls the background brushstrokes soft and feathery."
+        },
+        {
+          "request_id": "verify-03-en-r2",
+          "text": "what objects do they suggest",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "What objects do the background brushstrokes in Woman at Her Toilette suggest?",
+          "rationale": "The brushstrokes are described as suggesting a floral-patterned bedspread and wallpaper."
+        },
+        {
+          "request_id": "verify-03-en-r3",
+          "text": "which species of flower does the pattern show",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Which species of flower does the background pattern in Woman at Her Toilette show?",
+          "rationale": "The description suggests a floral pattern and gives no flower species."
+        }
+      ]
+    },
+    {
+      "case_id": "verify-03-zh-CN",
+      "pair_id": "verify-03",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "\u5728\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u91cc\uff0c\u80cc\u666f\u7684\u7b14\u89e6\u662f\u4ec0\u4e48\u6837\u7684\uff1f\u8fd9\u4e9b\u7b14\u89e6\u8ba9\u4eba\u8054\u60f3\u5230\u54ea\u4e9b\u7269\u4ef6\uff1f\u82b1\u7eb9\u753b\u7684\u662f\u54ea\u79cd\u82b1\uff1f",
+      "requests": [
+        {
+          "request_id": "verify-03-zh-CN-r1",
+          "text": "\u80cc\u666f\u7684\u7b14\u89e6\u662f\u4ec0\u4e48\u6837\u7684",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u80cc\u666f\u7684\u7b14\u89e6\u662f\u4ec0\u4e48\u6837\u7684\uff1f",
+          "rationale": "\u6458\u5f55\u5f62\u5bb9\u80cc\u666f\u7684\u7b14\u89e6\u67d4\u548c\uff0c\u50cf\u7fbd\u6bdb\u4e00\u6837\u8f7b\u76c8\u3002"
+        },
+        {
+          "request_id": "verify-03-zh-CN-r2",
+          "text": "\u8fd9\u4e9b\u7b14\u89e6\u8ba9\u4eba\u8054\u60f3\u5230\u54ea\u4e9b\u7269\u4ef6",
+          "artwork_id": "aic-11723",
+          "facet": "background_objects",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-11723-description-01"
+          ],
+          "standalone_query": "\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u80cc\u666f\u7684\u7b14\u89e6\u8ba9\u4eba\u8054\u60f3\u5230\u54ea\u4e9b\u7269\u4ef6\uff1f",
+          "rationale": "\u6458\u5f55\u63d0\u5230\uff0c\u7b14\u89e6\u8ba9\u4eba\u8054\u60f3\u5230\u5e26\u82b1\u7eb9\u7684\u5e8a\u7f69\u548c\u5899\u7eb8\u3002"
+        },
+        {
+          "request_id": "verify-03-zh-CN-r3",
+          "text": "\u82b1\u7eb9\u753b\u7684\u662f\u54ea\u79cd\u82b1",
+          "artwork_id": "aic-11723",
+          "facet": "flower_species",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u80cc\u666f\u7684\u82b1\u7eb9\u753b\u7684\u662f\u54ea\u79cd\u82b1\uff1f",
+          "rationale": "\u6458\u5f55\u63d0\u5230\u4e86\u82b1\u5349\u56fe\u6848\uff0c\u6ca1\u6709\u8bf4\u660e\u662f\u54ea\u4e00\u79cd\u82b1\u3002"
+        }
+      ]
+    },
+    {
+      "case_id": "verify-04-en",
+      "pair_id": "verify-04",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "For The Bedroom, how does the museum describe the colors, and which pigments did Van Gogh use to get those colors? What does it say about the brushwork in Woman at Her Toilette?",
+      "requests": [
+        {
+          "request_id": "verify-04-en-r1",
+          "text": "how does the museum describe the colors",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "How does the museum describe the colors in The Bedroom?",
+          "rationale": "The excerpt describes the colors as bold."
+        },
+        {
+          "request_id": "verify-04-en-r2",
+          "text": "which pigments did Van Gogh use to get those colors",
+          "artwork_id": "aic-28560",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "Which pigments did Van Gogh use for the colors in The Bedroom?",
+          "rationale": "The excerpts describe the colors and identify the paint medium. They give no pigment identities."
+        },
+        {
+          "request_id": "verify-04-en-r3",
+          "text": "What does it say about the brushwork in Woman at Her Toilette",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "What does the museum say about the brushwork in Woman at Her Toilette?",
+          "rationale": "This request concerns a different known artwork from the active artwork, The Bedroom."
+        }
+      ]
+    },
+    {
+      "case_id": "verify-04-zh-CN",
+      "pair_id": "verify-04",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "\u9986\u65b9\u662f\u600e\u4e48\u63cf\u8ff0\u300a\u5367\u5ba4\u300b\u7684\u8272\u5f69\u7684\uff1f\u68b5\u9ad8\u7528\u4e86\u54ea\u4e9b\u5177\u4f53\u7684\u989c\u6599\u6765\u8c03\u51fa\u8fd9\u4e9b\u989c\u8272\uff1f\u9986\u65b9\u53c8\u662f\u600e\u4e48\u63cf\u8ff0\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u7684\u7b14\u89e6\u7684\uff1f",
+      "requests": [
+        {
+          "request_id": "verify-04-zh-CN-r1",
+          "text": "\u9986\u65b9\u662f\u600e\u4e48\u63cf\u8ff0\u300a\u5367\u5ba4\u300b\u7684\u8272\u5f69\u7684",
+          "artwork_id": "aic-28560",
+          "facet": "color_appearance",
+          "status": "supported",
+          "chunk_ids": [
+            "aic-28560-description-01"
+          ],
+          "standalone_query": "\u9986\u65b9\u662f\u600e\u4e48\u63cf\u8ff0\u300a\u5367\u5ba4\u300b\u7684\u8272\u5f69\u7684\uff1f",
+          "rationale": "\u6458\u5f55\u5f62\u5bb9\u8fd9\u5e45\u753b\u7528\u8272\u5927\u80c6\u3002"
+        },
+        {
+          "request_id": "verify-04-zh-CN-r2",
+          "text": "\u68b5\u9ad8\u7528\u4e86\u54ea\u4e9b\u5177\u4f53\u7684\u989c\u6599\u6765\u8c03\u51fa\u8fd9\u4e9b\u989c\u8272",
+          "artwork_id": "aic-28560",
+          "facet": "pigment_identity",
+          "status": "insufficient_evidence",
+          "chunk_ids": [],
+          "standalone_query": "\u68b5\u9ad8\u7528\u4e86\u54ea\u4e9b\u5177\u4f53\u7684\u989c\u6599\u6765\u8c03\u51fa\u300a\u5367\u5ba4\u300b\u7684\u989c\u8272\uff1f",
+          "rationale": "\u6458\u5f55\u63cf\u8ff0\u4e86\u8272\u5f69\uff0c\u4e5f\u8bf4\u660e\u4e86\u5a92\u6750\uff0c\u4f46\u6ca1\u6709\u6307\u660e\u7528\u7684\u662f\u54ea\u4e9b\u5177\u4f53\u7684\u989c\u6599\u3002"
+        },
+        {
+          "request_id": "verify-04-zh-CN-r3",
+          "text": "\u9986\u65b9\u53c8\u662f\u600e\u4e48\u63cf\u8ff0\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u7684\u7b14\u89e6\u7684",
+          "artwork_id": "aic-11723",
+          "facet": "brushwork_appearance",
+          "status": "out_of_scope",
+          "chunk_ids": [],
+          "standalone_query": "\u9986\u65b9\u662f\u600e\u4e48\u63cf\u8ff0\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u7684\u7b14\u89e6\u7684\uff1f",
+          "rationale": "\u5f53\u524d\u4f5c\u54c1\u662f\u300a\u5367\u5ba4\u300b\uff0c\u8fd9\u9879\u8bf7\u6c42\u95ee\u7684\u662f\u53e6\u4e00\u4ef6\u5df2\u77e5\u4f5c\u54c1\u300a\u68b3\u5986\u7684\u5973\u4eba\u300b\u3002"
+        }
+      ]
+    }
+  ]
+}

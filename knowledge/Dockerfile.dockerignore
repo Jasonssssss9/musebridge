@@ -7,6 +7,7 @@ knowledge/**
 !knowledge/dataset.py
 !knowledge/errors.py
 !knowledge/http_service.py
+!knowledge/query.py
 !knowledge/retrieval.py
 !knowledge/data/
 knowledge/data/**
