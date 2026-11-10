@@ -6,14 +6,14 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/Jasonssssss9/musebridge/api/internal/jsonwire"
 )
 
 const institution = "Art Institute of Chicago"
@@ -95,7 +95,7 @@ func Load(path, expectedVersion string) (*Dataset, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read seed: %w", err)
 	}
-	if err := validateJSON(data); err != nil {
+	if err := jsonwire.Validate(data); err != nil {
 		return nil, fmt.Errorf("invalid seed JSON: %w", err)
 	}
 	root, err := objectFields(data, "dataset_version artworks sources chunks")
@@ -241,86 +241,4 @@ func objectFields(data []byte, fields string) (map[string]json.RawMessage, error
 		}
 	}
 	return object, nil
-}
-
-// encoding/json accepts duplicate keys and replaces malformed Unicode. Reject
-// both before decoding the typed seed so the Go and Python loaders agree.
-func validateJSON(data []byte) error {
-	if !utf8.Valid(data) || !json.Valid(data) {
-		return fmt.Errorf("expected one valid UTF-8 JSON value")
-	}
-	inside := false
-	for i := 0; i < len(data); i++ {
-		if data[i] == '"' {
-			inside = !inside
-		}
-		if !inside || data[i] != '\\' {
-			continue
-		}
-		if data[i+1] != 'u' {
-			i++
-			continue
-		}
-		value, _ := strconv.ParseUint(string(data[i+2:i+6]), 16, 16)
-		if value >= 0xd800 && value <= 0xdbff {
-			if i+12 > len(data) || string(data[i+6:i+8]) != `\u` {
-				return fmt.Errorf("unpaired Unicode surrogate")
-			}
-			low, err := strconv.ParseUint(string(data[i+8:i+12]), 16, 16)
-			if err != nil || low < 0xdc00 || low > 0xdfff {
-				return fmt.Errorf("unpaired Unicode surrogate")
-			}
-			i += 11
-		} else {
-			if value >= 0xdc00 && value <= 0xdfff {
-				return fmt.Errorf("unpaired Unicode surrogate")
-			}
-			i += 5
-		}
-	}
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.UseNumber()
-	var visit func() error
-	visit = func() error {
-		token, err := decoder.Token()
-		if err != nil {
-			return err
-		}
-		switch token {
-		case json.Delim('{'):
-			seen := make(map[string]bool)
-			for decoder.More() {
-				key, err := decoder.Token()
-				if err != nil {
-					return err
-				}
-				name := key.(string)
-				if seen[name] {
-					return fmt.Errorf("duplicate JSON property")
-				}
-				seen[name] = true
-				if err := visit(); err != nil {
-					return err
-				}
-			}
-			_, err = decoder.Token()
-			return err
-		case json.Delim('['):
-			for decoder.More() {
-				if err := visit(); err != nil {
-					return err
-				}
-			}
-			_, err = decoder.Token()
-			return err
-		}
-		return nil
-	}
-	if err := visit(); err != nil {
-		return err
-	}
-	if _, err := decoder.Token(); err != io.EOF {
-		return fmt.Errorf("trailing JSON content")
-	}
-	return nil
 }
