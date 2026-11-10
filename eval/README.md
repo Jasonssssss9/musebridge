@@ -8,6 +8,7 @@ This directory separates the frozen demo fixtures from broader retrieval diagnos
 | --- | --- |
 | [aic-seed-v0.1.tests.json](aic-seed-v0.1.tests.json) | Original frozen demo questions and artwork isolation fixtures. |
 | [aic-retrieval-v0.1.json](aic-retrieval-v0.1.json) | Additional reviewed questions with semantic evidence labels. |
+| [aic-retrieval-independent-v0.1.json](aic-retrieval-independent-v0.1.json) | Twelve independently authored utterances used to check transfer to new wording. |
 | [retrieval_eval.py](retrieval_eval.py) | Standard-library validation, evaluation and report CLI. |
 | [Top-1 baseline](reports/aic-retrieval-v0.1.top1.json) | Recorded diagnostic results with `top_k=1`. |
 | [Top-2 baseline](reports/aic-retrieval-v0.1.top2.json) | Recorded diagnostic results with `top_k=2`, the current default. |
@@ -16,7 +17,7 @@ The new suite contains 48 utterances organized as 24 English/Chinese pairs. Each
 
 The seed remains [aic-seed-v0.1](../knowledge/data/aic-seed-v0.1.json): The Bedroom (`aic-28560`) and Woman at Her Toilette (`aic-11723`), with two chunks per artwork. Each artwork has a medium chunk and a short museum description chunk. Labels use only those four released excerpts. Full museum pages, artwork metadata outside the chunks and general art knowledge are outside this evaluation's evidence scope.
 
-Neither the released seed, the original fixtures nor the keyword retriever was changed to improve these scores. The runtime service does not import the evaluation suite or use its gold labels.
+The recorded reports preserve the original keyword baseline. The first retrieval revision below keeps the seed, frozen fixtures, and original diagnostic labels fixed. The runtime service does not import the evaluation suites or use their gold labels.
 
 ## Run the evaluation
 
@@ -148,7 +149,43 @@ Top-2 category results make the remaining problems visible:
 
 The English and Chinese halves happen to have the same aggregate results on these authored pairs. That does not establish equal performance on general visitor language.
 
-The current baseline misses all eight semantic-gap utterances. In the multi-topic group, two questions retrieve the description but miss the required medium. Hard artwork filtering prevents foreign evidence records, yet a question naming the other artwork can still trigger an irrelevant local chunk. These are different failure modes and need separate future remedies.
+The recorded baseline misses all eight semantic-gap utterances. In the multi-topic group, two questions retrieve the description but miss the required medium. Hard artwork filtering prevents foreign evidence records, yet a question naming the other artwork can still trigger an irrelevant local chunk. These are different failure modes and need separate future remedies.
+
+## First contextual keyword revision
+
+We compared the revised retriever with commit `c072b65` at `top_k=2` using the same four excerpts. The pre-change run on the original suite matched the recorded top-2 baseline. All eight complete misses came from four bilingual intents, and both incomplete multi-topic results came from one bilingual intent:
+
+| Original case pairs | Missing evidence and cause |
+| --- | --- |
+| `semantic-gap-01` | The medium chunk was missed because a question about what a picture was painted on did not match a medium alias. |
+| `semantic-gap-02` | The Bedroom description was missed because the question described the scene as unsettling without using an existing energy alias. |
+| `semantic-gap-03` | The Morisot description was missed because the questions used painter's marks or 画痕 instead of brushwork. |
+| `semantic-gap-04` | The Morisot description was missed because the questions identified the background by its position behind the figure and its depicted shapes. |
+| `multi-topic-03` | Both questions found brushwork but missed the medium. They asked about paint and surface or 颜料和底材. |
+
+The revision maps those expressions to the existing topics with specific aliases and punctuation-delimited context rules. It collects all matched topics across a compound question. Scoring, artwork filtering, and the response contract stay the same. Visual-effect cues connect unease to the depicted scene so a question about the artist feeling uneasy does not gain that new match.
+
+| Top-2 metric | Original 48 before | Original 48 after | Independent 12 before | Independent 12 after |
+| --- | ---: | ---: | ---: | ---: |
+| Positives with at least one relevant chunk | 20/28 (71.43%) | 28/28 (100%) | 2/6 (33.33%) | 3/6 (50%) |
+| Positives with all gold chunks | 18/28 (64.29%) | 28/28 (100%) | 0/6 (0%) | 1/6 (16.67%) |
+| Mean evidence recall | 67.86% | 100% | 16.67% | 33.33% |
+| Negatives returning any evidence | 14/20 (70%) | 14/20 (70%) | 4/6 (66.67%) | 4/6 (66.67%) |
+| Foreign evidence records / invalid responses | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+
+Only the ten diagnosed utterances changed on the original suite. The independent suite contains six English/Chinese pairs authored without seeing the new rules. Its wording was revealed after the first candidate was scored on the original suite. A separate regression probe led to tighter visual-effect matching, and rerunning both suites confirmed that no case result changed from that tightening.
+
+The independent run recovered the Chinese question about the appearance of painting marks. The English phrasing “marks from the brush” and both paper-versus-woven-surface questions still missed. Both parts of the new compound question were supported by the seed, but retrieval found only the medium for both languages. The revision improves coverage for the diagnosed expressions and leaves substantial misses and negative returns on new phrasing. The six new paired intents provide a small transfer check over the same evidence, not a general accuracy estimate.
+
+Run the two current comparisons from the repository root:
+
+```bash
+python3 -m eval.retrieval_eval --top-k 2 --output /tmp/musebridge-contextual-top2.json
+python3 -m eval.retrieval_eval --suite eval/aic-retrieval-independent-v0.1.json \
+  --top-k 2 --output /tmp/musebridge-independent-top2.json
+```
+
+For the independent before result, run the second command from a separate checkout of `c072b65`, passing the absolute path to the independent suite from this checkout. The original JSON baseline reports remain unchanged.
 
 ## Reproducibility and future comparisons
 
@@ -156,4 +193,4 @@ CLI reports record Python and Unicode versions plus SHA-256 hashes of the seed, 
 
 Keep these reports as the original keyword baseline. For a future retriever change, run the same suite into a new report path, compare aggregate scores and inspect the changed case IDs. Do not adjust gold to match implementation output. If a question, label or evidence scope needs correction, review the change, release a new suite version and retain enough history to explain the comparison.
 
-This is a small authored diagnostic set over four excerpts. It is not held-out evaluation, production accuracy, a representative visitor study, latency measurement or generated-answer assessment. It exposes useful weaknesses before B or a model is available; broader corpus coverage and independently collected questions remain future work.
+Both suites use authored questions over the same four excerpts. They measure retrieval evidence and do not estimate visitor behavior, production accuracy, latency, or answer quality. The independent wording suite has now been inspected. Use fresh questions to assess transfer in later retrieval revisions.

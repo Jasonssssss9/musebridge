@@ -427,12 +427,12 @@ Reject the whole response on any violation. Do not silently drop an invalid reco
 
 ### 4.3 Deterministic keyword baseline
 
-C uses a small, reviewed bilingual topic dictionary for the first release. These are global aliases, not a mapping from full evaluation questions or case IDs to answers.
+C uses a reviewed bilingual topic dictionary and contextual phrase rules. They apply across artworks and map query wording to the same published topics.
 
 | Topic | Query aliases |
 | --- | --- |
-| `material` | `material`, `materials`, `medium`, `made of`, `oil`, `canvas`, `材料`, `材质`, `媒介`, `油画`, `画布` |
-| `brushwork` | `brushwork`, `brushstroke`, `brushstrokes`, `brush stroke`, `brush strokes`, `brush-stroke`, `brush-strokes`, `笔触` |
+| `material` | `material`, `materials`, `medium`, `made of`, `oil`, `canvas`, `painting support`, `材料`, `材质`, `媒介`, `油画`, `画布`, `底材` |
+| `brushwork` | `brushwork`, `brushstroke`, `brushstrokes`, `brush stroke`, `brush strokes`, `brush-stroke`, `brush-strokes`, `brush mark`, `brush marks`, `paint mark`, `paint marks`, `笔触`, `画痕`, `笔痕` |
 | `energy` | `nervous`, `energy`, `紧张` |
 | `color` | `color`, `colors`, `colour`, `colours`, `颜色`, `色彩` |
 | `perspective` | `perspective`, `receding lines`, `透视` |
@@ -440,7 +440,14 @@ C uses a small, reviewed bilingual topic dictionary for the first release. These
 
 Index the published `topics` attached to each chunk. Medium chunks carry `material` even though the source field need not contain that word. This is how a material question can retrieve the catalog's medium value without an embedding model.
 
-For query matching, apply Unicode NFKC normalization, lowercase Latin text, trim and collapse whitespace. Match English words/phrases with word boundaries and Chinese aliases as substrings; do not stem or fuzzy-match in v0.1. Each topic counts at most once. Compute score as the number of distinct query topics present in the chunk's topics; discard score-zero chunks, sort by descending score, then lexicographically ascending `chunk_id`, and take `top_k`. Preserve source excerpts unchanged by query normalization.
+For query matching, apply Unicode NFKC normalization, lowercase Latin text, trim and collapse whitespace. Match English words or phrases with word boundaries and Chinese aliases as substrings. The retriever also checks for these cues within punctuation-delimited clauses:
+
+- Painting support questions and joint requests for paint and surface map to `material`.
+- References to an artist's or painter's marks map to `brushwork`.
+- A room or scene described as feeling or looking unsettling maps to `energy`.
+- References to depicted patterns or shapes behind a figure map to `background`.
+
+The rules use literal cues and bounded patterns, with no stemming or fuzzy matching. Keep topics found across clauses so a compound query can contribute more than one topic. Each topic counts at most once. Compute score as the number of distinct query topics present in the chunk's topics; discard score-zero chunks, sort by descending score, then lexicographically ascending `chunk_id`, and take `top_k`. Preserve source excerpts unchanged by query normalization.
 
 The four chunks are topic-tagged as follows:
 

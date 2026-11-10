@@ -201,6 +201,43 @@ class RetrievalTests(unittest.TestCase):
         response = self.search(BEDROOM, "Describe the brushwork, please.")
         self.assertEqual(chunk_ids(response), [BEDROOM_DESCRIPTION])
 
+    def test_contextual_phrases_retrieve_single_and_compound_evidence(self):
+        cases = (
+            (BEDROOM, "On which surface was this picture painted?", [BEDROOM_MEDIUM]),
+            (BEDROOM, "Why does this scene feel so uneasy?", [BEDROOM_DESCRIPTION]),
+            (TOILETTE, "What do the patterned shapes behind the sitter suggest?", [TOILETTE_DESCRIPTION]),
+            (
+                TOILETTE,
+                "Which paint and support did she use, and what are the artist’s marks like?",
+                [TOILETTE_DESCRIPTION, TOILETTE_MEDIUM],
+            ),
+            (
+                BEDROOM,
+                "这幅是画在什么东西上的？画面为什么显得不安？",
+                [BEDROOM_DESCRIPTION, BEDROOM_MEDIUM],
+            ),
+            (TOILETTE, "她身后那些花纹看着像什么？", [TOILETTE_DESCRIPTION]),
+        )
+        for artwork, query, expected in cases:
+            with self.subTest(artwork=artwork, query=query):
+                response = self.search(artwork, query)
+                self.assert_scoped_evidence(response, artwork)
+                self.assertEqual(chunk_ids(response), expected)
+
+    def test_ambiguous_cues_do_not_match_without_local_context(self):
+        for artwork, query in (
+            (BEDROOM, "What was this painted on Tuesday for?"),
+            (BEDROOM, "What support did the artist receive?"),
+            (BEDROOM, "Did the artist feel uneasy? Where is the painting now?"),
+            (BEDROOM, "Did the artist feel uneasy about this painting?"),
+            (BEDROOM, "画家为什么不安？这幅画的构图是谁设计的？"),
+            (BEDROOM, "画家看起来对这幅画的构图有些不安吗？"),
+            (TOILETTE, "Who stood behind the sitter in real life?"),
+            (TOILETTE, "她身后站的是谁？"),
+        ):
+            with self.subTest(artwork=artwork, query=query):
+                self.assertEqual(chunk_ids(self.search(artwork, query)), [])
+
     def test_unknown_topics_and_other_artwork_topics_do_not_fall_back(self):
         for artwork, query in (
             (BEDROOM, "zither"),

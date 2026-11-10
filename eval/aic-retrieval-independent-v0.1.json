@@ -1,0 +1,153 @@
+{
+  "suite_id": "aic-retrieval-independent-v0.1",
+  "dataset_version": "aic-seed-v0.1",
+  "description": "A supplementary set of independently authored bilingual checks over the frozen four-chunk seed. This small diagnostic set is not a representative visitor study.",
+  "cases": [
+    {
+      "case_id": "independent-01-en",
+      "pair_id": "independent-01",
+      "category": "semantic_gap",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Are the marks from the brush smooth and continuous here, or thick and broken?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The selected artwork's description explicitly characterizes its brushwork as thick and broken, resolving the contrast in the question."
+    },
+    {
+      "case_id": "independent-01-zh-cn",
+      "pair_id": "independent-01",
+      "category": "semantic_gap",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "这幅画的画痕是平滑连贯的，还是粗厚、断断续续的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-28560-description-01"
+      ],
+      "rationale": "The selected artwork's description explicitly characterizes its brushwork as thick and broken, resolving the contrast in the question."
+    },
+    {
+      "case_id": "independent-02-en",
+      "pair_id": "independent-02",
+      "category": "paraphrase",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Was this painted on paper or on a woven surface?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "rationale": "The medium record identifies canvas as the painting support. This resolves the paper-versus-woven-surface question without identifying the canvas fiber."
+    },
+    {
+      "case_id": "independent-02-zh-cn",
+      "pair_id": "independent-02",
+      "category": "paraphrase",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这幅画是画在纸上的，还是画在织物上的？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium"
+      ],
+      "rationale": "The medium record identifies canvas as the painting support. This resolves the paper-versus-woven-surface question without identifying the canvas fiber."
+    },
+    {
+      "case_id": "independent-03-en",
+      "pair_id": "independent-03",
+      "category": "multi_topic",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Is this an oil painting on fabric, and what in the room looks as if it has a flower pattern?",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium",
+        "aic-11723-description-01"
+      ],
+      "rationale": "The medium record identifies oil on canvas. The separate description connects the brushstrokes to a suggested floral-patterned bedspread and wallpaper. Both excerpts are needed for the two questions."
+    },
+    {
+      "case_id": "independent-03-zh-cn",
+      "pair_id": "independent-03",
+      "category": "multi_topic",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "这是一幅画在布上的油画吗？房间里什么物件看起来带花卉图案？",
+      "answerability": "full",
+      "relevant_chunk_ids": [
+        "aic-11723-medium",
+        "aic-11723-description-01"
+      ],
+      "rationale": "The medium record identifies oil on canvas. The separate description connects the brushstrokes to a suggested floral-patterned bedspread and wallpaper. Both excerpts are needed for the two questions."
+    },
+    {
+      "case_id": "independent-04-en",
+      "pair_id": "independent-04",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "Are those receding lines based on the actual measurements of Van Gogh's bedroom?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description identifies sharply receding lines and a possible visual effect. Neither released excerpt says whether Van Gogh measured the room or based the painted lines on those measurements."
+    },
+    {
+      "case_id": "independent-04-zh-cn",
+      "pair_id": "independent-04",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "那些显出透视感的线条，是梵高按自己卧室的实际尺寸画的吗？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description identifies sharply receding lines and a possible visual effect. Neither released excerpt says whether Van Gogh measured the room or based the painted lines on those measurements."
+    },
+    {
+      "case_id": "independent-05-en",
+      "pair_id": "independent-05",
+      "category": "lexical_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-11723",
+      "query": "Did Morisot wait for the rest of the paint to dry before adding the wallpaper pattern?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description suggests wallpaper in the depicted background but does not establish the order of painting or whether another layer had already dried."
+    },
+    {
+      "case_id": "independent-05-zh-cn",
+      "pair_id": "independent-05",
+      "category": "lexical_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "query": "莫里索是不是等画上其他部分的颜料干了，才加上墙纸花纹的？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The description suggests wallpaper in the depicted background but does not establish the order of painting or whether another layer had already dried."
+    },
+    {
+      "case_id": "independent-06-en",
+      "pair_id": "independent-06",
+      "category": "scope_confusion",
+      "query_language": "en",
+      "artwork_id": "aic-28560",
+      "query": "In Morisot's Woman at Her Toilette, does the museum see the floral pattern on the bedspread, the wallpaper, or both?",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The request concerns only Morisot's Woman at Her Toilette. The active artwork is The Bedroom, whose released evidence cannot answer a question about Morisot's depicted objects."
+    },
+    {
+      "case_id": "independent-06-zh-cn",
+      "pair_id": "independent-06",
+      "category": "scope_confusion",
+      "query_language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "query": "莫里索《梳妆的女子》里的花纹，馆方认为是床罩上的、墙纸上的，还是两者都有？",
+      "answerability": "none",
+      "relevant_chunk_ids": [],
+      "rationale": "The request concerns only Morisot's Woman at Her Toilette. The active artwork is The Bedroom, whose released evidence cannot answer a question about Morisot's depicted objects."
+    }
+  ]
+}

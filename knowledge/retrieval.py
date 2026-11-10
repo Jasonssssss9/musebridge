@@ -9,12 +9,13 @@ from .errors import RetrievalError
 
 _TOPIC_ALIASES = {
     "material": (
-        "material", "materials", "medium", "made of", "oil", "canvas",
-        "材料", "材质", "媒介", "油画", "画布",
+        "material", "materials", "medium", "made of", "oil", "canvas", "painting support",
+        "材料", "材质", "媒介", "油画", "画布", "底材",
     ),
     "brushwork": (
         "brushwork", "brushstroke", "brushstrokes", "brush stroke", "brush strokes",
-        "brush-stroke", "brush-strokes", "笔触",
+        "brush-stroke", "brush-strokes", "brush mark", "brush marks", "paint mark", "paint marks",
+        "笔触", "画痕", "笔痕",
     ),
     "energy": ("nervous", "energy", "紧张"),
     "color": ("color", "colors", "colour", "colours", "颜色", "色彩"),
@@ -31,6 +32,61 @@ _TOPIC_PATTERNS = {
     )
     for topic, aliases in _TOPIC_ALIASES.items()
 }
+
+
+# Each alternative describes cues that must occur in the same clause. Ambiguous
+# words such as "surface", "uneasy" and "behind" are not standalone aliases.
+_CLAUSE_SEPARATOR = re.compile(r"[,.;:!?，。；：！？、]+")
+_CONTEXTUAL_TOPIC_CUES = {
+    "material": (
+        (r"\b(?:what|which)\b", r"\bpainted (?:on|onto)(?=\s*(?:$|(?:and|or)\b))"),
+        (
+            r"\b(?:what|which) (?:(?:kind|type) of )?(?:surface|support)\b",
+            r"\b(?:paint(?:ed|ing)?|picture|artwork)\b",
+        ),
+        (r"\b(?:paint and (?:the )?(?:surface|support)|(?:surface|support) and (?:the )?paint)\b",),
+        (r"(?:画|绘)在.{0,16}(?:什么|哪[种类样]).{0,12}上",),
+    ),
+    "brushwork": (
+        (r"\b(?:painter|artist)['’]s marks?\b",),
+    ),
+    "energy": (
+        (
+            r"\b(?:room|scene|painting|picture|image|composition) "
+            r"(?:(?:can|could|may|might) )?(?:feels?|seems?|looks?) "
+            r"(?:(?:so|very|rather|somewhat|slightly|a little|a bit) )?(?:unsettling|uneasy)\b",
+        ),
+        (r"(?:画面|房间|场景|构图).{0,12}(?:显得|看起来|让人|令人|给人).{0,6}不安",),
+    ),
+    "background": (
+        (
+            r"\bbehind (?:her|(?:the )?(?:figure|woman|sitter))\b",
+            r"\b(?:floral|flowers?|flower[- ]like|patterns?|shapes?|looks? like|suggest(?:s|ed)?)\b",
+        ),
+        (r"身后", r"花形|花纹|花卉|花朵|图案|看起来像|看着像|像什么"),
+    ),
+}
+_CONTEXTUAL_TOPIC_PATTERNS = {
+    topic: tuple(tuple(re.compile(cue) for cue in rule) for rule in rules)
+    for topic, rules in _CONTEXTUAL_TOPIC_CUES.items()
+}
+
+
+def _query_topics(normalized_query: str) -> set[str]:
+    topics = {
+        topic for topic, pattern in _TOPIC_PATTERNS.items() if pattern.search(normalized_query)
+    }
+    clauses = _CLAUSE_SEPARATOR.split(normalized_query)
+    for topic, alternatives in _CONTEXTUAL_TOPIC_PATTERNS.items():
+        if topic in topics:
+            continue
+        if any(
+            all(cue.search(clause) for cue in rule)
+            for clause in clauses
+            for rule in alternatives
+        ):
+            topics.add(topic)
+    return topics
 
 
 def retrieve(
@@ -65,9 +121,7 @@ def retrieve(
         raise RetrievalError("artwork_not_found", "The requested artwork is not in the dataset.")
 
     normalized_query = " ".join(unicodedata.normalize("NFKC", query).lower().split())
-    topics = {
-        topic for topic, pattern in _TOPIC_PATTERNS.items() if pattern.search(normalized_query)
-    }
+    topics = _query_topics(normalized_query)
     ranked_chunks = []
     for chunk in dataset.chunks:
         if chunk["artwork_id"] != artwork_id:
