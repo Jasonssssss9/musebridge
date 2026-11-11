@@ -337,6 +337,14 @@ class RetrievalHTTPTests(unittest.TestCase):
         )
         self.assert_error(result, 400, "invalid_request", retryable=False)
 
+    def test_path_only_endpoints_reject_empty_fragments_and_repeated_leading_slashes(self):
+        for target in (b"/readyz#", b"//readyz"):
+            with self.subTest(target=target):
+                response = self.raw_request(
+                    b"GET " + target + b" HTTP/1.1\r\nHost: localhost\r\n\r\n"
+                )
+                self.assert_error(response, 400, "invalid_request", retryable=False)
+
     def test_unknown_http_verb_uses_contract_method_error(self):
         result = self.request("MUSEBRIDGE", "/retrieve")
         self.assert_error(result, 405, "method_not_allowed", retryable=False)

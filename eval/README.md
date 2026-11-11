@@ -161,9 +161,9 @@ We compared the revised retriever with commit `c072b65` at `top_k=2` using the s
 | --- | --- |
 | `semantic-gap-01` | The medium chunk was missed because a question about what a picture was painted on did not match a medium alias. |
 | `semantic-gap-02` | The Bedroom description was missed because the question described the scene as unsettling without using an existing energy alias. |
-| `semantic-gap-03` | The Morisot description was missed because the questions used painter's marks or 画痕 instead of brushwork. |
+| `semantic-gap-03` | The Morisot description was missed because the questions used terms for the painter's marks instead of brushwork. |
 | `semantic-gap-04` | The Morisot description was missed because the questions identified the background by its position behind the figure and its depicted shapes. |
-| `multi-topic-03` | Both questions found brushwork but missed the medium. They asked about paint and surface or 颜料和底材. |
+| `multi-topic-03` | Both questions found brushwork but missed the medium. They asked about the type of paint and the painting surface. |
 
 The revision maps those expressions to the existing topics with specific aliases and punctuation-delimited context rules. It collects all matched topics across a compound question. Scoring, artwork filtering, and the response contract stay the same. Visual-effect cues connect unease to the depicted scene so a question about the artist feeling uneasy does not gain that new match.
 
@@ -215,7 +215,7 @@ The subquestion evaluator checks whether each requested fact gets the evidence t
 
 - [Development suite](aic-subquestions-v0.1.json) contains bilingual contrasts for size versus medium, quoted premises, context, comparisons and multiple facts sharing a chunk.
 - [First audit suite](aic-subquestions-audit-v0.1.json) and [challenge suite](aic-subquestions-challenge-v0.1.json) were independently authored before they were first scored. Their first runs exposed compound, description and scope errors. They are now regression sets.
-- [Final verification suite](aic-subquestions-blind-v0.1.json) was separately authored and reviewed against the four released excerpts. It was first scored after the final retrieval code was frozen. No retrieval rule changed in response to that score.
+- [Final verification suite](aic-subquestions-blind-v0.1.json) was separately authored and reviewed against the four released excerpts. It was first scored after the final retrieval code was frozen. No retrieval rule changed in that revision after the first score.
 
 A case labels each request with its normalized text span, requested artwork, fact facet, expected status and evidence IDs. Comparison sides can share a span and have distinct artwork IDs. A standalone wording resolves context for the isolated diagnostic without supplying the answer. A statement that sets context has no gold request.
 
@@ -229,6 +229,8 @@ python3 -m eval.subquestion_eval --suite eval/aic-subquestions-blind-v0.1.json \
 Full mode sends the complete question and aligns actual request bindings by normalized span, subject and facet. It counts a hit for evidence on a correctly attributed binding. An extra wrong binding still fails strict scoring. Unattributed or missing requests remain in the gold denominators. Report negative results as false returns, correctly empty, and unresolved, with insufficient evidence and out-of-scope requests separate. Strict success requires all requests and bindings to be correct, with no extras. Each case uses the same two-result budget and immutable seed. The trace stays in the local Python evaluation path.
 
 Isolated mode asks each reviewed standalone request within the original artwork scope. Its score diagnoses evidence selection after the wording and request boundary have been supplied. It does not measure how the system splits or resolves the original question, and the standalone rephrasing can itself affect matching. Each artwork has only two eligible chunks, so the combined budget remains at most two for this release.
+
+The table records results at revision `44974d3`. The current verification fixture uses English reviewer rationales. The questions, request spans, artwork assignments and expected evidence match the original fixture.
 
 | Suite and mode | Positive requests hit / all required | Negative false returns | Negative unresolved | Strict whole-query pass |
 | --- | ---: | ---: | ---: | ---: |

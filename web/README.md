@@ -42,7 +42,7 @@ Mock mode shows a "Mock API" pill in the top bar. Tap it to choose what the next
 | Server takes 15 s | The 12-second browser timeout, then polling history |
 | Server restarted | `404 conversation_not_found`: new conversation, question kept unsent |
 
-The mock keeps its "server" state in `localStorage` so it survives reloads like the real API does. "Reset mock server" clears it. Its answers copy the fixture text in contract section 6; it matches questions exactly as the contract says, so typed wording outside the listed examples returns "outside this demo's examples".
+The mock keeps its "server" state in `localStorage` so it survives reloads like the real API does. "Reset mock server" clears it. Its answers copy the reviewed fixture text in contract section 6. Questions outside the listed examples show "Outside this demo's examples" when mock retrieval returns evidence. An empty result shows "Not enough evidence".
 
 ## Layout
 

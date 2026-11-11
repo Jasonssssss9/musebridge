@@ -574,7 +574,7 @@ The fixture registry supports exactly these intents and phrasings in this releas
 
 The Go API still calls the real retrieval service for recognized known-gap fixtures. The fixture outcome remains insufficient even if a fault-injection stub supplies a related chunk. No passage asserts the required hours or definitive name.
 
-All standalone questions go to the retrieval service as their trimmed original text. Unsupported wording may retrieve evidence but must not silently select the nearest canned answer. For example, `Why did the artist choose this material?` matches the material retrieval topic but is outside the fixture registry, so the final status is `unsupported_question` when the medium chunk is present.
+All standalone questions go to the retrieval service as their trimmed original text. Unsupported wording may retrieve evidence but must not silently select the nearest canned answer. The question `What is the material listed by the museum?` retrieves the medium chunk and falls outside the fixture registry, so its final status is `unsupported_question`.
 
 ### 6.2 Follow-up rule
 

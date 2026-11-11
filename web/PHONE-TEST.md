@@ -23,7 +23,7 @@ For live mode, start Python and Go using the [setup guide](../docs/getting-start
 | 5 | Type `What about the brushwork?` | Answer about thick, broken brushwork, citing The Bedroom's description |
 | 6 | Ask the brushwork example on Woman at Her Toilette | A different answer, citing that work's own description |
 | 7 | On The Bedroom, type `How many hours did Van Gogh actually spend painting the Chicago version?` | "Not enough evidence", no sources |
-| 8 | Type `Why did the artist choose this material?` | "Outside this demo's examples", no sources |
+| 8 | Type `What is the material listed by the museum?` | "Outside this demo's examples", no sources |
 | 9 | Switch the language to 简体中文 and tap a suggested question | Interface and answer in Chinese; the source excerpt stays in English |
 | 10 | Refresh the page | The same conversation is still there |
 | 11 | Mock API pill → "503 retrieval_unavailable", then ask a question | Red failure box, question kept, "Try again" shown |

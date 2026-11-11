@@ -10,7 +10,6 @@ import signal
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from time import monotonic
-from urllib.parse import urlsplit
 from uuid import uuid4
 
 from . import DATASET_VERSION, DatasetValidationError, RetrievalError, load_dataset, retrieve
@@ -207,13 +206,11 @@ class _Handler(BaseHTTPRequestHandler):
     def _dispatch(self):
         self._ensure_request_id()
         try:
-            try:
-                target = urlsplit(self.path)
-            except ValueError as exc:
-                raise _invalid("The HTTP request target is malformed.") from exc
-            if target.scheme or target.netloc or target.fragment or "?" in self.path:
+            # The standard handler normalizes leading slashes before dispatch.
+            target = self.requestline.split()[1]
+            if not target.startswith("/") or target.startswith("//") or "?" in target or "#" in target:
                 raise _invalid("Use an endpoint path without query parameters or fragments.")
-            method = ROUTES.get(target.path)
+            method = ROUTES.get(target)
             if method is None:
                 raise _HTTPError(404, "route_not_found", "The requested route does not exist.")
             if self.command != method:
@@ -222,13 +219,13 @@ class _Handler(BaseHTTPRequestHandler):
                     "The HTTP method is not supported for this route.", allow=method,
                 )
             dataset = self.server.dataset
-            if target.path == "/healthz":
+            if target == "/healthz":
                 self._send_json(200, {
                     "status": "ok",
                     "dataset_version": dataset.dataset_version if dataset is not None else None,
                 })
                 return
-            if target.path == "/readyz":
+            if target == "/readyz":
                 if dataset is None:
                     raise _HTTPError(
                         503, "service_not_ready",

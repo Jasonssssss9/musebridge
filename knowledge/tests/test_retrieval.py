@@ -733,6 +733,37 @@ class RetrievalTests(unittest.TestCase):
                     [("flower_species", "insufficient_evidence")],
                 )
 
+    def test_context_statements_do_not_add_evidence_to_the_following_question(self):
+        for query in (
+            "我已经知道这幅画是什么材质。墙纸花纹看起来像什么？",
+            "我知道这是布面油画，不过能描述一下笔触吗？",
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=TOILETTE, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [TOILETTE_DESCRIPTION])
+                self.assertEqual(len(trace["requests"]), 1)
+
+    def test_general_material_and_color_descriptions_do_not_support_exact_details(self):
+        for query, facet in (
+            ("How many inches wide is this canvas?", "dimensions"),
+            ("这幅画布宽多少厘米？", "dimensions"),
+            ("What brand of oil paint did the artist use?", "paint_brand"),
+            ("油画颜料是什么牌子？", "paint_brand"),
+            ("Which colors does the museum list by name?", "color_identity"),
+            ("馆方有记录颜色的具体名称吗？", "color_identity"),
+        ):
+            with self.subTest(query=query):
+                result, trace = retrieve_with_trace(
+                    self.dataset, artwork_id=BEDROOM, query=query, dataset_version=VERSION,
+                )
+                self.assertEqual(chunk_ids(result), [])
+                self.assertEqual(
+                    [(r["facet"], r["status"]) for r in trace["requests"]],
+                    [(facet, "insufficient_evidence")],
+                )
+
     def test_equal_medium_can_compare_an_explicit_title_to_the_current_work(self):
         result, trace = retrieve_with_trace(
             self.dataset, artwork_id=TOILETTE, dataset_version=VERSION,

@@ -28,9 +28,9 @@ def main() -> int:
         )
     except (DatasetValidationError, RetrievalError) as exc:
         code = exc.code if isinstance(exc, RetrievalError) else "invalid_dataset"
-        print(json.dumps({"error": {"code": code, "message": str(exc)}}, ensure_ascii=False), file=sys.stderr)
+        print(json.dumps({"error": {"code": code, "message": str(exc)}}), file=sys.stderr)
         return 2
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    print(json.dumps(result, indent=2))
     return 0
 
 

@@ -1,6 +1,7 @@
 """Exercise the documented local command as a separate process."""
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -11,10 +12,10 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CliTests(unittest.TestCase):
-    def run_cli(self, *arguments):
+    def run_cli(self, *arguments, env=None):
         return subprocess.run(
             [sys.executable, "-m", "knowledge", *arguments],
-            cwd=ROOT, capture_output=True, text=True, timeout=10,
+            cwd=ROOT, capture_output=True, text=True, timeout=10, env=env,
         )
 
     def test_material_query_returns_json_and_original_source(self):
@@ -25,6 +26,21 @@ class CliTests(unittest.TestCase):
         self.assertEqual(response["dataset_version"], "aic-seed-v0.1")
         self.assertEqual([hit["chunk_id"] for hit in response["evidence"]], ["aic-28560-medium"])
         self.assertEqual(response["evidence"][0]["excerpt"], "Oil on canvas")
+
+    def test_cli_json_round_trips_in_an_ascii_terminal(self):
+        env = dict(os.environ, PYTHONIOENCODING="ascii:strict")
+        arguments = ("--artwork-id", "aic-28560", "--query", "material")
+        result = self.run_cli(*arguments, env=env)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        source = json.loads(result.stdout)["evidence"][0]["source_title"]
+        self.assertEqual(source, "The Bedroom — Art Institute of Chicago API record")
+
+        seed = ROOT / "knowledge/data/does-not-exist-café.json"
+        result = self.run_cli(*arguments, "--seed", str(seed), env=env)
+        self.assertEqual(result.returncode, 2)
+        error = json.loads(result.stderr)["error"]
+        self.assertEqual(error["code"], "invalid_dataset")
+        self.assertIn(seed.name, error["message"])
 
     def test_empty_result_is_success(self):
         result = self.run_cli("--artwork-id", "aic-11723", "--query", "What is the woman's real name?")

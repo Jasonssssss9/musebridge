@@ -45,6 +45,7 @@ _RESTART = re.compile(
     r"|did|do|does|is|are|was|were|can|could|would|has|have|will|tell|describe|explain)\b)"
     r"|(?:,\s*)?\b(?:and|but)\s+(?=(?:please\s+)?(?:tell|describe|explain|show|identify|name|give)\b)"
     r"|[,，]\s*(?=另外|此外|还想问|也想问|再问|还有|又(?:是)?(?:怎么|怎样|如何|为什么|用|有))"
+    r"|[,，]\s*(?:不过|但是|但)\s*(?=能|可以|请|什么|哪|怎么|怎样|如何|为什么|是否)"
     r"|(?:\s*[,，])?\s*(?:以及|并且?)\s*(?=请(?:问|描述|解释|说说|告诉)|能否|是否|什么|哪(?:种|些)|怎么|如何)",
     re.I,
 )
@@ -55,6 +56,11 @@ _QUESTION = re.compile(
     r"|什么|多少|多宽|多高|多大|怎么|怎样|如何|何种|有何|何处|哪[里儿]|哪(?:一)?[个种类件些样]"
     r"|是否|是不是|有没有|还是|谁|[吗呢]\s*$", re.I,
 )
+_RECORD_QUESTION_TAIL = re.compile(
+    r"^\s*(?:馆方|展签|标签|资料|说明)?(?:上|中|里)?(?:是否有|有没有|有)"
+    r"(?:明确|相关)?(?:记载|记录|说明)[吗呢]?\s*$"
+)
+_DECLARATIVE_CONTEXT = re.compile(r"^\s*(?:我|我们)(?:已经|早就)?(?:知道|了解|听说|记得)")
 _COMMAND = re.compile(
     r"^\s*(?:please\s+)?(?:tell|describe|explain|show|identify|name|compare|give)\b"
     r"|\bi(?:\s+(?:also )?want|(?: would|['’]d) (?:also )?like) to (?:know|understand)\b"
@@ -148,6 +154,11 @@ _FLORAL_MOTIF = re.compile(
     r"\b(?:floral|flower(?:[- ](?:like|shaped))?) (?:patterns?|motifs?|designs?|prints?)\b"
     r"|花(?:卉)?(?:纹样|纹|形|图案)|植物(?:图案|纹样)", re.I,
 )
+_FLOWERS_IN_DESIGN = re.compile(
+    rf"{_FLOWER_EN}\s+(?:(?:shown|painted|depicted)\s+)?(?:on|in|within)\s+"
+    r"(?:(?:the|that|this) )?(?:wallpaper|bedspread|(?:floral )?(?:pattern|motif|design))\b"
+    rf"|(?:墙纸|壁纸|床罩|花纹|图案|纹样)(?:上|中|里)(?:的)?{_FLOWER_ZH}", re.I,
+)
 _BOTANICAL_DETAIL = re.compile(
     r"\b(?:species|genera|genus|cultivars?|botanical (?:identification|name)|scientific name)\b"
     r"|品种|物种|花名|学名|属种", re.I,
@@ -155,10 +166,13 @@ _BOTANICAL_DETAIL = re.compile(
 _IDENTITY_OF_REFERENCE = re.compile(
     rf"\b(?:identify|name|recognize|recognise)\s+{_ASPECT_PRONOUN}\b"
     rf"|\bwhat (?:are|were|is|was) {_ASPECT_PRONOUN}\s+(?:called|known as)\b"
+    rf"|\b(?:tell|recognize|recognise|identify|figure out)\s+what\s+{_ASPECT_PRONOUN}"
+    r"\s+(?:are|were|is|was)\s*$"
     r"|(?:辨认|认出|识别)(?:出)?(?:它(?:们)?|这些|那些)(?:吗|呢|$)"
     r"|(?:它(?:们)?|这些|那些)(?:叫(?:做)?什么(?:名字)?|是(?:哪(?:一)?种|什么品种))",
     re.I,
 )
+_FLOWER_NAMES = r"(?:roses?|tulips?|daisy|daisies|lily|lilies|peon(?:y|ies)|violets?|orchids?)"
 # Nominal mentions can introduce a referent in a statement without becoming requests.
 _ASPECT_NOUNS = {
     "line_recession": re.compile(r"\b(?:lines|perspective)\b|透视|线条|斜线", re.I),
@@ -239,7 +253,7 @@ _SUPPORTED = {
     ),
     "color_appearance": (_ASPECT_NOUNS["color_appearance"].pattern,),
     "line_recession": (
-        r"\b(?:perspective|receding lines)\b"
+        r"\b(?:perspective|receding lines|recession of (?:the )?lines)\b"
         rf"|\blines\b.{{0,42}}(?:{_LINE_MOVEMENT})"
         r"|透视|线条.{0,10}(?:往里|向纵深|退向|收缩|延伸)|纵深.{0,8}线条"
         rf"|(?:线条|斜线).{{0,12}}(?:{_LINE_MOVEMENT})|(?:{_LINE_MOVEMENT}).{{0,10}}(?:线条|斜线)",
@@ -266,6 +280,16 @@ _UNSUPPORTED = {
         r"|纤维|亚麻.{0,8}棉|棉.{0,8}亚麻|(?:画布|布料).{0,12}(?:用什么织|怎么织|什么线)",
     ),
     "pigment_identity": (_PIGMENT_MATERIAL.pattern,),
+    "paint_brand": (
+        r"\b(?:brand|manufacturer|maker)\b.{0,40}\b(?:paint|pigments?)\b"
+        r"|\b(?:paint|pigments?)\b.{0,28}\b(?:brand|manufacturer|maker)\b"
+        r"|(?:颜料|油彩).{0,12}(?:牌子|品牌|厂家)|(?:什么|哪(?:个|种))品牌.{0,8}(?:颜料|油彩)",
+    ),
+    "color_identity": (
+        r"\b(?:what|which)\b.{0,24}\bcolou?rs?\b.{0,48}\b(?:by name|named individually)\b"
+        r"|\b(?:exact|specific) (?:hues|colou?rs)\b"
+        r"|颜色.{0,10}(?:名称|名字)|具体是哪些颜色|色彩.{0,12}逐一(?:列出|列明)",
+    ),
     "brush_tool": (
         r"\b(?:brush (?:size|width)|(?:size|width) of (?:the |her |his |their )?brush(?:es)?"
         r"|(?:small|large|big|wide|narrow|thick|thin|flat|round|pointed|fan)"
@@ -288,8 +312,9 @@ _UNSUPPORTED = {
         rf"|\b(?:identify|name|recogni[sz]e) (?:the |these |those )?{_FLOWER_EN}"
         r"|\bbotanical (?:name|identity|identification)\b|植物学名"
         rf"|{_FLOWER_EN}.{{0,36}}\b(?:called|known as|identified as)\b"
-        r"|\b(?:are|is|were) (?:those|these|they|that|this|the flowers?) "
-        r"(?:roses?|tulips?|daisy|daisies|lily|lilies|peon(?:y|ies)|violets?|orchids?)\b"
+        rf"|\b(?:are|is|were) (?:those|these|they|that|this|the flowers?) {_FLOWER_NAMES}\b"
+        rf"|\b(?:could|might|can) (?:they|it|those|these|that|this"
+        rf"|(?:the|those|these) {_FLOWER_EN}) be (?:an? )?{_FLOWER_NAMES}\b"
         rf"|(?:什么|哪(?:一)?种|哪些种类的){_FLOWER_ZH}|花种|花名"
         rf"|{_FLOWER_ZH}(?:是|属于)(?:什么|哪(?:一)?种)(?:呢|吗|$)"
         rf"|{_FLOWER_ZH}.{{0,12}}叫(?:做)?什么(?:名字)?"
@@ -330,7 +355,10 @@ _UNSUPPORTED = {
         r"\b(?:(?:actual|real|exact|physical) )?(?:measurements?|dimensions?)\b"
         r"|\bhow (?:wide|tall|large|big) (?:is|was|are|were)\b"
         r"|\b(?:actual|real|exact|physical) (?:size|width|height)\b"
-        r"|尺寸|多宽|多高|多大|宽度是多少|高度是多少|实测|实际比例",
+        r"|\bhow many (?:inches|feet|centimet(?:er|re)s|millimet(?:er|re)s|met(?:er|re)s)"
+        r"\b.{0,12}\b(?:wide|high|tall|long)\b"
+        r"|尺寸|多宽|多高|多大|宽度是多少|高度是多少|实测|实际比例"
+        r"|(?:宽|高|长|厚)(?:有|是)?多少(?:英寸|英尺|厘米|毫米|公分|米)",
     ),
 }
 _BACKGROUND_OBJECTS = re.compile(
@@ -354,6 +382,12 @@ _EFFECT_REQUEST = re.compile(
     r"|(?:画面|房间|场景|构图|整幅画).{0,32}(?:给(?:人|观众|看画的人)|让人|令人|带来|传达).{0,10}"
     r"(?:什么(?:样的)?|怎样的)(?:感觉|感受|情绪|气氛|氛围|气息|观感)"
     r"|(?:色彩|线条).{0,26}什么感觉|哪些.{0,18}(?:感觉|不安|紧张)", re.I,
+)
+_EFFECT_OF_TITLED_WORK = re.compile(
+    r"\bwhat (?:(?:kind|sort|type) of )?(?:effect|feeling|mood)\b.{0,96}"
+    r"\b(?:give off|evoke|convey|suggest)\b"
+    r"|(?:给(?:人|观者|观众)|让人|令人).{0,12}(?:什么(?:样的)?|怎样的)"
+    r"(?:感觉|感受|情绪|气氛|氛围|气息|观感)", re.I,
 )
 _OBJECT_REQUEST = re.compile(
     r"\b(?:what|which) (?:objects?|things?|items?)\b.{0,96}"
@@ -408,6 +442,21 @@ def _split_spans(pattern, text, start, end):
     yield start, end
 
 
+def _comma_spans(text, start, end):
+    spans = []
+    for left, right in _split_spans(_COMMA, text, start, end):
+        part = text[left:right]
+        cue = _QUESTION.search(part)
+        # A choice or a request to check the record can complete the preceding question.
+        if spans and (cue and cue.group() == "还是" or _RECORD_QUESTION_TAIL.fullmatch(part)):
+            previous_start, previous_end = spans[-1]
+            if _QUESTION.search(text[previous_start:previous_end]):
+                spans[-1] = (previous_start, right)
+                continue
+        spans.append((left, right))
+    return spans
+
+
 def _parts(text):
     start = 0
     for boundary in (*_SENTENCE_END.finditer(text), None):
@@ -415,7 +464,7 @@ def _parts(text):
         question_end = boundary is not None and "?" in boundary.group()
         pieces = list(_split_spans(_RESTART, text, start, end))
         for piece_index, (left, right) in enumerate(pieces):
-            commas = list(_split_spans(_COMMA, text, left, right))
+            commas = _comma_spans(text, left, right)
             comma_requests = [bool(_QUESTION.search(text[a:b])) for a, b in commas]
             prefix = text[commas[0][0]:commas[0][1]]
             topic_prefix = _DEICTIC_TOPIC.fullmatch(prefix) or (
@@ -444,6 +493,8 @@ def _is_request(text, question_mark):
     prefix, comma, body = text.partition(",")
     if comma and _TEMPORAL_PREFIX.search(prefix):
         return bool(_QUESTION.search(body) or _COMMAND.search(body))
+    if not question_mark and _DECLARATIVE_CONTEXT.search(text):
+        return False
     if question_mark or _QUESTION.search(text) or _COMMAND.search(text) or text.lower() == "made of":
         return True
     if comma and _LOCATIVE_PREFIX.search(prefix) and (_QUESTION.search(body) or _COMMAND.search(body)):
@@ -455,7 +506,7 @@ def _is_request(text, question_mark):
     )
 
 
-def _facets(text, visual_marks_context, inherited_aspect=None):
+def _facets(text, visual_marks_context, inherited_aspect, has_title):
     unsupported = {
         facet for facet, patterns in _UNSUPPORTED_PATTERNS.items()
         if any(pattern.search(text) for pattern in patterns)
@@ -505,7 +556,7 @@ def _facets(text, visual_marks_context, inherited_aspect=None):
     elif visible_marks and _STROKE_DESCRIPTION.search(text):
         supported.add("brushwork_appearance")
         supported.discard("background_objects")
-    if _EFFECT_REQUEST.search(text):
+    if _EFFECT_REQUEST.search(text) or (has_title and _EFFECT_OF_TITLED_WORK.search(text)):
         supported.add("visual_effect")
         supported.difference_update(("color_appearance", "line_recession", "brushwork_appearance"))
 
@@ -530,6 +581,8 @@ def _mentioned_aspects(text):
     aspects = {aspect for aspect, pattern in _ASPECT_NOUNS.items() if pattern.search(text)}
     if _FLOWER_MENTION.search(text):
         aspects.add("flower_species")
+        if _FLOWERS_IN_DESIGN.search(text):
+            aspects.discard("background_objects")
     return aspects
 
 
@@ -539,6 +592,7 @@ def _inherited_aspect(text, mentioned, earlier, recent):
         return None
     if "flower_species" in earlier and (
         _BOTANICAL_DETAIL.search(text)
+        or any(pattern.search(text) for pattern in _UNSUPPORTED_PATTERNS["flower_species"])
         or (recent == {"flower_species"} and _IDENTITY_OF_REFERENCE.search(text))
     ):
         return "flower_species"
@@ -602,7 +656,9 @@ def parse_requests(query: str, artwork_id: str) -> tuple[str, tuple[QueryRequest
 
         facets = ()
         if is_request:
-            facets = _facets(text, bool(has_scene and refers_to_scene), inherited)
+            facets = _facets(
+                text, bool(has_scene and refers_to_scene), inherited, has_title=bool(references),
+            )
             for target in targets:
                 for facet in facets:
                     requests.append(QueryRequest(start, end, target, facet))
