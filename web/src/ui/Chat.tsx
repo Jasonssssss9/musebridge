@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import type { AnswerLanguage, Artwork, Turn } from '../api/types';
 import { cleanQuestion, useConversation, type PendingView } from '../chat/useConversation';
-import { STRINGS, errorText, suggestions, type Strings } from '../i18n';
+import { UI_TEXT as t, errorText, suggestions } from '../i18n';
 import { Citation } from './Citation';
 
-function TurnView({ turn, t }: { turn: Turn; t: Strings }) {
+function TurnView({ turn }: { turn: Turn }) {
   const a = turn.answer;
   return (
     <li className="turn">
@@ -19,7 +19,7 @@ function TurnView({ turn, t }: { turn: Turn; t: Strings }) {
         {a.citations.length > 0 && (
           <section className="cites">
             <h3>{t.sources}</h3>
-            <ul>{a.citations.map((c) => <Citation key={c.chunk_id} c={c} t={t} />)}</ul>
+            <ul>{a.citations.map((c) => <Citation key={c.chunk_id} c={c} />)}</ul>
           </section>
         )}
       </article>
@@ -27,15 +27,15 @@ function TurnView({ turn, t }: { turn: Turn; t: Strings }) {
   );
 }
 
-function PendingRow(props: { p: PendingView; t: Strings; onRetry: () => void; onEdit: () => void; onCheck: () => void }) {
-  const { p, t } = props;
+function PendingRow(props: { p: PendingView; onRetry: () => void; onEdit: () => void; onCheck: () => void }) {
+  const { p } = props;
   return (
     <li className="turn">
       <p className="question"><span className="sr-only">{t.you}: </span>{p.question}</p>
       {p.phase === 'failed' && p.error ? (
         // A technical failure is never worded as "the museum has no information" (contract 7.1).
         <div className="failure" role="alert">
-          <p>{errorText(t, p.error.code)}</p>
+          <p>{errorText(p.error.code)}</p>
           {p.error.requestId && <p className="small muted">{t.reference}: <code>{p.error.requestId}</code></p>}
           <div className="actions">
             {p.error.retryable && <button className="btn" onClick={props.onRetry}>{t.retry}</button>}
@@ -57,8 +57,7 @@ function PendingRow(props: { p: PendingView; t: Strings; onRetry: () => void; on
   );
 }
 
-export function Chat({ artwork, lang }: { artwork: Artwork; lang: AnswerLanguage }) {
-  const t = STRINGS[lang];
+export function Chat({ artwork, answerLanguage }: { artwork: Artwork; answerLanguage: AnswerLanguage }) {
   const chat = useConversation(artwork.artwork_id);
   const [text, setText] = useState('');
   const [editing, setEditing] = useState(false);
@@ -85,7 +84,7 @@ export function Chat({ artwork, lang }: { artwork: Artwork; lang: AnswerLanguage
 
   const send = (q: string) => {
     if (!chat.canSend) return;
-    chat.send(q, lang); // the language is fixed at submission and reused on retry
+    chat.send(q, answerLanguage); // the language is fixed at submission and reused on retry
     setText('');
     setEditing(false);
   };
@@ -116,11 +115,10 @@ export function Chat({ artwork, lang }: { artwork: Artwork; lang: AnswerLanguage
       {chat.status === 'ready' && count === 0 && !chat.pending && <p className="muted small">{t.chatEmpty}</p>}
 
       <ol className="turns">
-        {chat.turns.map((turn) => <TurnView key={turn.turn_id} turn={turn} t={t} />)}
+        {chat.turns.map((turn) => <TurnView key={turn.turn_id} turn={turn} />)}
         {chat.pending && (
           <PendingRow
             p={chat.pending}
-            t={t}
             onRetry={chat.retry}
             onCheck={chat.checkAgain}
             onEdit={() => { setEditing(true); chat.edit(); }}
@@ -133,8 +131,8 @@ export function Chat({ artwork, lang }: { artwork: Artwork; lang: AnswerLanguage
         <div className="composer">
           {chat.canSend && !editing && (
             <div className="chips" aria-label={t.suggestions}>
-              {suggestions(artwork.artwork_id, lang).map((q) => (
-                <button key={q} type="button" className="chip" onClick={() => send(q)}>{q}</button>
+              {suggestions(artwork.artwork_id, answerLanguage).map((q) => (
+                <button key={q} type="button" className="chip" lang={answerLanguage} onClick={() => send(q)}>{q}</button>
               ))}
             </div>
           )}

@@ -24,6 +24,8 @@ Open <http://localhost:8080/a/aic-28560> or <http://localhost:8080/a/aic-11723>.
 
 Live mode loads artwork, creates or restores real Go conversations, reads history and submits questions through Go to the Python retriever. Start both backend services using the [setup guide](../docs/getting-started.md). Go returns reviewed fixture answers with validated museum citations; all three outcomes retain the fixed-test-answer label. Browser and physical-phone acceptance still need to be recorded against the real stack. The Go API must be started with `PUBLIC_BASE_URL` set to the exact origin in the browser's address bar (for example `http://192.168.1.20:8080`), because it rejects POSTs from any other origin.
 
+The interface is in English in both modes. The **Answer language** selector defaults to English and remembers your preference. It sets the language of suggested questions and new answers. You can type questions in English or Simplified Chinese. Citations keep the museum's original text.
+
 ## QR cards and the phone test
 
 `/qr` shows a printable card for each artwork. The codes are built from the address the page was opened at, so open it through your LAN address (Vite prints it as "Network" on startup), not `localhost`. The step-by-step phone check is in [PHONE-TEST.md](PHONE-TEST.md).
@@ -55,7 +57,7 @@ The mock keeps its "server" state in `localStorage` so it survives reloads like 
 | `src/chat/useConversation.ts` | Conversation state: create/restore, submit, retry, reload recovery |
 | `src/chat/drafts.ts` | The pending submission saved in `sessionStorage` |
 | `src/qr.ts` | QR encoder for the demo cards (no extra package) |
-| `src/i18n.ts` | English and Simplified Chinese interface text |
+| `src/i18n.ts` | English interface text, answer language preference, and bilingual suggested questions |
 | `src/ui/` | Screens and components |
 
 ## Contract behaviors to keep when editing

@@ -1,7 +1,7 @@
 import { useEffect, useState, type MouseEvent, type ReactNode } from 'react';
 import { IS_MOCK } from '../api/client';
 import type { AnswerLanguage } from '../api/types';
-import { STRINGS, initialLanguage, rememberLanguage } from '../i18n';
+import { UI_TEXT as t, initialAnswerLanguage, rememberAnswerLanguage } from '../i18n';
 import { ArtworkPage } from './ArtworkPage';
 import { Home } from './Home';
 import { MockPanel } from './MockPanel';
@@ -24,17 +24,13 @@ export function Link({ to, className, children }: { to: string; className?: stri
 
 export function App() {
   const [path, setPath] = useState(window.location.pathname);
-  const [lang, setLang] = useState<AnswerLanguage>(initialLanguage);
-  const t = STRINGS[lang];
+  const [answerLanguage, setAnswerLanguage] = useState<AnswerLanguage>(initialAnswerLanguage);
 
   useEffect(() => {
     const onPop = () => setPath(window.location.pathname);
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
-  useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
 
   const match = /^\/a\/([^/]+)\/?$/.exec(path);
   const slug = match ? decodeURIComponent(match[1]) : null;
@@ -45,22 +41,22 @@ export function App() {
         <Link to="/" className="brand">MuseBridge</Link>
         {IS_MOCK && <MockPanel />}
         <label className="lang">
-          <span className="sr-only">{t.language}</span>
+          <span className="small muted">{t.answerLanguage}</span>
           <select
-            value={lang}
+            value={answerLanguage}
             onChange={(e) => {
-              const l = e.target.value as AnswerLanguage;
-              setLang(l);
-              rememberLanguage(l);
+              const language = e.target.value as AnswerLanguage;
+              setAnswerLanguage(language);
+              rememberAnswerLanguage(language);
             }}
           >
             <option value="en">English</option>
-            <option value="zh-CN">简体中文</option>
+            <option value="zh-CN">Chinese (Simplified)</option>
           </select>
         </label>
       </header>
       {/* key: a different artwork is a different page with its own conversation state */}
-      {slug ? <ArtworkPage key={slug} slug={slug} lang={lang} /> : path === '/qr' ? <QrPage lang={lang} /> : <Home lang={lang} />}
+      {slug ? <ArtworkPage key={slug} slug={slug} answerLanguage={answerLanguage} /> : path === '/qr' ? <QrPage /> : <Home />}
     </div>
   );
 }

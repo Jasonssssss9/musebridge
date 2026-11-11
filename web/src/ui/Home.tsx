@@ -1,5 +1,4 @@
-import type { AnswerLanguage } from '../api/types';
-import { STRINGS } from '../i18n';
+import { UI_TEXT as t } from '../i18n';
 import { Link } from './App';
 
 // The two released slugs (contract 1.3). Titles are loaded by each artwork page.
@@ -8,8 +7,7 @@ export const DEMO = [
   { slug: 'aic-11723', title: 'Woman at Her Toilette', by: 'Berthe Morisot, 1875–80' },
 ];
 
-export function Home({ lang }: { lang: AnswerLanguage }) {
-  const t = STRINGS[lang];
+export function Home() {
   return (
     <main className="page home">
       <h1>{t.appTagline}</h1>

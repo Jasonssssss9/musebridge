@@ -1,5 +1,5 @@
 import type { Evidence } from '../api/types';
-import type { Strings } from '../i18n';
+import { UI_TEXT as t } from '../i18n';
 
 /** Only stored HTTPS URLs become links; anything else is shown as plain text (contract 2.5). */
 export function safeHttps(url: string): string | null {
@@ -11,7 +11,7 @@ export function safeHttps(url: string): string | null {
   }
 }
 
-export function Citation({ c, t }: { c: Evidence; t: Strings }) {
+export function Citation({ c }: { c: Evidence }) {
   const source = safeHttps(c.source_url);
   const license = safeHttps(c.license_url);
   return (

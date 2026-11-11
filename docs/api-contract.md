@@ -43,9 +43,9 @@ Use these sections when implementing a boundary:
 
 For the LAN HTTP demo, the frontend must generate UUID v4 values without relying exclusively on `crypto.randomUUID()`, which requires a secure context. Use `crypto.getRandomValues` with the UUID version/variant bits set, or a UUID implementation verified to use that method on HTTP. Never use `Math.random` for IDs. Validate this on the actual phone origin, since localhost can behave differently. [MDN randomUUID documentation](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID), [MDN getRandomValues documentation](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues).
 
-The frontend initially selects `zh-CN` if the browser's preferred language begins with `zh`, otherwise `en`. Show a language selector, include its current value on every submission, and preserve the submitted language on retries. Changing the selector affects the next new question; it does not relabel existing answers or alter a pending payload.
+The frontend uses English for its controls, instructions, statuses and citation labels. Its answer language selector defaults to English and restores a saved English or Simplified Chinese preference. Questions can be written in either language. Include the selected answer language on every submission and preserve it on retries. Changing the selector affects the next new question; it does not relabel existing answers or alter a pending payload.
 
-Every non-2xx API response uses this envelope. `message` is a safe English diagnostic; the frontend uses `code` to choose localized visitor-facing text. Do not return stack traces, cookies, filesystem paths or upstream response bodies.
+Every non-2xx API response uses this envelope. `message` is a safe English diagnostic; the frontend uses `code` to choose English visitor-facing text. Do not return stack traces, cookies, filesystem paths or upstream response bodies.
 
 ```json
 {
@@ -291,7 +291,7 @@ History subsequently contains exactly that turn and `pending_request: null`. Ret
 
 An `answered` turn has at least one citation. An `insufficient` or `unsupported_question` turn has an empty citation array. Citations are stored with the completed turn, so history and retries return the same evidence snapshot. For this short-answer fixture, every factual statement must be supported by the displayed evidence set; claim-level citation spans are outside this version.
 
-The frontend renders answer text and excerpts as text, not HTML. Each source item shows its title, excerpt, source language, locator, museum attribution, license link and any normalization notice. Source URLs open as external HTTPS links with safe link handling. Do not render generated URLs. The visible response label is “Demo response — fixed test answer” in English, with an equivalent Simplified Chinese label. Label all three outcome statuses.
+The frontend renders answer text and excerpts as text, not HTML. Each source item shows its title, excerpt, source language, locator, museum attribution, license link and any normalization notice. Source URLs open as external HTTPS links with safe link handling. Do not render generated URLs. The visible response label is “Demo response — fixed test answer” for either answer language. Label all three outcome statuses.
 
 ### 2.6 Three completed outcomes
 

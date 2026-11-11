@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import type { AnswerLanguage } from '../api/types';
-import { STRINGS } from '../i18n';
+import { UI_TEXT as t } from '../i18n';
 import { qrMatrix, qrPath } from '../qr';
 import { DEMO } from './Home';
 
@@ -25,8 +24,7 @@ function Qr({ text }: { text: string }) {
  * artwork, built from the address this page was opened at, so open it through
  * the same LAN address the phone will use.
  */
-export function QrPage({ lang }: { lang: AnswerLanguage }) {
-  const t = STRINGS[lang];
+export function QrPage() {
   const [base, setBase] = useState(window.location.origin);
   const origin = base.trim().replace(/\/+$/, '');
   const local = /^https?:\/\/(localhost|127\.|\[::1\])/i.test(origin);

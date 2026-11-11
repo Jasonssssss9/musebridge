@@ -26,7 +26,7 @@ Use the defaults below for the first build. The team reviews the contract and sh
 | Catalog and evidence | The Go API and retrieval service read the same released JSON data. The Go API serves the artwork metadata. The retrieval service reads and indexes the evidence. |
 | Retrieval | The Go API calls the retrieval service at private `POST /retrieve`. The retrieval service matches factual requests to evidence in the released JSON seed and filters by artwork before ranking. The Go API pins the release for each conversation and sends the retrieval service the prepared query, scope and result limit. |
 | Generation | The Go API runs an in-process fixture adapter. It returns reviewed, scripted answers when their required evidence is present and reports known gaps or unsupported questions explicitly. |
-| Languages | The visitor can request an answer in English or Simplified Chinese. Jason Zichen He tests the supported keyword coverage for each language. Source passages retain their original language. |
+| Languages | The interface stays in English. Visitors can ask questions and request answers in English or Simplified Chinese. Source passages retain their original language. |
 | Local runtime | Use a phone-reachable frontend origin with the Go API behind the same origin. The Go API reaches the retrieval service over the private service network. Compose can provide the common local startup path. |
 
 ## System boundaries
