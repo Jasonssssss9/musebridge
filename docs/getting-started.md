@@ -2,14 +2,56 @@
 
 This guide covers the currently runnable local components: the shared two-artwork dataset, Python evidence retrieval, the Go artwork/conversation/message APIs, reviewed fixture answers, and a mobile frontend with mock and live modes. The local answer path uses actual museum evidence and labeled fixed responses.
 
-## Prerequisites
+## Start the full local stack with Compose
+
+Install Docker with Compose v2 and run these commands from the repository root.
+
+```bash
+docker compose up --build -d
+docker compose ps
+```
+
+Open [The Bedroom](http://localhost:8080/a/aic-28560), [Woman at Her Toilette](http://localhost:8080/a/aic-11723), or the [QR cards](http://localhost:8080/qr). Compose serves the production web build in live mode. The browser uses relative `/api/` requests. The proxy forwards them to `api:8000`, and Go retrieves evidence from `http://retrieval:8001`. Both services read the same read-only `aic-seed-v0.1` file. Only web port `8080` is published.
+
+For a phone on the same network, replace the example IP with the address the phone can reach and start the stack with that exact origin. Open the same origin in the desktop browser when generating the QR cards. The local HTTP profile uses `COOKIE_SECURE=false` and `GENERATION_MODE=fixture`.
+
+```bash
+PUBLIC_BASE_URL=http://192.168.1.20:8080 docker compose up --build -d
+```
+
+Open the LAN URL on the phone before scanning a code. See the [phone walkthrough](../web/PHONE-TEST.md) for the two artwork scans, citations, refresh and recovery.
+
+### Check readiness and recovery
+
+```bash
+docker compose exec -T api wget -qO- http://127.0.0.1:8000/readyz
+docker compose exec -T retrieval python3 -c 'from urllib.request import urlopen; print(urlopen("http://127.0.0.1:8001/readyz").read().decode())'
+sha256sum knowledge/data/aic-seed-v0.1.json
+```
+
+Both private readiness replies show `aic-seed-v0.1`. The Go startup log records the loaded seed checksum. For a live recovery test, stop retrieval.
+
+```bash
+docker compose stop retrieval
+```
+
+Submit a supported question. The artwork stays available and the question shows a retryable failure. Start retrieval again and check its readiness. Use **Try again** on the existing question and confirm that one answer appears.
+
+```bash
+docker compose start retrieval
+docker compose logs api retrieval
+```
+
+Run `docker compose down` to stop the stack. Go keeps history in memory for the local demo, so restarting Go clears that history.
+
+## Native prerequisites
 
 - Python 3.10 or later.
 - Go 1.27 or later.
 - Node.js 20 or later and npm when running the optional frontend.
 - A local checkout of this repository.
 
-Python uses its standard library. Go uses its standard library and the pinned `golang.org/x/text` package for Unicode normalization; the first build downloads that module. The backend does not require Node.js, a model, API key or database. The frontend uses Node.js to run Vite and build React/TypeScript assets. Docker is optional for the standalone retrieval service; full-stack Compose startup is planned.
+Python uses its standard library. Go uses its standard library and the pinned `golang.org/x/text` package for Unicode normalization; the first build downloads that module. The backend does not require Node.js, a model, API key or database. The frontend uses Node.js to run Vite and build React/TypeScript assets.
 
 Start each terminal in the repository root unless a command explicitly changes directories. Both services use the immutable `knowledge/data/aic-seed-v0.1.json` release.
 
@@ -41,7 +83,7 @@ curl -fsS http://127.0.0.1:8000/api/artworks/aic-28560
 curl -fsS http://127.0.0.1:8000/api/artworks/aic-11723
 ```
 
-The health endpoints are private development/operations routes. Future frontend proxy configuration must keep them outside the public visitor API.
+The health endpoints are private development and operations routes. The Compose proxy keeps them outside the public visitor API.
 
 The [Go backend guide](../api/README.md#create-and-restore-a-conversation) includes cookie-aware commands for creating/restoring an artwork conversation and reading history. These routes do not require Python. Its [question example](../api/README.md#submit-a-question) runs real retrieval, selects a reviewed fixture answer, validates citations and saves the completed turn. Question submission requires Python to be available at `RETRIEVAL_BASE_URL`. A conversation expires 24 hours after creation; restarting Go clears all anonymous visitor and conversation state.
 
@@ -85,6 +127,14 @@ From `api/`:
 ```bash
 go test -race ./...
 go vet ./...
+```
+
+From `web/`, run the frontend checks.
+
+```bash
+npm ci
+npm test
+npm run build
 ```
 
 HTTP tests start temporary loopback servers and require local socket access. The normal test suites do not need a separately running retrieval service. Opt-in Go integration tests use a real Python service; see the Go backend guide for the command.

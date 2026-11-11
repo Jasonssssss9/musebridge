@@ -8,12 +8,13 @@ import { safeHttps } from './Citation';
 
 type Load = { state: 'loading' } | { state: 'ok'; artwork: Artwork } | { state: 'not_found' } | { state: 'error' };
 
-export function ArtworkPage({ slug, answerLanguage }: { slug: string; answerLanguage: AnswerLanguage }) {
-  const [load, setLoad] = useState<Load>({ state: 'loading' });
+export function ArtworkPage({ slug, answerLanguage }: { slug: string | null; answerLanguage: AnswerLanguage }) {
+  const [load, setLoad] = useState<Load>({ state: slug === null ? 'not_found' : 'loading' });
   const [attempt, setAttempt] = useState(0);
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
+    if (slug === null) return;
     let cancelled = false;
     setLoad({ state: 'loading' });
     getArtwork(slug).then(

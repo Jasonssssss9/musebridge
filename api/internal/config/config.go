@@ -77,7 +77,7 @@ func Load(lookup func(string) (string, bool)) (Config, error) {
 	}
 	return Config{
 		Host: values["HOST"], Port: values["PORT"],
-		PublicBaseURL: values["PUBLIC_BASE_URL"], CookieSecure: secure,
+		PublicBaseURL: browserOrigin(publicURL), CookieSecure: secure,
 		DatasetVersion: values["DATASET_VERSION"], SeedPath: values["SEED_PATH"],
 		RetrievalBaseURL: values["RETRIEVAL_BASE_URL"], GenerationMode: values["GENERATION_MODE"],
 	}, nil
@@ -111,4 +111,22 @@ func origin(value string) (*url.URL, error) {
 		return nil, fmt.Errorf("invalid IPv6 host")
 	}
 	return u, nil
+}
+
+// browserOrigin serializes the validated origin the way the browser sends it.
+// Public POST requests still require an exact match against that origin.
+func browserOrigin(u *url.URL) string {
+	host := strings.ToLower(u.Hostname())
+	if strings.Contains(host, ":") {
+		host = "[" + host + "]"
+	}
+	defaultPort := 80
+	if u.Scheme == "https" {
+		defaultPort = 443
+	}
+	port, _ := strconv.Atoi(u.Port())
+	if port != 0 && port != defaultPort {
+		host += ":" + strconv.Itoa(port)
+	}
+	return u.Scheme + "://" + host
 }

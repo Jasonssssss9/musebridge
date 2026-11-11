@@ -28,9 +28,18 @@ export class TransportError extends Error {
   }
 }
 
-async function request(method: 'GET' | 'POST', path: string, body?: unknown): Promise<unknown> {
+interface RequestOptions {
+  signal?: AbortSignal;
+  timeoutMs?: number;
+}
+
+async function request(method: 'GET' | 'POST', path: string, body?: unknown, options: RequestOptions = {}): Promise<unknown> {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), BROWSER_TIMEOUT_MS);
+  const cancel = () => ctrl.abort();
+  const { signal, timeoutMs = BROWSER_TIMEOUT_MS } = options;
+  if (signal?.aborted) cancel();
+  else signal?.addEventListener('abort', cancel, { once: true });
+  const timer = setTimeout(cancel, timeoutMs);
   let res: Response;
   let json: unknown;
   try {
@@ -52,6 +61,7 @@ async function request(method: 'GET' | 'POST', path: string, body?: unknown): Pr
     throw new TransportError(ctrl.signal.aborted ? 'timeout' : 'network', String(e));
   } finally {
     clearTimeout(timer);
+    signal?.removeEventListener('abort', cancel);
   }
   if (!res.ok) {
     try {
@@ -80,25 +90,26 @@ export async function getArtwork(slug: string): Promise<Artwork> {
   return parsed(() => parseArtwork(j.artwork));
 }
 
-// Contract 2.2: creation is serialized per tab, so concurrent callers (including
-// React StrictMode's double effect) share one in-flight request.
+// Serialize creation across artworks so the next request sees the visitor cookie.
 const creating = new Map<string, Promise<Conversation>>();
+let creationTail = Promise.resolve();
 
 export function openConversation(artworkId: string): Promise<Conversation> {
   const existing = creating.get(artworkId);
   if (existing) return existing;
-  const p = (async () => {
+  const p = creationTail.then(async () => {
     const j = (await request('POST', '/api/conversations', { artwork_id: artworkId })) as { conversation?: unknown };
     const c = parsed(() => parseConversation(j.conversation));
     if (c.artwork_id !== artworkId) throw new TransportError('invalid_response', 'conversation is bound to another artwork');
     return c;
-  })().finally(() => creating.delete(artworkId));
+  }).finally(() => creating.delete(artworkId));
   creating.set(artworkId, p);
+  creationTail = p.then(() => undefined, () => undefined);
   return p;
 }
 
-export async function getHistory(conversationId: string): Promise<History> {
-  const j = await request('GET', `/api/conversations/${conversationId}/messages`);
+export async function getHistory(conversationId: string, options?: RequestOptions): Promise<History> {
+  const j = await request('GET', `/api/conversations/${conversationId}/messages`, undefined, options);
   const h = parsed(() => parseHistory(j));
   if (h.conversation.conversation_id !== conversationId) throw new TransportError('invalid_response', 'history is for another conversation');
   return h;

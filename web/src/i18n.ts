@@ -41,7 +41,7 @@ export const UI_TEXT = {
   reference: 'Reference',
   chatStarting: 'Starting the conversation…',
   chatUnavailable: 'The guide is not available right now. The artwork details above are still correct.',
-  sessionEnded: 'Your earlier conversation is no longer available, so a new one has started. Your question is back in the box below — send it again when you are ready.',
+  sessionEnded: 'Your earlier conversation is no longer available.',
   editingNote: 'Editing sends this as a new question.',
   qrTitle: 'QR cards for the demo',
   qrIntro: 'Each code opens one artwork page. Print this page or show it on a second screen, then scan with the phone.',

@@ -36,6 +36,28 @@ func TestHTTPSAndContainerOverrides(t *testing.T) {
 	}
 }
 
+func TestPublicBaseURLUsesBrowserOrigin(t *testing.T) {
+	cases := []struct{ configured, expected string }{
+		{"http://LOCALHOST:80", "http://localhost"},
+		{"https://Museum.Example:443", "https://museum.example"},
+		{"http://Museum.Example:08080", "http://museum.example:8080"},
+		{"https://Museum.Example:80", "https://museum.example:80"},
+		{"http://[::1]:80", "http://[::1]"},
+		{"https://[2001:DB8::1]:8443", "https://[2001:db8::1]:8443"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.configured, func(t *testing.T) {
+			cfg, err := Load(environment(map[string]string{"PUBLIC_BASE_URL": tc.configured}))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if cfg.PublicBaseURL != tc.expected {
+				t.Fatalf("public origin = %q, want %q", cfg.PublicBaseURL, tc.expected)
+			}
+		})
+	}
+}
+
 func TestInvalidConfiguration(t *testing.T) {
 	cases := []struct{ key, value string }{
 		{"HOST", ""}, {"HOST", "bad host"}, {"HOST", "[::1]"},

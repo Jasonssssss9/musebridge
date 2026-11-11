@@ -1,0 +1,53 @@
+x-seed-mount: &seed-mount
+  type: bind
+  source: ./knowledge/data/aic-seed-v0.1.json
+  target: /seed/aic-seed-v0.1.json
+  read_only: true
+  bind:
+    create_host_path: false
+
+x-seed-environment: &seed-environment
+  DATASET_VERSION: aic-seed-v0.1
+  SEED_PATH: /seed/aic-seed-v0.1.json
+
+services:
+  retrieval:
+    build:
+      context: .
+      dockerfile: knowledge/Dockerfile
+    environment: *seed-environment
+    networks:
+      - backend
+    volumes:
+      - *seed-mount
+
+  api:
+    build: ./api
+    environment:
+      <<: *seed-environment
+      PUBLIC_BASE_URL: "${PUBLIC_BASE_URL:-http://localhost:8080}"
+      COOKIE_SECURE: "false"
+      RETRIEVAL_BASE_URL: http://retrieval:8001
+      GENERATION_MODE: fixture
+    networks:
+      - backend
+    volumes:
+      - *seed-mount
+    depends_on:
+      - retrieval
+
+  web:
+    build: ./web
+    networks:
+      - default
+      - backend
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  backend:
+    # A missing service name stays within Docker DNS rather than going upstream.
+    internal: true

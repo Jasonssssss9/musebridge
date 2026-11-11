@@ -33,7 +33,10 @@ export function App() {
   }, []);
 
   const match = /^\/a\/([^/]+)\/?$/.exec(path);
-  const slug = match ? decodeURIComponent(match[1]) : null;
+  let slug: string | null = null;
+  if (match) {
+    try { slug = decodeURIComponent(match[1]); } catch { /* Show the unavailable artwork page. */ }
+  }
 
   return (
     <div className="shell">
@@ -56,7 +59,7 @@ export function App() {
         </label>
       </header>
       {/* key: a different artwork is a different page with its own conversation state */}
-      {slug ? <ArtworkPage key={slug} slug={slug} answerLanguage={answerLanguage} /> : path === '/qr' ? <QrPage /> : <Home />}
+      {match ? <ArtworkPage key={slug ?? match[1]} slug={slug} answerLanguage={answerLanguage} /> : path === '/qr' ? <QrPage /> : <Home />}
     </div>
   );
 }

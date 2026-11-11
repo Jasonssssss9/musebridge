@@ -1,16 +1,16 @@
 # Phone test steps
 
-A repeatable check of the visitor flow on a real phone. Run the UI scenarios against the mock API (`npm run dev`), then repeat the applicable journey against Go and Python using `npm run dev:live`. Compose packaging is still planned; the services can currently be started separately.
+Use the Compose stack for the live phone walkthrough. The mock controls provide additional recovery scenarios during frontend development.
 
 ## Setup
 
 1. Put the phone and the computer on the same Wi-Fi. Guest and campus networks often block device-to-device traffic; a phone hotspot works if they do.
-2. In `web/`, run `npm install` once, then `npm run dev`.
-3. Note the "Network" address Vite prints, for example `http://192.168.1.20:8080`.
-4. On the computer, open `<network address>/qr`. Print the page or leave it on screen.
-5. On the phone, type `<network address>` into the browser first. If the computer loads it and the phone does not, the problem is the network or the computer's firewall, not the app.
+2. Start the live stack with `PUBLIC_BASE_URL` set to the exact LAN origin, such as `http://192.168.1.20:8080`. Follow the [Compose setup guide](../docs/getting-started.md#start-the-full-local-stack-with-compose).
+3. On the phone, open that LAN origin directly and check that the demo list loads.
+4. On the computer, open `<network origin>/qr`. Print the page or leave it on a second screen.
+5. Scan the codes with the phone camera and run the checks below.
 
-For live mode, start Python and Go using the [setup guide](../docs/getting-started.md), set Go's `PUBLIC_BASE_URL` to the exact network origin and run `npm run dev:live` instead. The Mock API controls in steps 11–13 are available only in mock mode. Record live dependency failures separately using the integration plan; changing a mock setting does not change the real services.
+For the optional mock checks, run `npm ci` and `npm run dev` from `web/`. Use `npm run dev:live` with the native Go and Python services if you are developing outside Compose.
 
 ## Checks
 
@@ -26,9 +26,9 @@ For live mode, start Python and Go using the [setup guide](../docs/getting-start
 | 8 | Type `What is the material listed by the museum?` | "Outside this demo's examples", no sources |
 | 9 | Set Answer language to Chinese (Simplified) and submit a suggested question | The question and answer are in Chinese. The interface, fixture label, citation controls and source excerpt stay in English. Switch back to English for the rest of the demo. |
 | 10 | Refresh the page | The same conversation is still there |
-| 11 | Mock API pill → "503 retrieval_unavailable", then ask a question | Red failure box, question kept, "Try again" shown |
-| 12 | Refresh, set the pill back to "Normal replies", tap "Try again" | The answer appears once |
-| 13 | Mock API pill → "Slow reply", ask, then open the other artwork while waiting | The late answer never shows on the other artwork; it is in the first one when you go back |
+| 11 | In live mode, run `docker compose stop retrieval` and submit a supported question | The artwork stays visible. The technical failure keeps the question and offers "Try again" |
+| 12 | Run `docker compose start retrieval`, wait for readiness, then tap "Try again" | The same submission completes once and its citation belongs to the current artwork |
+| 13 | In mock mode, select "Slow reply", ask a question, then open the other artwork while waiting | The late answer stays in its original artwork's conversation |
 | 14 | Open `<network address>/a/nope` | "This artwork link is not available" with a link to the demo list |
 
 Typed questions must match the examples exactly. If a typed question with an apostrophe lands in "Outside this demo's examples", the phone keyboard inserted a curly apostrophe; use the suggested-question buttons instead.

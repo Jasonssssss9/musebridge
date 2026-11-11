@@ -6,6 +6,8 @@ It implements the browser side of [the API contract](../docs/api-contract.md), r
 
 ## Run it
 
+Use the [Compose startup guide](../docs/getting-started.md#start-the-full-local-stack-with-compose) for the full local demo. The commands below run the frontend directly for development.
+
 Requires Node 20 or later.
 
 ```bash

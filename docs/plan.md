@@ -16,7 +16,7 @@ Use the [design](design.md) for architectural decisions and the [API contract](a
 
 Task IDs retain their original prefixes for continuity: `A1`–`A7` belong to Jeremiah Lim, `B1`–`B8` to Jinqing Zhang, and `C1`–`C6` to Jason Zichen He. The owner column names the contributor responsible for each task or acceptance check.
 
-Current implementation checkpoint: B2 public routes and B3 retrieval/fixture answers are implemented, including scoped follow-ups, bilingual reviewed text, current-evidence citations and stored completed turns. The server-side B4 lifecycle is also implemented and tested: reservations, UUID replay/conflicts, recoverable pending failures, supersession and rejection of late results. Automated real-Python checks cover both retrieval and public answers. Browser acceptance, the physical phone walkthrough and Compose packaging remain pending; the frontend provides both mock and live modes.
+The Compose stack serves the live frontend, Go API and Python retrieval service. The packaged browser and evidence checks passed. The physical phone walkthrough remains open. See the [verification record](#local-verification-record) for the observed results.
 
 ## Parallel course track
 
@@ -124,13 +124,13 @@ First connect the web app to the Go API with the controlled retrieval substitute
 | B6. Package local startup | Jinqing Zhang | B5 and C4 | Add `compose.yaml` and update the [getting-started instructions](getting-started.md). From a clean checkout, the target command `docker compose up --build` starts all three services and serves the web UI on host port `8080`. |
 | A5. Verify the physical phone journey | Jeremiah Lim, with Jinqing Zhang verifying network reachability | A4 and B6 | Record a phone scanning a QR code for each artwork, loading the correct page, asking a question, and opening the original source. Exercise refresh, an intentional recoverable error, and retry with the same submission. |
 
-The target Compose setup will publish port `8080` on the host and proxy same-origin API traffic to Go on container port `8000`. Go will reach Python on container port `8001`. Keep the two backend ports on the Compose network. Service-to-service addresses belong in container configuration. Browser requests should continue to use relative API URLs.
+Compose publishes port `8080` on the host and proxy same-origin API traffic to Go on container port `8000`. Go will reach Python on container port `8001`. Keep the two backend ports on the Compose network. Service-to-service addresses belong in container configuration. Browser requests should continue to use relative API URLs.
 
 For the phone test, choose a trusted network that allows the phone to reach the demo host. Verify the host address, inbound port access, and WSL or Docker forwarding as applicable before making the QR codes. Open the same LAN base URL manually on the phone first. Encode that reachable address and the artwork route in each QR code. Use a printed code or a second screen for the scan. Record the actual tested device, browser, and network.
 
 #### Startup and demo handoff
 
-The [setup guide](getting-started.md) maintained by Jinqing Zhang should let Jeremiah Lim start the same local build and run the phone walkthrough independently. Extend it with the target startup command and two artwork routes when the full stack is ready. Document these settings and checks.
+The [setup guide](getting-started.md) maintained by Jinqing Zhang should let Jeremiah Lim start the same local build and run the phone walkthrough independently. The guide includes the startup command and both artwork routes. Use these settings and checks for the handoff.
 
 - Set `PUBLIC_BASE_URL` to the exact LAN origin used by both browsers during the walkthrough. Use `COOKIE_SECURE=false` for that HTTP demo profile and `true` for the later HTTPS profile.
 - Mount the same read-only JSON at `SEED_PATH` in the Go API and the retrieval service, and use matching `DATASET_VERSION` values. Record how to confirm the active version and the fixture file’s SHA-256.
@@ -174,6 +174,17 @@ Keep three artifacts with the team’s handoff notes.
 - Jeremiah Lim records the walkthrough and the tested phone, browser, and LAN setup. Identify the local answer mode as fixture generation backed by the real Python retriever.
 - Jinqing Zhang records the implementation revision, startup and private health results, and request IDs and outcomes for invalid requests, retries, and fault injection.
 - Jason Zichen He records the dataset version and seed SHA-256, the expected and observed results for all eight frozen cases, and the follow-up and English case outcomes.
+
+#### Local verification record
+
+On November 10, 2026, the M0 changes were tested on Windows with Docker Desktop, WSL Ubuntu and Chrome at a phone-sized viewport. The production web build used the host's LAN HTTP origin. Both private readiness endpoints reported `aic-seed-v0.1`, and both containers reported seed SHA-256 `3703fd4c9fcefb8e9fba20f23a5cb70e612c62ef7cb3f594a15d319ebc18d6ac`.
+
+| Area | Observed result |
+| --- | --- |
+| Compose and routing | All three services became healthy. Only web port `8080` was published. Both private health paths returned `404` through the web proxy. Missing or mismatched POST origins returned `403`. |
+| Evidence and citations | All eight frozen answer checks matched their expected statuses and citation IDs through the public proxy. The separate English material and scoped brushwork follow-up matched their own evidence. Replaying the same UUID returned the same completed turn. |
+| Browser and recovery | Both QR images decoded to the correct artwork URLs. The first cross-artwork switch preserved both sessions, refresh restored the correct history, and a real retrieval outage returned `503`. The original UUID completed once after recovery. The browser recovered a dropped success response from history and stopped a stalled history read at the 12-second deadline. Restarting Go restored the saved question as unsent text on reload. |
+| Physical phone | Pending. Record scans of both QR codes, source-link access and recovery on the target phone and network using the [walkthrough](../web/PHONE-TEST.md). |
 
 ## Stage 2. Cloud GPU demonstration
 
