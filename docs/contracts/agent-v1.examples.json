@@ -1,0 +1,1836 @@
+{
+  "specification": "agent-workflow-v1",
+  "schema_version": "agent-schema-v1",
+  "description": "Synthetic contract examples, not observed model results. Timestamps, model name and digest are illustrative. valid is the expected result at the named validation layer. Runtime cases require the immutable released seed and the normative cross-field rules.",
+  "schema_cases": [
+    {
+      "name": "run_request",
+      "definition": "RunRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v1",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "What is it painted on, and why did the artist choose that support?",
+        "answer_language": "en",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh",
+          "recent_turns": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v1",
+          "profile_id": "local-ollama-v1",
+          "deadline_at": "2026-11-13T20:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "retrieve_plan",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "retrieve",
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is it painted on",
+            "question": "What support was used for The Bedroom?",
+            "scope": "current_artwork"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "why did the artist choose that support",
+            "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+            "scope": "current_artwork"
+          }
+        ],
+        "queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ]
+      }
+    },
+    {
+      "name": "planner_clarification",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "clarify",
+        "text": "Which detail in this artwork do you mean?"
+      }
+    },
+    {
+      "name": "planner_scope_guidance",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "out_of_scope",
+        "text": "This conversation is about The Bedroom. Open the other artwork's page to ask about it."
+      }
+    },
+    {
+      "name": "legacy_http_request",
+      "definition": "LegacyRetrieveRequest",
+      "valid": true,
+      "payload": {
+        "artwork_id": "aic-28560",
+        "query": "What support was used for The Bedroom?",
+        "dataset_version": "aic-seed-v0.1",
+        "top_k": 2
+      }
+    },
+    {
+      "name": "legacy_http_result",
+      "definition": "LegacyRetrieveResponse",
+      "valid": true,
+      "payload": {
+        "dataset_version": "aic-seed-v0.1",
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tool_input",
+      "definition": "ToolInput",
+      "valid": true,
+      "payload": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "What support was used for The Bedroom?",
+        "artwork_id": "aic-28560",
+        "dataset_version": "aic-seed-v0.1",
+        "top_k": 2
+      }
+    },
+    {
+      "name": "tool_result",
+      "definition": "ToolResult",
+      "valid": true,
+      "payload": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "artwork_id": "aic-28560",
+        "dataset_version": "aic-seed-v0.1",
+        "retrieval_strategy_version": "legacy-facet-v0.1",
+        "candidates": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tool_empty_result",
+      "definition": "ToolResult",
+      "valid": true,
+      "payload": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "artwork_id": "aic-28560",
+        "dataset_version": "aic-seed-v0.1",
+        "retrieval_strategy_version": "legacy-facet-v0.1",
+        "candidates": []
+      }
+    },
+    {
+      "name": "assess_finish",
+      "definition": "AssessmentDecision",
+      "valid": true,
+      "payload": {
+        "action": "finish",
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The museum lists canvas as the support.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          },
+          {
+            "request_id": "r2",
+            "support": "insufficient",
+            "text": "The available evidence does not explain why the artist chose that support.",
+            "citation_chunk_ids": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "assess_refinement",
+      "definition": "AssessmentDecision",
+      "valid": true,
+      "payload": {
+        "action": "refine",
+        "reason_code": "uncovered_request",
+        "request_ids": [
+          "r2"
+        ],
+        "queries": [
+          {
+            "id": "q3",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Museum explanation for the choice of painting support in The Bedroom"
+          }
+        ]
+      }
+    },
+    {
+      "name": "final_finish",
+      "definition": "FinalDecision",
+      "valid": true,
+      "payload": {
+        "action": "finish",
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The museum lists canvas as the support.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          },
+          {
+            "request_id": "r2",
+            "support": "insufficient",
+            "text": "The available evidence does not explain why the artist chose that support.",
+            "citation_chunk_ids": []
+          }
+        ]
+      }
+    },
+    {
+      "name": "final_clarification",
+      "definition": "FinalDecision",
+      "valid": true,
+      "payload": {
+        "action": "clarify",
+        "text": "Do you mean the brushwork or the background pattern?"
+      }
+    },
+    {
+      "name": "completed_snapshot",
+      "definition": "RunSnapshot",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v1",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "state": "completed",
+        "result": {
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "answer": {
+            "status": "partially_answered",
+            "text": "The museum lists canvas as the support.\n\nThe available evidence does not explain why the artist chose that support.",
+            "citations": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          },
+          "request_results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "The museum lists canvas as the support.",
+              "citation_chunk_ids": [
+                "aic-28560-medium"
+              ]
+            },
+            {
+              "request_id": "r2",
+              "support": "insufficient",
+              "text": "The available evidence does not explain why the artist chose that support.",
+              "citation_chunk_ids": []
+            }
+          ],
+          "execution": {
+            "workflow_id": "museum_qa_v1",
+            "profile_id": "local-ollama-v1",
+            "prompt_version": "museum-prompts-v1",
+            "schema_version": "agent-schema-v1",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "model_provider": "ollama",
+            "model_name": "example-installed-model",
+            "model_digest": "example-digest-not-a-deployment-value",
+            "model_calls": 2,
+            "retrieval_calls": 2,
+            "refinement_rounds": 0,
+            "duration_ms": 18000
+          }
+        },
+        "error": null
+      }
+    },
+    {
+      "name": "processing_snapshot",
+      "definition": "RunSnapshot",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v1",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "state": "processing",
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "name": "failed_snapshot",
+      "definition": "RunSnapshot",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v1",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "state": "failed",
+        "result": null,
+        "error": {
+          "code": "generation_timeout",
+          "message": "The model service exceeded its deadline.",
+          "retryable": true,
+          "phase": "assessment"
+        }
+      }
+    },
+    {
+      "name": "error_envelope",
+      "definition": "ErrorEnvelope",
+      "valid": true,
+      "payload": {
+        "request_id": "req-example-001",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "error": {
+          "code": "generation_timeout",
+          "message": "The model service exceeded its deadline.",
+          "retryable": true,
+          "phase": "assessment"
+        }
+      }
+    },
+    {
+      "name": "public_partial_answer",
+      "definition": "PublicAnswer",
+      "valid": true,
+      "payload": {
+        "status": "partially_answered",
+        "text": "The museum lists canvas as the support.\n\nThe available evidence does not explain why the artist chose that support.",
+        "citations": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "mode": "llm"
+      }
+    },
+    {
+      "name": "public_turn",
+      "definition": "PublicTurn",
+      "valid": true,
+      "payload": {
+        "turn_id": "44444444-4444-4444-8444-444444444444",
+        "sequence": 1,
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "What is it painted on, and why did the artist choose that support?",
+        "answer_language": "en",
+        "dataset_version": "aic-seed-v0.1",
+        "created_at": "2026-11-13T20:00:18Z",
+        "answer": {
+          "status": "partially_answered",
+          "text": "The museum lists canvas as the support.\n\nThe available evidence does not explain why the artist chose that support.",
+          "citations": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ],
+          "mode": "llm"
+        }
+      }
+    },
+    {
+      "name": "fixture_history_answer",
+      "definition": "PublicAnswer",
+      "valid": true,
+      "payload": {
+        "status": "unsupported_question",
+        "mode": "fixture",
+        "text": "This question is outside the fixed test examples.",
+        "citations": []
+      }
+    },
+    {
+      "name": "query_text_too_long",
+      "definition": "SearchQuery",
+      "valid": false,
+      "payload": {
+        "id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    },
+    {
+      "name": "extra_model_field",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "retrieve",
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is it painted on",
+            "question": "What support was used for The Bedroom?",
+            "scope": "current_artwork"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "why did the artist choose that support",
+            "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+            "scope": "current_artwork"
+          }
+        ],
+        "queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ],
+        "artwork_id": "aic-11723"
+      }
+    },
+    {
+      "name": "wrong_answer_language",
+      "definition": "RunRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-run-v1",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "What is it painted on, and why did the artist choose that support?",
+        "answer_language": "fr",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh",
+          "recent_turns": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v1",
+          "profile_id": "local-ollama-v1",
+          "deadline_at": "2026-11-13T20:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "refinement_forbidden_in_final",
+      "definition": "FinalDecision",
+      "valid": false,
+      "payload": {
+        "action": "refine",
+        "reason_code": "uncovered_request",
+        "request_ids": [
+          "r2"
+        ],
+        "queries": [
+          {
+            "id": "q3",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Museum explanation for the choice of painting support in The Bedroom"
+          }
+        ]
+      }
+    },
+    {
+      "name": "supported_without_citation",
+      "definition": "RequestResult",
+      "valid": false,
+      "payload": {
+        "request_id": "r1",
+        "support": "supported",
+        "text": "Canvas.",
+        "citation_chunk_ids": []
+      }
+    },
+    {
+      "name": "gap_with_citation",
+      "definition": "RequestResult",
+      "valid": false,
+      "payload": {
+        "request_id": "r2",
+        "support": "insufficient",
+        "text": "The evidence does not explain the choice.",
+        "citation_chunk_ids": [
+          "aic-28560-medium"
+        ]
+      }
+    },
+    {
+      "name": "llm_unsupported_fixture_status",
+      "definition": "PublicAnswer",
+      "valid": false,
+      "payload": {
+        "status": "unsupported_question",
+        "mode": "llm",
+        "text": "Unavailable.",
+        "citations": []
+      }
+    },
+    {
+      "name": "completed_without_result",
+      "definition": "RunSnapshot",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-run-v1",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "state": "completed",
+        "result": null,
+        "error": null
+      }
+    },
+    {
+      "name": "too_many_queries",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "retrieve",
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is it painted on",
+            "question": "What support was used for The Bedroom?",
+            "scope": "current_artwork"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "why did the artist choose that support",
+            "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+            "scope": "current_artwork"
+          }
+        ],
+        "queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          },
+          {
+            "id": "q3",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "Painting support"
+          }
+        ]
+      }
+    },
+    {
+      "name": "boolean_as_call_count",
+      "definition": "ExecutionRecord",
+      "valid": false,
+      "payload": {
+        "workflow_id": "museum_qa_v1",
+        "profile_id": "local-ollama-v1",
+        "prompt_version": "museum-prompts-v1",
+        "schema_version": "agent-schema-v1",
+        "retrieval_strategy_version": "legacy-facet-v0.1",
+        "model_provider": "ollama",
+        "model_name": "example-installed-model",
+        "model_digest": "example-digest-not-a-deployment-value",
+        "model_calls": true,
+        "retrieval_calls": 2,
+        "refinement_rounds": 0,
+        "duration_ms": 18000
+      }
+    },
+    {
+      "name": "planner_input",
+      "definition": "PlanInput",
+      "valid": true,
+      "payload": {
+        "original_question": "What is it painted on, and why did the artist choose that support?",
+        "answer_language": "en",
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "query_policy": {
+          "search_language": "en",
+          "max_requests": 4,
+          "max_queries": 2,
+          "scope_policy": "current_artwork_only"
+        }
+      }
+    },
+    {
+      "name": "assessment_input",
+      "definition": "AnswerInput",
+      "valid": true,
+      "payload": {
+        "original_question": "What is it painted on, and why did the artist choose that support?",
+        "answer_language": "en",
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is it painted on",
+            "question": "What support was used for The Bedroom?",
+            "scope": "current_artwork"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "why did the artist choose that support",
+            "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+            "scope": "current_artwork"
+          }
+        ],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ],
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "complete_scope": false,
+        "allow_refinement": true
+      }
+    },
+    {
+      "name": "final_input",
+      "definition": "FinalInput",
+      "valid": true,
+      "payload": {
+        "original_question": "What is it painted on, and why did the artist choose that support?",
+        "answer_language": "en",
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is it painted on",
+            "question": "What support was used for The Bedroom?",
+            "scope": "current_artwork"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "why did the artist choose that support",
+            "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+            "scope": "current_artwork"
+          }
+        ],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ],
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "complete_scope": false,
+        "allow_refinement": false
+      }
+    },
+    {
+      "name": "blank_clarification",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "clarify",
+        "text": " \t\n"
+      }
+    },
+    {
+      "name": "final_input_cannot_allow_refinement",
+      "definition": "FinalInput",
+      "valid": false,
+      "payload": {
+        "original_question": "What is it painted on, and why did the artist choose that support?",
+        "answer_language": "en",
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is it painted on",
+            "question": "What support was used for The Bedroom?",
+            "scope": "current_artwork"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "why did the artist choose that support",
+            "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+            "scope": "current_artwork"
+          }
+        ],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ],
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "complete_scope": false,
+        "allow_refinement": true
+      }
+    }
+  ],
+  "runtime_cases": [
+    {
+      "name": "faithful_plan_structure",
+      "kind": "plan",
+      "valid": true,
+      "payload": {
+        "run": {
+          "contract_version": "agent-run-v1",
+          "run_id": "11111111-1111-4111-8111-111111111111",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "What is it painted on, and why did the artist choose that support?",
+          "answer_language": "en",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "context": {
+            "artwork_title": "The Bedroom",
+            "artist": "Vincent van Gogh",
+            "recent_turns": []
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v1",
+            "profile_id": "local-ollama-v1",
+            "deadline_at": "2026-11-13T20:00:55Z"
+          }
+        },
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "duplicate_normalized_queries",
+      "kind": "plan",
+      "valid": false,
+      "payload": {
+        "run": {
+          "contract_version": "agent-run-v1",
+          "run_id": "11111111-1111-4111-8111-111111111111",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "What is it painted on, and why did the artist choose that support?",
+          "answer_language": "en",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "context": {
+            "artwork_title": "The Bedroom",
+            "artist": "Vincent van Gogh",
+            "recent_turns": []
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v1",
+            "profile_id": "local-ollama-v1",
+            "deadline_at": "2026-11-13T20:00:55Z"
+          }
+        },
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "  WHAT SUPPORT WAS USED FOR THE BEDROOM?  "
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "query_to_outside_scope_request",
+      "kind": "plan",
+      "valid": false,
+      "payload": {
+        "run": {
+          "contract_version": "agent-run-v1",
+          "run_id": "11111111-1111-4111-8111-111111111111",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "What is it painted on, and why did the artist choose that support?",
+          "answer_language": "en",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "context": {
+            "artwork_title": "The Bedroom",
+            "artist": "Vincent van Gogh",
+            "recent_turns": []
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v1",
+            "profile_id": "local-ollama-v1",
+            "deadline_at": "2026-11-13T20:00:55Z"
+          }
+        },
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "outside_scope"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "fragment_not_in_original_question",
+      "kind": "plan",
+      "valid": false,
+      "payload": {
+        "run": {
+          "contract_version": "agent-run-v1",
+          "run_id": "11111111-1111-4111-8111-111111111111",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "What is it painted on, and why did the artist choose that support?",
+          "answer_language": "en",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "context": {
+            "artwork_title": "The Bedroom",
+            "artist": "Vincent van Gogh",
+            "recent_turns": []
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v1",
+            "profile_id": "local-ollama-v1",
+            "deadline_at": "2026-11-13T20:00:55Z"
+          }
+        },
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "invented wording",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "partial_finish_binding",
+      "kind": "finish",
+      "valid": true,
+      "payload": {
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        },
+        "decision": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "The museum lists canvas as the support.",
+              "citation_chunk_ids": [
+                "aic-28560-medium"
+              ]
+            },
+            {
+              "request_id": "r2",
+              "support": "insufficient",
+              "text": "The available evidence does not explain why the artist chose that support.",
+              "citation_chunk_ids": []
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "unknown_citation",
+      "kind": "finish",
+      "valid": false,
+      "payload": {
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        },
+        "decision": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "The museum lists canvas as the support.",
+              "citation_chunk_ids": [
+                "unknown-id"
+              ]
+            },
+            {
+              "request_id": "r2",
+              "support": "insufficient",
+              "text": "The available evidence does not explain why the artist chose that support.",
+              "citation_chunk_ids": []
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "omitted_planned_request",
+      "kind": "finish",
+      "valid": false,
+      "payload": {
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        },
+        "decision": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "The museum lists canvas as the support.",
+              "citation_chunk_ids": [
+                "aic-28560-medium"
+              ]
+            }
+          ]
+        },
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "merge_identical_cross_call_record",
+      "kind": "merge",
+      "valid": true,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "responses": [
+          {
+            "tool_version": "evidence-tool-v1",
+            "query_id": "q1",
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "candidates": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          },
+          {
+            "tool_version": "evidence-tool-v1",
+            "query_id": "q2",
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "candidates": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "duplicate_within_one_tool_result",
+      "kind": "merge",
+      "valid": false,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "responses": [
+          {
+            "tool_version": "evidence-tool-v1",
+            "query_id": "q1",
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "candidates": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              },
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "foreign_tool_record",
+      "kind": "merge",
+      "valid": false,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "responses": [
+          {
+            "tool_version": "evidence-tool-v1",
+            "query_id": "q1",
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "candidates": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-11723",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "conflicting_same_id",
+      "kind": "merge",
+      "valid": false,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "responses": [
+          {
+            "tool_version": "evidence-tool-v1",
+            "query_id": "q1",
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "candidates": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          },
+          {
+            "tool_version": "evidence-tool-v1",
+            "query_id": "q2",
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "candidates": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Tempera on wood",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "permitted_refinement",
+      "kind": "refine",
+      "valid": true,
+      "payload": {
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        },
+        "decision": {
+          "action": "refine",
+          "reason_code": "uncovered_request",
+          "request_ids": [
+            "r2"
+          ],
+          "queries": [
+            {
+              "id": "q3",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Museum explanation for the choice of painting support in The Bedroom"
+            }
+          ]
+        },
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ],
+        "complete_scope": false,
+        "remaining_ms": 26000,
+        "refinement_rounds": 0
+      }
+    },
+    {
+      "name": "complete_scope_stops_refinement",
+      "kind": "refine",
+      "valid": false,
+      "payload": {
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        },
+        "decision": {
+          "action": "refine",
+          "reason_code": "uncovered_request",
+          "request_ids": [
+            "r2"
+          ],
+          "queries": [
+            {
+              "id": "q3",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Museum explanation for the choice of painting support in The Bedroom"
+            }
+          ]
+        },
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ],
+        "complete_scope": true,
+        "remaining_ms": 26000,
+        "refinement_rounds": 0
+      }
+    },
+    {
+      "name": "insufficient_refinement_time",
+      "kind": "refine",
+      "valid": false,
+      "payload": {
+        "plan": {
+          "action": "retrieve",
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is it painted on",
+              "question": "What support was used for The Bedroom?",
+              "scope": "current_artwork"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "why did the artist choose that support",
+              "question": "Why did Vincent van Gogh choose the support used for The Bedroom?",
+              "scope": "current_artwork"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What support was used for The Bedroom?"
+            },
+            {
+              "id": "q2",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+            }
+          ]
+        },
+        "decision": {
+          "action": "refine",
+          "reason_code": "uncovered_request",
+          "request_ids": [
+            "r2"
+          ],
+          "queries": [
+            {
+              "id": "q3",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "Museum explanation for the choice of painting support in The Bedroom"
+            }
+          ]
+        },
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What support was used for The Bedroom?"
+          },
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Why did Vincent van Gogh choose the support used for The Bedroom?"
+          }
+        ],
+        "complete_scope": false,
+        "remaining_ms": 19000,
+        "refinement_rounds": 0
+      }
+    },
+    {
+      "name": "source_union_complete",
+      "kind": "completeness",
+      "valid": true,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          },
+          {
+            "chunk_id": "aic-28560-description-01",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.description, paragraph 1",
+            "excerpt": "With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy.",
+            "license": "CC-BY-4.0",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "HTML removed; whitespace normalized."
+          }
+        ],
+        "expected_complete": true
+      }
+    },
+    {
+      "name": "partial_union_is_not_complete",
+      "kind": "completeness",
+      "valid": true,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "expected_complete": false
+      }
+    }
+  ]
+}

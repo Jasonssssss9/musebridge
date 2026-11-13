@@ -6,7 +6,7 @@ This is the implementation baseline for stage one. It specifies intended behavio
 
 The public API is synchronous JSON. The first demo uses actual museum evidence and deterministic fixture generation. It requires no local LLM, embedding model, cloud account, or database. The interfaces leave room for a later cloud GPU adapter, but real generation needs its own contract revision and evaluation.
 
-A [local LLM contract proposal](llm-contract-proposal.md) is available for team review. It proposes model understanding before bounded retrieval, a clarification outcome, revised generation modes and deadlines. These behaviors and evidence-authority changes are not part of this implemented baseline. Review and update all affected consumers before adopting a new revision.
+The [Agent architecture and contracts](agent-design.md) define the next implementation target, `agent-demo-v0.2`, with an independent Python Agent and private `agent-run-v1` protocol. This file remains the fixture baseline. New modes, statuses, deadlines and validation boundaries apply only after coordinated implementation; they are not available merely because the target is documented.
 
 Use these sections when implementing a boundary:
 

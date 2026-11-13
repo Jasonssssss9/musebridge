@@ -1,5 +1,7 @@
 # MuseBridge implementation plan
 
+> Baseline and historical plan: existing task IDs and named assignments below describe the fixture stage and its earlier follow-on plan. The [Agent architecture and contracts](agent-design.md) supersede future Go-owned model orchestration and the previous A/B/C allocation for new Agent work. Use its module-based P1-P8 packages to assign new responsibilities. Recorded fixture checks and the separate phone/hosted acceptance requirements remain relevant.
+
 ## Scope and ownership
 
 The first stage delivers a local, phone-ready museum guide for two Art Institute of Chicago works. A visitor scans a QR code, opens the matching artwork page, asks a supported question, and checks the answer against the original museum source. The demonstration also covers a limited follow-up and shows what happens when the guide lacks evidence or a service becomes unavailable.
@@ -190,7 +192,7 @@ On November 10, 2026, the M0 changes were tested on Windows with Docker Desktop,
 
 Start looking into the course and cloud constraints while the local prototype is in progress. Set dates after reviewing the current rubric, team availability, source permissions, and available GPU resources. Keep the local fixture path available for deterministic regression tests.
 
-Before adapter implementation, review the [local LLM contract proposal](llm-contract-proposal.md) with all three owners. It proposes an intermediate local Ollama workflow that interprets the original question before requesting bounded retrieval, then answers from C's authoritative evidence or asks for clarification. Review intent preservation, query limits, response modes and the additional model-stage budget together. The proposal is not implemented or approved; a local GPU walkthrough does not by itself complete the hosted/cloud acceptance below.
+Implement the [Agent architecture and contracts](agent-design.md) before enabling model-backed answers. It defines independent Python/FastAPI/LangGraph orchestration, bounded query refinement, explicit partial answers, private run recovery and shared schemas. Assign its P1-P8 work packages afresh rather than inheriting the older named integration tasks below. A local teammate-GPU walkthrough does not by itself complete the hosted/cloud acceptance below.
 
 | Task | Owner | Dependencies | Artifact and acceptance |
 | --- | --- | --- | --- |

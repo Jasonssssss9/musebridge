@@ -1,0 +1,1784 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:musebridge:agent-schema-v1",
+  "title": "MuseBridge Agent v1 contracts",
+  "description": "Normative structural contracts. Validate a named $defs entry. Cross-field, scope, provenance, deadline and semantic rules are defined in ../agent-design.md. Response metadata is additive; model outputs and requests are strict.",
+  "$ref": "#/$defs/RunRequest",
+  "$defs": {
+    "UUID": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "RequestID": {
+      "type": "string",
+      "pattern": "^r[1-4]$"
+    },
+    "QueryID": {
+      "type": "string",
+      "pattern": "^q[1-4]$"
+    },
+    "Language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "zh-CN"
+      ]
+    },
+    "Scope": {
+      "type": "object",
+      "properties": {
+        "artwork_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "artwork_id",
+        "dataset_version"
+      ],
+      "additionalProperties": false
+    },
+    "AgentStatus": {
+      "type": "string",
+      "enum": [
+        "answered",
+        "partially_answered",
+        "insufficient",
+        "clarification_needed",
+        "out_of_scope"
+      ]
+    },
+    "HistoryTurn": {
+      "type": "object",
+      "properties": {
+        "turn_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "answer_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "answer_status": {
+          "type": "string",
+          "enum": [
+            "answered",
+            "partially_answered",
+            "insufficient",
+            "clarification_needed",
+            "out_of_scope",
+            "unsupported_question"
+          ]
+        },
+        "answer_mode": {
+          "type": "string",
+          "enum": [
+            "fixture",
+            "llm"
+          ]
+        },
+        "answer_text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "turn_id",
+        "sequence",
+        "question",
+        "answer_language",
+        "answer_status",
+        "answer_mode",
+        "answer_text"
+      ],
+      "additionalProperties": false
+    },
+    "Context": {
+      "type": "object",
+      "properties": {
+        "artwork_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "artist": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "recent_turns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HistoryTurn"
+          },
+          "minItems": 0,
+          "maxItems": 3
+        }
+      },
+      "required": [
+        "artwork_title",
+        "artist",
+        "recent_turns"
+      ],
+      "additionalProperties": false
+    },
+    "RunExecution": {
+      "type": "object",
+      "properties": {
+        "workflow_id": {
+          "const": "museum_qa_v1"
+        },
+        "profile_id": {
+          "const": "local-ollama-v1"
+        },
+        "deadline_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "profile_id",
+        "deadline_at"
+      ],
+      "additionalProperties": false
+    },
+    "RunRequest": {
+      "type": "object",
+      "properties": {
+        "contract_version": {
+          "const": "agent-run-v1"
+        },
+        "run_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "conversation_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "client_message_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "answer_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "context": {
+          "$ref": "#/$defs/Context"
+        },
+        "execution": {
+          "$ref": "#/$defs/RunExecution"
+        }
+      },
+      "required": [
+        "contract_version",
+        "run_id",
+        "conversation_id",
+        "client_message_id",
+        "question",
+        "answer_language",
+        "scope",
+        "context",
+        "execution"
+      ],
+      "additionalProperties": false
+    },
+    "Evidence": {
+      "type": "object",
+      "properties": {
+        "chunk_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "artwork_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "source_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^https://"
+        },
+        "source_language": {
+          "const": "en"
+        },
+        "source_locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "license": {
+          "type": "string",
+          "enum": [
+            "CC0-1.0",
+            "CC-BY-4.0"
+          ]
+        },
+        "license_url": {
+          "type": "string",
+          "enum": [
+            "https://creativecommons.org/publicdomain/zero/1.0/",
+            "https://creativecommons.org/licenses/by/4.0/"
+          ]
+        },
+        "attribution": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "normalization": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "chunk_id",
+        "artwork_id",
+        "source_id",
+        "source_title",
+        "source_url",
+        "source_language",
+        "source_locator",
+        "excerpt",
+        "license",
+        "license_url",
+        "attribution",
+        "normalization"
+      ],
+      "additionalProperties": true
+    },
+    "InterpretedRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/RequestID"
+        },
+        "original_fragment": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "current_artwork",
+            "outside_scope"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "original_fragment",
+        "question",
+        "scope"
+      ],
+      "additionalProperties": false
+    },
+    "SearchQuery": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/QueryID"
+        },
+        "request_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RequestID"
+          },
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "request_ids",
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "RetrievePlan": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "retrieve"
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InterpretedRequest"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SearchQuery"
+          },
+          "minItems": 1,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "action",
+        "requests",
+        "queries"
+      ],
+      "additionalProperties": false
+    },
+    "Clarification": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "clarify"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "action",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "ScopeDecision": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "out_of_scope"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "action",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "Plan": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RetrievePlan"
+        },
+        {
+          "$ref": "#/$defs/Clarification"
+        },
+        {
+          "$ref": "#/$defs/ScopeDecision"
+        }
+      ]
+    },
+    "RequestResult": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "$ref": "#/$defs/RequestID"
+            },
+            "support": {
+              "const": "supported"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 450,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citation_chunk_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+                "allOf": [
+                  {
+                    "pattern": "\\S"
+                  }
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 8,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "request_id",
+            "support",
+            "text",
+            "citation_chunk_ids"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "$ref": "#/$defs/RequestID"
+            },
+            "support": {
+              "type": "string",
+              "enum": [
+                "insufficient",
+                "out_of_scope"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 450,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citation_chunk_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+                "allOf": [
+                  {
+                    "pattern": "\\S"
+                  }
+                ]
+              },
+              "minItems": 0,
+              "maxItems": 0
+            }
+          },
+          "required": [
+            "request_id",
+            "support",
+            "text",
+            "citation_chunk_ids"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "FinishDecision": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "finish"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RequestResult"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        }
+      },
+      "required": [
+        "action",
+        "results"
+      ],
+      "additionalProperties": false
+    },
+    "RefineDecision": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "const": "refine"
+        },
+        "reason_code": {
+          "type": "string",
+          "enum": [
+            "no_candidates",
+            "poor_candidate_relevance",
+            "uncovered_request"
+          ]
+        },
+        "request_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RequestID"
+          },
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SearchQuery"
+          },
+          "minItems": 1,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "action",
+        "reason_code",
+        "request_ids",
+        "queries"
+      ],
+      "additionalProperties": false
+    },
+    "AssessmentDecision": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FinishDecision"
+        },
+        {
+          "$ref": "#/$defs/Clarification"
+        },
+        {
+          "$ref": "#/$defs/RefineDecision"
+        }
+      ]
+    },
+    "FinalDecision": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FinishDecision"
+        },
+        {
+          "$ref": "#/$defs/Clarification"
+        }
+      ]
+    },
+    "ToolInput": {
+      "type": "object",
+      "properties": {
+        "tool_version": {
+          "const": "evidence-tool-v1"
+        },
+        "query_id": {
+          "$ref": "#/$defs/QueryID"
+        },
+        "request_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RequestID"
+          },
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "artwork_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "top_k": {
+          "const": 2
+        }
+      },
+      "required": [
+        "tool_version",
+        "query_id",
+        "request_ids",
+        "query",
+        "artwork_id",
+        "dataset_version",
+        "top_k"
+      ],
+      "additionalProperties": false
+    },
+    "ToolResult": {
+      "type": "object",
+      "properties": {
+        "tool_version": {
+          "const": "evidence-tool-v1"
+        },
+        "query_id": {
+          "$ref": "#/$defs/QueryID"
+        },
+        "artwork_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "retrieval_strategy_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "tool_version",
+        "query_id",
+        "artwork_id",
+        "dataset_version",
+        "retrieval_strategy_version",
+        "candidates"
+      ],
+      "additionalProperties": true
+    },
+    "LegacyRetrieveRequest": {
+      "type": "object",
+      "properties": {
+        "artwork_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "top_k": {
+          "const": 2
+        }
+      },
+      "required": [
+        "artwork_id",
+        "query",
+        "dataset_version",
+        "top_k"
+      ],
+      "additionalProperties": false
+    },
+    "LegacyRetrieveResponse": {
+      "type": "object",
+      "properties": {
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "dataset_version",
+        "evidence"
+      ],
+      "additionalProperties": true
+    },
+    "AgentAnswer": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "answered",
+                "partially_answered"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "minItems": 1,
+              "maxItems": 8
+            }
+          },
+          "required": [
+            "status",
+            "text",
+            "citations"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "insufficient",
+                "clarification_needed",
+                "out_of_scope"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "minItems": 0,
+              "maxItems": 0
+            }
+          },
+          "required": [
+            "status",
+            "text",
+            "citations"
+          ],
+          "additionalProperties": true
+        }
+      ]
+    },
+    "PublicAnswer": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "fixture"
+            },
+            "status": {
+              "const": "answered"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "minItems": 1,
+              "maxItems": 8
+            }
+          },
+          "required": [
+            "mode",
+            "status",
+            "text",
+            "citations"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "fixture"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "insufficient",
+                "unsupported_question"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "minItems": 0,
+              "maxItems": 0
+            }
+          },
+          "required": [
+            "mode",
+            "status",
+            "text",
+            "citations"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "llm"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "answered",
+                "partially_answered"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "minItems": 1,
+              "maxItems": 8
+            }
+          },
+          "required": [
+            "mode",
+            "status",
+            "text",
+            "citations"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "llm"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "insufficient",
+                "clarification_needed",
+                "out_of_scope"
+              ]
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Evidence"
+              },
+              "minItems": 0,
+              "maxItems": 0
+            }
+          },
+          "required": [
+            "mode",
+            "status",
+            "text",
+            "citations"
+          ],
+          "additionalProperties": true
+        }
+      ]
+    },
+    "ExecutionRecord": {
+      "type": "object",
+      "properties": {
+        "workflow_id": {
+          "const": "museum_qa_v1"
+        },
+        "profile_id": {
+          "const": "local-ollama-v1"
+        },
+        "prompt_version": {
+          "const": "museum-prompts-v1"
+        },
+        "schema_version": {
+          "const": "agent-schema-v1"
+        },
+        "retrieval_strategy_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "model_provider": {
+          "const": "ollama"
+        },
+        "model_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "model_digest": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "model_calls": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "retrieval_calls": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "refinement_rounds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 55000
+        }
+      },
+      "required": [
+        "workflow_id",
+        "profile_id",
+        "prompt_version",
+        "schema_version",
+        "retrieval_strategy_version",
+        "model_provider",
+        "model_name",
+        "model_digest",
+        "model_calls",
+        "retrieval_calls",
+        "refinement_rounds",
+        "duration_ms"
+      ],
+      "additionalProperties": true
+    },
+    "RunResult": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "answer": {
+          "$ref": "#/$defs/AgentAnswer"
+        },
+        "request_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RequestResult"
+          },
+          "minItems": 0,
+          "maxItems": 4
+        },
+        "execution": {
+          "$ref": "#/$defs/ExecutionRecord"
+        }
+      },
+      "required": [
+        "scope",
+        "answer",
+        "request_results",
+        "execution"
+      ],
+      "additionalProperties": true
+    },
+    "AgentError": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "invalid_request",
+            "payload_too_large",
+            "unsupported_media_type",
+            "agent_unauthorized",
+            "route_not_found",
+            "method_not_allowed",
+            "agent_contract_mismatch",
+            "agent_scope_mismatch",
+            "agent_run_conflict",
+            "agent_run_in_progress",
+            "agent_run_not_found",
+            "agent_busy",
+            "service_not_ready",
+            "agent_context_limit",
+            "retrieval_invalid_response",
+            "retrieval_unavailable",
+            "retrieval_timeout",
+            "generation_invalid_response",
+            "generation_unavailable",
+            "generation_timeout",
+            "request_timeout",
+            "agent_internal_error"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "admission",
+            "context",
+            "planning",
+            "retrieval",
+            "assessment",
+            "final_generation",
+            "validation",
+            "capacity"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "phase"
+      ],
+      "additionalProperties": false
+    },
+    "ErrorEnvelope": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[\\x20-\\x7e]+$"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UUID"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "$ref": "#/$defs/AgentError"
+        }
+      },
+      "required": [
+        "request_id",
+        "run_id",
+        "error"
+      ],
+      "additionalProperties": true
+    },
+    "RunSnapshot": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "agent-run-v1"
+            },
+            "run_id": {
+              "$ref": "#/$defs/UUID"
+            },
+            "state": {
+              "const": "processing"
+            },
+            "result": {
+              "type": "null"
+            },
+            "error": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "contract_version",
+            "run_id",
+            "state",
+            "result",
+            "error"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "agent-run-v1"
+            },
+            "run_id": {
+              "$ref": "#/$defs/UUID"
+            },
+            "state": {
+              "const": "completed"
+            },
+            "result": {
+              "$ref": "#/$defs/RunResult"
+            },
+            "error": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "contract_version",
+            "run_id",
+            "state",
+            "result",
+            "error"
+          ],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "agent-run-v1"
+            },
+            "run_id": {
+              "$ref": "#/$defs/UUID"
+            },
+            "state": {
+              "const": "failed"
+            },
+            "result": {
+              "type": "null"
+            },
+            "error": {
+              "$ref": "#/$defs/AgentError"
+            }
+          },
+          "required": [
+            "contract_version",
+            "run_id",
+            "state",
+            "result",
+            "error"
+          ],
+          "additionalProperties": true
+        }
+      ]
+    },
+    "PublicTurn": {
+      "type": "object",
+      "properties": {
+        "turn_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "client_message_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "answer_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "answer": {
+          "$ref": "#/$defs/PublicAnswer"
+        }
+      },
+      "required": [
+        "turn_id",
+        "sequence",
+        "client_message_id",
+        "question",
+        "answer_language",
+        "dataset_version",
+        "created_at",
+        "answer"
+      ],
+      "additionalProperties": true
+    },
+    "ArtworkContext": {
+      "type": "object",
+      "properties": {
+        "artwork_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "artist": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "artwork_title",
+        "artist"
+      ],
+      "additionalProperties": false
+    },
+    "QueryPolicy": {
+      "type": "object",
+      "properties": {
+        "search_language": {
+          "const": "en"
+        },
+        "max_requests": {
+          "const": 4
+        },
+        "max_queries": {
+          "const": 2
+        },
+        "scope_policy": {
+          "const": "current_artwork_only"
+        }
+      },
+      "required": [
+        "search_language",
+        "max_requests",
+        "max_queries",
+        "scope_policy"
+      ],
+      "additionalProperties": false
+    },
+    "PlanInput": {
+      "type": "object",
+      "properties": {
+        "original_question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "answer_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "artwork_context": {
+          "$ref": "#/$defs/ArtworkContext"
+        },
+        "recent_turns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HistoryTurn"
+          },
+          "minItems": 0,
+          "maxItems": 3
+        },
+        "query_policy": {
+          "$ref": "#/$defs/QueryPolicy"
+        }
+      },
+      "required": [
+        "original_question",
+        "answer_language",
+        "artwork_context",
+        "recent_turns",
+        "query_policy"
+      ],
+      "additionalProperties": false
+    },
+    "AnswerInput": {
+      "type": "object",
+      "properties": {
+        "original_question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "answer_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "artwork_context": {
+          "$ref": "#/$defs/ArtworkContext"
+        },
+        "recent_turns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HistoryTurn"
+          },
+          "minItems": 0,
+          "maxItems": 3
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InterpretedRequest"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "executed_queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SearchQuery"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "complete_scope": {
+          "type": "boolean"
+        },
+        "allow_refinement": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "original_question",
+        "answer_language",
+        "artwork_context",
+        "recent_turns",
+        "requests",
+        "executed_queries",
+        "evidence",
+        "complete_scope",
+        "allow_refinement"
+      ],
+      "additionalProperties": false
+    },
+    "FinalInput": {
+      "type": "object",
+      "properties": {
+        "original_question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]+$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "answer_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "artwork_context": {
+          "$ref": "#/$defs/ArtworkContext"
+        },
+        "recent_turns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HistoryTurn"
+          },
+          "minItems": 0,
+          "maxItems": 3
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InterpretedRequest"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "executed_queries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SearchQuery"
+          },
+          "minItems": 1,
+          "maxItems": 4
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 0,
+          "maxItems": 8
+        },
+        "complete_scope": {
+          "type": "boolean"
+        },
+        "allow_refinement": {
+          "const": false
+        }
+      },
+      "required": [
+        "original_question",
+        "answer_language",
+        "artwork_context",
+        "recent_turns",
+        "requests",
+        "executed_queries",
+        "evidence",
+        "complete_scope",
+        "allow_refinement"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
