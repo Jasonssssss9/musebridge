@@ -1,6 +1,6 @@
 # MuseBridge implementation plan
 
-> Baseline and historical plan: existing task IDs and named assignments below describe the fixture stage and its earlier follow-on plan. The [Agent architecture and contracts](agent-design.md) supersede future Go-owned model orchestration and the previous A/B/C allocation for new Agent work. Use its module-based P1-P8 packages to assign new responsibilities. Recorded fixture checks and the separate phone/hosted acceptance requirements remain relevant.
+> Baseline and historical plan: existing task IDs and named assignments below describe the fixture stage and its earlier follow-on plan. The [Agent architecture and contracts](agent-design.md) supersede future Go-owned model orchestration and the previous A/B/C allocation for new Agent work. The [Agent implementation plan](agent-plan.md) assigns new A/B/C responsibilities and groups the P1-P8 packages into three milestones. Recorded fixture checks and the separate phone/hosted acceptance requirements remain relevant.
 
 ## Scope and ownership
 
@@ -192,7 +192,7 @@ On November 10, 2026, the M0 changes were tested on Windows with Docker Desktop,
 
 Start looking into the course and cloud constraints while the local prototype is in progress. Set dates after reviewing the current rubric, team availability, source permissions, and available GPU resources. Keep the local fixture path available for deterministic regression tests.
 
-Implement the [Agent architecture and contracts](agent-design.md) before enabling model-backed answers. It defines independent Python/FastAPI/LangGraph orchestration, bounded query refinement, explicit partial answers, private run recovery and shared schemas. Assign its P1-P8 work packages afresh rather than inheriting the older named integration tasks below. A local teammate-GPU walkthrough does not by itself complete the hosted/cloud acceptance below.
+Implement the [Agent architecture and contracts](agent-design.md) before enabling model-backed answers. It defines independent Python/FastAPI/LangGraph orchestration, bounded query refinement, explicit partial answers, private run recovery and shared schemas. Follow the new A/B/C assignments in the [Agent implementation plan](agent-plan.md) rather than inheriting the older named integration tasks below. A local teammate-GPU walkthrough does not by itself complete the hosted/cloud acceptance below.
 
 | Task | Owner | Dependencies | Artifact and acceptance |
 | --- | --- | --- | --- |

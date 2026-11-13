@@ -900,7 +900,7 @@ New work is organized by module; previous A/B/C assignments do not automatically
 | P7. Browser integration | New parsing/statuses, source labels and coordinated waits | P1, P6 | Both artwork flows and recovery pass |
 | P8. Deployment acceptance | Native/container model path, phone tests and deployment record | P5–P7 | Real phone end-to-end evidence recorded |
 
-Assign people after reviewing these packages. Every implementation change must name its package and relevant acceptance cases. No new owner approval is implied by this document.
+The [Agent implementation plan](agent-plan.md) assigns these packages across A/B/C and groups them into three milestones. Its role split separates application/Agent infrastructure from AI behavior while preserving one Agent module. Every implementation change must name its package and relevant acceptance cases.
 
 ### 14.3 Compatibility and rollout
 
