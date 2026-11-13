@@ -190,6 +190,8 @@ On November 10, 2026, the M0 changes were tested on Windows with Docker Desktop,
 
 Start looking into the course and cloud constraints while the local prototype is in progress. Set dates after reviewing the current rubric, team availability, source permissions, and available GPU resources. Keep the local fixture path available for deterministic regression tests.
 
+Before adapter implementation, review the [local LLM contract proposal](llm-contract-proposal.md) with all three owners. It proposes an intermediate local Ollama workflow that interprets the original question before requesting bounded retrieval, then answers from C's authoritative evidence or asks for clarification. Review intent preservation, query limits, response modes and the additional model-stage budget together. The proposal is not implemented or approved; a local GPU walkthrough does not by itself complete the hosted/cloud acceptance below.
+
 | Task | Owner | Dependencies | Artifact and acceptance |
 | --- | --- | --- | --- |
 | B7. Connect GPU-backed generation | Jinqing Zhang | Local integration, confirmed course requirements, and access to the chosen GPU environment | Implement the provider adapter and deploy the inference service. Correlate a public demo request with inference logs, record the model version, and verify the cloud GPU path with an actual artwork question. |

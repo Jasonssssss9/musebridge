@@ -6,6 +6,8 @@ This is the implementation baseline for stage one. It specifies intended behavio
 
 The public API is synchronous JSON. The first demo uses actual museum evidence and deterministic fixture generation. It requires no local LLM, embedding model, cloud account, or database. The interfaces leave room for a later cloud GPU adapter, but real generation needs its own contract revision and evaluation.
 
+A [local LLM contract proposal](llm-contract-proposal.md) is available for team review. It proposes model understanding before bounded retrieval, a clarification outcome, revised generation modes and deadlines. These behaviors and evidence-authority changes are not part of this implemented baseline. Review and update all affected consumers before adopting a new revision.
+
 Use these sections when implementing a boundary:
 
 - [Common transport, identity and scope](#1-contract-conventions)
