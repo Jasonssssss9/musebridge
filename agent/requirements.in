@@ -1,0 +1,7 @@
+# C M1 workflow dependencies; no model server or FastAPI runtime.
+langgraph==1.2.21
+httpx==0.28.1
+jsonschema==4.26.0
+# Imported directly for tracing isolation around LangGraph.
+langchain-core==1.8.0
+langsmith==0.14.17

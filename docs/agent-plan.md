@@ -1,8 +1,10 @@
 # MuseBridge Agent Implementation Plan
 
-Status: **Delivery plan for the agreed Agent architecture. Implementation and acceptance are still pending.**
+Status: **C's M1 foundation is implemented. Team M1 integration and acceptance are still pending.**
 
 This plan defines three milestones and the new A/B/C responsibilities. It follows [Agent architecture and contracts](agent-design.md), including its protocols, call limits and [release gates](agent-design.md#13-evaluation-and-release-gates). It supersedes the earlier personal assignments for new Agent work. The [fixture-stage plan](plan.md) remains a historical reference.
+
+**C M1 implementation checkpoint:** the LangGraph foundation, context and prompt assets, real retrieval adapter, release-manifest validation and scripted-model tests are implemented. See the [C M1 handoff and local checks](../agent/README.md). The full M1 acceptance gate remains open until the A/B deliverables, production provider/budget integration and cross-service checks below are verified.
 
 The architecture and contract examples are already documented. The current checkout still runs fixture generation. Reuse the existing frontend, Go conversation lifecycle, source release and retrieval tests rather than rebuilding them.
 
