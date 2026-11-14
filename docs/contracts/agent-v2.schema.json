@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://musebridge.local/contracts/agent-v2.schema.json",
   "title": "MuseBridge conversation-first Agent v2 contracts",
-  "description": "Normative target contracts for agent-workflow-v2. Documentation only: the current runtime remains agent-run-v1. Use the named $defs at each boundary. JSON schema checks shape; language precedence, links, scope, provenance, completeness, state transitions and answer derivation require the accompanying runtime invariants. Decode strictly without duplicate keys, nonfinite values, coercion or integer-valued floats where integers are required.",
+  "description": "Normative target contracts for agent-workflow-v2. Documentation only: the current runtime remains agent-run-v1. Use the named $defs at each boundary. JSON schema checks shape; language precedence, links, scope, provenance, completeness, state transitions and answer derivation require the accompanying runtime invariants. Decode strictly without duplicate keys, nonfinite values, coercion or integer-valued floats where integers are required. Draft revision 2 adds local clarification, canonical catalog facts, one-off content translation and visitor interpretation policies; it remains unimplemented.",
   "$ref": "#/$defs/RunRequest",
   "$defs": {
     "UUID": {
@@ -613,14 +613,47 @@
             "turn",
             "conversation"
           ]
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "conversation_setting",
+            "turn_response"
+          ]
         }
       },
       "required": [
         "preference",
         "original_fragment",
-        "persistence"
+        "persistence",
+        "purpose"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "conversation_setting"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "persistence": {
+                "const": "conversation"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "persistence": {
+                "const": "turn"
+              }
+            }
+          }
+        }
+      ]
     },
     "LanguageDecision": {
       "type": "object",
@@ -648,12 +681,23 @@
         },
         "answer_language": {
           "$ref": "#/$defs/Language"
+        },
+        "translation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/TranslationTask"
+            }
+          ]
         }
       },
       "required": [
         "detected_language",
         "explicit_instruction",
-        "answer_language"
+        "answer_language",
+        "translation"
       ],
       "additionalProperties": false
     },
@@ -697,14 +741,78 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 2147483647
+        },
+        "original_fragment": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            }
+          ]
+        },
+        "unresolved_intent": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            }
+          ]
         }
       },
       "required": [
         "original_question",
         "question",
-        "created_sequence"
+        "created_sequence",
+        "original_fragment",
+        "unresolved_intent"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "original_fragment": {
+                "type": "string"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "unresolved_intent": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+                "allOf": [
+                  {
+                    "pattern": "\\S"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
     },
     "PendingUpdate": {
       "oneOf": [
@@ -747,11 +855,22 @@
                 "current_message",
                 "pending_clarification"
               ]
+            },
+            "request_id": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "$ref": "#/$defs/RequestID"
+                }
+              ]
             }
           },
           "required": [
             "action",
-            "source"
+            "source",
+            "request_id"
           ],
           "additionalProperties": false
         }
@@ -1090,12 +1209,21 @@
           },
           "minItems": 0,
           "maxItems": 5
+        },
+        "catalog_facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogFact"
+          },
+          "minItems": 3,
+          "maxItems": 3
         }
       },
       "required": [
         "artwork_title",
         "artist",
-        "recent_turns"
+        "recent_turns",
+        "catalog_facts"
       ],
       "additionalProperties": false
     },
@@ -1221,7 +1349,15 @@
             "conversation",
             "general_art_knowledge",
             "artwork_fact",
-            "outside_scope"
+            "outside_scope",
+            "catalog_fact"
+          ]
+        },
+        "resolution": {
+          "type": "string",
+          "enum": [
+            "clear",
+            "needs_clarification"
           ]
         }
       },
@@ -1229,7 +1365,8 @@
         "id",
         "original_fragment",
         "intent",
-        "kind"
+        "kind",
+        "resolution"
       ],
       "additionalProperties": false
     },
@@ -1250,7 +1387,7 @@
             "text": {
               "type": "string",
               "minLength": 1,
-              "maxLength": 450,
+              "maxLength": 2000,
               "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
               "allOf": [
                 {
@@ -1258,7 +1395,7 @@
                 }
               ]
             },
-            "citation_chunk_ids": {
+            "citation_ids": {
               "type": "array",
               "items": {
                 "type": "string",
@@ -1272,7 +1409,7 @@
                 ]
               },
               "minItems": 1,
-              "maxItems": 8,
+              "maxItems": 11,
               "uniqueItems": true
             }
           },
@@ -1280,7 +1417,7 @@
             "request_id",
             "support",
             "text",
-            "citation_chunk_ids"
+            "citation_ids"
           ],
           "additionalProperties": false
         },
@@ -1295,13 +1432,14 @@
               "enum": [
                 "insufficient",
                 "not_applicable",
-                "out_of_scope"
+                "out_of_scope",
+                "clarification_needed"
               ]
             },
             "text": {
               "type": "string",
               "minLength": 1,
-              "maxLength": 450,
+              "maxLength": 2000,
               "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
               "allOf": [
                 {
@@ -1309,7 +1447,7 @@
                 }
               ]
             },
-            "citation_chunk_ids": {
+            "citation_ids": {
               "type": "array",
               "items": {
                 "type": "string",
@@ -1331,7 +1469,7 @@
             "request_id",
             "support",
             "text",
-            "citation_chunk_ids"
+            "citation_ids"
           ],
           "additionalProperties": false
         }
@@ -1358,15 +1496,35 @@
             "type": "object",
             "properties": {
               "kind": {
-                "type": "string",
                 "const": "artwork_fact"
+              },
+              "resolution": {
+                "const": "clear"
               }
             },
             "required": [
-              "kind"
+              "kind",
+              "resolution"
             ]
           },
-          "minContains": 1
+          "minContains": 1,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "resolution": {
+                    "const": "needs_clarification"
+                  }
+                },
+                "required": [
+                  "resolution"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
         },
         "queries": {
           "type": "array",
@@ -1406,15 +1564,35 @@
             "type": "object",
             "properties": {
               "kind": {
-                "type": "string",
                 "const": "artwork_fact"
+              },
+              "resolution": {
+                "const": "clear"
               }
             },
             "required": [
-              "kind"
+              "kind",
+              "resolution"
             ]
           },
-          "minContains": 1
+          "minContains": 1,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "resolution": {
+                    "const": "needs_clarification"
+                  }
+                },
+                "required": [
+                  "resolution"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
         }
       },
       "required": [
@@ -1442,15 +1620,20 @@
                 "$ref": "#/$defs/InterpretedRequest"
               },
               {
-                "properties": {
-                  "kind": {
-                    "type": "string",
-                    "enum": [
-                      "conversation",
-                      "general_art_knowledge",
-                      "outside_scope"
-                    ]
-                  }
+                "not": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "const": "artwork_fact"
+                    },
+                    "resolution": {
+                      "const": "clear"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "resolution"
+                  ]
                 }
               }
             ]
@@ -1464,60 +1647,65 @@
                 "type": "string",
                 "enum": [
                   "conversation",
-                  "general_art_knowledge"
+                  "general_art_knowledge",
+                  "catalog_fact"
                 ]
+              },
+              "resolution": {
+                "const": "clear"
               }
             },
             "required": [
-              "kind"
+              "kind",
+              "resolution"
             ]
           },
-          "minContains": 1
+          "minContains": 1,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "resolution": {
+                    "const": "needs_clarification"
+                  }
+                },
+                "required": [
+                  "resolution"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
         },
         "results": {
           "type": "array",
           "items": {
-            "allOf": [
-              {
-                "$ref": "#/$defs/RequestResult"
-              },
-              {
-                "properties": {
-                  "support": {
-                    "type": "string",
-                    "enum": [
-                      "not_applicable",
-                      "out_of_scope"
-                    ]
-                  }
-                }
-              }
-            ]
+            "$ref": "#/$defs/RequestResult"
           },
           "minItems": 1,
-          "maxItems": 4
-        },
-        "memory_update": {
+          "maxItems": 4,
           "allOf": [
             {
-              "$ref": "#/$defs/MemoryUpdate"
-            },
-            {
-              "properties": {
-                "pending_update": {
-                  "properties": {
-                    "action": {
-                      "type": "string",
-                      "enum": [
-                        "keep",
-                        "clear"
-                      ]
-                    }
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "support": {
+                    "const": "clarification_needed"
                   }
-                }
-              }
+                },
+                "required": [
+                  "support"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
             }
           ]
+        },
+        "memory_update": {
+          "$ref": "#/$defs/MemoryUpdate"
         }
       },
       "required": [
@@ -1527,7 +1715,128 @@
         "results",
         "memory_update"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "memory_update": {
+                "properties": {
+                  "pending_update": {
+                    "properties": {
+                      "action": {
+                        "const": "set"
+                      }
+                    },
+                    "required": [
+                      "action"
+                    ]
+                  }
+                },
+                "required": [
+                  "pending_update"
+                ]
+              }
+            },
+            "required": [
+              "memory_update"
+            ]
+          },
+          "then": {
+            "properties": {
+              "results": {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "support": {
+                      "const": "clarification_needed"
+                    }
+                  },
+                  "required": [
+                    "support"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              "memory_update": {
+                "properties": {
+                  "pending_update": {
+                    "properties": {
+                      "request_id": {
+                        "$ref": "#/$defs/RequestID"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "results": {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "support": {
+                        "const": "clarification_needed"
+                      }
+                    },
+                    "required": [
+                      "support"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "results": {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "support": {
+                      "const": "supported"
+                    }
+                  },
+                  "required": [
+                    "support"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "results"
+            ]
+          },
+          "then": {
+            "properties": {
+              "requests": {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "const": "catalog_fact"
+                    },
+                    "resolution": {
+                      "const": "clear"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "resolution"
+                  ]
+                },
+                "minContains": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "ClarificationPlan": {
       "type": "object",
@@ -1564,6 +1873,9 @@
                       "enum": [
                         "set"
                       ]
+                    },
+                    "request_id": {
+                      "type": "null"
                     }
                   }
                 }
@@ -1664,29 +1976,27 @@
             "$ref": "#/$defs/RequestResult"
           },
           "minItems": 1,
-          "maxItems": 4
-        },
-        "memory_update": {
+          "maxItems": 4,
           "allOf": [
             {
-              "$ref": "#/$defs/MemoryUpdate"
-            },
-            {
-              "properties": {
-                "pending_update": {
-                  "properties": {
-                    "action": {
-                      "type": "string",
-                      "enum": [
-                        "keep",
-                        "clear"
-                      ]
-                    }
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "support": {
+                    "const": "clarification_needed"
                   }
-                }
-              }
+                },
+                "required": [
+                  "support"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
             }
           ]
+        },
+        "memory_update": {
+          "$ref": "#/$defs/MemoryUpdate"
         }
       },
       "required": [
@@ -1694,7 +2004,84 @@
         "results",
         "memory_update"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "memory_update": {
+                "properties": {
+                  "pending_update": {
+                    "properties": {
+                      "action": {
+                        "const": "set"
+                      }
+                    },
+                    "required": [
+                      "action"
+                    ]
+                  }
+                },
+                "required": [
+                  "pending_update"
+                ]
+              }
+            },
+            "required": [
+              "memory_update"
+            ]
+          },
+          "then": {
+            "properties": {
+              "results": {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "support": {
+                      "const": "clarification_needed"
+                    }
+                  },
+                  "required": [
+                    "support"
+                  ]
+                },
+                "minContains": 1,
+                "maxContains": 1
+              },
+              "memory_update": {
+                "properties": {
+                  "pending_update": {
+                    "properties": {
+                      "request_id": {
+                        "$ref": "#/$defs/RequestID"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "results": {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "support": {
+                        "const": "clarification_needed"
+                      }
+                    },
+                    "required": [
+                      "support"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "ClarificationDecision": {
       "type": "object",
@@ -1728,6 +2115,9 @@
                       "enum": [
                         "set"
                       ]
+                    },
+                    "request_id": {
+                      "type": "null"
                     }
                   }
                 }
@@ -1857,6 +2247,14 @@
         },
         "query_policy": {
           "$ref": "#/$defs/QueryPolicy"
+        },
+        "catalog_facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogFact"
+          },
+          "minItems": 3,
+          "maxItems": 3
         }
       },
       "required": [
@@ -1867,7 +2265,8 @@
         "conversation_context",
         "cached_evidence",
         "complete_scope",
-        "query_policy"
+        "query_policy",
+        "catalog_facts"
       ],
       "additionalProperties": false
     },
@@ -1908,7 +2307,24 @@
             "$ref": "#/$defs/InterpretedRequest"
           },
           "minItems": 1,
-          "maxItems": 4
+          "maxItems": 4,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "resolution": {
+                    "const": "needs_clarification"
+                  }
+                },
+                "required": [
+                  "resolution"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
         },
         "executed_queries": {
           "type": "array",
@@ -1931,6 +2347,24 @@
         },
         "allow_refinement": {
           "type": "boolean"
+        },
+        "catalog_facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogFact"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "translation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/ResolvedTranslation"
+            }
+          ]
         }
       },
       "required": [
@@ -1943,7 +2377,9 @@
         "executed_queries",
         "evidence",
         "complete_scope",
-        "allow_refinement"
+        "allow_refinement",
+        "catalog_facts",
+        "translation"
       ],
       "additionalProperties": false
     },
@@ -1984,7 +2420,24 @@
             "$ref": "#/$defs/InterpretedRequest"
           },
           "minItems": 1,
-          "maxItems": 4
+          "maxItems": 4,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "resolution": {
+                    "const": "needs_clarification"
+                  }
+                },
+                "required": [
+                  "resolution"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
         },
         "executed_queries": {
           "type": "array",
@@ -2008,6 +2461,24 @@
         "allow_refinement": {
           "type": "boolean",
           "const": false
+        },
+        "catalog_facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogFact"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "translation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/ResolvedTranslation"
+            }
+          ]
         }
       },
       "required": [
@@ -2020,7 +2491,9 @@
         "executed_queries",
         "evidence",
         "complete_scope",
-        "allow_refinement"
+        "allow_refinement",
+        "catalog_facts",
+        "translation"
       ],
       "additionalProperties": false
     },
@@ -2050,10 +2523,10 @@
             "citations": {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/Evidence"
+                "$ref": "#/$defs/Citation"
               },
               "minItems": 1,
-              "maxItems": 8
+              "maxItems": 11
             }
           },
           "required": [
@@ -2089,7 +2562,7 @@
             "citations": {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/Evidence"
+                "$ref": "#/$defs/Citation"
               },
               "minItems": 0,
               "maxItems": 0
@@ -2134,10 +2607,10 @@
             "citations": {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/Evidence"
+                "$ref": "#/$defs/Citation"
               },
               "minItems": 1,
-              "maxItems": 8
+              "maxItems": 11
             }
           },
           "required": [
@@ -2178,7 +2651,7 @@
             "citations": {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/Evidence"
+                "$ref": "#/$defs/Citation"
               },
               "minItems": 0,
               "maxItems": 0
@@ -2325,7 +2798,24 @@
             "$ref": "#/$defs/InterpretedRequest"
           },
           "minItems": 0,
-          "maxItems": 4
+          "maxItems": 4,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "resolution": {
+                    "const": "needs_clarification"
+                  }
+                },
+                "required": [
+                  "resolution"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
         },
         "request_results": {
           "type": "array",
@@ -2333,7 +2823,24 @@
             "$ref": "#/$defs/RequestResult"
           },
           "minItems": 0,
-          "maxItems": 4
+          "maxItems": 4,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "properties": {
+                  "support": {
+                    "const": "clarification_needed"
+                  }
+                },
+                "required": [
+                  "support"
+                ]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
         },
         "evidence_snapshot": {
           "type": "array",
@@ -2373,6 +2880,14 @@
         },
         "execution": {
           "$ref": "#/$defs/ExecutionRecord"
+        },
+        "catalog_snapshot": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogFact"
+          },
+          "minItems": 3,
+          "maxItems": 3
         }
       },
       "required": [
@@ -2386,7 +2901,8 @@
         "reused_chunk_ids",
         "executed_queries",
         "conversation_update",
-        "execution"
+        "execution",
+        "catalog_snapshot"
       ],
       "additionalProperties": true
     },
@@ -3066,6 +3582,296 @@
         "history_turn_limit"
       ],
       "additionalProperties": false
+    },
+    "CatalogFact": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "catalog"
+        },
+        "fact_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "artwork_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "dataset_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "field": {
+          "type": "string",
+          "enum": [
+            "title",
+            "artist",
+            "date_display"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "source_title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1,
+          "maxLength": 2048,
+          "pattern": "^https://"
+        },
+        "source_locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "attribution": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "normalization": {
+          "const": "Released catalog metadata; not a verbatim museum excerpt."
+        }
+      },
+      "required": [
+        "kind",
+        "fact_id",
+        "artwork_id",
+        "dataset_version",
+        "field",
+        "value",
+        "source_id",
+        "source_title",
+        "source_url",
+        "source_locator",
+        "attribution",
+        "normalization"
+      ],
+      "additionalProperties": false
+    },
+    "Citation": {
+      "oneOf": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/Evidence"
+            },
+            {
+              "not": {
+                "required": [
+                  "kind"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "$ref": "#/$defs/CatalogFact"
+        }
+      ]
+    },
+    "TranslationSource": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "history_answer"
+            },
+            "sequence": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "kind",
+            "sequence"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "history_excerpt"
+            },
+            "sequence": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "excerpt": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "sequence",
+            "excerpt"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "current_quote"
+            },
+            "excerpt": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500,
+              "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+              "allOf": [
+                {
+                  "pattern": "\\S"
+                }
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "excerpt"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "TranslationTask": {
+      "type": "object",
+      "properties": {
+        "target_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "original_fragment": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/TranslationSource"
+            }
+          ]
+        }
+      },
+      "required": [
+        "target_language",
+        "original_fragment",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "ResolvedTranslation": {
+      "type": "object",
+      "properties": {
+        "target_language": {
+          "$ref": "#/$defs/Language"
+        },
+        "source": {
+          "$ref": "#/$defs/TranslationSource"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\ud800-\\udfff]*$",
+          "allOf": [
+            {
+              "pattern": "\\S"
+            }
+          ]
+        }
+      },
+      "required": [
+        "target_language",
+        "source",
+        "text"
+      ],
+      "additionalProperties": false
     }
-  }
+  },
+  "x-draft-revision": 2
 }
