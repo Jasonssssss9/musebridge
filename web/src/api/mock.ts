@@ -1,32 +1,39 @@
-// In-browser stand-in for the Go API, used by `npm run dev` until the real
-// conversation endpoints exist. It follows docs/api-contract.md sections 2, 3
-// and 6: same routes, same bodies, same idempotency state machine. State lives
-// in localStorage so that, like the real server, it survives a page reload and
-// keeps working on a request after the browser stops listening.
+// In-browser stand-in for the Go API's agent contract (agent-demo-v0.3), used by
+// `npm run dev` until the real endpoints exist. It follows docs/agent-api-contract.md
+// sections 2 and 7 for routes, bodies, revisions and the idempotency rules, and
+// sections 4.2 and 5.5 for how the reply language and status are derived.
+//
+// It is a keyword script, not a model: it shows every reply shape the page must
+// render, and says nothing about real answer quality. State lives in localStorage
+// so that, like the real server, it survives a reload and keeps working on a
+// request after the browser stops listening.
 import {
-  ARTWORKS, CHUNKS, DATASET_VERSION, FIXTURES, FOLLOW_UPS, GENERAL_INSUFFICIENT, TOPIC_ALIASES, UNSUPPORTED,
-  type Fixture,
+  ARTWORKS, CITATIONS, DATASET_VERSION, INTENTS, LANGUAGE_NAMES, PARTS, SETTING_CUE, SPANISH_CUE, TRANSLATE_CUE,
+  type MockArtwork,
 } from './mockData';
-import type { Answer, AnswerLanguage, Conversation, ErrorBody, Turn } from './types';
+import { AGENT_CONTRACT, PREFERENCES, type ErrorBody, type Language, type LanguagePreference } from './types';
 import { uuidv4 } from './uuid';
 
 export type Fault =
-  | 'none' | 'slow' | 'unavailable' | 'timeout' | 'invalid' | 'lost_response' | 'browser_timeout' | 'session_lost';
+  | 'none' | 'slow' | 'unavailable' | 'timeout' | 'invalid' | 'lost_response' | 'browser_timeout' | 'session_lost' | 'state_conflict';
 
 export const FAULTS: { id: Fault; label: string }[] = [
   { id: 'none', label: 'Normal replies' },
-  { id: 'slow', label: 'Slow reply (4 s)' },
-  { id: 'unavailable', label: '503 retrieval_unavailable (retryable)' },
-  { id: 'timeout', label: '504 retrieval_timeout (retryable)' },
-  { id: 'invalid', label: '502 retrieval_invalid_response (not retryable)' },
+  { id: 'slow', label: 'Slow reply (9 s)' },
+  { id: 'unavailable', label: '503 generation_unavailable (retryable)' },
+  { id: 'timeout', label: '504 generation_timeout (retryable)' },
+  { id: 'invalid', label: '502 generation_invalid_response (not retryable)' },
   { id: 'lost_response', label: 'Answer saved, reply lost on the network' },
-  { id: 'browser_timeout', label: 'Server takes 15 s (past the 12 s browser wait)' },
+  { id: 'browser_timeout', label: 'Server takes 75 s (past the 70 s browser wait)' },
   { id: 'session_lost', label: 'Server restarted: conversation gone (404)' },
+  { id: 'state_conflict', label: 'Another tab answered first (409 state conflict)' },
 ];
 
+type Wire = Record<string, unknown>;
 interface Rec {
   question: string;
-  answer_language: AnswerLanguage;
+  language_override: LanguagePreference | null;
+  expected_revision: number;
   state: 'processing' | 'failed' | 'completed' | 'superseded';
   last_error: ErrorBody | null;
   turn_id: string | null;
@@ -34,8 +41,12 @@ interface Rec {
   planned_error: { status: number; body: ErrorBody } | null;
 }
 interface Conv {
-  conversation: Conversation;
-  turns: Turn[];
+  conversation: Wire & {
+    conversation_id: string; artwork_id: string; expires_at: string; revision: number;
+    language_preference: LanguagePreference; auto_language: Language; last_answer_language: Language | null;
+  };
+  turns: (Wire & { turn_id: string })[];
+  parts: Record<string, string[]>; // turn_id -> reply part keys, so "translate that" can re-render it
   records: Record<string, Rec>;
   pending: string | null; // client_message_id of the latest unfinished request
 }
@@ -44,7 +55,7 @@ interface State {
   fault: Fault;
 }
 
-const KEY = 'musebridge.mock.v1';
+const KEY = 'musebridge.mock.v2';
 let memory: State | null = null;
 
 function load(): State {
@@ -85,52 +96,104 @@ function sleep(ms: number, signal?: AbortSignal | null): Promise<void> {
   });
 }
 
-// ---- fixture answers (contract 2.6, 6.1, 6.2) ------------------------------
+// ---- scripted "agent" -------------------------------------------------------
 
-function normalize(q: string): string {
-  return q.normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').trim().replace(/[?.。]+$/u, '').trim();
+function detectLanguage(text: string): Language | null {
+  if (/[가-힯]/.test(text)) return 'ko';
+  if (/[一-鿿]/.test(text)) return 'zh-CN';
+  if (SPANISH_CUE.test(text)) return 'es';
+  return /[a-z]/.test(text) ? 'en' : null;
 }
 
-function retrieve(artworkId: string, query: string): string[] {
-  const q = query.normalize('NFKC').toLowerCase();
-  const topics = Object.entries(TOPIC_ALIASES)
-    .filter(([, aliases]) => aliases.some((a) => (/^[a-z ]+$/.test(a) ? new RegExp(`\\b${a}\\b`).test(q) : q.includes(a))))
-    .map(([t]) => t);
-  return CHUNKS.filter((c) => c.artwork_id === artworkId)
-    .map((c) => ({ id: c.chunk_id, score: c.topics.filter((t) => topics.includes(t)).length }))
-    .filter((c) => c.score > 0)
-    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
-    .slice(0, 2)
-    .map((c) => c.id);
+interface Planned {
+  parts: string[];
+  language: Language;
+  preference: LanguagePreference; // what to save as the conversation's preference
+  detected: Language | null;
 }
 
-function answer(artworkId: string, question: string, lang: AnswerLanguage, completedTurns: number): Answer {
-  const n = normalize(question);
-  const applies = (f: Fixture) => f.artworks === 'any' || f.artworks.includes(artworkId);
-  let fixture = FIXTURES.find((f) => applies(f) && f.questions.includes(n));
-  let query = question;
-  if (!fixture && completedTurns > 0) {
-    const fu = FOLLOW_UPS.find((f) => f.questions.includes(n));
-    if (fu) { fixture = fu.fixture; query = fu.fixture.questions[0]; }
+/** Decide the reply parts and language for one message (contract 4.2 rules 1–7, simplified). */
+function plan(c: Conv, question: string, override: LanguagePreference | null): Planned {
+  const q = question.normalize('NFKC').toLowerCase();
+  const artworkId = c.conversation.artwork_id;
+
+  const hits = INTENTS
+    .map((i) => ({ i, at: q.search(i.cue) }))
+    .filter((h) => h.at >= 0)
+    .sort((a, b) => a.at - b.at)
+    .map(({ i }) => (!i.only || i.only === artworkId ? i.part : i.elsewhere!));
+  let parts = [...new Set(hits)];
+
+  const named = LANGUAGE_NAMES.find((n) => n.cue.test(q))?.language ?? null;
+  const translateTo = TRANSLATE_CUE.test(q) ? named : null;
+  const setting: LanguagePreference | null =
+    translateTo ? null : SETTING_CUE.test(q) && named ? named : /\bauto(matic)?\b|自动|자동/.test(q) && SETTING_CUE.test(q) ? 'auto' : null;
+  // A message that is only a language instruction says nothing about the visitor's own language.
+  const detected = (translateTo || setting) && parts.length === 0 ? null : detectLanguage(q);
+
+  const candidate = override ?? c.conversation.language_preference;
+  const effective = setting ?? candidate;
+  const language = translateTo ?? (effective === 'auto' ? detected ?? c.conversation.auto_language : effective);
+
+  if (translateTo) {
+    const last = c.turns[c.turns.length - 1];
+    parts = last ? c.parts[last.turn_id] ?? [] : [];
+    if (parts.length === 0) parts = ['clarify_translation'];
+  } else if (setting) {
+    parts = [setting === 'auto' ? 'language_auto' : 'language_fixed', ...parts];
+  } else if (parts.length === 0) {
+    parts = [/[?？¿]|^(what|why|how|who|when|where|is|does|did)\b/.test(q) ? 'gap_generic' : 'chat_generic'];
   }
-  const hits = retrieve(artworkId, query);
-  const done = (status: Answer['status'], text: string, ids: string[] = []): Answer => ({
-    status, mode: 'fixture', text,
-    citations: ids.map((id) => {
-      const { topics: _topics, ...evidence } = CHUNKS.find((c) => c.chunk_id === id)!;
-      return evidence;
-    }),
-  });
-  if (fixture && fixture.chunk === null) return done('insufficient', fixture.text(artworkId)[lang]);
-  if (hits.length === 0) return done('insufficient', GENERAL_INSUFFICIENT[lang]);
-  if (fixture && fixture.chunk) {
-    const need = fixture.chunk(artworkId);
-    return hits.includes(need) ? done('answered', fixture.text(artworkId)[lang], [need]) : done('insufficient', GENERAL_INSUFFICIENT[lang]);
-  }
-  return done('unsupported_question', UNSUPPORTED[lang]);
+  // At most one clarification part (contract 5.4).
+  let asked = false;
+  parts = parts.filter((p) => PARTS[p].kind !== 'clarification' || (!asked && (asked = true)));
+  return { parts, language, preference: setting ?? candidate, detected };
 }
 
-// ---- request lifecycle (contract 3.1) --------------------------------------
+/** Assemble the public answer: join parts, collect sources, derive the status (contract 5.5). */
+function assemble(artwork: MockArtwork, parts: string[], language: Language): Wire {
+  const fill = (t: string) => t.replace('{title}', artwork.title).replace('{artist}', artwork.artist).replace('{date}', artwork.date_display);
+  const kinds = parts.map((p) => PARTS[p].kind);
+  const supported = kinds.includes('supported');
+  const gap = kinds.some((k) => k === 'insufficient' || k === 'out_of_scope' || k === 'clarification');
+  const status = supported ? (gap ? 'partially_answered' : 'answered')
+    : kinds.includes('clarification') ? 'clarification_needed'
+    : kinds.includes('insufficient') ? 'insufficient'
+    : kinds.includes('out_of_scope') ? 'out_of_scope'
+    : 'conversational';
+  const ids = [...new Set(parts.map((p) => PARTS[p].cite?.(artwork.artwork_id)).filter((id): id is string => !!id))];
+  return {
+    mode: 'llm',
+    status,
+    text: parts.map((p) => fill(PARTS[p].text[language])).join('\n\n'),
+    citations: supported ? ids.map((id) => CITATIONS[id]) : [],
+  };
+}
+
+function commitTurn(c: Conv, clientMessageId: string, question: string, override: LanguagePreference | null): Wire & { turn_id: string } {
+  const artwork = ARTWORKS.find((a) => a.artwork_id === c.conversation.artwork_id)!;
+  const p = plan(c, question, override);
+  const turn = {
+    turn_id: uuidv4(),
+    sequence: c.turns.length + 1,
+    client_message_id: clientMessageId,
+    question,
+    language_override: override,
+    answer_language: p.language,
+    dataset_version: DATASET_VERSION,
+    created_at: new Date().toISOString(),
+    answer: assemble(artwork, p.parts, p.language),
+  };
+  c.turns.push(turn);
+  c.parts[turn.turn_id] = p.parts;
+  c.conversation.revision = turn.sequence;
+  c.conversation.language_preference = p.preference;
+  c.conversation.last_answer_language = p.language;
+  if (p.detected) c.conversation.auto_language = p.detected;
+  return turn;
+}
+
+// ---- request lifecycle (contract 2.3) ---------------------------------------
 
 /** Finish any attempt whose time is up, whether or not a browser is still waiting. */
 function settle(s: State): void {
@@ -143,19 +206,8 @@ function settle(s: State): void {
       r.state = 'failed';
       r.last_error = r.planned_error.body;
     } else {
-      const turn: Turn = {
-        turn_id: uuidv4(),
-        sequence: c.turns.length + 1,
-        client_message_id: id,
-        question: r.question,
-        answer_language: r.answer_language,
-        dataset_version: c.conversation.dataset_version,
-        created_at: new Date().toISOString(),
-        answer: answer(c.conversation.artwork_id, r.question, r.answer_language, c.turns.length),
-      };
-      c.turns.push(turn);
+      r.turn_id = commitTurn(c, id, r.question, r.language_override).turn_id;
       r.state = 'completed';
-      r.turn_id = turn.turn_id;
       c.pending = null;
     }
   }
@@ -171,17 +223,19 @@ function liveConv(s: State, id: string): Conv | null {
 
 const err = (code: string, message: string, retryable: boolean): ErrorBody => ({ code, message, retryable });
 
-async function submit(convId: string, body: Record<string, unknown>, signal?: AbortSignal | null): Promise<Response> {
-  const keys = Object.keys(body);
-  const { client_message_id: rawId, question: rawQ, answer_language: lang } = body;
+async function submit(convId: string, body: Wire, signal?: AbortSignal | null): Promise<Response> {
+  const { contract_version, client_message_id: rawId, question: rawQ, language_override: lang, expected_revision: rev } = body;
   if (
-    keys.length !== 3 || typeof rawId !== 'string' || !UUID_RE.test(rawId) || typeof rawQ !== 'string' ||
-    (lang !== 'en' && lang !== 'zh-CN') || CONTROL_RE.test(rawQ)
+    Object.keys(body).length !== 5 || typeof contract_version !== 'string' || typeof rawId !== 'string' || !UUID_RE.test(rawId) ||
+    typeof rawQ !== 'string' || CONTROL_RE.test(rawQ) || !(lang === null || (PREFERENCES as readonly unknown[]).includes(lang)) ||
+    typeof rev !== 'number' || !Number.isInteger(rev) || rev < 0
   ) return fail(400, 'invalid_request', false);
+  if (contract_version !== AGENT_CONTRACT) return fail(409, 'agent_contract_mismatch', false);
   const question = rawQ.trim();
   const len = [...question].length;
   if (len < 1 || len > 500) return fail(400, 'invalid_request', false);
   const id = rawId.toLowerCase();
+  const override = lang as LanguagePreference | null;
 
   let s = load();
   settle(s);
@@ -192,33 +246,45 @@ async function submit(convId: string, body: Record<string, unknown>, signal?: Ab
   }
   const c = liveConv(s, convId);
   if (!c) return fail(404, 'conversation_not_found', false);
-
-  const rec = c.records[id];
-  if (rec) {
-    if (rec.question !== question || rec.answer_language !== lang) return fail(409, 'idempotency_conflict', false);
-    if (rec.state === 'completed') return reply(200, { turn: c.turns.find((t) => t.turn_id === rec.turn_id) });
-    if (rec.state === 'processing') return fail(409, 'request_in_progress', true);
-    if (rec.state === 'superseded') return fail(409, 'request_superseded', false);
-  } else {
-    const cur = c.pending ? c.records[c.pending] : undefined;
-    if (cur && cur.state === 'processing') return fail(409, 'conversation_busy', true);
-    if (cur && cur.state === 'failed') cur.state = 'superseded';
+  const current = c.pending ? c.records[c.pending] : undefined;
+  if (s.fault === 'state_conflict' && !(current && current.state === 'processing')) {
+    // Pretend another tab asked something first, so this submission's revision is stale.
+    commitTurn(c, uuidv4(), 'What is it made of?', null);
+    s.fault = 'none';
+    save(s);
   }
 
-  const plan: Record<Fault, { ms: number; error: Rec['planned_error'] }> = {
-    none: { ms: 700, error: null },
-    slow: { ms: 4000, error: null },
-    lost_response: { ms: 700, error: null },
-    browser_timeout: { ms: 15000, error: null },
-    session_lost: { ms: 700, error: null },
-    unavailable: { ms: 500, error: { status: 503, body: err('retrieval_unavailable', 'The evidence service is temporarily unavailable.', true) } },
-    timeout: { ms: 3000, error: { status: 504, body: err('retrieval_timeout', 'The evidence service did not answer in time.', true) } },
-    invalid: { ms: 500, error: { status: 502, body: err('retrieval_invalid_response', 'The evidence service returned an invalid response.', false) } },
+  // Same order as contract 2.3: changed payload, replay, in progress, stale revision, superseded, busy.
+  const rec = c.records[id];
+  if (rec && (rec.question !== question || rec.language_override !== override || rec.expected_revision !== rev)) {
+    return fail(409, 'idempotency_conflict', false);
+  }
+  if (rec?.state === 'completed') {
+    return reply(200, { conversation: c.conversation, turn: c.turns.find((t) => t.turn_id === rec.turn_id) });
+  }
+  if (rec?.state === 'processing') return fail(409, 'request_in_progress', true);
+  if (rev !== c.conversation.revision) return fail(409, 'conversation_state_conflict', false);
+  if (rec?.state === 'superseded') return fail(409, 'request_superseded', false);
+  if (!rec) {
+    if (current && current.state === 'processing') return fail(409, 'conversation_busy', true);
+    if (current && current.state === 'failed') current.state = 'superseded';
+  }
+
+  const plans: Record<Fault, { ms: number; error: Rec['planned_error'] }> = {
+    none: { ms: 900, error: null },
+    slow: { ms: 9000, error: null },
+    lost_response: { ms: 900, error: null },
+    browser_timeout: { ms: 75000, error: null },
+    session_lost: { ms: 900, error: null },
+    state_conflict: { ms: 900, error: null },
+    unavailable: { ms: 600, error: { status: 503, body: err('generation_unavailable', 'The model service is temporarily unavailable.', true) } },
+    timeout: { ms: 3000, error: { status: 504, body: err('generation_timeout', 'The model did not answer in time.', true) } },
+    invalid: { ms: 600, error: { status: 502, body: err('generation_invalid_response', 'The model returned an invalid response.', false) } },
   };
-  const { ms, error } = plan[s.fault];
+  const { ms, error } = plans[s.fault];
   const dropReply = s.fault === 'lost_response';
   c.records[id] = {
-    question, answer_language: lang, state: 'processing', last_error: null, turn_id: null,
+    question, language_override: override, expected_revision: rev, state: 'processing', last_error: null, turn_id: null,
     finish_at: Date.now() + ms, planned_error: error,
   };
   c.pending = id;
@@ -228,12 +294,13 @@ async function submit(convId: string, body: Record<string, unknown>, signal?: Ab
   s = load();
   settle(s);
   if (dropReply) throw new TypeError('Failed to fetch (mock: reply dropped after commit)');
-  const after = s.convs[convId.toLowerCase()]?.records[id];
-  if (!after) return fail(404, 'conversation_not_found', false);
-  if (after.state === 'completed') {
-    return reply(200, { turn: s.convs[convId.toLowerCase()].turns.find((t) => t.turn_id === after.turn_id) });
+  const after = s.convs[convId.toLowerCase()];
+  const done = after?.records[id];
+  if (!after || !done) return fail(404, 'conversation_not_found', false);
+  if (done.state === 'completed') {
+    return reply(200, { conversation: after.conversation, turn: after.turns.find((t) => t.turn_id === done.turn_id) });
   }
-  return reply(error?.status ?? 500, { request_id: `mock-${++reqCounter}`, error: after.last_error ?? err('internal_error', 'mock', true) });
+  return reply(error?.status ?? 500, { request_id: `mock-${++reqCounter}`, error: done.last_error ?? err('internal_error', 'mock', true) });
 }
 
 export async function mockFetch(path: string, init: RequestInit = {}): Promise<Response> {
@@ -249,12 +316,12 @@ export async function mockFetch(path: string, init: RequestInit = {}): Promise<R
     return art ? reply(200, { artwork: art }) : fail(404, 'artwork_not_found', false);
   }
 
-  let body: Record<string, unknown> = {};
+  let body: Wire = {};
   if (method === 'POST') {
     try {
       const parsedBody: unknown = JSON.parse(String(init.body));
       if (typeof parsedBody !== 'object' || parsedBody === null || Array.isArray(parsedBody)) throw new Error('not an object');
-      body = parsedBody as Record<string, unknown>;
+      body = parsedBody as Wire;
     } catch {
       return fail(400, 'invalid_request', false);
     }
@@ -262,20 +329,26 @@ export async function mockFetch(path: string, init: RequestInit = {}): Promise<R
 
   if (path === '/api/conversations' && method === 'POST') {
     const art = ARTWORKS.find((a) => a.artwork_id === body.artwork_id);
-    if (!art || Object.keys(body).length !== 1) return fail(400, 'invalid_request', false);
+    if (!art || Object.keys(body).length !== 2 || typeof body.contract_version !== 'string') return fail(400, 'invalid_request', false);
+    if (body.contract_version !== AGENT_CONTRACT) return fail(409, 'agent_contract_mismatch', false);
     const existing = Object.values(s.convs).find(
       (c) => c.conversation.artwork_id === art.artwork_id && Date.now() < Date.parse(c.conversation.expires_at),
     );
     if (existing) return reply(200, { conversation: existing.conversation, created: false });
     const now = Date.now();
-    const conversation: Conversation = {
+    const conversation: Conv['conversation'] = {
+      contract_version: AGENT_CONTRACT,
       conversation_id: uuidv4(),
       artwork_id: art.artwork_id,
       dataset_version: DATASET_VERSION,
       created_at: new Date(now).toISOString(),
       expires_at: new Date(now + 24 * 3600 * 1000).toISOString(),
+      revision: 0,
+      language_preference: 'auto',
+      auto_language: 'en',
+      last_answer_language: null,
     };
-    s.convs[conversation.conversation_id] = { conversation, turns: [], records: {}, pending: null };
+    s.convs[conversation.conversation_id] = { conversation, turns: [], parts: {}, records: {}, pending: null };
     save(s);
     return reply(200, { conversation, created: true });
   }
@@ -290,7 +363,10 @@ export async function mockFetch(path: string, init: RequestInit = {}): Promise<R
       const r = c.pending ? c.records[c.pending] : undefined;
       const pending =
         c.pending && r && (r.state === 'processing' || r.state === 'failed')
-          ? { client_message_id: c.pending, question: r.question, answer_language: r.answer_language, state: r.state, last_error: r.last_error }
+          ? {
+            contract_version: AGENT_CONTRACT, client_message_id: c.pending, question: r.question,
+            language_override: r.language_override, expected_revision: r.expected_revision, state: r.state, last_error: r.last_error,
+          }
           : null;
       return reply(200, { conversation: c.conversation, turns: c.turns, pending_request: pending });
     }

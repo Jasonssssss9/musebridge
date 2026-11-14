@@ -37,7 +37,10 @@ services:
       - retrieval
 
   web:
-    build: ./web
+    build:
+      context: ./web
+      args:
+        PUBLIC_CONTRACT: "${PUBLIC_CONTRACT:-fixture}"
     networks:
       - default
       - backend

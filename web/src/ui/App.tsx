@@ -1,7 +1,6 @@
 import { useEffect, useState, type MouseEvent, type ReactNode } from 'react';
 import { IS_MOCK } from '../api/client';
-import type { AnswerLanguage } from '../api/types';
-import { UI_TEXT as t, initialAnswerLanguage, rememberAnswerLanguage } from '../i18n';
+import { UI_TEXT as t } from '../i18n';
 import { ArtworkPage } from './ArtworkPage';
 import { Home } from './Home';
 import { MockPanel } from './MockPanel';
@@ -24,7 +23,6 @@ export function Link({ to, className, children }: { to: string; className?: stri
 
 export function App() {
   const [path, setPath] = useState(window.location.pathname);
-  const [answerLanguage, setAnswerLanguage] = useState<AnswerLanguage>(initialAnswerLanguage);
 
   useEffect(() => {
     const onPop = () => setPath(window.location.pathname);
@@ -38,28 +36,20 @@ export function App() {
     try { slug = decodeURIComponent(match[1]); } catch { /* Show the unavailable artwork page. */ }
   }
 
+  const artworkRoute = match !== null;
+  useEffect(() => {
+    // ArtworkPage owns its asynchronous title; other routes must clear a previous artwork's title.
+    if (!artworkRoute) document.title = path === '/qr' ? `${t.qrTitle} · MuseBridge` : 'MuseBridge';
+  }, [artworkRoute, path]);
+
   return (
     <div className="shell">
       <header className="topbar">
         <Link to="/" className="brand">MuseBridge</Link>
         {IS_MOCK && <MockPanel />}
-        <label className="lang">
-          <span className="small muted">{t.answerLanguage}</span>
-          <select
-            value={answerLanguage}
-            onChange={(e) => {
-              const language = e.target.value as AnswerLanguage;
-              setAnswerLanguage(language);
-              rememberAnswerLanguage(language);
-            }}
-          >
-            <option value="en">English</option>
-            <option value="zh-CN">Chinese (Simplified)</option>
-          </select>
-        </label>
       </header>
       {/* key: a different artwork is a different page with its own conversation state */}
-      {match ? <ArtworkPage key={slug ?? match[1]} slug={slug} answerLanguage={answerLanguage} /> : path === '/qr' ? <QrPage /> : <Home />}
+      {match ? <ArtworkPage key={slug ?? match[1]} slug={slug} /> : path === '/qr' ? <QrPage /> : <Home />}
     </div>
   );
 }

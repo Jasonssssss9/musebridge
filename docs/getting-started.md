@@ -11,7 +11,7 @@ docker compose up --build -d
 docker compose ps
 ```
 
-Open [The Bedroom](http://localhost:8080/a/aic-28560), [Woman at Her Toilette](http://localhost:8080/a/aic-11723), or the [QR cards](http://localhost:8080/qr). Compose serves the production web build in live mode. The browser uses relative `/api/` requests. The proxy forwards them to `api:8000`, and Go retrieves evidence from `http://retrieval:8001`. Both services read the same read-only `aic-seed-v0.1` file. Only web port `8080` is published.
+Open [The Bedroom](http://localhost:8080/a/aic-28560), [Woman at Her Toilette](http://localhost:8080/a/aic-11723), or the [QR cards](http://localhost:8080/qr). Compose serves the production web build in live mode. Its browser contract defaults to fixture mode. `PUBLIC_CONTRACT=agent docker compose build web` selects the Agent frontend at build time once the Go v2 API is available; it does not enable or implement that backend. The browser uses relative `/api/` requests. The proxy forwards them to `api:8000`, and Go retrieves evidence from `http://retrieval:8001`. Both services read the same read-only `aic-seed-v0.1` file. Only web port `8080` is published.
 
 For a phone on the same network, replace the example IP with the address the phone can reach and start the stack with that exact origin. Open the same origin in the desktop browser when generating the QR cards. The local HTTP profile uses `COOKIE_SECURE=false` and `GENERATION_MODE=fixture`.
 
