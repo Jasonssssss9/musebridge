@@ -2,11 +2,13 @@
 
 Contract revision: `local-demo-v0.1`. Dataset: `aic-seed-v0.1`.
 
+> Fixture-stage baseline: the new Agent-mode target is defined separately in the [v2 interface contract](agent-api-contract.md). This body remains `local-demo-v0.1`.
+
 This is the implementation baseline for stage one. It specifies intended behavior; publishing this document does not mean the endpoints already exist. [design.md](design.md) explains the system, and [plan.md](plan.md) assigns implementation and acceptance work. Jeremiah Lim owns the browser client, Jinqing Zhang owns the Go application API and generation adapter, and Jason Zichen He owns the Python retriever and source release.
 
 The public API is synchronous JSON. The first demo uses actual museum evidence and deterministic fixture generation. It requires no local LLM, embedding model, cloud account, or database. The interfaces leave room for a later cloud GPU adapter, but real generation needs its own contract revision and evaluation.
 
-The [Agent architecture and contracts](agent-design.md) define the next implementation target, `agent-demo-v0.2`, with an independent Python Agent and private `agent-run-v1` protocol. This file remains the fixture baseline. New modes, statuses, deadlines and validation boundaries apply only after coordinated implementation; they are not available merely because the target is documented.
+The [Agent architecture](agent-design.md) and [v2 interface contract](agent-api-contract.md) define the next coordinated target, `agent-demo-v0.3`, with an independent Python Agent and private `agent-run-v2` protocol. The implemented C M1 foundation still uses the [archived v1 Agent design](archive/agent-design-v1.md). This file remains the fixture baseline. New modes, statuses, languages, deadlines and validation boundaries apply only after coordinated implementation; they are not available merely because the target is documented.
 
 Use these sections when implementing a boundary:
 

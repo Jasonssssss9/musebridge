@@ -1,10 +1,10 @@
 # MuseBridge Agent Implementation Plan
 
-Status: **C's M1 foundation is implemented. Team M1 integration and acceptance are still pending.**
+Status: **C's v1 M1 foundation is implemented. The v2 conversation target adds pending interface and runtime work; team M1 integration and acceptance remain open.**
 
-This plan defines three milestones and the new A/B/C responsibilities. It follows [Agent architecture and contracts](agent-design.md), including its protocols, call limits and [release gates](agent-design.md#13-evaluation-and-release-gates). It supersedes the earlier personal assignments for new Agent work. The [fixture-stage plan](plan.md) remains a historical reference.
+This plan defines three milestones and the new A/B/C responsibilities. It follows the [Agent architecture](agent-design.md) and [v2 interface contract](agent-api-contract.md), including protocols, call limits and [release gates](agent-design.md#13-evaluation-and-release-gates). It supersedes the earlier personal assignments for new Agent work. The [fixture-stage plan](plan.md) remains a historical reference.
 
-**C M1 implementation checkpoint:** the LangGraph foundation, context and prompt assets, real retrieval adapter, release-manifest validation and scripted-model tests are implemented. See the [C M1 handoff and local checks](../agent/README.md). The full M1 acceptance gate remains open until the A/B deliverables, production provider/budget integration and cross-service checks below are verified.
+**C M1 v1 implementation checkpoint:** the LangGraph foundation, context and prompt assets, real retrieval adapter, release-manifest validation and scripted-model tests are implemented. See the [C M1 handoff and local checks](../agent/README.md). This checkpoint remains valid for v1. The v2 target additionally requires four languages, optional retrieval/direct dialogue, five completed history pairs and application-owned ConversationState. Adaptation to v2 and its tests are pending; do not report the existing v1 tests as v2 acceptance. The full M1 gate remains open until A/B deliverables, production interfaces and cross-service checks below are verified.
 
 The architecture and contract examples are already documented. The current checkout still runs fixture generation. Reuse the existing frontend, Go conversation lifecycle, source release and retrieval tests rather than rebuilding them.
 
@@ -24,17 +24,17 @@ These are acceptance stages, not three sequential work queues. A, B and C work i
 
 | Role | Deliverable |
 | --- | --- |
-| A | Update frontend types, parsing and mocks for model answers, partial answers, clarification and scope guidance. Prepare browser acceptance cases and independently authored held-out questions. |
-| B | Implement shared wire types, Go's Agent client, FastAPI run endpoints, service authentication, run identity and the provider interface. Verify the actual model endpoint, structured output, model identity and basic timing. |
-| C | Build the LangGraph skeleton, context preparation, initial prompt assets and the retrieval tool adapter. Connect the existing source release and implement evidence validation against its manifest. |
+| A | Update frontend types, parsing and mocks for conversational/model answers, partial answers, clarification, scope guidance, four language choices plus Auto, and revision-aware submissions. Prepare browser acceptance cases and independently authored held-out questions. |
+| B | Implement v2 wire types, Go's Agent client, private FastAPI v2 run endpoints, service authentication, run identity, revision snapshots and the provider interface. Verify the actual model endpoint, structured output, model identity and basic timing. |
+| C | Adapt the completed v1 LangGraph foundation to v2 context/decision contracts, five historical pairs and explicit dialogue/reuse routes. Define terminal memory proposals while preserving the real retrieval adapter and manifest checks. |
 
 **M1 is complete when:**
 
-- Shared valid/invalid contract examples pass in the relevant consumers.
+- Shared v2 shape and runtime relationship examples pass in the relevant consumers; semantic fixture expectations have separate model evaluation.
 - A contract-test request crosses Go -> Agent -> the real retrieval service and returns a valid result using a controlled model substitute.
 - Both artwork scopes are tested; a malformed or foreign evidence record is rejected.
-- A can render every new answer state from mocks without waiting for real generation.
-- The actual model route, identity, structured-output probes and basic timing are recorded. A fake-model test is not presented as evidence of real model quality.
+- A can render every new answer state and language/revision metadata from mocks without waiting for real generation.
+- The actual model route, identity, four-language structured-output probes, v2 context/output sizing and basic timing are recorded. A fake-model test is not presented as evidence of real model quality.
 - B and C have one agreed provider interface, one runtime budget implementation and one tool interface.
 
 The model service is prepared on the teammate's host or another approved inference host. C does not need to host a model locally.
@@ -45,18 +45,18 @@ The model service is prepared on the teammate's host or another approved inferen
 
 | Role | Deliverable |
 | --- | --- |
-| A | Connect the browser to the updated application API. Verify response labels, citations, bilingual answers, clarification replies, waiting, refresh and artwork switching. Run browser recovery checks. |
-| B | Complete Go result validation and atomic saving, Agent run replay/reconciliation, deadline/capacity handling and provider failures. Align application, Agent, browser and proxy budgets. |
-| C | Complete planning, faithful query generation, support assessment, partial answers, clarification, one bounded refinement and mandatory stopping. Run the shared workflow through the evaluation harness and analyze failures. |
+| A | Connect the browser to the updated application API. Verify response labels, citations, all four languages, language switching, normal dialogue, clarification replies, waiting, state-aware refresh and artwork switching. Run browser recovery checks. |
+| B | Complete Go result validation and atomic turn/ConversationState saving, expected-revision conflicts, Agent run replay/reconciliation, deadline/capacity handling and provider failures. Align application, Agent, browser and proxy budgets. |
+| C | Complete language-aware routing, faithful English query generation, direct conversation, support assessment, useful gap replies, validated evidence reuse, semantic memory updates, one bounded refinement and mandatory stopping. Run the shared workflow through the evaluation harness and analyze failures. |
 
 **M2 is complete when:**
 
 - A real request travels through browser -> Go -> Agent -> retrieval/model -> Go -> browser for both artworks.
-- The normal path uses two model calls; refinement uses at most three. Early clarification skips retrieval.
-- Contextual questions, compound questions, missing evidence and out-of-scope requests follow the specification.
+- Direct dialogue/early clarification uses one model call and no retrieval; evidence retrieval/reuse uses two; refinement uses at most three.
+- Four-language contextual and mixed social/factual messages, missing evidence and scope guidance follow the specification. Five-turn history, pending clarification, automatic fallback and one-turn language overrides retain their defined meaning.
 - Query refinement preserves the original intent and stops when the complete scoped release is already available.
 - Unknown citations, wrong releases, foreign evidence, invalid model output and exceeded budgets cannot become successful answers.
-- Duplicate submissions, lost responses, retries and late results do not create duplicate saved turns.
+- Duplicate submissions, lost responses, stale retries and late results do not create duplicate turns or advance/overwrite conversation state.
 - The independent model-quality evaluation meets the specification's thresholds, with actual counts, failures and versions recorded.
 - Existing fixture regression checks still pass.
 
@@ -68,7 +68,7 @@ Use a controlled integration environment while quality work is in progress. Prom
 
 | Role | Deliverable |
 | --- | --- |
-| A | Run both artwork QR flows on a physical phone. Verify source links, both answer languages, follow-ups and interrupted-request recovery. Coordinate the final walkthrough and video assembly. |
+| A | Run both artwork QR flows on a physical phone. Verify source links, all four answer languages, mid-conversation language changes, five-turn follow-ups and interrupted-request recovery. Coordinate the final walkthrough and video assembly. |
 | B | Verify the Agent-to-model route from the deployed environment, including containers where used. Finalize startup, configuration, warm-up and troubleshooting instructions. Record model/GPU identity and deployment logs. |
 | C | Run the final evaluation and regression checks against the release candidate. Publish the evidence-quality report, known limitations and workflow/prompt/schema versions. Prepare the Agent explanation for the project report. |
 

@@ -2,7 +2,9 @@
 
 Status: **C's M1 implementation is ready for integration. The full team M1 gate remains open.**
 
-This package implements C's workflow, context, prompts, retrieval tool and evidence validation from the [Agent design](../docs/agent-design.md) and [delivery plan](../docs/agent-plan.md). It uses LangGraph with an injected provider and run budget. The only runnable provider in this change is an explicitly scripted test substitute.
+> Implementation version: this runbook describes the unchanged v1 code at `021218c`. The [v2 design](../docs/agent-design.md) and [v2 interface contract](../docs/agent-api-contract.md) add four-language dialogue, five-turn context and ConversationState as a pending implementation target. They do not change the commands or runtime behavior below.
+
+This package implements C's workflow, context, prompts, retrieval tool and evidence validation from the [archived Agent v1 design](../docs/archive/agent-design-v1.md) and [delivery plan](../docs/agent-plan.md). It uses LangGraph with an injected provider and run budget. The only runnable provider in this change is an explicitly scripted test substitute.
 
 The application still runs its existing fixture path. This change does not add FastAPI routes, Go integration, model deployment, a production provider or a second run registry.
 

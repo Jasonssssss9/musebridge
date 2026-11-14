@@ -1,6 +1,6 @@
 # MuseBridge Local Demo Design
 
-> Baseline reference: this document describes the fixture-stage architecture. The [Agent architecture and contracts](agent-design.md) are the new implementation target. In Agent mode, AI orchestration moves to an independent Python service; existing fixture behavior remains available. The new architecture has not yet been implemented.
+> Fixture-stage baseline: the [Agent v2 architecture](agent-design.md) and [v2 interface contract](agent-api-contract.md) define the new conversation target. The C M1 v1 foundation is implemented separately; four-language dialogue, five-turn context and cross-turn state are pending v2 implementation. This baseline remains a historical reference.
 
 This is the stage-one design for the local demo. It records the project's agreed direction and the implementation defaults selected for the first build. [plan.md](plan.md) tracks the work and review checkpoints. [api-contract.md](api-contract.md) defines the wire formats and error codes.
 

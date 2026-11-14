@@ -1,0 +1,4339 @@
+{
+  "specification": "agent-workflow-v2",
+  "schema_version": "agent-schema-v2",
+  "description": "Normative synthetic documentation fixtures for the proposed conversation-first protocol. They are not observed model answers or implementation acceptance results. Existing v1 runtime and tests do not consume this file. Schema cases cover shape; runtime and semantic cases specify additional required behavior for later consumers. Model identity and timestamps are illustrative.",
+  "schema_cases": [
+    {
+      "name": "run_request_initial",
+      "definition": "RunRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v2",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh",
+          "recent_turns": []
+        },
+        "conversation_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 0,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v2",
+          "profile_id": "local-ollama-v2",
+          "deadline_at": "2026-11-13T20:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "five_complete_history_turns",
+      "definition": "RunRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v2",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh",
+          "recent_turns": [
+            {
+              "turn_id": "00000001-4444-4444-8444-444444444444",
+              "sequence": 1,
+              "question": "I like this painting.",
+              "answer_language": "en",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "What interests you most about it?"
+            },
+            {
+              "turn_id": "00000002-4444-4444-8444-444444444444",
+              "sequence": 2,
+              "question": "I like this painting.",
+              "answer_language": "es",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "¿Qué es lo que más te interesa de la pintura?"
+            },
+            {
+              "turn_id": "00000003-4444-4444-8444-444444444444",
+              "sequence": 3,
+              "question": "I like this painting.",
+              "answer_language": "zh-CN",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "这幅画最吸引你的是什么？"
+            },
+            {
+              "turn_id": "00000004-4444-4444-8444-444444444444",
+              "sequence": 4,
+              "question": "I like this painting.",
+              "answer_language": "ko",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+            },
+            {
+              "turn_id": "00000005-4444-4444-8444-444444444444",
+              "sequence": 5,
+              "question": "I like this painting.",
+              "answer_language": "en",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "What interests you most about it?"
+            }
+          ]
+        },
+        "conversation_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 5,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en",
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v2",
+          "profile_id": "local-ollama-v2",
+          "deadline_at": "2026-11-13T20:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "six_history_turns_rejected",
+      "definition": "RunRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-run-v2",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh",
+          "recent_turns": [
+            {
+              "turn_id": "00000001-4444-4444-8444-444444444444",
+              "sequence": 1,
+              "question": "I like this painting.",
+              "answer_language": "en",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "What interests you most about it?"
+            },
+            {
+              "turn_id": "00000002-4444-4444-8444-444444444444",
+              "sequence": 2,
+              "question": "I like this painting.",
+              "answer_language": "es",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "¿Qué es lo que más te interesa de la pintura?"
+            },
+            {
+              "turn_id": "00000003-4444-4444-8444-444444444444",
+              "sequence": 3,
+              "question": "I like this painting.",
+              "answer_language": "zh-CN",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "这幅画最吸引你的是什么？"
+            },
+            {
+              "turn_id": "00000004-4444-4444-8444-444444444444",
+              "sequence": 4,
+              "question": "I like this painting.",
+              "answer_language": "ko",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+            },
+            {
+              "turn_id": "00000005-4444-4444-8444-444444444444",
+              "sequence": 5,
+              "question": "I like this painting.",
+              "answer_language": "en",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "What interests you most about it?"
+            },
+            {
+              "turn_id": "00000005-4444-4444-8444-444444444444",
+              "sequence": 6,
+              "question": "I like this painting.",
+              "answer_language": "en",
+              "answer_status": "conversational",
+              "answer_mode": "llm",
+              "answer_text": "What interests you most about it?"
+            }
+          ]
+        },
+        "conversation_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 5,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en",
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v2",
+          "profile_id": "local-ollama-v2",
+          "deadline_at": "2026-11-13T20:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "language_en",
+      "definition": "LanguageDecision",
+      "valid": true,
+      "payload": {
+        "detected_language": "en",
+        "explicit_instruction": null,
+        "answer_language": "en"
+      }
+    },
+    {
+      "name": "language_es",
+      "definition": "LanguageDecision",
+      "valid": true,
+      "payload": {
+        "detected_language": "es",
+        "explicit_instruction": null,
+        "answer_language": "es"
+      }
+    },
+    {
+      "name": "language_zh-CN",
+      "definition": "LanguageDecision",
+      "valid": true,
+      "payload": {
+        "detected_language": "zh-CN",
+        "explicit_instruction": null,
+        "answer_language": "zh-CN"
+      }
+    },
+    {
+      "name": "language_ko",
+      "definition": "LanguageDecision",
+      "valid": true,
+      "payload": {
+        "detected_language": "ko",
+        "explicit_instruction": null,
+        "answer_language": "ko"
+      }
+    },
+    {
+      "name": "explicit_one_turn_language",
+      "definition": "LanguageDecision",
+      "valid": true,
+      "payload": {
+        "detected_language": "en",
+        "explicit_instruction": {
+          "preference": "es",
+          "original_fragment": "in Spanish for this reply only",
+          "persistence": "turn"
+        },
+        "answer_language": "es"
+      }
+    },
+    {
+      "name": "unsupported_answer_language",
+      "definition": "LanguageDecision",
+      "valid": false,
+      "payload": {
+        "detected_language": "other",
+        "explicit_instruction": null,
+        "answer_language": "ja"
+      }
+    },
+    {
+      "name": "invalid_input_language_override",
+      "definition": "PublicMessageRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": "ja",
+        "expected_revision": 0
+      }
+    },
+    {
+      "name": "missing_explicit_instruction_persistence",
+      "definition": "LanguageDecision",
+      "valid": false,
+      "payload": {
+        "detected_language": "en",
+        "explicit_instruction": {
+          "preference": "es",
+          "original_fragment": "in Spanish"
+        },
+        "answer_language": "es"
+      }
+    },
+    {
+      "name": "mixed_social_and_fact_plan",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "retrieve",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "What material is The Bedroom made of?"
+          }
+        ]
+      }
+    },
+    {
+      "name": "direct_appreciation",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "spanish_direct_response",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "es",
+          "explicit_instruction": null,
+          "answer_language": "es"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "Este cuadro es precioso.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "¿Qué parte te llamó más la atención?",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "korean_direct_response",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "ko",
+          "explicit_instruction": null,
+          "answer_language": "ko"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "이 그림이 정말 아름다워요.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "어떤 부분이 가장 마음에 드시나요?",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "chinese_direct_response",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "zh-CN",
+          "explicit_instruction": null,
+          "answer_language": "zh-CN"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "这幅画真美。",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "最吸引你的是哪一部分？",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "planner_clarification",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "clarify",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "text": "Which detail do you mean?",
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "set",
+            "source": "current_message"
+          }
+        }
+      }
+    },
+    {
+      "name": "planner_scope_guidance",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "out_of_scope",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "text": "Open that artwork's page so we can discuss it in its own conversation.",
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "answer_from_verified_context",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "answer_from_context",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ]
+      }
+    },
+    {
+      "name": "direct_artwork_fact_bypass",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "artwork_fact"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "direct_supported_claim_rejected",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "It is oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "retrieval_without_fact_request",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "retrieve",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "What material is The Bedroom made of?"
+          }
+        ]
+      }
+    },
+    {
+      "name": "outside_only_direct_route",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "outside_scope"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "clarification_must_set_pending",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "clarify",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "text": "Which detail do you mean?",
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "finish_cannot_set_clarification",
+      "definition": "FinalDecision",
+      "valid": false,
+      "payload": {
+        "action": "finish",
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          },
+          {
+            "request_id": "r2",
+            "support": "supported",
+            "text": "The museum lists the medium as oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "set",
+            "source": "current_message"
+          }
+        }
+      }
+    },
+    {
+      "name": "mixed_finished_response",
+      "definition": "AssessmentDecision",
+      "valid": true,
+      "payload": {
+        "action": "finish",
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          },
+          {
+            "request_id": "r2",
+            "support": "supported",
+            "text": "The museum lists the medium as oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "clear"
+          }
+        }
+      }
+    },
+    {
+      "name": "partial_with_natural_continuation",
+      "definition": "FinalDecision",
+      "valid": true,
+      "payload": {
+        "action": "finish",
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The museum lists oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          },
+          {
+            "request_id": "r2",
+            "support": "insufficient",
+            "text": "I cannot confirm the artist's specific reason. We can still discuss the material or the effect that interests you.",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "clear"
+          }
+        }
+      }
+    },
+    {
+      "name": "no_evidence_natural_continuation",
+      "definition": "FinalDecision",
+      "valid": true,
+      "payload": {
+        "action": "finish",
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "insufficient",
+            "text": "I cannot confirm the exact pigments from the evidence available to me. Which aspect of the colors would you like to explore?",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "clear"
+          }
+        }
+      }
+    },
+    {
+      "name": "supported_part_requires_citation",
+      "definition": "RequestResult",
+      "valid": false,
+      "payload": {
+        "request_id": "r1",
+        "support": "supported",
+        "text": "A claim without a source.",
+        "citation_chunk_ids": []
+      }
+    },
+    {
+      "name": "nonfactual_part_cannot_cite",
+      "definition": "RequestResult",
+      "valid": false,
+      "payload": {
+        "request_id": "r1",
+        "support": "not_applicable",
+        "text": "A conversational comment.",
+        "citation_chunk_ids": [
+          "aic-28560-medium"
+        ]
+      }
+    },
+    {
+      "name": "invented_citation_is_runtime_error",
+      "definition": "RequestResult",
+      "valid": true,
+      "payload": {
+        "request_id": "r1",
+        "support": "supported",
+        "text": "A claim with an unknown source.",
+        "citation_chunk_ids": [
+          "invented-chunk"
+        ]
+      },
+      "note": "This is structurally valid. Citation membership must fail the runtime case below."
+    },
+    {
+      "name": "assessment_refinement",
+      "definition": "AssessmentDecision",
+      "valid": true,
+      "payload": {
+        "action": "refine",
+        "reason_code": "uncovered_request",
+        "request_ids": [
+          "r2"
+        ],
+        "queries": [
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Museum explanation for the material choice in The Bedroom"
+          }
+        ]
+      }
+    },
+    {
+      "name": "final_cannot_refine",
+      "definition": "FinalDecision",
+      "valid": false,
+      "payload": {
+        "action": "refine",
+        "reason_code": "uncovered_request",
+        "request_ids": [
+          "r2"
+        ],
+        "queries": [
+          {
+            "id": "q2",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "Museum explanation for the material choice in The Bedroom"
+          }
+        ]
+      }
+    },
+    {
+      "name": "initial_conversation_state",
+      "definition": "ConversationState",
+      "valid": true,
+      "payload": {
+        "state_version": "conversation-state-v1",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "revision": 0,
+        "language_preference": "auto",
+        "auto_language": "en",
+        "last_answer_language": null,
+        "active_topic": null,
+        "continuity_summary": "",
+        "pending_clarification": null,
+        "verified_evidence": []
+      }
+    },
+    {
+      "name": "initial_state_cannot_have_cache",
+      "definition": "ConversationState",
+      "valid": false,
+      "payload": {
+        "state_version": "conversation-state-v1",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "revision": 0,
+        "language_preference": "auto",
+        "auto_language": "en",
+        "last_answer_language": null,
+        "active_topic": null,
+        "continuity_summary": "",
+        "pending_clarification": null,
+        "verified_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "state_with_verified_cache",
+      "definition": "ConversationState",
+      "valid": true,
+      "payload": {
+        "state_version": "conversation-state-v1",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "revision": 1,
+        "language_preference": "auto",
+        "auto_language": "en",
+        "last_answer_language": "en",
+        "active_topic": "The artwork's medium",
+        "continuity_summary": "The visitor asked about the medium.",
+        "pending_clarification": null,
+        "verified_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "initial_state_preference_must_be_auto",
+      "definition": "ConversationState",
+      "valid": false,
+      "payload": {
+        "state_version": "conversation-state-v1",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "revision": 0,
+        "language_preference": "es",
+        "auto_language": "en",
+        "last_answer_language": null,
+        "active_topic": null,
+        "continuity_summary": "",
+        "pending_clarification": null,
+        "verified_evidence": []
+      }
+    },
+    {
+      "name": "boolean_revision_rejected",
+      "definition": "ConversationState",
+      "valid": false,
+      "payload": {
+        "state_version": "conversation-state-v1",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "revision": true,
+        "language_preference": "auto",
+        "auto_language": "en",
+        "last_answer_language": "en",
+        "active_topic": "The artwork's medium",
+        "continuity_summary": "The visitor asked about the medium.",
+        "pending_clarification": null,
+        "verified_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "negative_revision_rejected",
+      "definition": "ConversationState",
+      "valid": false,
+      "payload": {
+        "state_version": "conversation-state-v1",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "revision": -1,
+        "language_preference": "auto",
+        "auto_language": "en",
+        "last_answer_language": "en",
+        "active_topic": "The artwork's medium",
+        "continuity_summary": "The visitor asked about the medium.",
+        "pending_clarification": null,
+        "verified_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "pending_clarification_record",
+      "definition": "PendingClarification",
+      "valid": true,
+      "payload": {
+        "original_question": "Why is that?",
+        "question": "Which detail do you mean?",
+        "created_sequence": 1
+      }
+    },
+    {
+      "name": "memory_update_cannot_change_revision",
+      "definition": "MemoryUpdate",
+      "valid": false,
+      "payload": {
+        "active_topic": "The visitor's response to the artwork",
+        "continuity_summary": "",
+        "pending_update": {
+          "action": "clear"
+        },
+        "revision": 12
+      }
+    },
+    {
+      "name": "memory_update_cannot_inject_sources",
+      "definition": "MemoryUpdate",
+      "valid": false,
+      "payload": {
+        "active_topic": "The visitor's response to the artwork",
+        "continuity_summary": "",
+        "pending_update": {
+          "action": "clear"
+        },
+        "verified_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "run_result_mixed",
+      "definition": "RunResult",
+      "valid": true,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "answer": {
+          "status": "answered",
+          "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+          "citations": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          },
+          {
+            "request_id": "r2",
+            "support": "supported",
+            "text": "The museum lists the medium as oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "What material is The Bedroom made of?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "The visitor's response to the artwork",
+            "continuity_summary": "",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v2",
+          "profile_id": "local-ollama-v2",
+          "prompt_version": "museum-prompts-v2",
+          "schema_version": "agent-schema-v2",
+          "retrieval_strategy_version": "legacy-facet-v0.1",
+          "model_provider": "ollama",
+          "model_name": "SYNTHETIC-CAPABILITY-EXAMPLE",
+          "model_digest": "SYNTHETIC-NOT-AN-OBSERVED-MODEL-DIGEST",
+          "model_calls": 2,
+          "retrieval_calls": 1,
+          "refinement_rounds": 0,
+          "duration_ms": 1000
+        }
+      }
+    },
+    {
+      "name": "run_result_reuses_evidence",
+      "definition": "RunResult",
+      "valid": true,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "answer": {
+          "status": "answered",
+          "text": "The medium is oil on canvas.",
+          "citations": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The medium is oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "reused_chunk_ids": [
+          "aic-28560-medium"
+        ],
+        "executed_queries": [],
+        "conversation_update": {
+          "base_revision": 1,
+          "memory": {
+            "active_topic": "The visitor's response to the artwork",
+            "continuity_summary": "",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v2",
+          "profile_id": "local-ollama-v2",
+          "prompt_version": "museum-prompts-v2",
+          "schema_version": "agent-schema-v2",
+          "retrieval_strategy_version": "legacy-facet-v0.1",
+          "model_provider": "ollama",
+          "model_name": "SYNTHETIC-CAPABILITY-EXAMPLE",
+          "model_digest": "SYNTHETIC-NOT-AN-OBSERVED-MODEL-DIGEST",
+          "model_calls": 2,
+          "retrieval_calls": 0,
+          "refinement_rounds": 0,
+          "duration_ms": 1000
+        }
+      }
+    },
+    {
+      "name": "completed_run_snapshot",
+      "definition": "RunSnapshot",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v2",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "state": "completed",
+        "result": {
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "answer_language": "en",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "answer": {
+            "status": "answered",
+            "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+            "citations": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "request_results": [
+            {
+              "request_id": "r1",
+              "support": "not_applicable",
+              "text": "What part of it caught your attention?",
+              "citation_chunk_ids": []
+            },
+            {
+              "request_id": "r2",
+              "support": "supported",
+              "text": "The museum lists the medium as oil on canvas.",
+              "citation_chunk_ids": [
+                "aic-28560-medium"
+              ]
+            }
+          ],
+          "evidence_snapshot": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ],
+          "reused_chunk_ids": [],
+          "executed_queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "What material is The Bedroom made of?"
+            }
+          ],
+          "conversation_update": {
+            "base_revision": 0,
+            "memory": {
+              "active_topic": "The visitor's response to the artwork",
+              "continuity_summary": "",
+              "pending_update": {
+                "action": "clear"
+              }
+            }
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v2",
+            "profile_id": "local-ollama-v2",
+            "prompt_version": "museum-prompts-v2",
+            "schema_version": "agent-schema-v2",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "model_provider": "ollama",
+            "model_name": "SYNTHETIC-CAPABILITY-EXAMPLE",
+            "model_digest": "SYNTHETIC-NOT-AN-OBSERVED-MODEL-DIGEST",
+            "model_calls": 2,
+            "retrieval_calls": 1,
+            "refinement_rounds": 0,
+            "duration_ms": 1000
+          }
+        },
+        "error": null
+      }
+    },
+    {
+      "name": "public_create_request",
+      "definition": "PublicCreateConversationRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "artwork_id": "aic-28560"
+      }
+    },
+    {
+      "name": "public_submission",
+      "definition": "PublicMessageRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "expected_revision": 0
+      }
+    },
+    {
+      "name": "public_submission_response",
+      "definition": "PublicSubmissionResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.3",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1",
+          "created_at": "2026-11-13T20:00:00Z",
+          "expires_at": "2026-11-14T20:00:00Z",
+          "revision": 1,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "turn": {
+          "turn_id": "44444444-4444-4444-8444-444444444444",
+          "sequence": 1,
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": null,
+          "answer_language": "en",
+          "dataset_version": "aic-seed-v0.1",
+          "created_at": "2026-11-13T20:00:01Z",
+          "answer": {
+            "mode": "llm",
+            "status": "answered",
+            "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+            "citations": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "public_history",
+      "definition": "PublicHistoryResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.3",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1",
+          "created_at": "2026-11-13T20:00:00Z",
+          "expires_at": "2026-11-14T20:00:00Z",
+          "revision": 1,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "turns": [
+          {
+            "turn_id": "44444444-4444-4444-8444-444444444444",
+            "sequence": 1,
+            "client_message_id": "33333333-3333-4333-8333-333333333333",
+            "question": "This painting is beautiful. What material is it made of?",
+            "language_override": null,
+            "answer_language": "en",
+            "dataset_version": "aic-seed-v0.1",
+            "created_at": "2026-11-13T20:00:01Z",
+            "answer": {
+              "mode": "llm",
+              "status": "answered",
+              "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+              "citations": [
+                {
+                  "chunk_id": "aic-28560-medium",
+                  "artwork_id": "aic-28560",
+                  "source_id": "aic-api-28560",
+                  "source_title": "The Bedroom — Art Institute of Chicago API record",
+                  "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                  "source_language": "en",
+                  "source_locator": "data.medium_display",
+                  "excerpt": "Oil on canvas",
+                  "license": "CC0-1.0",
+                  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                  "attribution": "Art Institute of Chicago",
+                  "normalization": "none"
+                }
+              ]
+            }
+          }
+        ],
+        "pending_request": null
+      }
+    },
+    {
+      "name": "public_create_restore",
+      "definition": "PublicConversationResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.3",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1",
+          "created_at": "2026-11-13T20:00:00Z",
+          "expires_at": "2026-11-14T20:00:00Z",
+          "revision": 0,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null
+        },
+        "created": true
+      }
+    },
+    {
+      "name": "public_pending_processing",
+      "definition": "PendingRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "expected_revision": 0,
+        "state": "processing",
+        "last_error": null
+      }
+    },
+    {
+      "name": "public_pending_failure",
+      "definition": "PendingRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "expected_revision": 0,
+        "state": "failed",
+        "last_error": {
+          "code": "retrieval_timeout",
+          "message": "The lookup timed out. Please retry.",
+          "retryable": true
+        }
+      }
+    },
+    {
+      "name": "failed_pending_requires_error",
+      "definition": "PendingRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "expected_revision": 0,
+        "state": "failed",
+        "last_error": null
+      }
+    },
+    {
+      "name": "conversational_public_answer",
+      "definition": "PublicAnswer",
+      "valid": true,
+      "payload": {
+        "mode": "llm",
+        "status": "conversational",
+        "text": "What caught your attention?",
+        "citations": []
+      }
+    },
+    {
+      "name": "answered_public_response_needs_sources",
+      "definition": "PublicAnswer",
+      "valid": false,
+      "payload": {
+        "mode": "llm",
+        "status": "answered",
+        "text": "It is oil on canvas.",
+        "citations": []
+      }
+    },
+    {
+      "name": "v1_contract_not_v2",
+      "definition": "RunRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-run-v1",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh",
+          "recent_turns": []
+        },
+        "conversation_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 0,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v2",
+          "profile_id": "local-ollama-v2",
+          "deadline_at": "2026-11-13T20:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "unknown_model_field",
+      "definition": "Plan",
+      "valid": false,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        },
+        "hidden_tool": "web_search"
+      }
+    },
+    {
+      "name": "planner_input",
+      "definition": "PlanInput",
+      "valid": true,
+      "payload": {
+        "original_question": "This painting is beautiful. What material is it made of?",
+        "language_override": null,
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null
+        },
+        "cached_evidence": [],
+        "complete_scope": false,
+        "query_policy": {
+          "search_language": "en",
+          "max_requests": 4,
+          "max_queries": 2,
+          "scope_policy": "current_artwork_only"
+        }
+      }
+    },
+    {
+      "name": "answer_input",
+      "definition": "AnswerInput",
+      "valid": true,
+      "payload": {
+        "original_question": "This painting is beautiful. What material is it made of?",
+        "answer_language": "en",
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "What material is The Bedroom made of?"
+          }
+        ],
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "complete_scope": false,
+        "allow_refinement": false
+      }
+    },
+    {
+      "name": "final_input",
+      "definition": "FinalInput",
+      "valid": true,
+      "payload": {
+        "original_question": "This painting is beautiful. What material is it made of?",
+        "answer_language": "en",
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "What material is The Bedroom made of?"
+          }
+        ],
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "complete_scope": false,
+        "allow_refinement": false
+      }
+    },
+    {
+      "name": "final_input_forbids_refinement",
+      "definition": "FinalInput",
+      "valid": false,
+      "payload": {
+        "original_question": "This painting is beautiful. What material is it made of?",
+        "answer_language": "en",
+        "artwork_context": {
+          "artwork_title": "The Bedroom",
+          "artist": "Vincent van Gogh"
+        },
+        "recent_turns": [],
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r2"
+            ],
+            "query": "What material is The Bedroom made of?"
+          }
+        ],
+        "evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "complete_scope": false,
+        "allow_refinement": true
+      }
+    },
+    {
+      "name": "general_art_direct_response",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "direct_response",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is brushwork?",
+            "intent": "Explain the general concept of brushwork.",
+            "kind": "general_art_knowledge"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "Brushwork means how an artist applies paint with a brush, including the marks and texture this creates.",
+            "citation_chunk_ids": []
+          }
+        ],
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "spanish_question_english_query",
+      "definition": "Plan",
+      "valid": true,
+      "payload": {
+        "action": "retrieve",
+        "language_decision": {
+          "detected_language": "es",
+          "explicit_instruction": null,
+          "answer_language": "es"
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "¿De qué material está hecha esta pintura?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What material is The Bedroom made of?"
+          }
+        ]
+      }
+    },
+    {
+      "name": "model_cannot_write_auto_language",
+      "definition": "MemoryUpdate",
+      "valid": false,
+      "payload": {
+        "active_topic": "The visitor's response to the artwork",
+        "continuity_summary": "",
+        "pending_update": {
+          "action": "clear"
+        },
+        "auto_language": "ko"
+      }
+    },
+    {
+      "name": "public_conversation_requires_auto_language",
+      "definition": "PublicConversation",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "artwork_id": "aic-28560",
+        "dataset_version": "aic-seed-v0.1",
+        "created_at": "2026-11-13T20:00:00Z",
+        "expires_at": "2026-11-14T20:00:00Z",
+        "revision": 1,
+        "language_preference": "auto",
+        "last_answer_language": "en"
+      }
+    },
+    {
+      "name": "private_health_success",
+      "definition": "HealthResponse",
+      "valid": true,
+      "payload": {
+        "status": "ok"
+      }
+    },
+    {
+      "name": "private_readiness_success",
+      "definition": "ReadinessResponse",
+      "valid": true,
+      "payload": {
+        "status": "ok",
+        "contract_version": "agent-run-v2",
+        "workflow_id": "museum_qa_v2",
+        "profile_id": "local-ollama-v2",
+        "dataset_version": "aic-seed-v0.1",
+        "state_version": "conversation-state-v1",
+        "supported_languages": [
+          "en",
+          "es",
+          "zh-CN",
+          "ko"
+        ],
+        "history_turn_limit": 5
+      }
+    },
+    {
+      "name": "readiness_cannot_report_three_turns",
+      "definition": "ReadinessResponse",
+      "valid": false,
+      "payload": {
+        "status": "ok",
+        "contract_version": "agent-run-v2",
+        "workflow_id": "museum_qa_v2",
+        "profile_id": "local-ollama-v2",
+        "dataset_version": "aic-seed-v0.1",
+        "state_version": "conversation-state-v1",
+        "supported_languages": [
+          "en",
+          "es",
+          "zh-CN",
+          "ko"
+        ],
+        "history_turn_limit": 3
+      }
+    }
+  ],
+  "runtime_cases": [
+    {
+      "name": "explicit_instruction_overrides_ui",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "Please answer in Spanish.",
+        "language_override": "ko",
+        "conversation_context": {
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": {
+            "preference": "es",
+            "original_fragment": "Please answer in Spanish.",
+            "persistence": "conversation"
+          },
+          "answer_language": "es"
+        }
+      },
+      "expected": {
+        "answer_language": "es",
+        "next_language_preference": "es",
+        "next_auto_language": "en"
+      }
+    },
+    {
+      "name": "explicit_one_turn_preserves_ui_preference",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "Please answer in Spanish for this reply only.",
+        "language_override": "ko",
+        "conversation_context": {
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": {
+            "preference": "es",
+            "original_fragment": "in Spanish for this reply only",
+            "persistence": "turn"
+          },
+          "answer_language": "es"
+        }
+      },
+      "expected": {
+        "answer_language": "es",
+        "next_language_preference": "ko",
+        "next_auto_language": "en"
+      }
+    },
+    {
+      "name": "ui_auto_releases_fixed_preference",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "이 그림이 정말 아름다워요.",
+        "language_override": "auto",
+        "conversation_context": {
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "language_decision": {
+          "detected_language": "ko",
+          "explicit_instruction": null,
+          "answer_language": "ko"
+        }
+      },
+      "expected": {
+        "answer_language": "ko",
+        "next_language_preference": "auto",
+        "next_auto_language": "ko"
+      }
+    },
+    {
+      "name": "fixed_preference_wins_over_input_language",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "这幅画真美。",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "es",
+          "auto_language": "en",
+          "last_answer_language": "es"
+        },
+        "language_decision": {
+          "detected_language": "zh-CN",
+          "explicit_instruction": null,
+          "answer_language": "es"
+        }
+      },
+      "expected": {
+        "answer_language": "es",
+        "next_language_preference": "es",
+        "next_auto_language": "zh-CN"
+      }
+    },
+    {
+      "name": "short_reply_uses_auto_language",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "OK",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "ko",
+          "last_answer_language": "ko"
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": null,
+          "answer_language": "ko"
+        }
+      },
+      "expected": {
+        "answer_language": "ko",
+        "next_language_preference": "auto",
+        "next_auto_language": "ko"
+      }
+    },
+    {
+      "name": "fresh_short_reply_uses_english",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "OK",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        }
+      },
+      "expected": {
+        "answer_language": "en",
+        "next_language_preference": "auto",
+        "next_auto_language": "en"
+      }
+    },
+    {
+      "name": "auto_supported_chinese",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "这幅画是什么材质？",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null
+        },
+        "language_decision": {
+          "detected_language": "zh-CN",
+          "explicit_instruction": null,
+          "answer_language": "zh-CN"
+        }
+      },
+      "expected": {
+        "answer_language": "zh-CN",
+        "next_language_preference": "auto",
+        "next_auto_language": "zh-CN"
+      }
+    },
+    {
+      "name": "wrong_language_precedence",
+      "kind": "language_resolution",
+      "valid": false,
+      "payload": {
+        "question": "Please answer in Spanish.",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": {
+            "preference": "es",
+            "original_fragment": "Please answer in Spanish.",
+            "persistence": "conversation"
+          },
+          "answer_language": "en"
+        }
+      },
+      "reason": "The explicit conversation preference requires Spanish."
+    },
+    {
+      "name": "invented_language_instruction",
+      "kind": "language_resolution",
+      "valid": false,
+      "payload": {
+        "question": "What is the medium?",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": {
+            "preference": "es",
+            "original_fragment": "Please answer in Spanish.",
+            "persistence": "conversation"
+          },
+          "answer_language": "en"
+        }
+      },
+      "reason": "The explicit instruction fragment must occur literally in the original message."
+    },
+    {
+      "name": "unknown_citation_id",
+      "kind": "answer_binding",
+      "valid": false,
+      "payload": {
+        "requests": [
+          {
+            "id": "r2",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r2",
+            "support": "supported",
+            "text": "A claim.",
+            "citation_chunk_ids": [
+              "invented-chunk"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ]
+      },
+      "reason": "Supported citations must belong to the accepted evidence snapshot."
+    },
+    {
+      "name": "social_query_is_forbidden",
+      "kind": "plan_binding",
+      "valid": false,
+      "payload": {
+        "question": "This painting is beautiful. What material is it made of?",
+        "plan": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "Is this painting beautiful?"
+            }
+          ]
+        }
+      },
+      "reason": "Queries may target only artwork_fact request IDs and must cover all such requests."
+    },
+    {
+      "name": "outside_scope_query_is_forbidden",
+      "kind": "plan_binding",
+      "valid": false,
+      "payload": {
+        "question": "This painting is beautiful. What material is it made of?",
+        "plan": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "outside_scope"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "What material is The Bedroom made of?"
+            }
+          ]
+        }
+      },
+      "reason": "A query cannot authorize a different artwork or outside-scope request."
+    },
+    {
+      "name": "mixed_plan_queries_only_fact",
+      "kind": "plan_binding",
+      "valid": true,
+      "payload": {
+        "question": "This painting is beautiful. What material is it made of?",
+        "plan": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "What material is The Bedroom made of?"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "direct_relabels_fact_as_conversation",
+      "kind": "semantic_route",
+      "valid": false,
+      "payload": {
+        "question": "What material is it made of?",
+        "plan": {
+          "action": "direct_response",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "conversation"
+            }
+          ],
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "not_applicable",
+              "text": "What part of it caught your attention?",
+              "citation_chunk_ids": []
+            }
+          ],
+          "memory_update": {
+            "active_topic": "The visitor's response to the artwork",
+            "continuity_summary": "",
+            "pending_update": {
+              "action": "keep"
+            }
+          }
+        }
+      },
+      "reason": "A schema-valid conversation label cannot turn a factual artwork request into a source-less response; semantic evaluation must catch this."
+    },
+    {
+      "name": "reuse_valid_current_scope",
+      "kind": "evidence_cache",
+      "valid": true,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "cached_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "plan": {
+          "action": "answer_from_context",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "reused_chunk_ids": [
+          "aic-28560-medium"
+        ],
+        "retrieval_calls": 0
+      }
+    },
+    {
+      "name": "reuse_cache_other_artwork",
+      "kind": "evidence_cache",
+      "valid": false,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "cached_evidence": [
+          {
+            "chunk_id": "aic-11723-medium",
+            "artwork_id": "aic-11723",
+            "source_id": "aic-api-11723",
+            "source_title": "Woman at Her Toilette — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/11723",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "plan": {
+          "action": "answer_from_context",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ]
+        }
+      },
+      "reason": "Cached records must match the authorized artwork and canonical manifest."
+    },
+    {
+      "name": "reuse_empty_cache",
+      "kind": "evidence_cache",
+      "valid": false,
+      "payload": {
+        "scope": {
+          "artwork_id": "aic-28560",
+          "dataset_version": "aic-seed-v0.1"
+        },
+        "cached_evidence": [],
+        "plan": {
+          "action": "answer_from_context",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ]
+        }
+      },
+      "reason": "answer_from_context requires a nonempty validated cache."
+    },
+    {
+      "name": "complete_cache_forbids_lookup",
+      "kind": "plan_binding",
+      "valid": false,
+      "payload": {
+        "question": "This painting is beautiful. What material is it made of?",
+        "plan": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "What material is The Bedroom made of?"
+            }
+          ]
+        },
+        "cached_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          },
+          {
+            "chunk_id": "aic-28560-description-01",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.description, paragraph 1",
+            "excerpt": "With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy.",
+            "license": "CC-BY-4.0",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "HTML removed; whitespace normalized."
+          }
+        ],
+        "complete_scope": true
+      },
+      "reason": "The complete authorized release is already available; fresh retrieval cannot add evidence."
+    },
+    {
+      "name": "partial_cache_can_retrieve",
+      "kind": "plan_binding",
+      "valid": true,
+      "payload": {
+        "question": "This painting is beautiful. What material is it made of?",
+        "plan": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "What material is The Bedroom made of?"
+            }
+          ]
+        },
+        "cached_evidence": [
+          {
+            "chunk_id": "aic-28560-medium",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.medium_display",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "none"
+          }
+        ],
+        "complete_scope": false
+      }
+    },
+    {
+      "name": "clarification_sets_current_question",
+      "kind": "memory_transition",
+      "valid": true,
+      "payload": {
+        "prior_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 0,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "question": "Why is that?",
+        "answer": {
+          "status": "clarification_needed",
+          "text": "Which detail do you mean?",
+          "citations": []
+        },
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "set",
+            "source": "current_message"
+          }
+        }
+      },
+      "expected": {
+        "pending_clarification": {
+          "original_question": "Why is that?",
+          "question": "Which detail do you mean?",
+          "created_sequence": 1
+        }
+      }
+    },
+    {
+      "name": "clarification_preserves_original_request",
+      "kind": "memory_transition",
+      "valid": true,
+      "payload": {
+        "prior_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 2,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en",
+          "active_topic": "The artwork's medium",
+          "continuity_summary": "The visitor asked about the medium.",
+          "pending_clarification": {
+            "original_question": "Why is that?",
+            "question": "Which detail do you mean?",
+            "created_sequence": 2
+          },
+          "verified_evidence": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ]
+        },
+        "question": "The colors.",
+        "answer": {
+          "status": "clarification_needed",
+          "text": "Do you mean their appearance or the materials used?",
+          "citations": []
+        },
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "set",
+            "source": "pending_clarification"
+          }
+        }
+      },
+      "expected": {
+        "pending_clarification": {
+          "original_question": "Why is that?",
+          "question": "Do you mean their appearance or the materials used?",
+          "created_sequence": 3
+        }
+      }
+    },
+    {
+      "name": "cannot_reference_missing_pending",
+      "kind": "memory_transition",
+      "valid": false,
+      "payload": {
+        "prior_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 0,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "question": "Why is that?",
+        "answer": {
+          "status": "clarification_needed",
+          "text": "Which detail do you mean?",
+          "citations": []
+        },
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "set",
+            "source": "pending_clarification"
+          }
+        }
+      }
+    },
+    {
+      "name": "unrelated_chat_keeps_pending",
+      "kind": "memory_transition",
+      "valid": true,
+      "payload": {
+        "prior_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 2,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en",
+          "active_topic": "The artwork's medium",
+          "continuity_summary": "The visitor asked about the medium.",
+          "pending_clarification": {
+            "original_question": "Why is that?",
+            "question": "Which detail do you mean?",
+            "created_sequence": 2
+          },
+          "verified_evidence": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ]
+        },
+        "question": "Thanks.",
+        "answer": {
+          "status": "conversational",
+          "text": "You are welcome.",
+          "citations": []
+        },
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      },
+      "expected": {
+        "pending_clarification": {
+          "original_question": "Why is that?",
+          "question": "Which detail do you mean?",
+          "created_sequence": 2
+        }
+      }
+    },
+    {
+      "name": "resolved_or_abandoned_pending_clears",
+      "kind": "memory_transition",
+      "valid": true,
+      "payload": {
+        "prior_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 2,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en",
+          "active_topic": "The artwork's medium",
+          "continuity_summary": "The visitor asked about the medium.",
+          "pending_clarification": {
+            "original_question": "Why is that?",
+            "question": "Which detail do you mean?",
+            "created_sequence": 2
+          },
+          "verified_evidence": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ]
+        },
+        "question": "Never mind that question.",
+        "answer": {
+          "status": "conversational",
+          "text": "Of course.",
+          "citations": []
+        },
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "clear"
+          }
+        }
+      },
+      "expected": {
+        "pending_clarification": null
+      }
+    },
+    {
+      "name": "clarification_cannot_keep_old_pending",
+      "kind": "memory_transition",
+      "valid": false,
+      "payload": {
+        "prior_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 2,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en",
+          "active_topic": "The artwork's medium",
+          "continuity_summary": "The visitor asked about the medium.",
+          "pending_clarification": {
+            "original_question": "Why is that?",
+            "question": "Which detail do you mean?",
+            "created_sequence": 2
+          },
+          "verified_evidence": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ]
+        },
+        "question": "The colors.",
+        "answer": {
+          "status": "clarification_needed",
+          "text": "Which color do you mean?",
+          "citations": []
+        },
+        "memory_update": {
+          "active_topic": "The visitor's response to the artwork",
+          "continuity_summary": "",
+          "pending_update": {
+            "action": "keep"
+          }
+        }
+      }
+    },
+    {
+      "name": "first_commit_advances_state_once",
+      "kind": "conversation_commit",
+      "valid": true,
+      "payload": {
+        "current_state": {
+          "state_version": "conversation-state-v1",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "revision": 0,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "submission": {
+          "contract_version": "agent-demo-v0.3",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": null,
+          "expected_revision": 0
+        },
+        "run_result": {
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "answer_language": "en",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "answer": {
+            "status": "answered",
+            "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+            "citations": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "request_results": [
+            {
+              "request_id": "r1",
+              "support": "not_applicable",
+              "text": "What part of it caught your attention?",
+              "citation_chunk_ids": []
+            },
+            {
+              "request_id": "r2",
+              "support": "supported",
+              "text": "The museum lists the medium as oil on canvas.",
+              "citation_chunk_ids": [
+                "aic-28560-medium"
+              ]
+            }
+          ],
+          "evidence_snapshot": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ],
+          "reused_chunk_ids": [],
+          "executed_queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "What material is The Bedroom made of?"
+            }
+          ],
+          "conversation_update": {
+            "base_revision": 0,
+            "memory": {
+              "active_topic": "The visitor's response to the artwork",
+              "continuity_summary": "",
+              "pending_update": {
+                "action": "clear"
+              }
+            }
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v2",
+            "profile_id": "local-ollama-v2",
+            "prompt_version": "museum-prompts-v2",
+            "schema_version": "agent-schema-v2",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "model_provider": "ollama",
+            "model_name": "SYNTHETIC-CAPABILITY-EXAMPLE",
+            "model_digest": "SYNTHETIC-NOT-AN-OBSERVED-MODEL-DIGEST",
+            "model_calls": 2,
+            "retrieval_calls": 1,
+            "refinement_rounds": 0,
+            "duration_ms": 1000
+          }
+        },
+        "logical_request_state": "processing"
+      },
+      "expected": {
+        "committed_sequence": 1,
+        "next_revision": 1,
+        "next_language_preference": "auto",
+        "next_auto_language": "en",
+        "next_last_answer_language": "en",
+        "cached_chunk_ids": [
+          "aic-28560-medium"
+        ],
+        "saved_turn_count_delta": 1
+      }
+    },
+    {
+      "name": "completed_replay_precedes_revision_check",
+      "kind": "public_replay",
+      "valid": true,
+      "payload": {
+        "current_revision": 5,
+        "submission": {
+          "contract_version": "agent-demo-v0.3",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": null,
+          "expected_revision": 0
+        },
+        "logical_request_state": "completed",
+        "stored_turn": {
+          "turn_id": "44444444-4444-4444-8444-444444444444",
+          "sequence": 1,
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": null,
+          "answer_language": "en",
+          "dataset_version": "aic-seed-v0.1",
+          "created_at": "2026-11-13T20:00:01Z",
+          "answer": {
+            "mode": "llm",
+            "status": "answered",
+            "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+            "citations": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "returned_turn": {
+          "turn_id": "44444444-4444-4444-8444-444444444444",
+          "sequence": 1,
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": null,
+          "answer_language": "en",
+          "dataset_version": "aic-seed-v0.1",
+          "created_at": "2026-11-13T20:00:01Z",
+          "answer": {
+            "mode": "llm",
+            "status": "answered",
+            "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+            "citations": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          }
+        },
+        "returned_conversation_revision": 5,
+        "new_model_calls": 0,
+        "saved_turn_count_delta": 0
+      }
+    },
+    {
+      "name": "stale_new_submission_is_rejected",
+      "kind": "public_admission",
+      "valid": false,
+      "payload": {
+        "current_revision": 2,
+        "submission": {
+          "contract_version": "agent-demo-v0.3",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": null,
+          "expected_revision": 0
+        },
+        "logical_request_state": "absent"
+      },
+      "expected": {
+        "error_code": "conversation_state_conflict",
+        "new_model_calls": 0
+      }
+    },
+    {
+      "name": "changed_payload_same_key_is_conflict",
+      "kind": "public_admission",
+      "valid": false,
+      "payload": {
+        "current_revision": 1,
+        "submission": {
+          "contract_version": "agent-demo-v0.3",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": "es",
+          "expected_revision": 0
+        },
+        "stored_submission": {
+          "contract_version": "agent-demo-v0.3",
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "This painting is beautiful. What material is it made of?",
+          "language_override": null,
+          "expected_revision": 0
+        },
+        "logical_request_state": "completed"
+      },
+      "expected": {
+        "error_code": "idempotency_conflict",
+        "new_model_calls": 0
+      }
+    },
+    {
+      "name": "late_result_cannot_overwrite_newer_state",
+      "kind": "conversation_commit",
+      "valid": false,
+      "payload": {
+        "current_revision": 2,
+        "run_result": {
+          "scope": {
+            "artwork_id": "aic-28560",
+            "dataset_version": "aic-seed-v0.1"
+          },
+          "answer_language": "en",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "answer": {
+            "status": "answered",
+            "text": "What part of it caught your attention?\n\nThe museum lists the medium as oil on canvas.",
+            "citations": [
+              {
+                "chunk_id": "aic-28560-medium",
+                "artwork_id": "aic-28560",
+                "source_id": "aic-api-28560",
+                "source_title": "The Bedroom — Art Institute of Chicago API record",
+                "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+                "source_language": "en",
+                "source_locator": "data.medium_display",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "Art Institute of Chicago",
+                "normalization": "none"
+              }
+            ]
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "This painting is beautiful.",
+              "intent": "Respond to the visitor's appreciation.",
+              "kind": "conversation"
+            },
+            {
+              "id": "r2",
+              "original_fragment": "What material is it made of?",
+              "intent": "What material is The Bedroom made of?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "request_results": [
+            {
+              "request_id": "r1",
+              "support": "not_applicable",
+              "text": "What part of it caught your attention?",
+              "citation_chunk_ids": []
+            },
+            {
+              "request_id": "r2",
+              "support": "supported",
+              "text": "The museum lists the medium as oil on canvas.",
+              "citation_chunk_ids": [
+                "aic-28560-medium"
+              ]
+            }
+          ],
+          "evidence_snapshot": [
+            {
+              "chunk_id": "aic-28560-medium",
+              "artwork_id": "aic-28560",
+              "source_id": "aic-api-28560",
+              "source_title": "The Bedroom — Art Institute of Chicago API record",
+              "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+              "source_language": "en",
+              "source_locator": "data.medium_display",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "Art Institute of Chicago",
+              "normalization": "none"
+            }
+          ],
+          "reused_chunk_ids": [],
+          "executed_queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r2"
+              ],
+              "query": "What material is The Bedroom made of?"
+            }
+          ],
+          "conversation_update": {
+            "base_revision": 0,
+            "memory": {
+              "active_topic": "The visitor's response to the artwork",
+              "continuity_summary": "",
+              "pending_update": {
+                "action": "clear"
+              }
+            }
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v2",
+            "profile_id": "local-ollama-v2",
+            "prompt_version": "museum-prompts-v2",
+            "schema_version": "agent-schema-v2",
+            "retrieval_strategy_version": "legacy-facet-v0.1",
+            "model_provider": "ollama",
+            "model_name": "SYNTHETIC-CAPABILITY-EXAMPLE",
+            "model_digest": "SYNTHETIC-NOT-AN-OBSERVED-MODEL-DIGEST",
+            "model_calls": 2,
+            "retrieval_calls": 1,
+            "refinement_rounds": 0,
+            "duration_ms": 1000
+          }
+        },
+        "attempt_is_current": false
+      },
+      "expected": {
+        "state_unchanged": true,
+        "saved_turn_count_delta": 0
+      }
+    },
+    {
+      "name": "mixed_social_and_supported_fact_is_answered",
+      "kind": "status_derivation",
+      "valid": true,
+      "payload": {
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          },
+          {
+            "request_id": "r2",
+            "support": "supported",
+            "text": "The museum lists the medium as oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "answered"
+      }
+    },
+    {
+      "name": "social_only_is_conversational",
+      "kind": "status_derivation",
+      "valid": true,
+      "payload": {
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          }
+        ]
+      },
+      "expected": {
+        "status": "conversational"
+      }
+    },
+    {
+      "name": "one_fact_missing_is_partial",
+      "kind": "status_derivation",
+      "valid": true,
+      "payload": {
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is it made of",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "why did the artist choose it",
+            "intent": "Why did the artist choose The Bedroom's material?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The museum lists oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          },
+          {
+            "request_id": "r2",
+            "support": "insufficient",
+            "text": "I cannot confirm the artist's specific reason. We can still discuss the material or the effect that interests you.",
+            "citation_chunk_ids": []
+          }
+        ]
+      },
+      "expected": {
+        "status": "partially_answered"
+      }
+    },
+    {
+      "name": "natural_continuation_does_not_hide_fact_gap",
+      "kind": "status_derivation",
+      "valid": true,
+      "payload": {
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "Which exact pigments were used?",
+            "intent": "Which exact pigments were used for The Bedroom?",
+            "kind": "artwork_fact"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "insufficient",
+            "text": "I cannot confirm the exact pigments from the evidence available to me. Which aspect of the colors would you like to explore?",
+            "citation_chunk_ids": []
+          }
+        ]
+      },
+      "expected": {
+        "status": "insufficient"
+      }
+    },
+    {
+      "name": "insufficient_part_cannot_be_supported_by_related_description",
+      "kind": "semantic_support",
+      "valid": false,
+      "payload": {
+        "question": "Which exact pigments were used?",
+        "evidence_snapshot": [
+          {
+            "chunk_id": "aic-28560-description-01",
+            "artwork_id": "aic-28560",
+            "source_id": "aic-api-28560",
+            "source_title": "The Bedroom — Art Institute of Chicago API record",
+            "source_url": "https://api.artic.edu/api/v1/artworks/28560",
+            "source_language": "en",
+            "source_locator": "data.description, paragraph 1",
+            "excerpt": "With its bold colors, thick and broken brushwork, and sharply receding lines, the picture might suggest a nervous energy.",
+            "license": "CC-BY-4.0",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "Art Institute of Chicago",
+            "normalization": "HTML removed; whitespace normalized."
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The painting uses these specific pigments.",
+            "citation_chunk_ids": [
+              "aic-28560-description-01"
+            ]
+          }
+        ]
+      },
+      "reason": "Valid citation membership does not establish semantic support for pigment identity."
+    },
+    {
+      "name": "fifth_history_turn_is_required",
+      "kind": "history_window",
+      "valid": true,
+      "payload": {
+        "conversation_revision": 5,
+        "recent_turns": [
+          {
+            "turn_id": "00000001-4444-4444-8444-444444444444",
+            "sequence": 1,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          },
+          {
+            "turn_id": "00000002-4444-4444-8444-444444444444",
+            "sequence": 2,
+            "question": "I like this painting.",
+            "answer_language": "es",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "¿Qué es lo que más te interesa de la pintura?"
+          },
+          {
+            "turn_id": "00000003-4444-4444-8444-444444444444",
+            "sequence": 3,
+            "question": "I like this painting.",
+            "answer_language": "zh-CN",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "这幅画最吸引你的是什么？"
+          },
+          {
+            "turn_id": "00000004-4444-4444-8444-444444444444",
+            "sequence": 4,
+            "question": "I like this painting.",
+            "answer_language": "ko",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+          },
+          {
+            "turn_id": "00000005-4444-4444-8444-444444444444",
+            "sequence": 5,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          }
+        ]
+      },
+      "expected": {
+        "expected_sequences": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    },
+    {
+      "name": "sixth_history_turn_is_outside_window",
+      "kind": "history_window",
+      "valid": false,
+      "payload": {
+        "conversation_revision": 6,
+        "recent_turns": [
+          {
+            "turn_id": "00000001-4444-4444-8444-444444444444",
+            "sequence": 1,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          },
+          {
+            "turn_id": "00000002-4444-4444-8444-444444444444",
+            "sequence": 2,
+            "question": "I like this painting.",
+            "answer_language": "es",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "¿Qué es lo que más te interesa de la pintura?"
+          },
+          {
+            "turn_id": "00000003-4444-4444-8444-444444444444",
+            "sequence": 3,
+            "question": "I like this painting.",
+            "answer_language": "zh-CN",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "这幅画最吸引你的是什么？"
+          },
+          {
+            "turn_id": "00000004-4444-4444-8444-444444444444",
+            "sequence": 4,
+            "question": "I like this painting.",
+            "answer_language": "ko",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+          },
+          {
+            "turn_id": "00000005-4444-4444-8444-444444444444",
+            "sequence": 5,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          },
+          {
+            "turn_id": "00000005-4444-4444-8444-444444444444",
+            "sequence": 6,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          }
+        ]
+      }
+    },
+    {
+      "name": "history_must_end_at_state_revision",
+      "kind": "history_window",
+      "valid": false,
+      "payload": {
+        "conversation_revision": 6,
+        "recent_turns": [
+          {
+            "turn_id": "00000001-4444-4444-8444-444444444444",
+            "sequence": 1,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          },
+          {
+            "turn_id": "00000002-4444-4444-8444-444444444444",
+            "sequence": 2,
+            "question": "I like this painting.",
+            "answer_language": "es",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "¿Qué es lo que más te interesa de la pintura?"
+          },
+          {
+            "turn_id": "00000003-4444-4444-8444-444444444444",
+            "sequence": 3,
+            "question": "I like this painting.",
+            "answer_language": "zh-CN",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "这幅画最吸引你的是什么？"
+          },
+          {
+            "turn_id": "00000004-4444-4444-8444-444444444444",
+            "sequence": 4,
+            "question": "I like this painting.",
+            "answer_language": "ko",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+          },
+          {
+            "turn_id": "00000005-4444-4444-8444-444444444444",
+            "sequence": 5,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          }
+        ]
+      },
+      "reason": "The inbound window must contain the last min(5,revision) completed pairs, ending at revision."
+    },
+    {
+      "name": "unsupported_explicit_language_requires_clarification",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "Please answer in Japanese.",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null
+        },
+        "plan": {
+          "action": "clarify",
+          "language_decision": {
+            "detected_language": "und",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "text": "I can reply in English, Spanish, Chinese or Korean. Which would you prefer?",
+          "memory_update": {
+            "active_topic": "The visitor's response to the artwork",
+            "continuity_summary": "",
+            "pending_update": {
+              "action": "set",
+              "source": "current_message"
+            }
+          }
+        }
+      },
+      "expected": {
+        "action": "clarify",
+        "answer_language": "en",
+        "next_language_preference": "auto",
+        "next_auto_language": "en"
+      }
+    },
+    {
+      "name": "conversation_and_scope_guidance_is_out_of_scope",
+      "kind": "status_derivation",
+      "valid": true,
+      "payload": {
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "This painting is beautiful.",
+            "intent": "Respond to the visitor's appreciation.",
+            "kind": "conversation"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "and the other painting",
+            "intent": "Discuss another artwork.",
+            "kind": "outside_scope"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "not_applicable",
+            "text": "What part of it caught your attention?",
+            "citation_chunk_ids": []
+          },
+          {
+            "request_id": "r2",
+            "support": "out_of_scope",
+            "text": "Open that artwork's page to discuss it.",
+            "citation_chunk_ids": []
+          }
+        ]
+      },
+      "expected": {
+        "status": "out_of_scope"
+      }
+    },
+    {
+      "name": "supported_fact_and_scope_guidance_is_partial",
+      "kind": "status_derivation",
+      "valid": true,
+      "payload": {
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What material is it made of?",
+            "intent": "What material is The Bedroom made of?",
+            "kind": "artwork_fact"
+          },
+          {
+            "id": "r2",
+            "original_fragment": "and the other painting",
+            "intent": "Discuss another artwork.",
+            "kind": "outside_scope"
+          }
+        ],
+        "results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The museum lists the medium as oil on canvas.",
+            "citation_chunk_ids": [
+              "aic-28560-medium"
+            ]
+          },
+          {
+            "request_id": "r2",
+            "support": "out_of_scope",
+            "text": "Open that artwork's page to discuss it.",
+            "citation_chunk_ids": []
+          }
+        ]
+      },
+      "expected": {
+        "status": "partially_answered"
+      }
+    },
+    {
+      "name": "one_turn_korean_does_not_change_auto_fallback",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "Korean for this reply only, please.",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": {
+            "preference": "ko",
+            "original_fragment": "Korean for this reply only",
+            "persistence": "turn"
+          },
+          "answer_language": "ko"
+        }
+      },
+      "expected": {
+        "answer_language": "ko",
+        "next_language_preference": "auto",
+        "next_auto_language": "en"
+      }
+    },
+    {
+      "name": "neutral_reply_after_temporary_korean_returns_to_auto_english",
+      "kind": "language_resolution",
+      "valid": true,
+      "payload": {
+        "question": "OK",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "ko"
+        },
+        "language_decision": {
+          "detected_language": "und",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        }
+      },
+      "expected": {
+        "answer_language": "en",
+        "next_language_preference": "auto",
+        "next_auto_language": "en"
+      }
+    },
+    {
+      "name": "answer_language_cannot_change_after_plan",
+      "kind": "language_freeze",
+      "valid": false,
+      "payload": {
+        "plan_language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        },
+        "run_result_answer_language": "es"
+      },
+      "reason": "The resolved answer language is frozen after planning."
+    },
+    {
+      "name": "revision_six_uses_sequences_two_through_six",
+      "kind": "history_window",
+      "valid": true,
+      "payload": {
+        "conversation_revision": 6,
+        "recent_turns": [
+          {
+            "turn_id": "00000002-4444-4444-8444-444444444444",
+            "sequence": 2,
+            "question": "I like this painting.",
+            "answer_language": "es",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "¿Qué es lo que más te interesa de la pintura?"
+          },
+          {
+            "turn_id": "00000003-4444-4444-8444-444444444444",
+            "sequence": 3,
+            "question": "I like this painting.",
+            "answer_language": "zh-CN",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "这幅画最吸引你的是什么？"
+          },
+          {
+            "turn_id": "00000004-4444-4444-8444-444444444444",
+            "sequence": 4,
+            "question": "I like this painting.",
+            "answer_language": "ko",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+          },
+          {
+            "turn_id": "00000005-4444-4444-8444-444444444444",
+            "sequence": 5,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          },
+          {
+            "turn_id": "00000006-4444-4444-8444-444444444444",
+            "sequence": 6,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          }
+        ]
+      },
+      "expected": {
+        "expected_sequences": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    },
+    {
+      "name": "missing_fifth_completed_pair_is_invalid",
+      "kind": "history_window",
+      "valid": false,
+      "payload": {
+        "conversation_revision": 6,
+        "recent_turns": [
+          {
+            "turn_id": "00000003-4444-4444-8444-444444444444",
+            "sequence": 3,
+            "question": "I like this painting.",
+            "answer_language": "zh-CN",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "这幅画最吸引你的是什么？"
+          },
+          {
+            "turn_id": "00000004-4444-4444-8444-444444444444",
+            "sequence": 4,
+            "question": "I like this painting.",
+            "answer_language": "ko",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+          },
+          {
+            "turn_id": "00000005-4444-4444-8444-444444444444",
+            "sequence": 5,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          },
+          {
+            "turn_id": "00000006-4444-4444-8444-444444444444",
+            "sequence": 6,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          }
+        ]
+      },
+      "expected": {
+        "expected_sequences": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "reason": "At revision six, send all five completed pairs before prompt sizing, not only four."
+    },
+    {
+      "name": "quoted_language_directive_is_not_a_preference",
+      "kind": "semantic_language_instruction",
+      "valid": true,
+      "payload": {
+        "question": "What does \"please answer in Korean\" mean?",
+        "language_override": null,
+        "conversation_context": {
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en"
+        }
+      },
+      "expected": {
+        "explicit_instruction": null,
+        "answer_language": "en",
+        "next_language_preference": "auto",
+        "next_auto_language": "en"
+      }
+    },
+    {
+      "name": "pending_short_reply_preserves_original_causal_intent",
+      "kind": "semantic_pending_resolution",
+      "valid": true,
+      "payload": {
+        "question": "The support.",
+        "pending_clarification": {
+          "original_question": "Why did the artist choose it?",
+          "question": "Do you mean the paint medium or the support?",
+          "created_sequence": 1
+        },
+        "plan": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en"
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "The support.",
+              "intent": "Why did the artist choose the support used for The Bedroom?",
+              "kind": "artwork_fact"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "Why did the artist choose the support used for The Bedroom?"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "preserved_fact": "reason for support choice",
+        "new_original_fragment": "The support."
+      },
+      "reason": "Use the current reply as the literal fragment while resolving its meaning from the pending original question; do not reduce why to what."
+    },
+    {
+      "name": "latest_history_language_must_match_state",
+      "kind": "history_window",
+      "valid": false,
+      "payload": {
+        "conversation_revision": 5,
+        "recent_turns": [
+          {
+            "turn_id": "00000001-4444-4444-8444-444444444444",
+            "sequence": 1,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          },
+          {
+            "turn_id": "00000002-4444-4444-8444-444444444444",
+            "sequence": 2,
+            "question": "I like this painting.",
+            "answer_language": "es",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "¿Qué es lo que más te interesa de la pintura?"
+          },
+          {
+            "turn_id": "00000003-4444-4444-8444-444444444444",
+            "sequence": 3,
+            "question": "I like this painting.",
+            "answer_language": "zh-CN",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "这幅画最吸引你的是什么？"
+          },
+          {
+            "turn_id": "00000004-4444-4444-8444-444444444444",
+            "sequence": 4,
+            "question": "I like this painting.",
+            "answer_language": "ko",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "이 그림에서 어떤 점이 가장 흥미로운가요?"
+          },
+          {
+            "turn_id": "00000005-4444-4444-8444-444444444444",
+            "sequence": 5,
+            "question": "I like this painting.",
+            "answer_language": "en",
+            "answer_status": "conversational",
+            "answer_mode": "llm",
+            "answer_text": "What interests you most about it?"
+          }
+        ],
+        "state_last_answer_language": "ko"
+      },
+      "reason": "The latest completed history answer language is en, but committed state reports ko; reject the inconsistent snapshot."
+    }
+  ]
+}

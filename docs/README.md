@@ -7,8 +7,11 @@ The root README introduces the project. This directory provides entry points to 
 | [Getting started](getting-started.md) | Compose startup, native development and verification |
 | [System design](design.md) | Stage-one target behavior, module boundaries and later decisions |
 | [API and data contract](api-contract.md) | Request/response formats, identity, evidence, errors and retries |
-| [Agent architecture and contracts](agent-design.md) | New implementation target: independent Python/FastAPI/LangGraph Agent, workflow, protocols, prompts, deployment and acceptance; not yet implemented |
-| [Agent schema and examples](contracts/agent-v1.schema.json) | Machine-readable wire contracts; [valid and invalid examples](contracts/agent-v1.examples.json) accompany the specification |
+| [Agent v2 architecture](agent-design.md) | Four-language conversation, optional English retrieval, direct responses, five-turn context and conversation state; pending implementation |
+| [Agent v2 interface contract](agent-api-contract.md) | Public/private requests, model decisions, language policy, state updates, citations, errors and recovery |
+| [Agent v2 schema](contracts/agent-v2.schema.json) | New machine-readable target; [shape and runtime/semantic examples](contracts/agent-v2.examples.json) define acceptance cases |
+| [C M1 implementation](../agent/README.md) | Runnable v1 foundation with scripted models and real retrieval |
+| [Archived Agent v1 design](archive/agent-design-v1.md) | Preserved reference for the unchanged [v1 schema](contracts/agent-v1.schema.json) and [v1 examples](contracts/agent-v1.examples.json) used by current code |
 | [Agent implementation plan](agent-plan.md) | Three milestones, A/B/C responsibilities, handoffs and completion criteria |
 | [Fixture-stage implementation plan](plan.md) | Historical task IDs, assignments and local verification records |
 | [Go backend guide](../api/README.md) | Artwork, conversation and question APIs, fixture answers, configuration and Go tests |
@@ -25,4 +28,4 @@ The root README introduces the project. This directory provides entry points to 
 
 The design, contract and plan describe the intended local-demo behavior. Consult the getting-started and module guides for what is currently runnable. Conversation recovery, question submission, real retrieval, reviewed fixture answers and request replay are implemented. The local stack has a Compose startup path and a separate physical phone walkthrough. Cloud model generation follows the local stage. The [web guide](../web/README.md) covers the frontend's mock and live modes.
 
-The Agent specification replaces the earlier LLM proposal as the development target. The runnable fixture baseline remains `local-demo-v0.1`; the target public contract is `agent-demo-v0.2`. The new Agent endpoints, modes and framework are not implemented by this documentation change. Historical ownership above does not assign the new work. The [Agent implementation plan](agent-plan.md) defines the new A/B/C responsibilities and three milestones, mapped to the architecture's delivery packages.
+The current Agent target is `agent-workflow-v2`, with public `agent-demo-v0.3` and private `agent-run-v2`. The runnable fixture baseline remains `local-demo-v0.1`; C M1 at `021218c` implements the v1 workflow foundation and uses simulated model decisions. This documentation update preserves runtime-loaded v1 schemas/prompts and adds separate v2 artifacts. It does not activate four-language dialogue or new endpoints. Historical ownership above does not assign the new work. The [Agent implementation plan](agent-plan.md) defines the new A/B/C responsibilities and three milestones, mapped to the architecture's delivery packages.
