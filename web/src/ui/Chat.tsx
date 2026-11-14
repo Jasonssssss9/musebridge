@@ -92,13 +92,16 @@ export function Chat({ artwork }: { artwork: Artwork }) {
   const meta = chat.conversation?.agent ?? null;
   const [choice, setChoice] = useState<LanguagePreference | null>(null);
   const [fixtureLanguage, setFixtureLanguage] = useState<Language>(initialAnswerLanguage);
-  const revision = meta?.revision;
-  useEffect(() => setChoice(null), [revision, chat.conversation?.conversation_id]);
+  useEffect(() => setChoice(null), [chat.conversation?.conversation_id]);
 
-  const selected: LanguagePreference = CONTRACT === 'agent' ? choice ?? meta?.language_preference ?? 'auto' : fixtureLanguage;
-  const unsentChoice = CONTRACT === 'agent' && choice !== null && choice !== meta?.language_preference;
+  // A newer selection belongs to the next message, even while an earlier message is pending.
+  // Failed submissions have not committed their preference; retry still uses their saved payload.
+  const pendingLanguage = chat.pending?.phase !== 'failed' ? chat.pending?.language_override : null;
+  const selected: LanguagePreference = CONTRACT === 'agent'
+    ? choice ?? pendingLanguage ?? meta?.language_preference ?? 'auto' : fixtureLanguage;
+  const unsentChoice = CONTRACT === 'agent' && choice !== null;
   // The language example questions are shown in: the fixed selection, or what Auto would currently use.
-  const exampleLanguage: Language = selected !== 'auto' ? selected : meta?.last_answer_language ?? meta?.auto_language ?? 'en';
+  const exampleLanguage: Language = selected !== 'auto' ? selected : meta?.auto_language ?? 'en';
 
   // Text handed back after a lost session, a state conflict or "Edit question".
   useEffect(() => {
@@ -122,6 +125,7 @@ export function Chat({ artwork }: { artwork: Artwork }) {
     if (!chat.canSend) return;
     // The choice is fixed at submission and reused unchanged on retry.
     chat.send(q, CONTRACT === 'agent' ? (unsentChoice ? choice : null) : fixtureLanguage);
+    setChoice(null); // Only consume the selection attached to this new submission.
     setText('');
     setEditing(false);
   };

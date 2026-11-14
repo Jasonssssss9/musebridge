@@ -26,8 +26,15 @@ function Qr({ text }: { text: string }) {
  */
 export function QrPage() {
   const [base, setBase] = useState(window.location.origin);
-  const origin = base.trim().replace(/\/+$/, '');
-  const local = /^https?:\/\/(localhost|127\.|\[::1\])/i.test(origin);
+  let address: URL | null = null;
+  try {
+    const parsed = new URL(base.trim());
+    if (['http:', 'https:'].includes(parsed.protocol) && !parsed.username && !parsed.password
+      && parsed.pathname === '/' && !parsed.search && !parsed.hash) address = parsed;
+  } catch { /* Incomplete or invalid addresses must not create misleading QR cards. */ }
+  const origin = address?.origin ?? null;
+  const local = address && (address.hostname === 'localhost' || address.hostname.endsWith('.localhost') || address.hostname === '[::1]'
+    || address.hostname === '0.0.0.0' || /^127\./.test(address.hostname));
   return (
     <main className="page qrpage">
       <div className="no-print">
@@ -35,12 +42,13 @@ export function QrPage() {
         <p className="muted small">{t.qrIntro}</p>
         <label className="field">
           <span className="small">{t.qrBase}</span>
-          <input value={base} onChange={(e) => setBase(e.target.value)} inputMode="url" autoCapitalize="none" spellCheck={false} />
+          <input value={base} onChange={(e) => setBase(e.target.value)} inputMode="url" autoCapitalize="none" spellCheck={false} aria-invalid={!origin} aria-describedby={!origin ? 'qr-address-error' : undefined} />
         </label>
+        {!origin && <p id="qr-address-error" className="notice small" role="alert">{t.qrInvalidBase}</p>}
         {local && <p className="notice small" role="alert">{t.qrLocalWarning}</p>}
-        <div className="actions"><button className="btn" onClick={() => window.print()}>{t.qrPrint}</button></div>
+        <div className="actions"><button className="btn" disabled={!origin} onClick={() => window.print()}>{t.qrPrint}</button></div>
       </div>
-      <ul className="qrcards">
+      {origin && <ul className="qrcards">
         {DEMO.map((w) => {
           const url = `${origin}/a/${w.slug}`;
           return (
@@ -53,7 +61,7 @@ export function QrPage() {
             </li>
           );
         })}
-      </ul>
+      </ul>}
     </main>
   );
 }

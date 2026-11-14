@@ -16,7 +16,7 @@ export const UI_TEXT = {
   noImage: 'Image not included in this demo',
   answerLanguage: 'Answer language',
   chatHeading: 'Ask about this work',
-  chatEmpty: 'Answers come from the museum’s own records, and each one shows its source.',
+  chatEmpty: 'Ask about the artwork or share what you notice. Answers grounded in museum records include sources.',
   suggestions: 'Try asking',
   placeholder: 'Ask a question…',
   send: 'Send',
@@ -65,7 +65,8 @@ export const UI_TEXT = {
   qrTitle: 'QR cards for the demo',
   qrIntro: 'Each code opens one artwork page. Print this page or show it on a second screen, then scan with the phone.',
   qrBase: 'Address the phone will use',
-  qrLocalWarning: 'A phone cannot open "localhost". Open this page through the computer’s network address (for example http://192.168.1.20:8080/qr), or type that address above.',
+  qrLocalWarning: 'A phone cannot open this computer-local address. Enter the computer’s network origin above, for example http://192.168.1.20:8080, or open this page at http://192.168.1.20:8080/qr.',
+  qrInvalidBase: 'Enter an HTTP or HTTPS address without a path, query, or login details, such as http://192.168.1.20:8080.',
   qrPrint: 'Print cards',
   qrScan: 'Scan to ask about this work',
   err: {

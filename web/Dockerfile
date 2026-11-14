@@ -4,7 +4,8 @@ WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+ARG PUBLIC_CONTRACT=fixture
+RUN PUBLIC_CONTRACT="$PUBLIC_CONTRACT" npm run build
 
 FROM nginx:1.28-alpine
 

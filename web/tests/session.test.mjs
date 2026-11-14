@@ -9,7 +9,7 @@ const vite = await createServer({
   appType: 'custom',
   define: { 'import.meta.env.VITE_API_MODE': JSON.stringify('live') },
   optimizeDeps: { noDiscovery: true },
-  server: { middlewareMode: true, hmr: false, watch: null },
+  server: { middlewareMode: true, hmr: false, ws: false, watch: null },
 });
 after(() => vite.close());
 
@@ -28,7 +28,7 @@ test('serializes conversation creation across artworks and coalesces the same ar
     }
     return Response.json({
       conversation: {
-        conversation_id: artworkId + '-conversation',
+        conversation_id: artworkId === 'aic-28560' ? '22222222-2222-4222-8222-222222222222' : '11111111-1111-4111-8111-111111111111',
         artwork_id: artworkId,
         dataset_version: 'aic-seed-v0.1',
         created_at: '2026-11-07T18:00:00Z',

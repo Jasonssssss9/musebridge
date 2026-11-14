@@ -1,5 +1,6 @@
 import { useEffect, useState, type MouseEvent, type ReactNode } from 'react';
 import { IS_MOCK } from '../api/client';
+import { UI_TEXT as t } from '../i18n';
 import { ArtworkPage } from './ArtworkPage';
 import { Home } from './Home';
 import { MockPanel } from './MockPanel';
@@ -34,6 +35,12 @@ export function App() {
   if (match) {
     try { slug = decodeURIComponent(match[1]); } catch { /* Show the unavailable artwork page. */ }
   }
+
+  const artworkRoute = match !== null;
+  useEffect(() => {
+    // ArtworkPage owns its asynchronous title; other routes must clear a previous artwork's title.
+    if (!artworkRoute) document.title = path === '/qr' ? `${t.qrTitle} · MuseBridge` : 'MuseBridge';
+  }, [artworkRoute, path]);
 
   return (
     <div className="shell">

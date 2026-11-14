@@ -136,9 +136,35 @@ function obj(v: unknown, what: string): Obj {
   if (typeof v !== 'object' || v === null || Array.isArray(v)) throw new InvalidResponse(`${what} is not an object`);
   return v as Obj;
 }
-function str(o: Obj, k: string): string {
+function str(o: Obj, k: string, max = Infinity): string {
   const v = o[k];
-  if (typeof v !== 'string' || v.trim() === '') throw new InvalidResponse(`${k} is not a nonempty string`);
+  if (typeof v !== 'string' || v.trim() === '' || [...v].length > max
+    || /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\uD800-\uDFFF]/u.test(v)) {
+    throw new InvalidResponse(`${k} is not valid text`);
+  }
+  return v;
+}
+function uuid(o: Obj, k: string, canonical = false): string {
+  const v = str(o, k);
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
+    || (canonical && v !== v.toLowerCase())) throw new InvalidResponse(`${k} is not a UUID`);
+  return v.toLowerCase();
+}
+function timestamp(o: Obj, k: string): string {
+  const v = str(o, k);
+  const ms = Date.parse(v);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/.test(v)
+    || !Number.isFinite(ms) || new Date(ms).toISOString().slice(0, 19) !== v.slice(0, 19)) {
+    throw new InvalidResponse(`${k} is not a UTC timestamp`);
+  }
+  return v;
+}
+function httpsUrl(o: Obj, k: string): string {
+  const v = str(o, k, 2048);
+  try {
+    const u = new URL(v);
+    if (!v.startsWith('https://') || u.protocol !== 'https:' || !u.hostname || u.username || u.password) throw new Error();
+  } catch { throw new InvalidResponse(`${k} is not an HTTPS URL`); }
   return v;
 }
 function oneOf<T extends string>(o: Obj, k: string, allowed: readonly T[]): T {
@@ -164,9 +190,9 @@ function arr(o: Obj, k: string): unknown[] {
 export function parseArtwork(v: unknown): Artwork {
   const o = obj(v, 'artwork');
   const img = o.image_url;
-  if (img !== null && (typeof img !== 'string' || img === '')) throw new InvalidResponse('image_url');
+  if (img !== null) httpsUrl(o, 'image_url');
   return {
-    artwork_id: str(o, 'artwork_id'),
+    artwork_id: str(o, 'artwork_id', 128),
     slug: str(o, 'slug'),
     title: str(o, 'title'),
     artist: str(o, 'artist'),
@@ -174,9 +200,9 @@ export function parseArtwork(v: unknown): Artwork {
     museum: str(o, 'museum'),
     museum_record_id: int(o, 'museum_record_id', 1),
     accession_number: str(o, 'accession_number'),
-    source_url: str(o, 'source_url'),
-    image_url: img,
-    dataset_version: str(o, 'dataset_version'),
+    source_url: httpsUrl(o, 'source_url'),
+    image_url: img as string | null,
+    dataset_version: str(o, 'dataset_version', 128),
   };
 }
 
@@ -194,13 +220,16 @@ export function parseConversation(v: unknown): Conversation {
       last_answer_language: nullableOneOf(o, 'last_answer_language', LANGUAGES),
     };
     if (agent.revision > 0 && agent.last_answer_language === null) throw new InvalidResponse('last_answer_language missing after a turn');
+    if (agent.revision === 0 && (agent.last_answer_language !== null || agent.language_preference !== 'auto' || agent.auto_language !== 'en')) {
+      throw new InvalidResponse('invalid initial language state');
+    }
   }
   return {
-    conversation_id: str(o, 'conversation_id').toLowerCase(),
-    artwork_id: str(o, 'artwork_id'),
-    dataset_version: str(o, 'dataset_version'),
-    created_at: str(o, 'created_at'),
-    expires_at: str(o, 'expires_at'),
+    conversation_id: uuid(o, 'conversation_id', agent !== null),
+    artwork_id: str(o, 'artwork_id', 128),
+    dataset_version: str(o, 'dataset_version', 128),
+    created_at: timestamp(o, 'created_at'),
+    expires_at: timestamp(o, 'expires_at'),
     agent,
   };
 }
@@ -212,33 +241,33 @@ function parseCitation(v: unknown): Citation {
     oneOf(o, 'kind', ['catalog'] as const);
     return {
       kind: 'catalog',
-      fact_id: str(o, 'fact_id'),
-      artwork_id: str(o, 'artwork_id'),
-      dataset_version: str(o, 'dataset_version'),
+      fact_id: str(o, 'fact_id', 128),
+      artwork_id: str(o, 'artwork_id', 128),
+      dataset_version: str(o, 'dataset_version', 128),
       field: oneOf(o, 'field', ['title', 'artist', 'date_display'] as const),
-      value: str(o, 'value'),
-      source_id: str(o, 'source_id'),
-      source_title: str(o, 'source_title'),
-      source_url: str(o, 'source_url'),
-      source_locator: str(o, 'source_locator'),
-      attribution: str(o, 'attribution'),
-      normalization: str(o, 'normalization'),
+      value: str(o, 'value', 500),
+      source_id: str(o, 'source_id', 128),
+      source_title: str(o, 'source_title', 500),
+      source_url: httpsUrl(o, 'source_url'),
+      source_locator: str(o, 'source_locator', 500),
+      attribution: str(o, 'attribution', 500),
+      normalization: str(o, 'normalization', 1000),
     };
   }
   return {
     kind: 'evidence',
-    chunk_id: str(o, 'chunk_id'),
-    artwork_id: str(o, 'artwork_id'),
-    source_id: str(o, 'source_id'),
-    source_title: str(o, 'source_title'),
-    source_url: str(o, 'source_url'),
-    source_language: str(o, 'source_language'),
-    source_locator: str(o, 'source_locator'),
-    excerpt: str(o, 'excerpt'),
-    license: str(o, 'license'),
-    license_url: str(o, 'license_url'),
-    attribution: str(o, 'attribution'),
-    normalization: str(o, 'normalization'),
+    chunk_id: str(o, 'chunk_id', 128),
+    artwork_id: str(o, 'artwork_id', 128),
+    source_id: str(o, 'source_id', 128),
+    source_title: str(o, 'source_title', 500),
+    source_url: httpsUrl(o, 'source_url'),
+    source_language: oneOf(o, 'source_language', ['en'] as const),
+    source_locator: str(o, 'source_locator', 500),
+    excerpt: str(o, 'excerpt', 4000),
+    license: oneOf(o, 'license', ['CC0-1.0', 'CC-BY-4.0'] as const),
+    license_url: httpsUrl(o, 'license_url'),
+    attribution: str(o, 'attribution', 500),
+    normalization: str(o, 'normalization', 1000),
   };
 }
 
@@ -254,6 +283,7 @@ export function parseAnswer(v: unknown): Answer {
   const status: AnswerStatus = mode === 'fixture' ? oneOf(a, 'status', FIXTURE_STATUSES) : oneOf(a, 'status', AGENT_STATUSES);
   const citations = arr(a, 'citations').map(parseCitation);
   const text = str(a, 'text');
+  if (mode === 'llm' && citations.length > 11) throw new InvalidResponse('too many citations');
   if ([...text].length > 2000) throw new InvalidResponse('answer text is too long');
   if (CITED.includes(status) && citations.length === 0) throw new InvalidResponse(`${status} turn without citations`);
   if (!CITED.includes(status) && citations.length > 0) throw new InvalidResponse(`${status} turn with citations`);
@@ -266,15 +296,15 @@ export function parseTurn(v: unknown): Turn {
   const o = obj(v, 'turn');
   const answer = parseAnswer(o.answer);
   return {
-    turn_id: str(o, 'turn_id').toLowerCase(),
+    turn_id: uuid(o, 'turn_id', answer.mode === 'llm'),
     sequence: int(o, 'sequence', 1),
-    client_message_id: str(o, 'client_message_id').toLowerCase(),
-    question: str(o, 'question'),
+    client_message_id: uuid(o, 'client_message_id', answer.mode === 'llm'),
+    question: str(o, 'question', 500),
     // Fixture turns only ever use en / zh-CN; agent turns may use all four.
     answer_language: oneOf(o, 'answer_language', answer.mode === 'fixture' ? (['en', 'zh-CN'] as const) : LANGUAGES),
     language_override: answer.mode === 'llm' ? nullableOneOf(o, 'language_override', PREFERENCES) : null,
-    dataset_version: str(o, 'dataset_version'),
-    created_at: str(o, 'created_at'),
+    dataset_version: str(o, 'dataset_version', 128),
+    created_at: timestamp(o, 'created_at'),
     answer,
   };
 }
@@ -282,36 +312,65 @@ export function parseTurn(v: unknown): Turn {
 export function parseErrorBody(v: unknown): ErrorBody {
   const o = obj(v, 'error');
   if (typeof o.retryable !== 'boolean') throw new InvalidResponse('retryable');
-  return { code: str(o, 'code'), message: typeof o.message === 'string' ? o.message : '', retryable: o.retryable };
+  return { code: str(o, 'code'), message: str(o, 'message', 500), retryable: o.retryable };
 }
 
-function parsePending(v: unknown): PendingRequest | null {
+export type ConversationScope = Pick<Conversation, 'artwork_id' | 'dataset_version'>;
+
+/** The browser checks scope relationships; B/C independently verify canonical source content. */
+export function validateTurnScope(turn: Turn, conversation: ConversationScope): void {
+  if (turn.dataset_version !== conversation.dataset_version) throw new InvalidResponse('turn uses another source release');
+  for (const citation of turn.answer.citations) {
+    if (citation.artwork_id !== conversation.artwork_id
+      || (citation.kind === 'catalog' && citation.dataset_version !== conversation.dataset_version)) {
+      throw new InvalidResponse('citation is outside the conversation scope');
+    }
+  }
+}
+
+function parsePending(v: unknown, conversation: Conversation): PendingRequest | null {
   if (v === null) return null;
   const o = obj(v, 'pending_request');
   const state = oneOf(o, 'state', ['processing', 'failed'] as const);
-  const last_error = o.last_error === null || o.last_error === undefined ? null : parseErrorBody(o.last_error);
-  if (state === 'failed' && last_error === null) throw new InvalidResponse('failed pending request without an error');
-  const agent = o.contract_version !== undefined;
+  const last_error = o.last_error === null ? null : parseErrorBody(o.last_error);
+  if ((state === 'failed') !== (last_error !== null)) throw new InvalidResponse('pending error does not match its state');
+  const agent = conversation.agent !== null;
   if (agent) oneOf(o, 'contract_version', [AGENT_CONTRACT] as const);
-  return {
-    client_message_id: str(o, 'client_message_id').toLowerCase(),
-    question: str(o, 'question'),
+  else if (o.contract_version !== undefined) throw new InvalidResponse('pending request uses another contract');
+  const pending = {
+    client_message_id: uuid(o, 'client_message_id', agent),
+    question: str(o, 'question', 500),
     // The fixture contract carries a plain answer_language; keep it as the explicit choice.
     language_override: agent ? nullableOneOf(o, 'language_override', PREFERENCES) : oneOf(o, 'answer_language', ['en', 'zh-CN'] as const),
     expected_revision: agent ? int(o, 'expected_revision', 0) : 0,
     state,
     last_error,
   };
+  if (conversation.agent && pending.expected_revision !== conversation.agent.revision) throw new InvalidResponse('pending request uses a different revision');
+  return pending;
 }
 
 export function parseHistory(v: unknown): History {
   const o = obj(v, 'history');
   const conversation = parseConversation(o.conversation);
-  const turns = arr(o, 'turns').map(parseTurn).sort((a, b) => a.sequence - b.sequence);
+  const turns = arr(o, 'turns').map(parseTurn);
   const expectedMode = conversation.agent ? 'llm' : 'fixture';
-  if (turns.some((t) => t.answer.mode !== expectedMode)) throw new InvalidResponse('turn mode does not match the conversation contract');
-  // The revision is the latest committed turn sequence (contract 2.2).
-  const lastSequence = turns.length ? turns[turns.length - 1].sequence : 0;
-  if (conversation.agent && conversation.agent.revision !== lastSequence) throw new InvalidResponse('revision does not match the latest turn');
-  return { conversation, turns, pending_request: parsePending(o.pending_request) };
+  const turnIds = new Set<string>();
+  const messageIds = new Set<string>();
+  for (const [index, turn] of turns.entries()) {
+    if (turn.answer.mode !== expectedMode) throw new InvalidResponse('turn mode does not match the conversation contract');
+    if (turn.sequence !== index + 1) throw new InvalidResponse('history is not complete and ordered');
+    if (turnIds.has(turn.turn_id) || messageIds.has(turn.client_message_id)) throw new InvalidResponse('duplicate history identity');
+    turnIds.add(turn.turn_id);
+    messageIds.add(turn.client_message_id);
+    validateTurnScope(turn, conversation);
+  }
+  if (conversation.agent) {
+    if (conversation.agent.revision !== turns.length) throw new InvalidResponse('revision does not match the latest turn');
+    const last = turns[turns.length - 1];
+    if (last && last.answer_language !== conversation.agent.last_answer_language) throw new InvalidResponse('last answer language does not match history');
+  }
+  const pending_request = parsePending(o.pending_request, conversation);
+  if (pending_request && messageIds.has(pending_request.client_message_id)) throw new InvalidResponse('completed message is still pending');
+  return { conversation, turns, pending_request };
 }

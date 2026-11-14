@@ -1,7 +1,7 @@
 import { mockFetch } from './mock';
 import {
-  AGENT_CONTRACT, type Artwork, type Conversation, type History, type LanguagePreference, type Turn,
-  InvalidResponse, parseArtwork, parseConversation, parseErrorBody, parseHistory, parseTurn,
+  AGENT_CONTRACT, type Artwork, type Conversation, type History, type LanguagePreference, type Turn, type ConversationScope,
+  InvalidResponse, parseArtwork, parseConversation, parseErrorBody, parseHistory, parseTurn, validateTurnScope,
 } from './types';
 
 export const IS_MOCK = import.meta.env.VITE_API_MODE === 'mock';
@@ -45,6 +45,7 @@ export class TransportError extends Error {
 interface RequestOptions {
   signal?: AbortSignal;
   timeoutMs?: number;
+  expectedScope?: ConversationScope;
 }
 
 async function request(method: 'GET' | 'POST', path: string, body?: unknown, options: RequestOptions = {}): Promise<unknown> {
@@ -57,7 +58,7 @@ async function request(method: 'GET' | 'POST', path: string, body?: unknown, opt
   let res: Response;
   let json: unknown;
   try {
-    const init: RequestInit = { method, signal: ctrl.signal, credentials: 'same-origin' };
+    const init: RequestInit = { method, signal: ctrl.signal, credentials: 'same-origin', redirect: 'error' };
     if (body !== undefined) {
       init.headers = { 'Content-Type': 'application/json' };
       init.body = JSON.stringify(body);
@@ -99,9 +100,16 @@ function parsed<T>(fn: () => T): T {
   }
 }
 
+function field(envelope: unknown, name: string): unknown {
+  if (typeof envelope !== 'object' || envelope === null || Array.isArray(envelope)) throw new InvalidResponse('response is not an object');
+  return (envelope as Record<string, unknown>)[name];
+}
+
 export async function getArtwork(slug: string): Promise<Artwork> {
-  const j = (await request('GET', `/api/artworks/${encodeURIComponent(slug)}`)) as { artwork?: unknown };
-  return parsed(() => parseArtwork(j.artwork));
+  const j = await request('GET', `/api/artworks/${encodeURIComponent(slug)}`);
+  const artwork = parsed(() => parseArtwork(field(j, 'artwork')));
+  if (artwork.slug !== slug) throw new TransportError('invalid_response', 'artwork is for another route');
+  return artwork;
 }
 
 // Serialize creation across artworks so the next request sees the visitor cookie.
@@ -113,8 +121,8 @@ export function openConversation(artworkId: string): Promise<Conversation> {
   if (existing) return existing;
   const p = creationTail.then(async () => {
     const body = CONTRACT === 'agent' ? { contract_version: AGENT_CONTRACT, artwork_id: artworkId } : { artwork_id: artworkId };
-    const j = (await request('POST', '/api/conversations', body)) as { conversation?: unknown };
-    const c = parsed(() => parseConversation(j.conversation));
+    const j = await request('POST', '/api/conversations', body);
+    const c = parsed(() => parseConversation(field(j, 'conversation')));
     if (c.artwork_id !== artworkId) throw new TransportError('invalid_response', 'conversation is bound to another artwork');
     checkContract(c);
     return c;
@@ -134,7 +142,14 @@ export async function getHistory(conversationId: string, options?: RequestOption
   const h = parsed(() => parseHistory(j));
   if (h.conversation.conversation_id !== conversationId) throw new TransportError('invalid_response', 'history is for another conversation');
   checkContract(h.conversation);
+  checkScope(h.conversation, options?.expectedScope);
   return h;
+}
+
+function checkScope(actual: ConversationScope, expected?: ConversationScope): void {
+  if (expected && (actual.artwork_id !== expected.artwork_id || actual.dataset_version !== expected.dataset_version)) {
+    throw new TransportError('invalid_response', 'reply changed the conversation scope');
+  }
 }
 
 /**
@@ -160,7 +175,7 @@ export interface SubmissionResult {
   conversation: Conversation | null;
 }
 
-export async function postMessage(conversationId: string, s: Submission): Promise<SubmissionResult> {
+export async function postMessage(conversationId: string, s: Submission, expectedScope?: ConversationScope): Promise<SubmissionResult> {
   const body = CONTRACT === 'agent'
     ? {
       contract_version: AGENT_CONTRACT,
@@ -170,15 +185,28 @@ export async function postMessage(conversationId: string, s: Submission): Promis
       expected_revision: s.expected_revision,
     }
     : { client_message_id: s.client_message_id, question: s.question, answer_language: s.language_override ?? 'en' };
-  const j = (await request('POST', `/api/conversations/${conversationId}/messages`, body, { timeoutMs: BROWSER_WAIT_MS })) as {
-    turn?: unknown; conversation?: unknown;
-  };
-  const turn = parsed(() => parseTurn(j.turn));
+  const j = await request('POST', `/api/conversations/${conversationId}/messages`, body, { timeoutMs: BROWSER_WAIT_MS });
+  const turn = parsed(() => parseTurn(field(j, 'turn')));
   if (turn.client_message_id !== s.client_message_id) throw new TransportError('invalid_response', 'turn is for another message');
   if ((turn.answer.mode === 'llm') !== (CONTRACT === 'agent')) throw new TransportError('invalid_response', 'turn uses another contract');
-  if (CONTRACT !== 'agent') return { turn, conversation: null };
-  const conversation = parsed(() => parseConversation(j.conversation));
+  if (turn.question !== s.question) throw new TransportError('invalid_response', 'reply changed the submitted question');
+  if (expectedScope) parsed(() => validateTurnScope(turn, expectedScope));
+  if (CONTRACT !== 'agent') {
+    if (turn.answer_language !== (s.language_override ?? 'en')) throw new TransportError('invalid_response', 'reply changed the requested fixture language');
+    return { turn, conversation: null };
+  }
+  if (turn.language_override !== s.language_override || turn.sequence !== s.expected_revision + 1) {
+    throw new TransportError('invalid_response', 'reply changed the accepted submission');
+  }
+  const conversation = parsed(() => parseConversation(field(j, 'conversation')));
   if (conversation.conversation_id !== conversationId) throw new TransportError('invalid_response', 'reply is for another conversation');
   checkContract(conversation);
+  checkScope(conversation, expectedScope);
+  parsed(() => validateTurnScope(turn, conversation));
+  // A replay may return an old turn with a newer authoritative projection.
+  if (conversation.agent!.revision < turn.sequence
+    || (conversation.agent!.revision === turn.sequence && conversation.agent!.last_answer_language !== turn.answer_language)) {
+    throw new TransportError('invalid_response', 'reply has an inconsistent conversation revision or language');
+  }
   return { turn, conversation };
 }

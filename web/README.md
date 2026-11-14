@@ -19,7 +19,7 @@ Requires Node 20 or later.
 
 ```bash
 cd web
-npm install
+npm ci
 npm run dev
 ```
 
@@ -31,7 +31,7 @@ Open <http://localhost:8080/a/aic-28560> or <http://localhost:8080/a/aic-11723>.
 | `npm run dev:live` | **Live mode, fixture contract.** `/api` is proxied to the Go API at `http://127.0.0.1:8000` (override with `API_TARGET`). |
 | `PUBLIC_CONTRACT=agent npm run dev:live` | **Live mode, agent contract.** For the Go API once it serves `agent-demo-v0.3`. |
 | `npm run build` | Type-checks and builds the live app into `dist/` (fixture contract unless `PUBLIC_CONTRACT=agent`). |
-| `npm test` | Client checks, including the shared public examples in `docs/contracts/agent-v2.examples.json`. |
+| `npm test` | Protocol, React DOM, conversation recovery, scripted mock and build-configuration regressions; no model service is used. |
 
 Live mode loads artwork, creates or restores real Go conversations, reads history and submits questions through Go to the Python retriever. Start both backend services using the [setup guide](../docs/getting-started.md). Go returns reviewed fixture answers with validated museum citations; all three outcomes retain the fixed-test-answer label. Browser and physical-phone acceptance still need to be recorded against the real stack. The Go API must be started with `PUBLIC_BASE_URL` set to the exact origin in the browser's address bar (for example `http://192.168.1.20:8080`), because it rejects POSTs from any other origin.
 
@@ -40,7 +40,7 @@ The interface labels are English. The **Answer language** selector sits under th
 - **Agent contract:** Auto, English, Español, 简体中文 and 한국어. The server stores the preference per conversation. A new selection is sent once, as `language_override` on the next message; after that the page sends `null` and shows the server's stored value. Auto follows the language the visitor writes in.
 - **Fixture contract:** English or Simplified Chinese, remembered in the browser and sent with every question.
 
-Citations keep the museum's original text.
+Citations keep the museum's original text. Changing the selector while an earlier answer is pending applies to the next new submission. A retry always keeps the failed request's original language choice and revision. A one-off translation does not change Auto's fallback or suggested-question language.
 
 ## What the agent contract changes on the page
 
@@ -55,7 +55,7 @@ Citations keep the museum's original text.
 
 ## QR cards and the phone test
 
-`/qr` shows a printable card for each artwork. The codes are built from the address the page was opened at, so open it through your LAN address (Vite prints it as "Network" on startup), not `localhost`. The step-by-step phone check is in [PHONE-TEST.md](PHONE-TEST.md).
+`/qr` shows a printable card for each artwork. The codes are built from the address the page was opened at, so open it through your LAN address (Vite prints it as "Network" on startup), not `localhost`. The step-by-step phone check is in [PHONE-TEST.md](PHONE-TEST.md). The QR address must be a complete HTTP(S) origin, without a page path, query, fragment or credentials. Invalid values hide the cards and disable printing; computer-local addresses receive a warning.
 
 ## Mock mode
 
@@ -105,7 +105,7 @@ The mock is a keyword script, not a model. It exists to show every reply shape, 
 ## Contract behaviors to keep when editing
 
 - A retry reuses the original `client_message_id`, question, language choice and `expected_revision`. Editing a failed question creates a new UUID.
-- Nothing is re-sent automatically. After a timeout or a `409`, the app reads history (polling once a second within the wait budget: 12 seconds for fixture, 70 for agent) and then offers a manual action.
+- Nothing is re-sent automatically. After an unknown outcome or a `409`, the app reads history within the remaining wait budget (12 seconds for fixture, 70 for agent). Once the budget is spent, it offers a manual check. Even a malformed success reply is reconciled because the server may already have saved the turn.
 - The page never rolls its conversation back to an older revision, and never resends a message against a newer one.
 - A reply is rendered only on the artwork page that asked for it.
 - Technical failures are never worded as the museum lacking information.
@@ -114,7 +114,39 @@ The mock is a keyword script, not a model. It exists to show every reply shape, 
 
 ## Open items for integration (M2)
 
-- The Compose proxy (`nginx.conf`) still allows 15 seconds per API response. The agent contract needs 75 seconds there; the Vite dev proxy is already set to 75.
-- The default Docker build speaks the fixture contract. Build with `PUBLIC_CONTRACT=agent` once Go serves `agent-demo-v0.3`.
+- Verify the complete public Agent path once B supplies the v2 Go and private Agent endpoints. Frontend mocks and source checks do not establish model quality, atomic backend persistence or real service timing.
+- Execute the browser journeys against that service, retain independently authored held-out visitor questions, and record physical-phone acceptance.
 - The label wording for model answers ("AI guide response") is a placeholder until the team agrees on one.
 - There is no reset or new-visitor control; the contract defers it.
+
+## Build and verification
+
+Use Node 20 or later (the current regression run uses Node 24) and the committed lockfile:
+
+```bash
+cd web
+npm ci
+npm test
+npm run build
+PUBLIC_CONTRACT=agent npm run build
+```
+
+The test suite exercises actual React components and conversation hooks in a DOM environment, public response validation, both artwork scopes, retry/replay identity, lost and malformed responses, revision conflicts, stale history and drafts, navigation during requests, remaining-time limits, all six statuses, four answer languages, temporary translation, catalog/passage cards and QR validation. The scripted API checks use sample answers, not the C workflow or a real model. Public contract fixtures are regression material, not independent model-quality tests.
+
+Docker and Compose pass the same explicit build-time contract selection. From the repository root:
+
+```bash
+docker build --build-arg PUBLIC_CONTRACT=agent -t musebridge-web:agent ./web
+PUBLIC_CONTRACT=agent docker compose build web
+```
+
+The default remains `fixture`. The current Compose backend also remains in fixture mode; select `agent` only when its public API is ready. Changing an environment variable on an already built static container does not change its contract: rebuild the image. Unsupported `PUBLIC_CONTRACT` values fail the build. Both Vite and the production Nginx proxy allow 75 seconds, above the browser's bounded 70-second Agent wait.
+
+Verification recorded for this frontend update on November 14, 2026:
+
+- 46 automated frontend tests passed, including 10 React UI and 13 conversation-hook checks.
+- Fixture and Agent production builds passed with TypeScript checking.
+- Both frontend Docker variants built; Nginx configuration checks passed, and Compose resolves the requested build contract.
+- A 390-by-844 browser viewport loaded both artwork pages and verified a mixed answer/clarification, Spanish catalog replies, isolated conversations, navigation titles and invalid/valid QR origins. No browser console errors were observed in these checks.
+
+This records mock frontend and build validation. It does not close real Agent/model integration, independent visitor-quality evaluation or physical-phone acceptance.

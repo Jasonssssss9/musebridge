@@ -62,15 +62,18 @@ export function useConversation(artworkId: string): ConversationView {
 
   const page = useRef<AbortSignal | null>(null);
   const conv = useRef<Conversation | null>(null);
-  const busy = useRef(false); // a POST or a reconcile loop is running
+  const busy = useRef<symbol | null>(null); // identifies the operation that may update this page
+  const owns = useCallback((signal: AbortSignal, operation: symbol) =>
+    page.current === signal && !signal.aborted && busy.current === operation, []);
 
   /** Take the server's conversation view, but never roll back to an older revision (agent contract 2.4). */
   const adopt = useCallback((c: Conversation | null) => {
-    if (!c) return;
+    if (!c) return true;
     const held = conv.current;
-    if (held && held.conversation_id === c.conversation_id && held.agent && c.agent && c.agent.revision < held.agent.revision) return;
+    if (held && held.conversation_id === c.conversation_id && held.agent && c.agent && c.agent.revision < held.agent.revision) return false;
     conv.current = c;
     setConversation(c);
+    return true;
   }, []);
 
   const failed = (s: Submission, code: string, retryable: boolean, requestId: string | null = null): PendingView => ({
@@ -80,7 +83,7 @@ export function useConversation(artworkId: string): ConversationView {
   /** Apply a history snapshot for submission `s`. Returns true when the outcome is settled. */
   const settleFromHistory = useCallback((h: History, s: Submission): boolean => {
     const id = h.conversation.conversation_id;
-    adopt(h.conversation);
+    if (!adopt(h.conversation)) return false;
     setTurns(h.turns);
     if (h.turns.some((t) => t.client_message_id === s.client_message_id)) {
       clearDraft(id, s.client_message_id);
@@ -96,6 +99,13 @@ export function useConversation(artworkId: string): ConversationView {
       setPending(failed(accepted, p.last_error?.code ?? 'internal_error', p.last_error?.retryable ?? true));
       return true;
     }
+    if (h.conversation.agent && h.conversation.agent.revision > s.expected_revision) {
+      clearDraft(id, s.client_message_id);
+      setConversationChanged(true);
+      setRestoredText(s.question);
+      setPending(null);
+      return true;
+    }
     if (loadDraft(id)?.client_message_id === s.client_message_id) saveDraft(id, s);
     // No trace of this key on the server: it never arrived. The same UUID and payload are safe to
     // resend (if another request has since replaced it, the retry is rejected and history is reloaded).
@@ -105,14 +115,18 @@ export function useConversation(artworkId: string): ConversationView {
 
   const open = useCallback(async (signal: AbortSignal) => {
     if (signal.aborted) return;
+    const operation = Symbol('open');
+    busy.current = operation;
     setStatus('starting');
     try {
       const c = await openConversation(artworkId);
-      if (signal.aborted) return;
-      const h = await getHistory(c.conversation_id, { signal });
-      if (signal.aborted) return;
-      conv.current = null;
-      adopt(h.conversation);
+      if (!owns(signal, operation)) return;
+      const h = await getHistory(c.conversation_id, { signal, expectedScope: c });
+      if (!owns(signal, operation)) return;
+      if (!adopt(h.conversation)) {
+        setStatus('ready');
+        return;
+      }
       setTurns(h.turns);
 
       const previousId = lastConversationId(artworkId);
@@ -135,7 +149,7 @@ export function useConversation(artworkId: string): ConversationView {
       const p = h.pending_request;
       if (p) {
         const s = payload(p);
-        if (draft?.previous?.client_message_id === s.client_message_id) {
+        if (draft && draft.client_message_id !== s.client_message_id) {
           setRestoredText(draft.question);
         }
         saveDraft(c.conversation_id, s); // the server's pending request outranks an older draft
@@ -146,19 +160,28 @@ export function useConversation(artworkId: string): ConversationView {
           setPending(failed(s, p.last_error?.code ?? 'internal_error', p.last_error?.retryable ?? true));
         }
       } else if (draft) {
-        saveDraft(c.conversation_id, draft);
-        setPending(failed(draft, 'unconfirmed', true));
+        if (h.conversation.agent && draft.expected_revision < h.conversation.agent.revision) {
+          clearDraft(c.conversation_id, draft.client_message_id);
+          setRestoredText(draft.question);
+          setConversationChanged(true);
+          setPending(null);
+        } else {
+          saveDraft(c.conversation_id, draft);
+          setPending(failed(draft, 'unconfirmed', true));
+        }
       } else {
         setPending(null);
       }
       setStatus('ready');
     } catch {
-      if (signal.aborted) return;
+      if (!owns(signal, operation)) return;
       conv.current = null;
       setConversation(null);
       setStatus('unavailable');
+    } finally {
+      if (busy.current === operation) busy.current = null;
     }
-  }, [artworkId, adopt]);
+  }, [artworkId, adopt, owns]);
 
   /** The session is gone (expired, or the API restarted): explain, start a new one, keep the text unsent. */
   const sessionLost = useCallback((signal: AbortSignal, submission: Submission) => {
@@ -173,43 +196,46 @@ export function useConversation(artworkId: string): ConversationView {
 
   /**
    * Outcome unknown: read history, then poll once a second until `deadline` while this page is
-   * active. History is always read at least once, even when the wait budget is already spent.
+   * active. Once that budget is spent, only a deliberate Check again starts a new read.
    */
   const reconcile = useCallback(async (signal: AbortSignal, s: Submission, deadline = performance.now() + BROWSER_WAIT_MS) => {
     const c = conv.current;
     if (!c || signal.aborted) return;
-    busy.current = true;
+    const operation = Symbol('reconcile');
+    busy.current = operation;
     try {
-      for (let first = true; !signal.aborted; first = false) {
+      while (owns(signal, operation)) {
         const remaining = deadline - performance.now();
-        if (remaining <= 0 && !first) break;
+        if (remaining <= 0) break;
         let h: History;
         try {
-          h = await getHistory(c.conversation_id, { signal, timeoutMs: Math.min(HISTORY_TIMEOUT_MS, Math.max(remaining, 3000)) });
+          h = await getHistory(c.conversation_id, { signal, expectedScope: c, timeoutMs: Math.min(HISTORY_TIMEOUT_MS, remaining) });
         } catch (e) {
-          if (signal.aborted) return;
+          if (!owns(signal, operation)) return;
           if (e instanceof ApiError && e.code === 'conversation_not_found') return sessionLost(signal, s);
           if (e instanceof TransportError && e.kind === 'timeout') break;
-          setPending(failed(s, 'unconfirmed', true));
+          const malformed = e instanceof TransportError && e.kind === 'invalid_response';
+          setPending(failed(s, malformed ? 'bad_response' : 'unconfirmed', !malformed));
           return;
         }
-        if (signal.aborted) return;
+        if (!owns(signal, operation)) return;
         if (settleFromHistory(h, s)) return;
         const waitMs = deadline - performance.now();
         if (waitMs <= 0) break;
         await wait(Math.min(POLL_MS, waitMs));
       }
-      if (!signal.aborted) setPending({ ...s, phase: 'stalled', error: null });
+      if (owns(signal, operation)) setPending({ ...s, phase: 'stalled', error: null });
     } finally {
-      busy.current = false;
+      if (busy.current === operation) busy.current = null;
     }
-  }, [sessionLost, settleFromHistory]);
+  }, [sessionLost, settleFromHistory, owns]);
 
   const submit = useCallback(async (s: Submission) => {
     const signal = page.current;
     const c = conv.current;
     if (!c || !signal || signal.aborted || busy.current) return;
-    busy.current = true;
+    const operation = Symbol('submit');
+    busy.current = operation;
     stageDraft(c.conversation_id, s);
     setSessionEnded(false);
     setConversationChanged(false);
@@ -218,14 +244,17 @@ export function useConversation(artworkId: string): ConversationView {
     setPending({ ...s, phase: 'sending', error: null });
     let next: 'done' | 'reconcile' = 'done';
     try {
-      const { turn, conversation: latest } = await postMessage(c.conversation_id, s);
+      const { turn, conversation: latest } = await postMessage(c.conversation_id, s, c);
       clearDraft(c.conversation_id, s.client_message_id); // confirmed, even after navigation
-      if (signal.aborted) return;
+      if (!owns(signal, operation)) return;
       adopt(latest);
       setTurns((ts) => (ts.some((t) => t.turn_id === turn.turn_id) ? ts : [...ts, turn].sort((a, b) => a.sequence - b.sequence)));
-      setPending(null);
+      // A completed replay may carry a newer conversation than its saved turn.
+      // Load the intervening turns before accepting another context-dependent question.
+      if (latest?.agent && latest.agent.revision > turn.sequence) next = 'reconcile';
+      else setPending(null);
     } catch (e) {
-      if (signal.aborted) return;
+      if (!owns(signal, operation)) return;
       if (e instanceof ApiError) {
         switch (e.code) {
           case 'request_in_progress':
@@ -233,7 +262,7 @@ export function useConversation(artworkId: string): ConversationView {
             next = 'reconcile';
             break;
           case 'conversation_not_found':
-            busy.current = false;
+            busy.current = null;
             return sessionLost(signal, s);
           case 'conversation_state_conflict':
           case 'idempotency_conflict':
@@ -245,30 +274,30 @@ export function useConversation(artworkId: string): ConversationView {
             clearDraft(c.conversation_id, s.client_message_id);
             setPending(null);
             setRestoredText(s.question);
-            busy.current = false;
+            busy.current = null;
             return void open(signal);
           default:
             setPending(failed(s, e.code, e.retryable, e.requestId));
         }
-      } else if (e instanceof TransportError && e.kind === 'invalid_response') {
-        setPending(failed(s, 'bad_response', false));
       } else {
-        next = 'reconcile'; // timeout or dropped connection: the server may still have committed it
+        // Even a malformed success body may follow a committed turn. Recover its
+        // canonical history before allowing a new submission; never repeat the POST.
+        next = 'reconcile';
       }
     } finally {
-      busy.current = false;
+      if (busy.current === operation) busy.current = null;
     }
-    if (next === 'reconcile') {
+    if (next === 'reconcile' && page.current === signal && !signal.aborted) {
       setPending({ ...s, phase: 'checking', error: null });
       void reconcile(signal, s, deadline);
     }
-  }, [adopt, open, reconcile, sessionLost]);
+  }, [adopt, open, reconcile, sessionLost, owns]);
 
   useEffect(() => {
     const controller = new AbortController();
     page.current = controller.signal;
     conv.current = null;
-    busy.current = false;
+    busy.current = null;
     setConversation(null);
     setTurns([]);
     setPending(null);
