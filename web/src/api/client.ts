@@ -1,12 +1,26 @@
 import { mockFetch } from './mock';
 import {
-  type AnswerLanguage, type Artwork, type Conversation, type History, type Turn,
+  AGENT_CONTRACT, type Artwork, type Conversation, type History, type LanguagePreference, type Turn,
   InvalidResponse, parseArtwork, parseConversation, parseErrorBody, parseHistory, parseTurn,
 } from './types';
 
 export const IS_MOCK = import.meta.env.VITE_API_MODE === 'mock';
-/** Contract 7.2: after 12 seconds the outcome is unknown and is reconciled with history. */
-export const BROWSER_TIMEOUT_MS = 12_000;
+
+/**
+ * Which public contract this build speaks. The mock always speaks the agent
+ * contract. A live build speaks the fixture contract unless it is built with
+ * PUBLIC_CONTRACT=agent, so the current Go API keeps working until its
+ * agent-demo-v0.3 endpoints exist.
+ */
+export const CONTRACT: 'fixture' | 'agent' = IS_MOCK || import.meta.env.VITE_PUBLIC_CONTRACT === 'agent' ? 'agent' : 'fixture';
+
+/**
+ * How long the browser actively waits for one question, including recovery
+ * polling. Fixture: 12 s (api-contract 7.2). Agent: 70 s (agent-api-contract 7.4).
+ */
+export const BROWSER_WAIT_MS = CONTRACT === 'agent' ? 70_000 : 12_000;
+/** One history read. Agent contract 7.4 caps it at 10 s. */
+export const HISTORY_TIMEOUT_MS = CONTRACT === 'agent' ? 10_000 : 12_000;
 
 /** A structured non-2xx reply from the API. */
 export class ApiError extends Error {
@@ -36,7 +50,7 @@ interface RequestOptions {
 async function request(method: 'GET' | 'POST', path: string, body?: unknown, options: RequestOptions = {}): Promise<unknown> {
   const ctrl = new AbortController();
   const cancel = () => ctrl.abort();
-  const { signal, timeoutMs = BROWSER_TIMEOUT_MS } = options;
+  const { signal, timeoutMs = HISTORY_TIMEOUT_MS } = options;
   if (signal?.aborted) cancel();
   else signal?.addEventListener('abort', cancel, { once: true });
   const timer = setTimeout(cancel, timeoutMs);
@@ -98,9 +112,11 @@ export function openConversation(artworkId: string): Promise<Conversation> {
   const existing = creating.get(artworkId);
   if (existing) return existing;
   const p = creationTail.then(async () => {
-    const j = (await request('POST', '/api/conversations', { artwork_id: artworkId })) as { conversation?: unknown };
+    const body = CONTRACT === 'agent' ? { contract_version: AGENT_CONTRACT, artwork_id: artworkId } : { artwork_id: artworkId };
+    const j = (await request('POST', '/api/conversations', body)) as { conversation?: unknown };
     const c = parsed(() => parseConversation(j.conversation));
     if (c.artwork_id !== artworkId) throw new TransportError('invalid_response', 'conversation is bound to another artwork');
+    checkContract(c);
     return c;
   }).finally(() => creating.delete(artworkId));
   creating.set(artworkId, p);
@@ -108,26 +124,61 @@ export function openConversation(artworkId: string): Promise<Conversation> {
   return p;
 }
 
+/** A fixture conversation must never be read as an agent one, or the reverse (contract 2.1). */
+function checkContract(c: Conversation): void {
+  if ((c.agent !== null) !== (CONTRACT === 'agent')) throw new TransportError('invalid_response', 'conversation uses another contract');
+}
+
 export async function getHistory(conversationId: string, options?: RequestOptions): Promise<History> {
   const j = await request('GET', `/api/conversations/${conversationId}/messages`, undefined, options);
   const h = parsed(() => parseHistory(j));
   if (h.conversation.conversation_id !== conversationId) throw new TransportError('invalid_response', 'history is for another conversation');
+  checkContract(h.conversation);
   return h;
 }
 
+/**
+ * One logical question. A retry must resend exactly these values, because the
+ * server treats (question, language_override, expected_revision) as the payload
+ * identity for a client_message_id (agent contract 2.3).
+ */
 export interface Submission {
   client_message_id: string;
   question: string;
-  answer_language: AnswerLanguage;
+  /**
+   * Agent: null when the visitor has not changed the language selector, otherwise their selection.
+   * Fixture: always the selected answer language (en or zh-CN).
+   */
+  language_override: LanguagePreference | null;
+  /** Agent: the conversation revision the visitor was looking at. Fixture: unused, 0. */
+  expected_revision: number;
 }
 
-export async function postMessage(conversationId: string, s: Submission): Promise<Turn> {
-  const j = (await request('POST', `/api/conversations/${conversationId}/messages`, {
-    client_message_id: s.client_message_id,
-    question: s.question,
-    answer_language: s.answer_language,
-  })) as { turn?: unknown };
-  const t = parsed(() => parseTurn(j.turn));
-  if (t.client_message_id !== s.client_message_id) throw new TransportError('invalid_response', 'turn is for another message');
-  return t;
+export interface SubmissionResult {
+  turn: Turn;
+  /** Agent: the server's current conversation projection. Fixture: null. */
+  conversation: Conversation | null;
+}
+
+export async function postMessage(conversationId: string, s: Submission): Promise<SubmissionResult> {
+  const body = CONTRACT === 'agent'
+    ? {
+      contract_version: AGENT_CONTRACT,
+      client_message_id: s.client_message_id,
+      question: s.question,
+      language_override: s.language_override,
+      expected_revision: s.expected_revision,
+    }
+    : { client_message_id: s.client_message_id, question: s.question, answer_language: s.language_override ?? 'en' };
+  const j = (await request('POST', `/api/conversations/${conversationId}/messages`, body, { timeoutMs: BROWSER_WAIT_MS })) as {
+    turn?: unknown; conversation?: unknown;
+  };
+  const turn = parsed(() => parseTurn(j.turn));
+  if (turn.client_message_id !== s.client_message_id) throw new TransportError('invalid_response', 'turn is for another message');
+  if ((turn.answer.mode === 'llm') !== (CONTRACT === 'agent')) throw new TransportError('invalid_response', 'turn uses another contract');
+  if (CONTRACT !== 'agent') return { turn, conversation: null };
+  const conversation = parsed(() => parseConversation(j.conversation));
+  if (conversation.conversation_id !== conversationId) throw new TransportError('invalid_response', 'reply is for another conversation');
+  checkContract(conversation);
+  return { turn, conversation };
 }

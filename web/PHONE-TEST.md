@@ -2,6 +2,8 @@
 
 Use the Compose stack for the live phone walkthrough. The mock controls provide additional recovery scenarios during frontend development.
 
+These checks cover the fixture contract (`local-demo-v0.1`). The agent-contract phone journeys are defined in the [visitor acceptance plan](../docs/visitor-acceptance.md) and have not been run.
+
 ## Setup
 
 1. Put the phone and the computer on the same Wi-Fi. Guest and campus networks often block device-to-device traffic; a phone hotspot works if they do.

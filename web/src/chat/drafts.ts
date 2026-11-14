@@ -1,5 +1,12 @@
 // Pending submissions and the last artwork conversation are scoped to this tab.
 import type { Submission } from '../api/client';
+import { PREFERENCES } from '../api/types';
+
+// A retry must resend the original payload exactly, so the draft keeps every field of it.
+const copy = (s: Submission): Submission => ({
+  client_message_id: s.client_message_id, question: s.question,
+  language_override: s.language_override, expected_revision: s.expected_revision,
+});
 
 const draftKey = (conversationId: string) => 'musebridge.draft.' + conversationId;
 const conversationKey = (artworkId: string) => 'musebridge.conversation.' + artworkId;
@@ -12,7 +19,8 @@ function isSubmission(value: unknown): value is Submission {
   if (typeof value !== 'object' || value === null) return false;
   const draft = value as Partial<Submission>;
   return typeof draft.client_message_id === 'string' && typeof draft.question === 'string'
-    && (draft.answer_language === 'en' || draft.answer_language === 'zh-CN');
+    && (draft.language_override === null || (PREFERENCES as readonly unknown[]).includes(draft.language_override))
+    && typeof draft.expected_revision === 'number' && Number.isInteger(draft.expected_revision) && draft.expected_revision >= 0;
 }
 
 export function loadDraft(conversationId: string): DraftRecord | null {
@@ -22,10 +30,7 @@ export function loadDraft(conversationId: string): DraftRecord | null {
     const draft: unknown = JSON.parse(raw);
     if (!isSubmission(draft)) return null;
     const previous = (draft as DraftRecord).previous;
-    return {
-      client_message_id: draft.client_message_id, question: draft.question, answer_language: draft.answer_language,
-      previous: isSubmission(previous) ? previous : undefined,
-    };
+    return { ...copy(draft), previous: isSubmission(previous) ? copy(previous) : undefined };
   } catch {
     return null;
   }
@@ -41,15 +46,12 @@ export function stageDraft(conversationId: string, submission: Submission): void
   const previous = draft?.client_message_id === submission.client_message_id ? draft.previous : draft;
   writeDraft(conversationId, {
     ...submission,
-    previous: previous ? {
-      client_message_id: previous.client_message_id, question: previous.question, answer_language: previous.answer_language,
-    } : undefined,
+    previous: previous ? copy(previous) : undefined,
   });
 }
 
 export function saveDraft(conversationId: string, submission: Submission): void {
-  const { client_message_id, question, answer_language } = submission;
-  writeDraft(conversationId, { client_message_id, question, answer_language });
+  writeDraft(conversationId, copy(submission));
 }
 
 export function clearDraft(conversationId: string, clientMessageId: string): void {

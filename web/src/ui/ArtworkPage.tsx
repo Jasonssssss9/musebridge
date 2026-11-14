@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ApiError, getArtwork } from '../api/client';
-import type { AnswerLanguage, Artwork } from '../api/types';
+import type { Artwork } from '../api/types';
 import { UI_TEXT as t } from '../i18n';
 import { Link } from './App';
 import { Chat } from './Chat';
@@ -8,7 +8,7 @@ import { safeHttps } from './Citation';
 
 type Load = { state: 'loading' } | { state: 'ok'; artwork: Artwork } | { state: 'not_found' } | { state: 'error' };
 
-export function ArtworkPage({ slug, answerLanguage }: { slug: string | null; answerLanguage: AnswerLanguage }) {
+export function ArtworkPage({ slug }: { slug: string | null }) {
   const [load, setLoad] = useState<Load>({ state: slug === null ? 'not_found' : 'loading' });
   const [attempt, setAttempt] = useState(0);
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
@@ -65,7 +65,7 @@ export function ArtworkPage({ slug, answerLanguage }: { slug: string | null; ans
           {record && <> · <a href={record} target="_blank" rel="noopener noreferrer">{t.museumRecord}</a></>}
         </p>
       </section>
-      <Chat artwork={a} answerLanguage={answerLanguage} />
+      <Chat artwork={a} />
     </main>
   );
 }

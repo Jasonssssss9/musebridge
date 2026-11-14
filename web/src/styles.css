@@ -83,13 +83,14 @@ code { font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wra
   justify-self: start; width: 100%; padding: 14px 14px 14px 16px; background: var(--card);
   border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 4px 12px 12px 4px; display: grid; gap: 8px;
 }
-.answer-insufficient, .answer-unsupported_question { border-left-color: var(--amber); }
+.answer-insufficient, .answer-unsupported_question, .answer-partially_answered, .answer-out_of_scope, .answer-clarification_needed { border-left-color: var(--amber); }
+.answer-conversational { border-left-color: var(--rule); }
 .fixture { font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .status {
   justify-self: start; font-size: 0.8rem; font-weight: 600; color: var(--amber); background: var(--amber-bg);
   padding: 2px 8px; border-radius: 999px;
 }
-.answer-text { font: 1.08rem/1.5 var(--serif); overflow-wrap: anywhere; }
+.answer-text { font: 1.08rem/1.5 var(--serif); overflow-wrap: anywhere; white-space: pre-wrap; }
 .cites { border-top: 1px solid var(--rule); padding-top: 10px; display: grid; gap: 8px; }
 .cites h3 { font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .cites ul { display: grid; gap: 12px; }
@@ -153,3 +154,16 @@ code { font: 0.85em ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wra
   .shell { max-width: none; }
   .qrcards { grid-template-columns: 1fr 1fr; }
 }
+
+/* Catalog citations: metadata, not a quoted passage */
+.cite-kind {
+  justify-self: start; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px; padding: 1px 8px;
+}
+.cite-fact { font-size: 0.98rem; overflow-wrap: anywhere; }
+
+/* Answer language selector, under the question box */
+.langrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.langrow .lang { display: flex; align-items: center; gap: 8px; }
+.langhint { flex: 1; min-width: 8rem; }
+.mockmeta { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.72rem; }

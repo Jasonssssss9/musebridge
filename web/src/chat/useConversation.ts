@@ -1,27 +1,32 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ApiError, TransportError, getHistory, openConversation, postMessage, type Submission,
+  ApiError, BROWSER_WAIT_MS, HISTORY_TIMEOUT_MS, TransportError, getHistory, openConversation, postMessage, type Submission,
 } from '../api/client';
-import type { AnswerLanguage, Conversation, History, Turn } from '../api/types';
+import type { Conversation, History, LanguagePreference, PendingRequest, Turn } from '../api/types';
 import { uuidv4 } from '../api/uuid';
 import { clearDraft, lastConversationId, loadDraft, rememberConversation, saveDraft, stageDraft } from './drafts';
 
 export interface PendingView extends Submission {
-  /** sending: POST in flight. checking: outcome unknown, reading history. stalled: polled 12 s with no result. */
+  /** sending: POST in flight. checking: outcome unknown, reading history. stalled: the wait budget ran out with no result. */
   phase: 'sending' | 'checking' | 'stalled' | 'failed';
   error: { code: string; retryable: boolean; requestId: string | null } | null;
 }
 
 export interface ConversationView {
   status: 'starting' | 'ready' | 'unavailable';
+  /** The server's latest view of this conversation (revision and language settings under the agent contract). */
+  conversation: Conversation | null;
   turns: Turn[];
   pending: PendingView | null;
   sessionEnded: boolean;
+  /** The conversation moved on elsewhere (another tab) before this question was accepted. */
+  conversationChanged: boolean;
   /** Text to put back into the input box (set after a lost session or an edit). */
   restoredText: string | null;
   consumeRestoredText: () => void;
   canSend: boolean;
-  send: (question: string, lang: AnswerLanguage) => void;
+  /** `languageOverride`: the visitor's new language selection, or null when they did not change it. */
+  send: (question: string, languageOverride: LanguagePreference | null) => void;
   retry: () => void;
   checkAgain: () => void;
   edit: () => void;
@@ -29,8 +34,12 @@ export interface ConversationView {
 }
 
 const POLL_MS = 1000;
-const POLL_LIMIT_MS = 12_000;
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+const payload = (p: Submission | PendingRequest): Submission => ({
+  client_message_id: p.client_message_id, question: p.question,
+  language_override: p.language_override, expected_revision: p.expected_revision,
+});
 
 /** Trim once and drop control characters the API rejects (contract 1.1). */
 export function cleanQuestion(q: string): string {
@@ -47,11 +56,22 @@ export function useConversation(artworkId: string): ConversationView {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [pending, setPending] = useState<PendingView | null>(null);
   const [sessionEnded, setSessionEnded] = useState(false);
+  const [conversationChanged, setConversationChanged] = useState(false);
+  const [conversation, setConversation] = useState<Conversation | null>(null);
   const [restoredText, setRestoredText] = useState<string | null>(null);
 
   const page = useRef<AbortSignal | null>(null);
   const conv = useRef<Conversation | null>(null);
   const busy = useRef(false); // a POST or a reconcile loop is running
+
+  /** Take the server's conversation view, but never roll back to an older revision (agent contract 2.4). */
+  const adopt = useCallback((c: Conversation | null) => {
+    if (!c) return;
+    const held = conv.current;
+    if (held && held.conversation_id === c.conversation_id && held.agent && c.agent && c.agent.revision < held.agent.revision) return;
+    conv.current = c;
+    setConversation(c);
+  }, []);
 
   const failed = (s: Submission, code: string, retryable: boolean, requestId: string | null = null): PendingView => ({
     ...s, phase: 'failed', error: { code, retryable, requestId },
@@ -60,6 +80,7 @@ export function useConversation(artworkId: string): ConversationView {
   /** Apply a history snapshot for submission `s`. Returns true when the outcome is settled. */
   const settleFromHistory = useCallback((h: History, s: Submission): boolean => {
     const id = h.conversation.conversation_id;
+    adopt(h.conversation);
     setTurns(h.turns);
     if (h.turns.some((t) => t.client_message_id === s.client_message_id)) {
       clearDraft(id, s.client_message_id);
@@ -69,7 +90,7 @@ export function useConversation(artworkId: string): ConversationView {
     const p = h.pending_request;
     if (p && p.state === 'processing') return false; // ours or another key: keep waiting
     if (p) {
-      const accepted = { client_message_id: p.client_message_id, question: p.question, answer_language: p.answer_language };
+      const accepted = payload(p);
       saveDraft(id, accepted);
       if (p.client_message_id !== s.client_message_id) setRestoredText(s.question);
       setPending(failed(accepted, p.last_error?.code ?? 'internal_error', p.last_error?.retryable ?? true));
@@ -80,7 +101,7 @@ export function useConversation(artworkId: string): ConversationView {
     // resend (if another request has since replaced it, the retry is rejected and history is reloaded).
     setPending(failed(s, 'unconfirmed', true));
     return true;
-  }, []);
+  }, [adopt]);
 
   const open = useCallback(async (signal: AbortSignal) => {
     if (signal.aborted) return;
@@ -90,7 +111,8 @@ export function useConversation(artworkId: string): ConversationView {
       if (signal.aborted) return;
       const h = await getHistory(c.conversation_id, { signal });
       if (signal.aborted) return;
-      conv.current = c;
+      conv.current = null;
+      adopt(h.conversation);
       setTurns(h.turns);
 
       const previousId = lastConversationId(artworkId);
@@ -112,7 +134,7 @@ export function useConversation(artworkId: string): ConversationView {
       }
       const p = h.pending_request;
       if (p) {
-        const s: Submission = { client_message_id: p.client_message_id, question: p.question, answer_language: p.answer_language };
+        const s = payload(p);
         if (draft?.previous?.client_message_id === s.client_message_id) {
           setRestoredText(draft.question);
         }
@@ -133,13 +155,15 @@ export function useConversation(artworkId: string): ConversationView {
     } catch {
       if (signal.aborted) return;
       conv.current = null;
+      setConversation(null);
       setStatus('unavailable');
     }
-  }, [artworkId]);
+  }, [artworkId, adopt]);
 
   /** The session is gone (expired, or the API restarted): explain, start a new one, keep the text unsent. */
   const sessionLost = useCallback((signal: AbortSignal, submission: Submission) => {
     conv.current = null;
+    setConversation(null);
     setPending(null);
     setTurns([]);
     setSessionEnded(true);
@@ -147,19 +171,21 @@ export function useConversation(artworkId: string): ConversationView {
     void open(signal);
   }, [open]);
 
-  /** Outcome unknown: read history, polling once a second for at most 12 s while this page is active. */
-  const reconcile = useCallback(async (signal: AbortSignal, s: Submission) => {
+  /**
+   * Outcome unknown: read history, then poll once a second until `deadline` while this page is
+   * active. History is always read at least once, even when the wait budget is already spent.
+   */
+  const reconcile = useCallback(async (signal: AbortSignal, s: Submission, deadline = performance.now() + BROWSER_WAIT_MS) => {
     const c = conv.current;
     if (!c || signal.aborted) return;
     busy.current = true;
     try {
-      const deadline = performance.now() + POLL_LIMIT_MS;
-      while (!signal.aborted) {
+      for (let first = true; !signal.aborted; first = false) {
         const remaining = deadline - performance.now();
-        if (remaining <= 0) break;
+        if (remaining <= 0 && !first) break;
         let h: History;
         try {
-          h = await getHistory(c.conversation_id, { signal, timeoutMs: remaining });
+          h = await getHistory(c.conversation_id, { signal, timeoutMs: Math.min(HISTORY_TIMEOUT_MS, Math.max(remaining, 3000)) });
         } catch (e) {
           if (signal.aborted) return;
           if (e instanceof ApiError && e.code === 'conversation_not_found') return sessionLost(signal, s);
@@ -168,9 +194,9 @@ export function useConversation(artworkId: string): ConversationView {
           return;
         }
         if (signal.aborted) return;
+        if (settleFromHistory(h, s)) return;
         const waitMs = deadline - performance.now();
         if (waitMs <= 0) break;
-        if (settleFromHistory(h, s)) return;
         await wait(Math.min(POLL_MS, waitMs));
       }
       if (!signal.aborted) setPending({ ...s, phase: 'stalled', error: null });
@@ -186,12 +212,16 @@ export function useConversation(artworkId: string): ConversationView {
     busy.current = true;
     stageDraft(c.conversation_id, s);
     setSessionEnded(false);
+    setConversationChanged(false);
+    // One wait budget covers the POST and any recovery polling after it (agent contract 7.4).
+    const deadline = performance.now() + BROWSER_WAIT_MS;
     setPending({ ...s, phase: 'sending', error: null });
     let next: 'done' | 'reconcile' = 'done';
     try {
-      const turn = await postMessage(c.conversation_id, s);
+      const { turn, conversation: latest } = await postMessage(c.conversation_id, s);
       clearDraft(c.conversation_id, s.client_message_id); // confirmed, even after navigation
       if (signal.aborted) return;
+      adopt(latest);
       setTurns((ts) => (ts.some((t) => t.turn_id === turn.turn_id) ? ts : [...ts, turn].sort((a, b) => a.sequence - b.sequence)));
       setPending(null);
     } catch (e) {
@@ -205,9 +235,13 @@ export function useConversation(artworkId: string): ConversationView {
           case 'conversation_not_found':
             busy.current = false;
             return sessionLost(signal, s);
+          case 'conversation_state_conflict':
           case 'idempotency_conflict':
           case 'request_superseded':
             // This key can never run again. Show what the server has and hand the text back.
+            // After a state conflict the conversation gained a turn elsewhere: the visitor reviews
+            // the text and sends it as a new question; it is never resent automatically (agent contract 2.3).
+            if (e.code === 'conversation_state_conflict') setConversationChanged(true);
             clearDraft(c.conversation_id, s.client_message_id);
             setPending(null);
             setRestoredText(s.question);
@@ -226,18 +260,20 @@ export function useConversation(artworkId: string): ConversationView {
     }
     if (next === 'reconcile') {
       setPending({ ...s, phase: 'checking', error: null });
-      void reconcile(signal, s);
+      void reconcile(signal, s, deadline);
     }
-  }, [open, reconcile, sessionLost]);
+  }, [adopt, open, reconcile, sessionLost]);
 
   useEffect(() => {
     const controller = new AbortController();
     page.current = controller.signal;
     conv.current = null;
     busy.current = false;
+    setConversation(null);
     setTurns([]);
     setPending(null);
     setSessionEnded(false);
+    setConversationChanged(false);
     setRestoredText(null);
     void open(controller.signal);
     return () => controller.abort();
@@ -246,26 +282,28 @@ export function useConversation(artworkId: string): ConversationView {
   const canSend = status === 'ready' && (pending === null || pending.phase === 'failed');
 
   return {
-    status, turns, pending, sessionEnded, restoredText,
+    status, conversation, turns, pending, sessionEnded, conversationChanged, restoredText,
     consumeRestoredText: useCallback(() => setRestoredText(null), []),
     canSend,
-    send: (question, lang) => {
+    send: (question, languageOverride) => {
       const q = cleanQuestion(question);
       const n = [...q].length;
-      if (!canSend || n < 1 || n > 500) return;
-      // A new question (or an edited failed one) always gets a new UUID.
-      void submit({ client_message_id: uuidv4(), question: q, answer_language: lang });
+      if (!canSend || !conv.current || n < 1 || n > 500) return;
+      // A new question (or an edited failed one) always gets a new UUID, and is tied to the
+      // conversation revision the visitor is looking at now.
+      void submit({
+        client_message_id: uuidv4(), question: q, language_override: languageOverride,
+        expected_revision: conv.current.agent?.revision ?? 0,
+      });
     },
     retry: () => {
-      // Same UUID, same question, same language as first submitted.
-      if (pending?.phase === 'failed' && pending.error?.retryable) {
-        void submit({ client_message_id: pending.client_message_id, question: pending.question, answer_language: pending.answer_language });
-      }
+      // Same UUID, question, language choice and revision as first submitted.
+      if (pending?.phase === 'failed' && pending.error?.retryable) void submit(payload(pending));
     },
     checkAgain: () => {
       const signal = page.current;
       if (pending?.phase === 'stalled' && signal && !busy.current) {
-        const s = { client_message_id: pending.client_message_id, question: pending.question, answer_language: pending.answer_language };
+        const s = payload(pending);
         setPending({ ...s, phase: 'checking', error: null });
         void reconcile(signal, s);
       }

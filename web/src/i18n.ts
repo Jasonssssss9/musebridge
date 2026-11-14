@@ -1,4 +1,4 @@
-import type { AnswerLanguage } from './api/types';
+import type { AnswerLanguage, AnswerStatus, Language, LanguagePreference } from './api/types';
 
 // Interface labels are English. The answer language is stored separately.
 export const UI_TEXT = {
@@ -23,15 +23,34 @@ export const UI_TEXT = {
   tooLong: 'Questions can be up to 500 characters.',
   you: 'You asked',
   fixtureLabel: 'Demo response — fixed test answer',
-  statusInsufficient: 'Not enough evidence',
-  statusUnsupported: 'Outside this demo’s examples',
+  llmLabel: 'AI guide response',
+  // Short coverage note per answer status. The answer text is always shown as well.
+  statusNote: {
+    answered: null,
+    conversational: null,
+    partially_answered: 'Partly answered',
+    clarification_needed: 'Needs a detail from you',
+    insufficient: 'Not confirmed by the museum record',
+    out_of_scope: 'Outside this guide',
+    unsupported_question: 'Outside this demo’s examples',
+  } as Record<AnswerStatus, string | null>,
+  fixtureInsufficient: 'Not enough evidence',
+  answeredIn: 'Answered in',
+  catalogBadge: 'Catalog record',
+  catalogField: { title: 'Title', artist: 'Artist', date_display: 'Date' } as Record<string, string>,
+  attribution: 'From',
+  languageAuto: 'Auto',
+  languageAutoHint: 'Auto follows the language you write in.',
+  languageNext: 'Applies from your next message.',
+  waitingLong: 'Still working. Answers can take up to a minute.',
+  conversationChanged: 'This conversation was updated somewhere else, so your message was not sent. Check the latest replies, then send it again if you still want to.',
   sources: 'Sources',
   openSource: 'Open original source',
   sourceLanguage: 'Source language',
   locator: 'Where',
   license: 'License',
   normalization: 'Note',
-  langName: { en: 'English', 'zh-CN': 'Chinese (Simplified)' } as Record<string, string>,
+  langName: { en: 'English', es: 'Spanish', 'zh-CN': 'Chinese (Simplified)', ko: 'Korean' } as Record<string, string>,
   sending: 'Sending…',
   checking: 'Checking whether your question went through…',
   stalled: 'Still waiting for an answer.',
@@ -64,7 +83,10 @@ export function errorText(code: string): string {
   if (code === 'unconfirmed') return err.unconfirmed;
   if (code.endsWith('_timeout')) return err.timeout;
   if (code.endsWith('_unavailable') || code === 'service_not_ready') return err.unavailable;
-  if (code.endsWith('_invalid_response') || code === 'bad_response' || code === 'origin_not_allowed' || code === 'invalid_request') return err.service;
+  if (
+    code.endsWith('_invalid_response') || code === 'bad_response' || code === 'origin_not_allowed' || code === 'invalid_request' ||
+    code === 'agent_contract_mismatch' || code === 'agent_context_limit'
+  ) return err.service;
   return err.generic;
 }
 
@@ -81,15 +103,49 @@ export function rememberAnswerLanguage(language: AnswerLanguage): void {
   try { localStorage.setItem(ANSWER_LANGUAGE_KEY, language); } catch { /* ignore */ }
 }
 
-/** Supported example questions per artwork (contract 6.1), shown as tap-to-ask chips. */
-export function suggestions(artworkId: string, lang: AnswerLanguage): string[] {
-  const zhQ = lang === 'zh-CN';
-  const list = [
-    zhQ ? '这件作品用了什么材料？' : 'What material is this artwork made of?',
-    zhQ ? '馆方如何描述这件作品的笔触？' : "How does the museum describe this artwork's brushwork?",
-  ];
-  if (artworkId === 'aic-28560') {
-    list.push(zhQ ? '馆方认为，画面里的哪些元素可能让人感到紧张？' : 'Which elements might suggest nervous energy, according to the museum?');
-  }
+/** How each language names itself, for the selector. */
+export const LANGUAGE_LABEL: Record<Language, string> = { en: 'English', es: 'Español', 'zh-CN': '简体中文', ko: '한국어' };
+
+/** The label for a selector value. */
+export function preferenceLabel(p: LanguagePreference): string {
+  return p === 'auto' ? UI_TEXT.languageAuto : LANGUAGE_LABEL[p];
+}
+
+const EXAMPLES: Record<Language, { material: string; brushwork: string; artist: string; energy: string }> = {
+  en: {
+    material: 'What material is this artwork made of?',
+    brushwork: "How does the museum describe this artwork's brushwork?",
+    artist: 'Who made it, and when?',
+    energy: 'Which elements might suggest nervous energy, according to the museum?',
+  },
+  es: {
+    material: '¿De qué material está hecha esta obra?',
+    brushwork: '¿Cómo describe el museo la pincelada de esta obra?',
+    artist: '¿Quién la hizo y cuándo?',
+    energy: 'Según el museo, ¿qué elementos podrían sugerir una energía nerviosa?',
+  },
+  'zh-CN': {
+    material: '这件作品用了什么材料？',
+    brushwork: '馆方如何描述这件作品的笔触？',
+    artist: '作者是谁？是什么时候画的？',
+    energy: '馆方认为，画面里的哪些元素可能让人感到紧张？',
+  },
+  ko: {
+    material: '이 작품은 무엇으로 만들어졌나요?',
+    brushwork: '미술관은 이 작품의 붓질을 어떻게 설명하나요?',
+    artist: '누가, 언제 만들었나요?',
+    energy: '미술관은 어떤 요소가 불안한 에너지를 암시한다고 보나요?',
+  },
+};
+
+/**
+ * Example questions shown as tap-to-ask chips, in the given language. The fixture contract only
+ * recognizes its listed wordings (api-contract 6.1), so `catalog` questions are agent-only.
+ */
+export function suggestions(artworkId: string, lang: Language, catalog: boolean): string[] {
+  const e = EXAMPLES[lang];
+  const list = [e.material, e.brushwork];
+  if (catalog) list.push(e.artist);
+  if (artworkId === 'aic-28560') list.push(e.energy);
   return list;
 }
