@@ -1,6 +1,6 @@
 """Read-only release manifest and exact provenance checks for retrieved evidence."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import hashlib
 from pathlib import Path
 import re
@@ -40,6 +40,9 @@ class EvidenceManifest:
     artworks: Mapping[str, Mapping[str, object]]
     records: Mapping[str, Mapping[str, str]]
     chunk_ids_by_artwork: Mapping[str, frozenset[str]]
+    sources: Mapping[str, Mapping[str, object]] = field(
+        default_factory=lambda: MappingProxyType({})
+    )
 
     @classmethod
     def load(
@@ -85,6 +88,8 @@ class EvidenceManifest:
             artworks=MappingProxyType({key: MappingProxyType(dict(value)) for key, value in dataset.artworks.items()}),
             records=MappingProxyType(records),
             chunk_ids_by_artwork=MappingProxyType({key: frozenset(value) for key, value in scope_ids.items()}),
+            sources=MappingProxyType({key: MappingProxyType(dict(value))
+                                      for key, value in dataset.sources.items()}),
         )
 
     def artwork(self, artwork_id: str, dataset_version: str) -> dict:

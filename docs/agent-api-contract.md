@@ -1,14 +1,14 @@
 # MuseBridge Agent v2 Interface Contract
 
-Status: **Normative implementation target; documentation and contract fixtures only. Visitor-policy draft revision 2.**
+Status: **Normative visitor-policy revision 2. C workflow implemented; production transport, application integration and real-model acceptance pending.**
 
 Public contract: `agent-demo-v0.3`. Private contract: `agent-run-v2`. Workflow: `museum_qa_v2`. Schema: `agent-schema-v2`. State format: `conversation-state-v1`. Prompt package: `museum-prompts-v2`. Profile: `local-ollama-v2`.
 
 Read this with [the v2 design](agent-design.md), [JSON Schema](contracts/agent-v2.schema.json) and [synthetic examples](contracts/agent-v2.examples.json). The schema defines structural constraints; the relationship and semantic rules below are equally normative. Examples are synthetic and do not claim observed LLM performance.
 
-Revision 2 revises the unimplemented v2 target in place. It adds local clarification, canonical catalog facts, explicit translation tasks and subjective-discussion policy. All v2 consumers must use the same revision of the documents, schema and fixtures; the version names below do not imply compatibility with the earlier draft.
+Revision 2 defines the v2 target selected by the new C workflow. It adds local clarification, canonical catalog facts, explicit translation tasks and subjective-discussion policy. All v2 consumers must use the same revision of the documents, schema and fixtures; the version names below do not imply compatibility with the earlier draft.
 
-The implemented C M1 code still reads the unchanged v1 artifacts. The [fixture API contract](api-contract.md) continues to govern fixture mode. Consumers must explicitly migrate; a deployment must not reinterpret a v1 message as v2.
+The preserved C M1 entry point reads the unchanged v1 artifacts. The new MuseumQAWorkflowV2 explicitly reads revision-2 v2 artifacts and uses injected provider, sizing, budget and retrieval ports; see the [C runbook](../agent/README.md). The [fixture API contract](api-contract.md) continues to govern fixture mode. Consumers must explicitly migrate; a deployment must not reinterpret a v1 message as v2.
 
 ## 1. Conventions and ownership
 
@@ -497,7 +497,7 @@ Tool-level `ToolInput` adds `tool_version: evidence-tool-v1`, `query_id` and `re
 
 Canonical Evidence fields remain `chunk_id`, `artwork_id`, `source_id`, `source_title`, `source_url`, `source_language`, `source_locator`, `excerpt`, `license`, `license_url`, `attribution` and `normalization`. Compare every field against the immutable manifest. Original excerpts are not translated or rewritten. Compatible extra response metadata is discarded before acceptance.
 
-Retain the legacy service's 8 KiB request and 64 KiB response limits, strict UTF-8 JSON, uncompressed bodies, no redirects, exact trace echo and at most three seconds for preparation, full HTTP read and validation. Calls are sequential. Do not retry automatically.
+Retain the legacy service's 8 KiB request and 64 KiB response limits, strict UTF-8 JSON, uncompressed bodies, no redirects, exact trace echo and at most three seconds for preparation, full HTTP read and validation. Calls are sequential. Stop the remaining batch when canonical retrieval coverage becomes complete, recording only the actually executed prefix. Do not retry automatically.
 
 Duplicate IDs within one result, conflicts across results, wrong query identity, foreign artwork, wrong version or changed canonical fields fail the run. Identical cross-call records deduplicate. Cache records obey the same validation.
 
@@ -598,4 +598,4 @@ At minimum, test:
 - Subjective reactions, correction, general-to-specific inference traps and all [visitor acceptance journeys](visitor-acceptance.md).
 - All old fixture/C M1 checks while v2 remains disabled.
 
-This document introduces no running endpoint, migration, model installation, code change or deployment. Implementation must explicitly select the v2 schema and new prompt package before these contracts become active.
+The C workflow selects this v2 schema and prompt package and returns validated C-owned result fields. It does not implement the public/private HTTP endpoints, a production model provider, Go state persistence or deployment. Scripted-model checks cannot close those integration or semantic acceptance gates.

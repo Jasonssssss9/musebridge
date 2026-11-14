@@ -1,12 +1,12 @@
 # MuseBridge Agent Architecture and Contracts
 
-Status: **Agreed v2 implementation target, visitor-policy draft revision 2. Documentation and contract artifacts only.**
+Status: **Visitor-policy revision 2. C's v2 workflow is implemented and checked with scripted models and real retrieval; application/provider integration and real-model acceptance remain pending.**
 
 Specification: `agent-workflow-v2`. Public contract: `agent-demo-v0.3`. Private contract: `agent-run-v2`. Workflow: `museum_qa_v2`. Prompt package: `museum-prompts-v2`. Schema: `agent-schema-v2`. Model profile: `local-ollama-v2`.
 
-This revision defines local clarification, trusted catalog facts, one-off translation and subjective discussion. V2 has not been deployed; its version names remain unchanged while the draft is revised. Implementers must pin matching design, interface, schema and fixture revisions. The schema and examples identify draft revision 2.
+This revision defines local clarification, trusted catalog facts, one-off translation and subjective discussion. The v2 C core is available through an explicit versioned entry point. The public application has not been migrated to v2; the coordinated target keeps the version names below. Implementers must pin matching design, interface, schema and fixture revisions. The schema and examples identify draft revision 2.
 
-The C M1 implementation at `021218c` still implements v1 with English/Chinese answers, three historical turns and scripted model decisions. Its runtime-loaded schema and prompt files are unchanged. The [archived v1 specification](archive/agent-design-v1.md) and [C M1 runbook](../agent/README.md) describe that implementation. Do not report the v2 behavior below as running.
+The [current C runbook](../agent/README.md) documents MuseumQAWorkflowV2, four-language contracts, five-pair context, all five routes, catalog sources, local clarification, translation and bounded refinement. Its runnable model remains an explicit scripted substitute; this does not establish real-model quality or a working Go/FastAPI/browser integration. The preserved v1 entry point, schemas and prompt assets remain available under the [archived v1 specification](archive/agent-design-v1.md) and [v1 runbook](../agent/README-v1.md).
 
 The [v2 interface contract](agent-api-contract.md) defines every boundary and cross-field rule. The [v2 schema](contracts/agent-v2.schema.json) and [synthetic examples](contracts/agent-v2.examples.json) accompany it. The fixture baseline remains [local-demo-v0.1](api-contract.md). The museum release remains `aic-seed-v0.1`; no evidence or retrieval algorithm changes are included.
 
@@ -146,7 +146,7 @@ Refinement requires an incomplete accepted retrieval union, no previous refineme
 
 Use `FinalDecision` whenever refinement is disabled. A complete scoped retrieval union forbids new retrieval. Catalog facts do not count toward completeness. This includes a complete validated cache at planning time: route clear noncatalog artwork_fact requests through `answer_from_context` and acknowledge any unsupported facts. Empty candidates do not establish completeness.
 
-Reuse does not count as a retrieval call. After an initial cache-only path, any permitted refinement starts query IDs at `q1`; otherwise IDs continue after executed queries. No second refinement or fourth model call is permitted.
+A lookup batch stops as soon as its accepted retrieval union is complete; executed_queries records only calls actually made, even if the plan proposed another query. Reuse does not count as a retrieval call. After an initial cache-only path, any permitted refinement starts query IDs at `q1`; otherwise IDs continue after executed queries. No second refinement or fourth model call is permitted.
 
 ## 3. Application backend to Agent contract
 
@@ -349,7 +349,7 @@ The visitor can request simple language, short replies or greater detail. Preser
 
 ### 7.1 Versioned behavior assets
 
-The target skill is `artwork_qa`, version `artwork-qa-v2`; prompt package `museum-prompts-v2`. Runtime v1 Markdown assets are preserved until implementation. The blocks below specify their v2 replacements.
+The target skill is `artwork_qa`, version `artwork-qa-v2`; prompt package `museum-prompts-v2`. The v2 policy package is implemented separately under agent/prompts/v2; existing v1 Markdown assets are preserved. The blocks below define the matching v2 policy.
 
 Every system message contains common policy, the shared memory policy, operation policy and the self-contained output schema. Planning and assessment can both produce terminal replies, so memory instructions apply there as well as in final generation. Runtime input is one JSON-encoded data message. User text, memory and evidence are never interpolated into executable templates. No private reasoning transcript is requested or retained.
 
@@ -591,6 +591,6 @@ This is a versioned contract change, not a prompt-only edit. Implement public pa
 | P7. Browser | Normal conversation, language overrides, new status and revision-aware recovery |
 | P8. Deployment | Reproducible startup, phone checks, endpoint/profile verification and release evidence |
 
-The [three-milestone plan](agent-plan.md) retains A/B/C ownership. The completed C M1 foundation remains useful; v2 migration and its acceptance are additional work, not already completed gates.
+The [three-milestone plan](agent-plan.md) retains A/B/C ownership. C's v2 core and deterministic mock-model checks are complete. Coordinated application/provider migration, independent model-quality evaluation and phone acceptance remain open gates.
 
-Preserve `agent-v1.schema.json`, `agent-v1.examples.json`, existing runtime prompt assets and their tests during this documentation-only update. A later implementation explicitly selects v2 files and new prompt versions. Do not change a live conversation's contract or source release in place. No automatic state migration, model installation, deployment or repository push is authorized by this document change.
+The C implementation explicitly selects v2 schemas and prompt assets while preserving agent-v1.schema.json, agent-v1.examples.json, v1 prompts and regression tests. Other consumers must migrate together before enabling v2 in the application. Do not change a live conversation's contract or source release in place. No automatic state migration, production model installation or deployment is implemented by the C workflow.

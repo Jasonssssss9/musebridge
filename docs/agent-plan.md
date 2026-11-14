@@ -1,10 +1,10 @@
 # MuseBridge Agent Implementation Plan
 
-Status: **C's v1 M1 foundation is implemented. The v2 conversation target adds pending interface and runtime work; team M1 integration and acceptance remain open.**
+Status: **C's v2 core is implemented with scripted-model and real-retrieval checks. Team M1 integration, real-model M2 quality and M3 deployment acceptance remain open.**
 
 This plan defines three milestones and the new A/B/C responsibilities. It follows the [Agent architecture](agent-design.md) and [v2 interface contract](agent-api-contract.md), including protocols, call limits and [release gates](agent-design.md#13-evaluation-and-release-gates). It supersedes the earlier personal assignments for new Agent work. The [fixture-stage plan](plan.md) remains a historical reference.
 
-**C M1 v1 implementation checkpoint:** the LangGraph foundation, context and prompt assets, real retrieval adapter, release-manifest validation and scripted-model tests are implemented. See the [C M1 handoff and local checks](../agent/README.md). This checkpoint remains valid for v1. The v2 target additionally requires four languages, optional retrieval/direct dialogue, five completed history pairs and application-owned ConversationState. Adaptation to v2 and its tests are pending; do not report the existing v1 tests as v2 acceptance. The full M1 gate remains open until A/B deliverables, production interfaces and cross-service checks below are verified.
+**C v2 implementation checkpoint:** the versioned LangGraph entry point, four-language decisions, five-pair context, direct/catalog replies, cache reuse, local clarification, pinned translations, semantic memory proposals and one bounded refinement are implemented. Tests use a scripted provider and the real retrieval service. See the [C runbook and handoff](../agent/README.md). V1 remains available separately. This checkpoint proves deterministic execution and source boundaries; it does not prove real query rewriting, subjective reasoning, multilingual answer quality, production model sizing or application state persistence. The full M1 gate remains open until A/B deliverables and cross-service checks are verified.
 
 The [visitor acceptance plan](visitor-acceptance.md) defines published journey families, multilingual coverage, reviewer expectations and completion records. These are designed cases, not measured results or an independent held-out set.
 
@@ -28,7 +28,7 @@ These are acceptance stages, not three sequential work queues. A, B and C work i
 | --- | --- |
 | A | Update frontend types, parsing and mocks for conversational/model answers, partial answers, clarification, scope guidance, four language choices plus Auto, and revision-aware submissions. Prepare the visitor journeys, source display mocks and independently authored held-out questions; cover partial answers with clarification and temporary translation tasks. |
 | B | Implement v2 wire types, Go's Agent client, private FastAPI v2 run endpoints, service authentication, run identity, revision snapshots and the provider interface. Supply the released catalog projections and verify the actual model endpoint, structured output, model identity and basic timing. |
-| C | Adapt the completed v1 LangGraph foundation to v2 context/decision contracts, five historical pairs and explicit dialogue/reuse routes. Define local clarification and terminal memory proposals, metadata grounding, translation semantics and subjective-discussion policy while preserving the real retrieval adapter and manifest checks. |
+| C | Deliver the implemented v2 context/decision contracts, five historical pairs and explicit dialogue/reuse routes through the agreed provider/budget ports. Define local clarification and terminal memory proposals, metadata grounding, translation semantics and subjective-discussion policy while preserving the real retrieval adapter and manifest checks. |
 
 **M1 is complete when:**
 
@@ -50,7 +50,7 @@ The model service is prepared on the teammate's host or another approved inferen
 | --- | --- |
 | A | Connect the browser to the updated application API. Verify response labels, citations, all four languages, language switching, normal dialogue, clarification replies, waiting, state-aware refresh and artwork switching. Run browser recovery checks and the visitor acceptance journeys; report the deferred reset limitation honestly. |
 | B | Complete Go result validation and atomic turn/ConversationState saving, expected-revision conflicts, Agent run replay/reconciliation, deadline/capacity handling and provider failures. Align application, Agent, browser and proxy budgets. |
-| C | Complete language-aware routing, faithful English query generation, direct conversation, support assessment, useful gap replies, validated evidence reuse, semantic memory updates, local clarification, catalog facts, task-specific translations, subjective interpretation, one bounded refinement and mandatory stopping. Run the shared workflow through the evaluation harness and analyze failures. |
+| C | Integrate the implemented routes, sources, memory proposals and bounded refinement with the real provider. Evaluate faithful English queries, support assessment, useful gap replies, translations, subjective interpretation and conversational continuity; correct measured semantic failures. Run the shared workflow through the evaluation harness and analyze failures. |
 
 **M2 is complete when:**
 
