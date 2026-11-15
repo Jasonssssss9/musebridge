@@ -4,6 +4,8 @@ Owner: Jinqing Zhang (Go backend and system integration).
 
 This implements the Go artwork service, anonymous conversations, bounded question orchestration, reviewed fixture answers and validating retrieval client. The Go and Python services load the same immutable seed. Artwork cards and conversation recovery remain available independently of retrieval, and a separate Go diagnostic command can call the retrieval service.
 
+The [v2 boundary layer](../docs/contracts/README.md) and [internal Agent state store](../docs/agent-state-store.md) are also implemented. They provide strict wire contracts and atomic revision/memory handling for later integration. The HTTP routes below continue to serve fixture mode; this does not enable the private Agent service or real inference.
+
 Implemented routes:
 
 | Method and path | Behavior |
@@ -19,7 +21,7 @@ The B2 public routes and B3 retrieval/fixture answer path are implemented. Histo
 
 ## Run locally
 
-Use Go 1.27 or later. The module uses the standard library and the Go-maintained [`golang.org/x/text/unicode/norm`](https://pkg.go.dev/golang.org/x/text/unicode/norm) package for contract-required NFKC normalization. The first build downloads the version pinned in `go.mod` and verified by `go.sum`. From the repository root:
+Use Go 1.27 or later. The module uses the standard library, Go-maintained [`golang.org/x/text/unicode/norm`](https://pkg.go.dev/golang.org/x/text/unicode/norm) for contract-required NFKC normalization, and the pinned JSON Schema validator described in the boundary guide. The first build downloads the versions pinned in `go.mod` and verified by `go.sum`. From the repository root:
 
 ```bash
 cd api

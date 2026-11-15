@@ -161,3 +161,15 @@ func TestEmbeddedSchemaMatchesCanonicalFile(t *testing.T) {
 		t.Fatal("regenerate error policies", err)
 	}
 }
+
+func TestTypedEncodingRejectsInvalidUTF8WithoutRepair(t *testing.T) {
+	v := validator(t)
+	var request PublicMessageRequest
+	if err := v.Decode("PublicMessageRequest", []byte(message), &request); err != nil {
+		t.Fatal(err)
+	}
+	request.Question = string([]byte{0xff})
+	if _, err := v.Encode("PublicMessageRequest", request); err == nil {
+		t.Fatal("silently replaced invalid text")
+	}
+}

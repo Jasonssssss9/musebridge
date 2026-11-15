@@ -241,3 +241,21 @@ func TestUnicodeLimitsDepthAndNullableUnion(t *testing.T) {
 		t.Fatal("changed optional union")
 	}
 }
+
+func TestResultCannotDiscardIndependentAnswerParts(t *testing.T) {
+	v := validator(t)
+	var run RunRequest
+	fixture(t, "run_request_initial", &run)
+	var result RunResult
+	fixture(t, "run_result_mixed", &result)
+	result.RequestResults = []RequestResult{}
+	result.Answer = AgentAnswer{Status: "out_of_scope", Text: "Outside scope.", Citations: []Citation{}}
+	if v.CheckRunResult(run, result) == nil {
+		t.Fatal("scope result discarded planned requests")
+	}
+	result.Answer.Status = "clarification_needed"
+	result.ConversationUpdate.Memory.PendingUpdate = PendingUpdate{Action: "set", Source: Some("current_message"), RequestID: Some[*RequestID](nil)}
+	if v.CheckRunResult(run, result) == nil {
+		t.Fatal("whole clarification discarded independent conversation part")
+	}
+}

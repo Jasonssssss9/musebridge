@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/Jasonssssss9/musebridge/api/internal/jsonwire"
 	"github.com/santhosh-tekuri/jsonschema/v6"
@@ -255,11 +256,51 @@ func (v *Validator) Validate(name string, data []byte) error { return v.Decode(n
 // Encode checks outgoing messages too; callers cannot bypass union rules by
 // constructing a Go struct directly. It returns a new byte slice.
 func (v *Validator) Encode(name string, value any) ([]byte, error) {
+	if !validTypedUTF8(reflect.ValueOf(value), 0) {
+		return nil, invalid(name)
+	}
 	data, err := json.Marshal(value)
 	if err != nil || v.Validate(name, data) != nil {
 		return nil, invalid(name)
 	}
 	return data, nil
+}
+
+// encoding/json replaces invalid Go string bytes. Reject them before marshaling
+// so typed snapshots cannot silently change original text during persistence.
+func validTypedUTF8(value reflect.Value, depth int) bool {
+	if depth > 64 {
+		return false
+	}
+	if !value.IsValid() {
+		return true
+	}
+	switch value.Kind() {
+	case reflect.String:
+		return utf8.ValidString(value.String())
+	case reflect.Pointer, reflect.Interface:
+		return value.IsNil() || validTypedUTF8(value.Elem(), depth+1)
+	case reflect.Slice, reflect.Array:
+		for i := 0; i < value.Len(); i++ {
+			if !validTypedUTF8(value.Index(i), depth+1) {
+				return false
+			}
+		}
+	case reflect.Map:
+		iter := value.MapRange()
+		for iter.Next() {
+			if !validTypedUTF8(iter.Key(), depth+1) || !validTypedUTF8(iter.Value(), depth+1) {
+				return false
+			}
+		}
+	case reflect.Struct:
+		for i := 0; i < value.NumField(); i++ {
+			if value.Type().Field(i).PkgPath == "" && !validTypedUTF8(value.Field(i), depth+1) {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // DecodePublicMessage performs the sole public-question trim and classifies a

@@ -263,6 +263,22 @@ func (v *Validator) CheckRunResult(run RunRequest, result RunResult) error {
 		}
 	} else if (result.Answer.Status != "clarification_needed" && result.Answer.Status != "out_of_scope") || len(result.Answer.Citations) != 0 {
 		return invalid("empty result parts")
+	} else if result.Answer.Status == "out_of_scope" && len(result.Requests) != 0 {
+		return invalid("scope result coverage")
+	} else if result.Answer.Status == "clarification_needed" && result.LanguageDecision.Translation == nil {
+		clear, local, independent := false, false, false
+		for _, request := range result.Requests {
+			if request.Resolution == "needs_clarification" {
+				local = true
+			}
+			if request.Resolution == "clear" {
+				clear = true
+				independent = independent || request.Kind != "artwork_fact"
+			}
+		}
+		if clear && (local || independent) {
+			return invalid("discarded independent answer")
+		}
 	}
 	return v.checkPending(run, result)
 }

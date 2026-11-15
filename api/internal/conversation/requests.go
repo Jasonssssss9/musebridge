@@ -31,7 +31,7 @@ func (s *Store) Begin(token, id string, submission Submission, budget time.Durat
 	defer s.mu.Unlock()
 	s.expire(s.now().UTC())
 	item := s.conversations[id]
-	if item == nil || s.visitors[token] == nil || item.owner != token {
+	if item == nil || s.visitors[token] == nil || item.owner != token || item.agent != nil {
 		return Attempt{}, nil, notFound()
 	}
 	previous := item.requests[submission.ClientMessageID]
@@ -117,7 +117,7 @@ func (s *Store) Fail(attempt Attempt, failure *Failure) *Failure {
 func (s *Store) active(attempt Attempt) (*record, *request, *Failure) {
 	s.expire(s.now().UTC())
 	item := s.conversations[attempt.conversationID]
-	if item == nil {
+	if item == nil || item.agent != nil {
 		return nil, nil, notFound()
 	}
 	current := item.requests[attempt.messageID]

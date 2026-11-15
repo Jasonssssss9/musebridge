@@ -12,7 +12,7 @@ import (
 const Lifetime = 24 * time.Hour
 
 type scope struct {
-	artworkID, datasetVersion string
+	artworkID, datasetVersion, contractVersion string
 }
 
 type visitor struct {
@@ -26,6 +26,7 @@ type record struct {
 	turns        []Turn
 	requests     map[string]*request
 	pending      string
+	agent        *agentRecord
 }
 
 // Store is private to a handler/process. It is safe for concurrent requests.
@@ -33,6 +34,7 @@ type record struct {
 type Store struct {
 	mu            sync.Mutex
 	now           func() time.Time
+	steadyNow     func() time.Time
 	visitors      map[string]*visitor
 	conversations map[string]*record
 }
@@ -42,7 +44,7 @@ func New(now func() time.Time) *Store {
 		now = time.Now
 	}
 	return &Store{
-		now: now, visitors: make(map[string]*visitor), conversations: make(map[string]*record),
+		now: now, steadyNow: time.Now, visitors: make(map[string]*visitor), conversations: make(map[string]*record),
 	}
 }
 
@@ -54,16 +56,8 @@ func (s *Store) Open(token, artworkID, datasetVersion string) (string, Conversat
 	defer s.mu.Unlock()
 	now := s.now().UTC()
 	s.expire(now)
-	v := s.visitors[token]
-	if v == nil {
-		var random [32]byte
-		_, _ = rand.Read(random[:])
-		token = base64.RawURLEncoding.EncodeToString(random[:])
-		v = &visitor{conversations: make(map[scope]string)}
-		s.visitors[token] = v
-	}
-	v.expiresAt = now.Add(Lifetime)
-	key := scope{artworkID, datasetVersion}
+	token, v := s.identity(token, now)
+	key := scope{artworkID: artworkID, datasetVersion: datasetVersion}
 	if id, ok := v.conversations[key]; ok {
 		return token, s.conversations[id].conversation, false
 	}
@@ -78,6 +72,21 @@ func (s *Store) Open(token, artworkID, datasetVersion string) (string, Conversat
 	return token, conversation, true
 }
 
+// identity renews only the anonymous visitor, never a conversation's expiry.
+// The caller holds the store lock and has already expired old records.
+func (s *Store) identity(token string, now time.Time) (string, *visitor) {
+	v := s.visitors[token]
+	if v == nil {
+		var random [32]byte
+		_, _ = rand.Read(random[:])
+		token = base64.RawURLEncoding.EncodeToString(random[:])
+		v = &visitor{conversations: make(map[scope]string)}
+		s.visitors[token] = v
+	}
+	v.expiresAt = now.Add(Lifetime)
+	return token, v
+}
+
 // History never creates or renews identity. All unavailable ownership and
 // expiry conditions have the same result, including after a process restart.
 func (s *Store) History(token, id string) (History, bool) {
@@ -85,7 +94,7 @@ func (s *Store) History(token, id string) (History, bool) {
 	defer s.mu.Unlock()
 	s.expire(s.now().UTC())
 	item, ok := s.conversations[id]
-	if !ok || s.visitors[token] == nil || item.owner != token {
+	if !ok || s.visitors[token] == nil || item.owner != token || item.agent != nil {
 		return History{}, false
 	}
 	history := History{Conversation: item.conversation, Turns: cloneTurns(item.turns)}
@@ -108,7 +117,11 @@ func (s *Store) expire(now time.Time) {
 		if !now.Before(item.conversation.ExpiresAt) {
 			delete(s.conversations, id)
 			if v := s.visitors[item.owner]; v != nil {
-				delete(v.conversations, scope{item.conversation.ArtworkID, item.conversation.DatasetVersion})
+				key := scope{artworkID: item.conversation.ArtworkID, datasetVersion: item.conversation.DatasetVersion}
+				if item.agent != nil {
+					key.contractVersion = item.agent.stateContract
+				}
+				delete(v.conversations, key)
 			}
 		}
 	}
