@@ -1,0 +1,43 @@
+{
+  "contract_version": "agent-run-v2",
+  "description": "Section 7.3 error mappings. Reconcile first when requested; public status/code describe the exhausted-recovery fallback.",
+  "policies": {
+    "invalid_request": [400, 502, "agent_invalid_response", false],
+    "payload_too_large": [413, 502, "agent_invalid_response", false],
+    "unsupported_media_type": [415, 502, "agent_invalid_response", false],
+    "agent_unauthorized": [401, 503, "agent_unavailable", false],
+    "route_not_found": [404, 502, "agent_invalid_response", false],
+    "method_not_allowed": [405, 502, "agent_invalid_response", false],
+    "agent_contract_mismatch": [409, 502, "agent_invalid_response", false],
+    "agent_scope_mismatch": [409, 502, "agent_invalid_response", false],
+    "agent_run_conflict": [409, 502, "agent_invalid_response", false],
+    "agent_run_in_progress": [409, 503, "agent_unavailable", true],
+    "agent_run_not_found": [404, 503, "agent_unavailable", true],
+    "agent_busy": [503, 503, "agent_unavailable", true],
+    "service_not_ready": [503, 503, "agent_unavailable", true],
+    "agent_context_limit": [502, 502, "agent_context_limit", false],
+    "retrieval_invalid_response": [502, 502, "retrieval_invalid_response", false],
+    "retrieval_unavailable": [503, 503, "retrieval_unavailable", true],
+    "retrieval_timeout": [504, 504, "retrieval_timeout", true],
+    "generation_invalid_response": [502, 502, "generation_invalid_response", false],
+    "generation_unavailable": [503, 503, "generation_unavailable", true],
+    "generation_timeout": [504, 504, "generation_timeout", true],
+    "request_timeout": [504, 504, "request_timeout", true],
+    "agent_internal_error": [500, 503, "agent_unavailable", true]
+  },
+  "messages": {
+    "invalid_request": "The request is invalid.",
+    "payload_too_large": "The request exceeds its size limit.",
+    "agent_contract_mismatch": "The client and service contracts do not match.",
+    "agent_invalid_response": "The Agent service returned an invalid response.",
+    "agent_unavailable": "The Agent service is unavailable.",
+    "agent_context_limit": "The required context exceeds the model profile limit.",
+    "retrieval_invalid_response": "The evidence service returned an invalid response.",
+    "retrieval_unavailable": "The evidence service is unavailable.",
+    "retrieval_timeout": "The evidence service exceeded its deadline.",
+    "generation_invalid_response": "The model service returned an invalid response.",
+    "generation_unavailable": "The model service is unavailable.",
+    "generation_timeout": "The model service exceeded its deadline.",
+    "request_timeout": "The request exceeded its deadline."
+  }
+}

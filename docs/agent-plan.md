@@ -10,6 +10,8 @@ The [visitor acceptance plan](visitor-acceptance.md) defines published journey f
 
 The architecture and contract examples are already documented. The current checkout still runs fixture generation. Reuse the existing frontend, Go conversation lifecycle, source release and retrieval tests rather than rebuilding them.
 
+**B phase-1 checkpoint:** the [Go/Python boundary layer](contracts/README.md) implements generated v2 wire types, strict decoding/encoding, pure snapshot checks and shared error mappings. Shared structural fixtures and the existing fixture/C regressions pass. This is B's first integration phase, not closure of team M1: live admission, atomic state storage, FastAPI runs, provider readiness and cross-service integration remain open.
+
 ## 1. Milestones
 
 | Milestone | Outcome | Main dependencies |

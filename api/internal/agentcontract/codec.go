@@ -1,0 +1,307 @@
+// Package agentcontract implements the versioned Agent boundary without I/O.
+package agentcontract
+
+import (
+	"bytes"
+	_ "embed"
+	"encoding/json"
+	"fmt"
+	"math"
+	"reflect"
+	"regexp"
+	"strconv"
+	"strings"
+	"sync"
+
+	"github.com/Jasonssssss9/musebridge/api/internal/jsonwire"
+	"github.com/santhosh-tekuri/jsonschema/v6"
+)
+
+const (
+	PublicVersion    = "agent-demo-v0.3"
+	PrivateVersion   = "agent-run-v2"
+	WorkflowID       = "museum_qa_v2"
+	StateVersion     = "conversation-state-v1"
+	ProfileID        = "local-ollama-v2"
+	PublicBodyLimit  = 8 * 1024
+	PrivateBodyLimit = 256 * 1024
+)
+
+//go:generate python3 ../../../scripts/generate_agent_contracts.py
+
+//go:embed schema_generated.json
+var schemaJSON []byte
+
+// Optional preserves absent versus present-null union fields. Required nullable
+// fields use ordinary pointers and are checked for presence by the schema.
+type Optional[T any] struct {
+	Value   T
+	Present bool
+}
+
+func Some[T any](value T) Optional[T]              { return Optional[T]{Value: value, Present: true} }
+func (o Optional[T]) IsZero() bool                 { return !o.Present }
+func (o Optional[T]) MarshalJSON() ([]byte, error) { return json.Marshal(o.Value) }
+func (o *Optional[T]) UnmarshalJSON(data []byte) error {
+	o.Present = true
+	return json.Unmarshal(data, &o.Value)
+}
+func (o Optional[T]) wireType() reflect.Type { return reflect.TypeFor[T]() }
+
+// Violation intentionally contains no submitted values or schema diagnostics.
+type Violation struct{ Definition string }
+
+func (e *Violation) Error() string { return "invalid " + e.Definition + " contract" }
+func invalid(name string) error    { return &Violation{Definition: name} }
+
+type noLoader struct{}
+
+func (noLoader) Load(string) (any, error) { return nil, fmt.Errorf("external schemas are disabled") }
+
+type nonblankPattern struct{}
+
+func (nonblankPattern) String() string                { return `\S` }
+func (nonblankPattern) MatchString(value string) bool { return strings.TrimSpace(value) != "" }
+
+// Go RE2 uses hex escapes instead of JSON Schema's Unicode escapes. Surrogates
+// cannot occur in accepted UTF-8; jsonwire rejects escaped surrogates first.
+func compilePattern(pattern string) (jsonschema.Regexp, error) {
+	if pattern == `\S` {
+		return nonblankPattern{}, nil
+	}
+	pattern = strings.ReplaceAll(pattern, `\ud800-\udfff`, "")
+	unicodeEscape := regexp.MustCompile(`\\u([0-9a-fA-F]{4})`)
+	pattern = unicodeEscape.ReplaceAllString(pattern, `\x{$1}`)
+	return regexp.Compile(pattern)
+}
+
+// Validator compiles the embedded, generated copy of the shared schema once.
+// Compiled schemas are immutable and safe for concurrent validation.
+type Validator struct{ schemas map[string]*jsonschema.Schema }
+
+func NewValidator() (*Validator, error) {
+	doc, err := jsonschema.UnmarshalJSON(bytes.NewReader(schemaJSON))
+	if err != nil {
+		return nil, err
+	}
+	c := jsonschema.NewCompiler()
+	c.UseLoader(noLoader{})
+	c.UseRegexpEngine(compilePattern)
+	c.AssertFormat()
+	const origin = "https://musebridge.local/contracts/agent-v2.schema.json"
+	if err := c.AddResource(origin, doc); err != nil {
+		return nil, err
+	}
+	v := &Validator{schemas: make(map[string]*jsonschema.Schema)}
+	for name := range wireTypes {
+		s, err := c.Compile(origin + "#/$defs/" + name)
+		if err != nil {
+			return nil, fmt.Errorf("compile %s: %w", name, err)
+		}
+		v.schemas[name] = s
+	}
+	return v, nil
+}
+
+var defaultValidator = sync.OnceValues(NewValidator)
+
+func DefaultValidator() (*Validator, error) { return defaultValidator() }
+
+func parse(data []byte, limit int) (any, error) {
+	if len(data) > limit || jsonwire.Validate(data) != nil {
+		return nil, invalid("JSON")
+	}
+	d := json.NewDecoder(bytes.NewReader(data))
+	d.UseNumber()
+	var value any
+	if d.Decode(&value) != nil || checkValue(value, 0) != nil {
+		return nil, invalid("JSON")
+	}
+	return value, nil
+}
+
+func checkValue(value any, depth int) error {
+	if depth > 64 {
+		return invalid("JSON")
+	}
+	checkText := func(s string) error {
+		for _, r := range s {
+			if (r < 32 && r != 9 && r != 10 && r != 13) || (r >= 127 && r <= 159) {
+				return invalid("Unicode")
+			}
+		}
+		return nil
+	}
+	switch x := value.(type) {
+	case map[string]any:
+		for key, child := range x {
+			if checkText(key) != nil || checkValue(child, depth+1) != nil {
+				return invalid("JSON")
+			}
+		}
+	case []any:
+		for _, child := range x {
+			if checkValue(child, depth+1) != nil {
+				return invalid("JSON")
+			}
+		}
+	case string:
+		return checkText(x)
+	case json.Number:
+		if strings.ContainsAny(string(x), ".eE") {
+			number, err := strconv.ParseFloat(string(x), 64)
+			if err != nil || math.IsInf(number, 0) || math.IsNaN(number) {
+				return invalid("JSON number")
+			}
+		}
+	}
+	return nil
+}
+
+// project selects exact JSON field names before encoding/json can apply its
+// case-insensitive aliases. Schema-open response metadata is safely discarded.
+func project(value any, kind reflect.Type) any {
+	if value == nil {
+		return nil
+	}
+	for kind.Kind() == reflect.Pointer {
+		kind = kind.Elem()
+	}
+	if optional, ok := reflect.Zero(kind).Interface().(interface{ wireType() reflect.Type }); ok {
+		return project(value, optional.wireType())
+	}
+	switch kind.Kind() {
+	case reflect.Struct:
+		object, ok := value.(map[string]any)
+		if !ok {
+			return value
+		}
+		result := make(map[string]any)
+		for i := 0; i < kind.NumField(); i++ {
+			field := kind.Field(i)
+			name := strings.Split(field.Tag.Get("json"), ",")[0]
+			if child, exists := object[name]; exists {
+				result[name] = project(child, field.Type)
+			}
+		}
+		return result
+	case reflect.Slice:
+		items, ok := value.([]any)
+		if !ok {
+			return value
+		}
+		result := make([]any, len(items))
+		for i, child := range items {
+			result[i] = project(child, kind.Elem())
+		}
+		return result
+	}
+	return value
+}
+
+func (v *Validator) decodeValue(name string, value any, destination any) error {
+	kind, exists := wireTypes[name]
+	if !exists {
+		return invalid("unknown definition")
+	}
+	if v.schemas[name].Validate(value) != nil {
+		return invalid(name)
+	}
+	// Reserved citation discriminators cannot hide in a schema-open cache record.
+	if name == "RunRequest" || name == "ConversationState" {
+		state := value.(map[string]any)
+		if name == "RunRequest" {
+			state = state["conversation_state"].(map[string]any)
+		}
+		for _, item := range state["verified_evidence"].([]any) {
+			record := item.(map[string]any)
+			if _, exists := record["kind"]; exists {
+				return invalid("evidence cache")
+			}
+			if _, exists := record["fact_id"]; exists {
+				return invalid("evidence cache")
+			}
+		}
+	}
+	if destination == nil {
+		destination = reflect.New(kind).Interface()
+	}
+	if reflect.TypeOf(destination) != reflect.PointerTo(kind) || reflect.ValueOf(destination).IsNil() {
+		return invalid("destination")
+	}
+	encoded, err := json.Marshal(project(value, kind))
+	if err != nil || json.Unmarshal(encoded, destination) != nil {
+		return invalid(name)
+	}
+	return nil
+}
+
+// Decode validates presence, nullability and schema constraints before typed
+// decoding. Integer-valued decimals/exponents fail typed integer decoding.
+func (v *Validator) Decode(name string, data []byte, destination any) error {
+	limit := PrivateBodyLimit
+	if name == "PublicMessageRequest" || name == "PublicCreateConversationRequest" {
+		limit = PublicBodyLimit
+	}
+	value, err := parse(data, limit)
+	if err != nil {
+		return err
+	}
+	return v.decodeValue(name, value, destination)
+}
+
+func (v *Validator) Validate(name string, data []byte) error { return v.Decode(name, data, nil) }
+
+// Encode checks outgoing messages too; callers cannot bypass union rules by
+// constructing a Go struct directly. It returns a new byte slice.
+func (v *Validator) Encode(name string, value any) ([]byte, error) {
+	data, err := json.Marshal(value)
+	if err != nil || v.Validate(name, data) != nil {
+		return nil, invalid(name)
+	}
+	return data, nil
+}
+
+// DecodePublicMessage performs the sole public-question trim and classifies a
+// well-typed unsupported version separately from malformed input. It does not
+// consult a store, compare current revisions or reserve a request.
+func (v *Validator) DecodePublicMessage(data []byte) (PublicMessageRequest, *Failure) {
+	var request PublicMessageRequest
+	failure := v.decodePublic("PublicMessageRequest", data, &request)
+	return request, failure
+}
+
+func (v *Validator) DecodePublicCreate(data []byte) (PublicCreateConversationRequest, *Failure) {
+	var request PublicCreateConversationRequest
+	failure := v.decodePublic("PublicCreateConversationRequest", data, &request)
+	return request, failure
+}
+
+func (v *Validator) decodePublic(name string, data []byte, destination any) *Failure {
+	if len(data) > PublicBodyLimit {
+		return publicFailure(413, "payload_too_large", false)
+	}
+	value, err := parse(data, PublicBodyLimit)
+	if err != nil {
+		return publicFailure(400, "invalid_request", false)
+	}
+	object, ok := value.(map[string]any)
+	if !ok {
+		return publicFailure(400, "invalid_request", false)
+	}
+	version, ok := object["contract_version"].(string)
+	if !ok {
+		return publicFailure(400, "invalid_request", false)
+	}
+	if question, ok := object["question"].(string); ok {
+		object["question"] = strings.TrimSpace(question)
+	}
+	object["contract_version"] = PublicVersion
+	if v.decodeValue(name, object, destination) != nil {
+		return publicFailure(400, "invalid_request", false)
+	}
+	if version != PublicVersion {
+		return publicFailure(409, "agent_contract_mismatch", false)
+	}
+	return nil
+}

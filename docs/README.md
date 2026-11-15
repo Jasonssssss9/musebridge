@@ -10,6 +10,7 @@ The root README introduces the project. This directory provides entry points to 
 | [Agent v2 architecture](agent-design.md) | Four-language conversation, optional English retrieval, direct responses, five-turn context and conversation state; C core implemented, application/model integration pending |
 | [Agent v2 interface contract](agent-api-contract.md) | Public/private requests, model decisions, language policy, state updates, citations, errors and recovery |
 | [Agent v2 schema](contracts/agent-v2.schema.json) | New machine-readable target; [shape and runtime/semantic examples](contracts/agent-v2.examples.json) define acceptance cases |
+| [Go/Python boundary implementation](contracts/README.md) | B phase 1: generated wire types, strict codecs, pure snapshot validation, shared error mappings and checks |
 | [C Agent implementation](../agent/README.md) | Runnable v2 workflow, scripted scenarios, real retrieval and B handoff; [preserved v1 runbook](../agent/README-v1.md) |
 | [Archived Agent v1 design](archive/agent-design-v1.md) | Preserved reference for the unchanged [v1 schema](contracts/agent-v1.schema.json) and [v1 examples](contracts/agent-v1.examples.json) used by current code |
 | [Visitor acceptance journeys](visitor-acceptance.md) | Twelve realistic visitor journey families, multilingual scripts, expected behavior and deferred capabilities; designed, not yet executed |
