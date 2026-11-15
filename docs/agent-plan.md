@@ -16,6 +16,8 @@ The architecture and contract examples are already documented. The current check
 
 **B phase-3 checkpoint:** the [private FastAPI service](agent-service.md) implements v2 POST/GET runs, service authentication, strict HTTP boundaries, retained replay/status, cancellation-aware supervision, capacity limits and shared inference gating. Actual HTTP checks traverse C's v2 graph and real retrieval for both artworks and recover a dropped POST response without repeating the model run. These checks inject a scripted provider and synthetic profile/sizer/identity. The default service remains unready; production provider verification, Go Agent/public v2 integration and full M1 acceptance remain open.
 
+**B phase-4 implementation checkpoint:** the [Ollama provider](ollama-provider.md) adds pinned model/server identity, bounded structured transport, mandatory original-schema validation, a verified-asset BPE sizing envelope and capability-gated startup. Local real-model probes exercise the 16K/2048 profile, but workflow acceptance has not passed: generated queries can miss the rule-based retriever, repeated refinement is rejected and unsupported factual prose needs C review. Readiness remains closed, Go/public activation is unchanged, and full M1/M2 acceptance is still open. Passing provider unit tests do not close these real-model failures.
+
 ## 1. Milestones
 
 | Milestone | Outcome | Main dependencies |

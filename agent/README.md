@@ -14,8 +14,10 @@ describes that preserved implementation.
 B's [private run service](../docs/agent-service.md) now wraps this workflow with
 FastAPI endpoints, authentication, replay, run budgets and capacity management.
 The [internal Go state store](../docs/agent-state-store.md) supplies revision-aware
-admission and atomic saving. Production provider access, the Go Agent client and
-public v2 activation remain pending. C returns a validated result and a proposed
+admission and atomic saving. An [opt-in Ollama provider](../docs/ollama-provider.md)
+now implements real transport and token budgets, with readiness still blocked by
+real workflow acceptance failures. The Go Agent client and public v2 activation
+remain pending. C returns a validated result and a proposed
 memory update against the input revision.
 
 ## 1. Implemented workflow
@@ -308,8 +310,8 @@ latency or resistance to prompt injection by an LLM.
 Remaining integration belongs to the shared plan:
 
 - B has implemented the private run service/lifecycle and internal Go state
-  store. Verified model access, the production provider/profile/sizer and Go
-  Agent/public HTTP integration remain to be delivered.
+  store and the opt-in provider/profile/sizer. Real workflow readiness and Go
+  Agent/public HTTP integration remain to be accepted.
 - A supplies v2 browser behavior, source rendering, language/recovery handling and
   independent visitor scripts.
 - C integrates the real provider and measures the workflow on independently

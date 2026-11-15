@@ -10,6 +10,8 @@ The [current C runbook](../agent/README.md) documents MuseumQAWorkflowV2, four-l
 
 B's [private FastAPI run service](agent-service.md) and [internal Go state store](agent-state-store.md) are implemented. The service has controlled HTTP/workflow/retrieval checks, while its default factory remains unready until real provider verification. Go-to-Agent/public v2 integration remains pending.
 
+The [Ollama provider implementation](ollama-provider.md) is available through explicit configuration. Its local real-model checks found unresolved query/retrieval and grounding failures; readiness and real-model acceptance remain open. The provider retains strict validation against the original C schemas.
+
 The [v2 interface contract](agent-api-contract.md) defines every boundary and cross-field rule. The [v2 schema](contracts/agent-v2.schema.json) and [synthetic examples](contracts/agent-v2.examples.json) accompany it. The fixture baseline remains [local-demo-v0.1](api-contract.md). The museum release remains `aic-seed-v0.1`; no evidence or retrieval algorithm changes are included.
 
 ## Reading guide

@@ -137,7 +137,7 @@ async def _body(request: Request) -> bytes:
 
 
 def create_app(runtime: RunRegistry | None = None, *, service_token: str | None = None) -> FastAPI:
-    """Uvicorn factory; phase 4 will supply verified production dependencies."""
+    """Uvicorn factory; real inference requires explicit provider configuration."""
     token = service_token if service_token is not None else os.environ.get("AGENT_SERVICE_TOKEN", "")
     try:
         valid_token = (type(token) is str and len(token.encode("ascii")) >= 43
@@ -146,12 +146,24 @@ def create_app(runtime: RunRegistry | None = None, *, service_token: str | None 
         valid_token = False
     if not valid_token:
         raise ValueError("AGENT_SERVICE_TOKEN must be a visible ASCII token generated from at least 32 random bytes.")
+    injected = runtime is not None
+    provider = "disabled" if injected else os.environ.get("AGENT_PROVIDER", "disabled")
+    if provider not in {"disabled", "ollama"}:
+        raise ValueError("AGENT_PROVIDER must be disabled or ollama.")
     runtime = runtime if runtime is not None else RunRegistry()
 
     @asynccontextmanager
     async def lifespan(_app):
-        yield
-        await runtime.close()
+        nonlocal runtime
+        close = runtime.close
+        if provider == "ollama":
+            from agent.providers.bootstrap import start_ollama_runtime
+            runtime, close = await start_ollama_runtime()
+            _app.state.runtime = runtime
+        try:
+            yield
+        finally:
+            await close()
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None,
                   telemetry={"tracing": False, "metrics": False, "logs": False, "auto_configure": False},

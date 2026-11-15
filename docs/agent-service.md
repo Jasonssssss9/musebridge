@@ -11,6 +11,10 @@ without a model provider and deliberately reports not ready; it cannot generate
 visitor answers until a verified provider/profile/sizer is supplied in phase 4.
 No test provider is selected by a production environment variable.
 
+Phase 4 now provides [explicit Ollama configuration](ollama-provider.md). Its
+readiness probes have exposed unresolved workflow failures, so the production
+capability gate remains closed. The factory still defaults to the disabled shell.
+
 ## Run the infrastructure shell
 
 Use Python 3.12 and the pinned dependencies, from the repository root:
@@ -110,8 +114,8 @@ for cancellation acknowledgement. A still-running workflow keeps its capacity
 slot; a still-running provider operation keeps the shared inference slot.
 Cancellation is requested, late exceptions are consumed safely, and late results
 cannot replace a terminal failure. This controls application acceptance; it does
-not prove a remote GPU immediately stopped computing. Phase 4 must supply
-cancellation-aware, bounded HTTP transport as well.
+not prove a remote GPU immediately stopped computing. The phase-4 Ollama provider
+supplies cancellation-aware, bounded HTTP transport as well.
 
 Shutdown stops new admission, allows up to 65 seconds to finish, then records
 failure and cancels outstanding work within that drain budget. Retained results
@@ -167,7 +171,8 @@ contract generation check pass. All 49 pinned Python distributions match the
 installed versions. These are controlled execution results, not measurements of
 the local Qwen model.
 
-Phase 4 supplies the real Ollama provider/profile/sizer and capability evidence.
+Phase 4 supplies the real Ollama provider/profile/sizer; its workflow capability
+acceptance remains open as documented in the provider guide.
 Phase 5 connects Go's private client, reconciliation and public v2 routing to
 the existing [atomic state store](agent-state-store.md). Phase 6 completes
 cross-service, deployment, real-model and phone acceptance. This phase does not

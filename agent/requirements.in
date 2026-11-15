@@ -1,6 +1,7 @@
 # Agent workflow and private run-service dependencies; no inference server.
 fastapi==0.162.7
 uvicorn==0.54.0
+tokenizers==0.23.3
 langgraph==1.2.21
 httpx==0.28.1
 jsonschema==4.26.0

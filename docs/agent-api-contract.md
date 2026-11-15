@@ -12,6 +12,8 @@ The preserved C M1 entry point reads the unchanged v1 artifacts. The new MuseumQ
 
 The [private service guide](agent-service.md) records B phase-3 behavior and controlled HTTP checks. Its default factory has no production provider and reports not ready. Public v2 activation and actual model capability verification remain separate work.
 
+The [opt-in Ollama provider](ollama-provider.md) now implements real transport, model identity, grammar preparation and tokenizer budgets. Failed local workflow acceptance prevents readiness; these implementation details do not alter the authoritative schemas or their assertions.
+
 ## 1. Conventions and ownership
 
 | Item | Rule |
