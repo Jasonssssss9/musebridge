@@ -8,6 +8,8 @@ This revision defines local clarification, trusted catalog facts, one-off transl
 
 The [current C runbook](../agent/README.md) documents MuseumQAWorkflowV2, four-language contracts, five-pair context, all five routes, catalog sources, local clarification, translation and bounded refinement. Its runnable model remains an explicit scripted substitute; this does not establish real-model quality or a working Go/FastAPI/browser integration. The preserved v1 entry point, schemas and prompt assets remain available under the [archived v1 specification](archive/agent-design-v1.md) and [v1 runbook](../agent/README-v1.md).
 
+B's [private FastAPI run service](agent-service.md) and [internal Go state store](agent-state-store.md) are implemented. The service has controlled HTTP/workflow/retrieval checks, while its default factory remains unready until real provider verification. Go-to-Agent/public v2 integration remains pending.
+
 The [v2 interface contract](agent-api-contract.md) defines every boundary and cross-field rule. The [v2 schema](contracts/agent-v2.schema.json) and [synthetic examples](contracts/agent-v2.examples.json) accompany it. The fixture baseline remains [local-demo-v0.1](api-contract.md). The museum release remains `aic-seed-v0.1`; no evidence or retrieval algorithm changes are included.
 
 ## Reading guide

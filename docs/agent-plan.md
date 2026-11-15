@@ -12,7 +12,9 @@ The architecture and contract examples are already documented. The current check
 
 **B phase-1 checkpoint:** the [Go/Python boundary layer](contracts/README.md) implements generated v2 wire types, strict decoding/encoding, pure snapshot checks and shared error mappings. Shared structural fixtures and the existing fixture/C regressions pass. This is B's first integration phase, not closure of team M1.
 
-**B phase-2 checkpoint:** the [internal Go state store](agent-state-store.md) implements contract-bound conversations, revision-aware admission, frozen five-pair run snapshots, atomic turn/state/replay commits, language and focused-pending updates, and cited-only evidence caching. Deterministic state and concurrency checks pass. Public v2 HTTP routing, FastAPI run infrastructure, actual provider access and cross-service acceptance remain open; the application still serves the fixture path.
+**B phase-2 checkpoint:** the [internal Go state store](agent-state-store.md) implements contract-bound conversations, revision-aware admission, frozen five-pair run snapshots, atomic turn/state/replay commits, language and focused-pending updates, and cited-only evidence caching. Deterministic state and concurrency checks pass. The application still serves the fixture path.
+
+**B phase-3 checkpoint:** the [private FastAPI service](agent-service.md) implements v2 POST/GET runs, service authentication, strict HTTP boundaries, retained replay/status, cancellation-aware supervision, capacity limits and shared inference gating. Actual HTTP checks traverse C's v2 graph and real retrieval for both artworks and recover a dropped POST response without repeating the model run. These checks inject a scripted provider and synthetic profile/sizer/identity. The default service remains unready; production provider verification, Go Agent/public v2 integration and full M1 acceptance remain open.
 
 ## 1. Milestones
 

@@ -1,8 +1,9 @@
 # Go and Python Agent boundary contracts
 
 B integration phase 1 is implemented: v2 wire types, strict codecs, pure snapshot
-checks and error mappings. Application admission/atomic storage, FastAPI run
-lifecycle, production inference and the application client are later phases.
+checks and error mappings. The [Go state store](../agent-state-store.md) and
+[private run service](../agent-service.md) implement phases 2 and 3. Production
+inference and the application client remain later phases.
 Agent mode remains disabled in the runnable application.
 
 ## Sources and generation

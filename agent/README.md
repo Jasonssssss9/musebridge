@@ -11,10 +11,12 @@ The v2 entry point is explicitly selected; the existing v1 workflow, prompt
 assets, contract and tests remain available. The [v1 handoff](README-v1.md)
 describes that preserved implementation.
 
-This change does not add FastAPI endpoints, a Go Agent client, a production model
-provider, model deployment, frontend behavior or an authoritative conversation
-store. B owns service, provider, admission and atomic state integration. C returns
-a validated result and a proposed memory update against the input revision.
+B's [private run service](../docs/agent-service.md) now wraps this workflow with
+FastAPI endpoints, authentication, replay, run budgets and capacity management.
+The [internal Go state store](../docs/agent-state-store.md) supplies revision-aware
+admission and atomic saving. Production provider access, the Go Agent client and
+public v2 activation remain pending. C returns a validated result and a proposed
+memory update against the input revision.
 
 ## 1. Implemented workflow
 
@@ -286,7 +288,7 @@ routes, bounded refinement, time budgets, malformed outputs and cancellation.
 Real HTTP smoke scenarios exercise both artwork scopes. Existing v1 Agent and
 knowledge regressions remain part of the checks.
 
-Recorded verification for this implementation:
+Recorded verification at C's v2 checkpoint, before B's boundary/service additions:
 
 | Check | Result |
 | --- | --- |
@@ -295,6 +297,9 @@ Recorded verification for this implementation:
 | Dependency consistency | pip check passed |
 | Real-retrieval controlled smoke | All 14 combinations passed: seven scenarios across both artworks |
 
+The [private service guide](../docs/agent-service.md#verification-and-remaining-work)
+records the later B phase-3 checks and current aggregate suite totals.
+
 These checks use predetermined model decisions. They do not establish actual
 language detection, reference resolution, query quality, semantic support,
 subjective-discussion quality, translation quality, real token sizing, inference
@@ -302,8 +307,9 @@ latency or resistance to prompt injection by an LLM.
 
 Remaining integration belongs to the shared plan:
 
-- B supplies verified model access, the production provider/profile/sizer,
-  FastAPI run endpoints, lifecycle and Go Agent/state integration.
+- B has implemented the private run service/lifecycle and internal Go state
+  store. Verified model access, the production provider/profile/sizer and Go
+  Agent/public HTTP integration remain to be delivered.
 - A supplies v2 browser behavior, source rendering, language/recovery handling and
   independent visitor scripts.
 - C integrates the real provider and measures the workflow on independently
