@@ -3,6 +3,8 @@ from collections import Counter
 from dataclasses import dataclass
 from uuid import uuid4
 
+from agent.runtime.followup_plan import expand_plan
+from agent.runtime.validation import ContractViolation
 from agent.testing.v2 import make_run
 
 
@@ -61,8 +63,28 @@ def expected(case):
                              "persistence": "conversation", "preference": case.language} if case.instruction else None)}
 
 
+def _observed_plan(attempts):
+    attempt = next((item for item in attempts if item["operation"] == "plan"), {})
+    data = attempt.get("completion", {}).get("data")
+    if "canonical_plan" in attempt:
+        return attempt["canonical_plan"]
+    if data and "visitor_task" in data:
+        # Archived dialogue probes saved the fitted input before the capability
+        # probe began recording the canonical projection alongside raw output.
+        return project_plan(data, attempt.get("model_input", {}))
+    return data
+
+
+def project_plan(data, payload):
+    """Use the same literal source binding as the workflow for probe grading."""
+    try:
+        return expand_plan(data, payload)
+    except ContractViolation:
+        return None
+
+
 def grade_case(expect, result, attempts, lookups):
-    plan = next((a.get("completion", {}).get("data") for a in attempts if a["operation"] == "plan"), None)
+    plan = _observed_plan(attempts)
     sources = {c["chunk_id"] for lookup in lookups for c in lookup.get("candidates", [])}
     evidence = set(expect["evidence_ids"])
     requires_lookup = expect["route"] == "retrieve"
@@ -93,8 +115,9 @@ def grade_case(expect, result, attempts, lookups):
 
 
 def review_slots(attempts, result):
-    plan = next((a.get("completion", {}).get("data") for a in attempts if a["operation"] == "plan"), None)
-    any_queries = any(a.get("completion", {}).get("data", {}).get("queries") for a in attempts)
+    plan = _observed_plan(attempts)
+    any_queries = bool(plan and plan.get("queries")) or any(
+        a.get("completion", {}).get("data", {}).get("queries") for a in attempts if a["operation"] != "plan")
     observable = {"planning_meaning": bool(plan), "query_meaning": any_queries,
                   "grounding": bool(result), "answer_language": bool(result), "memory": bool(result)}
     return {key: "pending" if observable[key] else "not_applicable" for key in REVIEW_FIELDS}

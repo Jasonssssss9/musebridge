@@ -12,6 +12,7 @@ from unittest.mock import patch
 import httpx
 
 from agent.providers.capabilities import CHECKS, make_record
+from agent.providers.ollama import OllamaCompletion
 from agent.providers.profile import OllamaProfile
 from agent.runtime.errors import WorkflowError
 from agent.testing.probe_quality import expected, five_pair_capacity, grade_case, review_slots, visitor_cases
@@ -39,6 +40,26 @@ class ProbeQualityTests(unittest.TestCase):
         for unobserved in ([], [{"error_code": "retrieval_timeout"}]):
             self.assertIsNone(grade_case(expected(case), None, model, unobserved)[0]["retrieved_evidence"])
         self.assertFalse(grade_case(expected(case), None, model, [{"candidates": []}])[0]["retrieved_evidence"])
+
+    def test_tagged_archives_and_canonical_plans_have_the_same_review_dimensions(self):
+        case = next(c for c in self.cases if c.name == "five-pair-sizing")
+        public = medium_plan(case.run)
+        payload = {"original_question": case.run["question"], "recent_turns": case.run["context"]["recent_turns"]}
+        fact = {"source": {"sentence": 1}, "english_search_question": public["queries"][0]["query"]}
+        compact = {"visitor_task": "check_artwork_facts", "language_decision": public["language_decision"],
+                   "evidence_action": "search", "facts": [fact]}
+        for raw in (compact, {"visitor_task": "other_request", "plan": public}):
+            attempt = {"operation": "plan", "completion": {"data": raw}, "model_input": payload}
+            metrics, _ = grade_case(expected(case), None, [attempt], [])
+            self.assertTrue(metrics["route"])
+            self.assertTrue(metrics["language_decision"])
+            self.assertEqual(review_slots([attempt], None)["query_meaning"], "pending")
+            self.assertIn("visitor_task", attempt["completion"]["data"])
+        fact["source"] = {"excerpt": "missing source"}
+        self.assertIsNone(grade_case(expected(case), None, [dict(attempt, completion={"data": compact})], [])[0]["route"])
+        rejected = {**attempt, "canonical_plan": None}
+        self.assertEqual(review_slots([rejected], None)["planning_meaning"], "not_applicable")
+        self.assertEqual(review_slots([rejected], None)["query_meaning"], "not_applicable")
 
     def test_false_language_provenance_survives_format_but_fails_probe(self):
         case = self.cases[0]
@@ -111,6 +132,27 @@ class ProbeQualityTests(unittest.TestCase):
 
 
 class ProviderObservationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_tagged_provider_output_retains_raw_and_records_actual_source_binding(self):
+        case = next(c for c in visitor_cases(EvidenceManifest.load()) if c.name == "five-pair-sizing")
+        public = medium_plan(case.run)
+        raw = {"visitor_task": "check_artwork_facts", "language_decision": public["language_decision"],
+               "evidence_action": "search", "facts": [{"source": {"sentence": 1},
+                   "english_search_question": public["queries"][0]["query"]}]}
+        completion = OllamaCompletion(raw, "test", "test", "test", "stop", 1, 1, 2, 0, {})
+        payload = {"original_question": case.run["question"], "recent_turns": case.run["context"]["recent_turns"]}
+        report = {"model_attempts": []}
+        model = ProbeModel(report, base_url="http://test.invalid", sizer=Sizer())
+        self.addAsyncCleanup(model.aclose)
+        with patch("agent.providers.ollama.OllamaModel.complete_structured", AsyncMock(return_value=completion)):
+            await model.complete_structured(operation="plan", messages=[{"role": "user", "content": json.dumps(payload)}],
+                output_schema={"$ref": "#/$defs/Plan"}, profile=model.profile, deadline=monotonic() + 2,
+                trace_context={"request_id": "tagged-probe"})
+        [attempt] = report["model_attempts"]
+        self.assertEqual(attempt["completion"]["data"], raw)
+        self.assertEqual(attempt["canonical_plan"]["requests"][0]["original_fragment"], case.run["question"])
+        self.assertTrue(grade_case(expected(case), None, [attempt], [])[0]["route"])
+        self.assertEqual(review_slots([attempt], None)["query_meaning"], "pending")
+
     async def test_next_case_rechecks_identity_after_transport_failure_without_retrying_chat(self):
         model = SimpleNamespace(verified=False, metadata_fingerprint="same", verify=AsyncMock())
         report = {"metadata_fingerprint":"same"}

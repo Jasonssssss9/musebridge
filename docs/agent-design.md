@@ -297,6 +297,16 @@ Successful empty candidates mean this lookup supplied no evidence. They do not e
 | clarify | Whole-message ambiguity, missing exact translation source, incompatible language targets, length constraints or prioritization that prevents an independent safe response |
 | out_of_scope | Unsupported subject or another artwork, with useful scope guidance |
 
+These actions describe the canonical workflow plan. With a retained history pair,
+the model first chooses a visitor task within the same planning call. For one
+or two clear noncatalog artwork facts it selects the visitor's words and writes
+one English question per fact. It also chooses whether to search or use the
+verified cache. The Agent binds each selected sentence or excerpt to the
+current message and creates the canonical requests and query links. All other
+tasks use the full plan, including translation, catalog questions, mixed kinds
+and clarification. The same plan validator runs before either path may use a
+tool or answer. A turn with no fitted history uses the original planning format.
+
 Each request retains a literal current-message fragment, standalone English intent, kind and resolution (clear or needs_clarification). Kinds are conversation, general_art_knowledge, catalog_fact, artwork_fact and outside_scope. At most one request is marked needs_clarification. Preserve obvious context and mixed social/factual intent; do not ask a question merely because the visitor used “it.”
 
 An ordinary “Give me a quick introduction” is a clear overview request, not automatically a need for clarification. Default to a short orientation using catalog facts and one source-supported feature when available. Do not pretend the current small corpus supports a complete historical account. A brief introduction may group catalog and descriptive facts into an auditable request with both source types.

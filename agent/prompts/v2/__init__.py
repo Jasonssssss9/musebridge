@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from agent.runtime.followup_plan import source_sentences
+
 from .readings import translation_notes
 
 PROMPT_VERSION = "museum-prompts-v2"
@@ -27,6 +29,12 @@ def build_messages(operation: str, payload: dict[str, Any],
     files = ("core_policy.md", "memory_policy.md", *_OPERATION_POLICIES[operation])
     policies = [(_PROMPT_DIRECTORY / name).read_text(encoding="utf-8").strip()
                 for name in files]
+    if operation == "plan" and payload.get("recent_turns"):
+        policies[-1] = ("The following reference describes language handling for all requests and "
+                        "the full Plan used inside other_request. Choose the visitor task first. "
+                        "A question about the museum's wording, interpretation or physical details "
+                        "belongs to check_artwork_facts, even when the visitor wants it restated.\n"
+                        + policies[-1])
     if operation == "plan" and payload.get("language_override") in {"en", "es", "zh-CN", "ko"}:
         policies.append(
             "The UI selection specifies the preferred reply language only. For an acknowledgement "
@@ -59,6 +67,18 @@ def build_messages(operation: str, payload: dict[str, Any],
             'supported part. Keep each unresolved visitor question open with its original meaning.'
         )
     schema_json = json.dumps(output_schema, ensure_ascii=False, allow_nan=False)
-    system = "\n\n".join([*policies, "Required JSON output schema:\n" + schema_json])
+    policies.append("Required JSON output schema:\n" + schema_json)
+    if operation == "plan" and payload.get("recent_turns"):
+        policies.append((_PROMPT_DIRECTORY / "followup_planning.md").read_text(encoding="utf-8").strip())
+        # Keep the current question next to the generation boundary, in the data message.
+        payload = payload.copy()
+        if "original_question" in payload:
+            question = payload.pop("original_question")
+            payload["source_sentences"] = [
+                {"sentence": number, "text": sentence}
+                for number, sentence in enumerate(source_sentences(question), 1)
+            ]
+            payload["original_question"] = question
+    system = "\n\n".join(policies)
     data = json.dumps(payload, ensure_ascii=False, allow_nan=False)
     return [{"role": "system", "content": system}, {"role": "user", "content": data}]

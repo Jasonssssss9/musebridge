@@ -27,7 +27,7 @@ from agent.runtime.validation_v2 import ContractValidatorV2, assemble_answer
 from agent.prompts.v2 import build_messages
 from agent.service import ModelIdentity, create_workflow_runtime
 from agent.testing.probe_quality import (aggregate, expected, five_pair_capacity, grade_case, operation_summary,
-                                         review_slots, visitor_cases)
+                                         project_plan, review_slots, visitor_cases)
 from agent.testing.v2 import make_run, medium_plan
 from agent.tools.evidence import EvidenceManifest
 from agent.tools.retrieval import RetrievalTool
@@ -77,6 +77,8 @@ class ProbeModel(OllamaModel):
             item.pop("raw_content", None)
             item.update(outcome="completed", schema_result="valid", completion=asdict(completion),
                         estimated_prompt_tokens=completion.estimated_prompt_tokens)
+            if item["schema"] == "Plan" and "visitor_task" in completion.data:
+                item["canonical_plan"] = project_plan(completion.data, payload)
             return completion
         except Exception as exc:
             cause = exc.__cause__

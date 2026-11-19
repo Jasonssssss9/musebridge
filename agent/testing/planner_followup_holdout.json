@@ -1,0 +1,307 @@
+{
+  "version": "planner-followup-holdout-v1",
+  "cases": [
+    {
+      "id": "F01",
+      "language": "en",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "I'm listening instead of looking. How does the label describe the colors in this room scene?",
+          "parts": [
+            {
+              "intent": "Recover the museum's description of the colors in The Bedroom.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "How does the museum describe the colors in The Bedroom?"
+            }
+          ],
+          "review": "The description calls the colors bold. Avoid naming individual hues."
+        },
+        {
+          "question": "Would it be fair to say that tells us which color covers the most area? If not, what impression does the whole picture give, according to the label?",
+          "parts": [
+            {
+              "intent": "Identify the color occupying the largest area of The Bedroom.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Which color covers the largest area in The Bedroom?"
+            },
+            {
+              "intent": "Recover the museum's tentative interpretation of the overall impression of The Bedroom.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "What feeling might The Bedroom suggest according to the museum?"
+            }
+          ],
+          "review": "The earlier word concerns color quality, not surface area. The work might suggest a nervous energy. Keep both the color ranking and the artist's intentions open."
+        }
+      ]
+    },
+    {
+      "id": "F02",
+      "language": "en",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "I'm making a note about the signature. Does the text say where Morisot signed this painting?",
+          "parts": [
+            {
+              "intent": "Locate Morisot's signature within Woman at Her Toilette.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Where did Morisot sign Woman at Her Toilette?"
+            }
+          ],
+          "review": "A signature location is unverified here. Do not say the painting is unsigned."
+        },
+        {
+          "question": "I'll leave that line blank. What can I put in the medium field instead?",
+          "parts": [
+            {
+              "intent": "Give the recorded medium for Woman at Her Toilette.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-medium"
+              ],
+              "manual_query": "What medium is listed for Woman at Her Toilette?"
+            }
+          ],
+          "review": "The new field refers to the physical work. Give oil on canvas. Do not carry the earlier gap into this field."
+        }
+      ]
+    },
+    {
+      "id": "F03",
+      "language": "es",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "¿Se sabe quién le vendió al pintor los materiales para este cuadro?",
+          "parts": [
+            {
+              "intent": "Identify the supplier of the artist's materials for The Bedroom.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Who supplied the materials used to paint The Bedroom?"
+            }
+          ],
+          "review": "The record at hand establishes no supplier. It does not establish that no supplier is known."
+        },
+        {
+          "question": "Bueno, sin entrar en quién se los vendió, ¿qué técnica y soporte figuran juntos en la ficha?",
+          "parts": [
+            {
+              "intent": "Give the recorded paint medium and support for The Bedroom.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-medium"
+              ],
+              "manual_query": "What is the recorded medium of The Bedroom, including the support?"
+            }
+          ],
+          "review": "Report óleo sobre lienzo. The visitor has dropped the supplier question."
+        }
+      ]
+    },
+    {
+      "id": "F04",
+      "language": "es",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "Me parece ver un vestido estampado al fondo. ¿Qué objetos cree ver allí el museo?",
+          "parts": [
+            {
+              "intent": "Identify the objects suggested by the background brushstrokes in Woman at Her Toilette.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "What objects do the brushstrokes in the background of Woman at Her Toilette suggest?"
+            }
+          ],
+          "review": "The strokes suggest a floral-patterned bedspread and wallpaper. Identify the dress as the visitor's impression if mentioned."
+        },
+        {
+          "question": "¿Se sabe si la colcha era de la mujer retratada, o solo tenemos esa impresión visual?",
+          "parts": [
+            {
+              "intent": "Establish whether the woman depicted actually owned the suggested bedspread.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Did the woman depicted in Woman at Her Toilette own the bedspread suggested in its background?"
+            },
+            {
+              "intent": "Distinguish the visual suggestion of a bedspread from evidence of an actual possession.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "How does the description of Woman at Her Toilette present the bedspread in the background?"
+            }
+          ],
+          "review": "The account describes an impression produced by brushwork. Keep ownership unverified and the suggested object distinct from a documented possession."
+        }
+      ]
+    },
+    {
+      "id": "F05",
+      "language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "我想给朋友写张明信片。展签说这幅画给人的感觉时，语气是肯定的，还是留有余地？",
+          "parts": [
+            {
+              "intent": "Recover the degree of certainty in the museum's interpretation of the mood of The Bedroom.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "What feeling does the museum say The Bedroom might suggest?"
+            }
+          ],
+          "review": "Convey both the possibility and the specific nervous energy. Do not make it a diagnosis of a person."
+        },
+        {
+          "question": "那我能写成“住在这个房间的人当时很焦虑”吗？",
+          "parts": [
+            {
+              "intent": "Determine whether the interpretation establishes the actual state of mind of a person who lived in the room.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "What does the source establish about the actual emotional state of a person living in the room depicted in The Bedroom?"
+            }
+          ],
+          "review": "Explain that the previous description concerned the picture's possible effect. The occupant's emotional state is unverified. Do not store the visitor's proposed sentence as fact."
+        }
+      ]
+    },
+    {
+      "id": "F06",
+      "language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "这个场景让我想起外婆家了。我只是想分享一下。",
+          "parts": [
+            {
+              "intent": "Acknowledge the visitor's personal association without introducing facts about the artwork.",
+              "support": "not_applicable",
+              "citations": [],
+              "manual_query": null
+            }
+          ],
+          "review": "Respond naturally to the visitor's memory. Treat it as a personal association."
+        },
+        {
+          "question": "回到画本身，说明里说背景的笔触让人联想到哪两样东西？有没有提到是谁设计了那些花纹？",
+          "parts": [
+            {
+              "intent": "Identify the two objects suggested by the background brushstrokes of Woman at Her Toilette.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "What objects do the background brushstrokes suggest in Woman at Her Toilette?"
+            },
+            {
+              "intent": "Identify the designer of the patterns suggested in the background of Woman at Her Toilette.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Who designed the patterns suggested in the background of Woman at Her Toilette?"
+            }
+          ],
+          "review": "Identify the suggested floral-patterned bedspread and wallpaper. The available passage does not establish a designer. Do not connect the objects to the visitor's family."
+        }
+      ]
+    },
+    {
+      "id": "F07",
+      "language": "ko",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "작품 카드에 재료를 한 줄로 적으려는데, 이 그림은 무엇으로 어디에 그렸나요?",
+          "parts": [
+            {
+              "intent": "Give the recorded medium and support of The Bedroom.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-medium"
+              ],
+              "manual_query": "What is the recorded medium and support of The Bedroom?"
+            }
+          ],
+          "review": "Give oil on canvas in Korean."
+        },
+        {
+          "question": "그 바탕에 밑칠을 몇 겹 했는지도 나와 있나요? 색채를 어떻게 묘사했는지도 궁금해요.",
+          "parts": [
+            {
+              "intent": "Determine the number of preparatory coats on the canvas of The Bedroom.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "How many layers of primer were applied to the canvas of The Bedroom?"
+            },
+            {
+              "intent": "Describe the colors of The Bedroom as characterized by the museum.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "How does the museum describe the colors of The Bedroom?"
+            }
+          ],
+          "review": "The previous mention of canvas does not establish a preparatory layer count. The museum describes bold colors."
+        }
+      ]
+    },
+    {
+      "id": "F08",
+      "language": "ko",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "친구가 배경의 붓 자국이 날카로워 보인대요. 작품 설명은 그 붓질을 어떤 말로 표현하나요?",
+          "parts": [
+            {
+              "intent": "Recover the museum's wording for the background brushwork in Woman at Her Toilette.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "How does the museum describe the background brushwork in Woman at Her Toilette?"
+            }
+          ],
+          "review": "Attribute soft and feathery to the description and sharp to the friend's observation."
+        },
+        {
+          "question": "그 붓질이 암시하는 게 뭐죠? 그중 벽지가 화면 왼쪽에 있는지도 글에 나오나요?",
+          "parts": [
+            {
+              "intent": "Identify what those previously discussed brushstrokes suggest.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "What do the background brushstrokes suggest in Woman at Her Toilette?"
+            },
+            {
+              "intent": "Determine whether the suggested wallpaper is specifically located on the left side of the composition.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Is the suggested wallpaper on the left side of Woman at Her Toilette?"
+            }
+          ],
+          "review": "Name the suggested floral-patterned bedspread and wallpaper. The excerpt situates these impressions in the background and provides no left/right placement."
+        }
+      ]
+    }
+  ]
+}

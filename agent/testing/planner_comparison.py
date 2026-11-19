@@ -12,6 +12,8 @@ from knowledge.http_service import create_server
 from agent.providers.capabilities import implementation_fingerprint
 from agent.providers.sizing import QwenPromptSizer
 from agent.runtime.errors import WorkflowError
+from agent.runtime.followup_plan import expand_plan
+from agent.runtime.validation import ContractViolation
 from agent.runtime.validation_v2 import ContractValidatorV2, assemble_answer, validate_plan
 from agent.service import ModelIdentity, create_workflow_runtime
 from agent.testing.probe_quality import operation_summary
@@ -38,10 +40,13 @@ class DialogueProbeModel(ProbeModel):
         try:
             return await super().complete_structured(messages=messages, **kwargs)
         finally:
-            self.attempts[start]["model_input"] = json.loads(messages[-1]["content"])
+            payload = json.loads(messages[-1]["content"])
+            if "source_sentences" in payload:
+                self.attempts[start]["source_sentences"] = payload.pop("source_sentences")
+            self.attempts[start]["model_input"] = payload
 
 
-def plan_check(run, attempts, validator):
+def plan_check(run, attempts, validator, *, deadline=None):
     """Check the plan independently of lookup or final answer success."""
     attempt = next((call for call in attempts if call["operation"] == "plan"), None)
     if attempt is None or "completion" not in attempt:
@@ -49,11 +54,20 @@ def plan_check(run, attempts, validator):
                 "schema_result": attempt["schema_result"] if attempt else "unobserved"}
     plan = attempt["completion"]["data"]
     payload = attempt["model_input"]
+    # The production stage checks its clock on model return and after plan validation.
+    # Terminal answer assembly runs in the graph node after that deadline.
+    timed_out = {"valid": None, "schema_result": attempt["schema_result"],
+                 "error_code": "generation_timeout"}
+    if deadline is not None and monotonic() > deadline:
+        return timed_out
     try:
+        plan = expand_plan(plan, payload)
         validate_plan(run, plan, validator, plan_input=payload)
+        if deadline is not None and monotonic() > deadline:
+            return timed_out
         if plan["action"] in {"direct_response", "clarify", "out_of_scope"}:
             assemble_answer(run, plan, plan, payload["cached_evidence"], payload["catalog_facts"], validator)
-    except WorkflowError as error:
+    except (ContractViolation, WorkflowError) as error:
         return {"valid": False, "schema_result": attempt["schema_result"],
                 "reason": str(error.__cause__ or error)}
     return {"valid": True, "schema_result": attempt["schema_result"]}

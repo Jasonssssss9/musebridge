@@ -303,6 +303,26 @@ class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
             history.append(turn)
         self.assertEqual(state["revision"], 8)
 
+    async def test_factual_followup_reaches_assessment_with_a_canonical_plan(self):
+        for evidence_action, prior_chunk, expected_calls in (
+            ("reuse_cache", "aic-28560-medium", 0),
+            ("search", "aic-28560-description-01", 1),
+        ):
+            with self.subTest(evidence_action=evidence_action):
+                run = cached_run(self.manifest, question="What was that surface made of?",
+                                 chunks=[prior_chunk])
+                canonical = medium_plan(run)
+                shorthand = {
+                    "visitor_task": "check_artwork_facts", "language_decision": canonical["language_decision"],
+                    "evidence_action": evidence_action,
+                    "facts": [{"source": {"sentence": 1}, "english_search_question": canonical["queries"][0]["query"]}],
+                }
+                out, model, tool = await self.execute(run, shorthand, medium_answer(run))
+                self.assertEqual(out.retrieval_calls, expected_calls)
+                self.assertEqual(out.requests, canonical["requests"])
+                self.assertEqual(out.request_results[0]["citation_ids"], ["aic-28560-medium"])
+                self.assertEqual(len(model.calls), 2)
+
     async def test_complete_cache_reuses_without_lookup_and_catalog_stays_direct(self):
         run = cached_run(self.manifest, question="What is the material?",
                          chunks=["aic-28560-medium", "aic-28560-description-01"])

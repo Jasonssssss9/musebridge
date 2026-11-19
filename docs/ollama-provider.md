@@ -73,10 +73,11 @@ Requests use the documented [non-streaming chat API](https://docs.ollama.com/api
 compiler: unsupported string patterns/formats, conditional assertions and
 `allOf` are omitted from the **generation grammar only**. This avoids a converter
 behavior where pattern-only string branches become object-shaped output.
-Types, fields, references and union branches remain in the grammar. C's original
-schema remains in the prompt and validates every returned decision, including
-all omitted assertions. This is preparation before generation, without retries,
-post-generation repair or an alternative answer path.
+Types, fields, references and union branches remain in the grammar. The full
+model-facing schema stays in the prompt and validates the raw decision, including
+all omitted assertions. For a follow-up, C binds the selected visitor text,
+expands the decision, and independently validates the canonical workflow plan.
+Invalid decisions follow the existing generation-error path.
 
 The provider bounds request and complete response bodies to 256 KiB, requires
 uncompressed UTF-8 JSON and strictly parses both the HTTP envelope and the JSON

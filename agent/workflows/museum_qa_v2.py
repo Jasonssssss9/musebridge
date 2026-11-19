@@ -23,6 +23,7 @@ from agent.runtime.context_v2 import (
     build_answer_input, build_plan_input, fit_history, validate_run_context,
 )
 from agent.runtime.errors import WorkflowError
+from agent.runtime.followup_plan import expand_plan, planning_schema
 from agent.runtime.grounding import grounded_memory, render_evidence_gaps
 from agent.runtime.validation import ContractViolation, TRACE_ID
 from agent.runtime.validation_v2 import (
@@ -147,6 +148,8 @@ class MuseumQAWorkflowV2:
             except ContractViolation as exc:
                 raise WorkflowError("agent_internal_error", "The prepared model context is invalid.",
                                     phase="context") from exc
+            if operation == "plan":
+                schema = planning_schema(schema, fitted)
             phase = {"plan": "planning", "assess": "assessment", "final": "final_generation"}[operation]
             budget.check_active()
             remaining = budget.remaining_seconds()
@@ -170,6 +173,8 @@ class MuseumQAWorkflowV2:
                                     phase=phase, retryable=True)
             try:
                 decision = deepcopy(completion.data)
+                if operation == "plan":
+                    decision = expand_plan(decision, fitted)
                 self.validator.validate(schema_name, decision)
             except (ContractViolation, AttributeError, RecursionError) as exc:
                 raise WorkflowError("generation_invalid_response", "The provider returned an invalid decision.",

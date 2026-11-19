@@ -210,6 +210,8 @@ multi-turn readiness.
 
 The [two-turn planner baseline](../docs/planner-baseline.md) compares Qwen’s
 plans with independent English retrieval controls across eight visitor dialogues.
+The [follow-up planning evaluation](../docs/followup-planning.md) covers exact
+input replay, end-to-end regression and a separate four-language visitor set.
 
 ## 3. Package map
 

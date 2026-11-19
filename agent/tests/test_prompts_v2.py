@@ -42,6 +42,31 @@ class PromptV2Tests(unittest.TestCase):
         payload["translation"]["text"] = "Mutated after rendering"
         self.assertEqual(json.loads(messages[1]["content"]), original)
 
+    def test_followup_policy_only_runs_for_planning_with_retained_history(self):
+        history = [{"answer_text": "Private previous visitor answer"}]
+        for operation, turns, expected in (("plan", history, True), ("plan", [], False),
+                                            ("assess", history, False), ("final", history, False)):
+            with self.subTest(operation=operation, has_history=bool(turns)):
+                payload = {"recent_turns": turns}
+                system, data = build_messages(operation, payload, {})
+                self.assertEqual("Plan this follow-up" in system["content"], expected)
+                self.assertNotIn("Private previous visitor answer", system["content"])
+                self.assertEqual(json.loads(data["content"]), payload)
+
+    def test_numbered_sources_stay_verbatim_in_the_user_message(self):
+        question = "¿Qué material usó?   第二句保留  空格！"
+        payload = {"original_question": question, "recent_turns": [{"answer_text": "history"}]}
+        original = deepcopy(payload)
+        system, data = build_messages("plan", payload, {})
+        wire = json.loads(data["content"])
+        self.assertEqual(wire.pop("source_sentences"), [
+            {"sentence": 1, "text": "¿Qué material usó?"},
+            {"sentence": 2, "text": "第二句保留  空格！"},
+        ])
+        self.assertEqual(wire, original)
+        self.assertEqual(payload, original)
+        self.assertNotIn("第二句保留", system["content"])
+
     def test_source_wording_only_uses_accepted_excerpts_and_keeps_the_wire_payload(self):
         manifest = EvidenceManifest.load()
         van_gogh = dict(manifest.records["aic-28560-description-01"])

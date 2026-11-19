@@ -101,6 +101,10 @@ class ScriptedModel:
                 response = await response
         try:
             data = strict_json(response) if isinstance(response, str) else deepcopy(response)
+            # Existing scripted fixtures describe the public workflow plan.
+            if ("StandardPlan" in output_schema.get("$defs", {}) and isinstance(data, dict)
+                    and "action" in data and "visitor_task" not in data):
+                data = {"visitor_task": "other_request", "plan": data}
             # Validate the supplied reachable schema, not the old v1 registry.
             _StrictValidator(output_schema, format_checker=FormatChecker()).validate(data)
         except (ContractViolation, ValidationError, ValueError, TypeError) as exc:

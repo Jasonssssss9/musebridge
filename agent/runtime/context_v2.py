@@ -12,6 +12,7 @@ from typing import Any
 from agent.prompts.v2 import build_messages
 from agent.runtime.context import PromptSizer
 from agent.runtime.errors import WorkflowError
+from agent.runtime.followup_plan import planning_schema
 from agent.runtime.validation import ContractValidator, ContractViolation
 from agent.tools.catalog import validate_catalog
 from agent.tools.evidence import EvidenceManifest
@@ -175,8 +176,9 @@ def fit_history(
         raise ValueError("Context sizing configuration must use positive integer limits.")
     fitted = deepcopy(payload)
     while True:
-        messages = build_messages(operation, fitted, output_schema)
-        count = prompt_sizer(messages, deepcopy(output_schema))
+        schema = planning_schema(output_schema, fitted) if operation == "plan" else output_schema
+        messages = build_messages(operation, fitted, schema)
+        count = prompt_sizer(messages, deepcopy(schema))
         if type(count) is not int or count < 0:
             raise ValueError("The prompt sizer must return a nonnegative integer token count.")
         if count + output_tokens + safety_tokens <= context_limit:
