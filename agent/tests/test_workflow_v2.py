@@ -115,6 +115,43 @@ class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
                         "model_digest": "SYNTHETIC-NOT-A-MODEL-DIGEST", "duration_ms": 1}
                     ContractValidatorV2().validate("RunResult", wire)
 
+    async def test_partial_medium_and_pigment_preserves_ui_language_and_evidence(self):
+        medium_fragment, pigment_fragment = "这幅画用什么材料？", "具体的蓝色颜料是什么？"
+        run = make_run(question=medium_fragment + pigment_fragment, language_override="es")
+        plan = medium_plan(run, language="es")
+        plan["language_decision"]["detected_language"] = "zh-CN"
+        plan["requests"][0]["original_fragment"] = medium_fragment
+        pigment_query = "Which blue pigment was used in The Bedroom?"
+        plan["requests"].append({
+            "id": "r2", "original_fragment": pigment_fragment, "intent": pigment_query,
+            "kind": "artwork_fact", "resolution": "clear",
+        })
+        plan["queries"].append({"id": "q2", "request_ids": ["r2"], "query": pigment_query})
+
+        def assess(call):
+            inputs = json.loads(call.messages[1]["content"])
+            self.assertEqual(inputs["answer_language"], "es")
+            self.assertEqual(inputs["executed_queries"], plan["queries"])
+            self.assertEqual([record["chunk_id"] for record in inputs["evidence"]],
+                             ["aic-28560-medium"])
+            terminal = medium_answer(run, text="La ficha indica óleo sobre lienzo.")
+            terminal["results"].append({
+                "request_id": "r2", "support": "insufficient", "citation_ids": [],
+                "text": "No puedo identificar el pigmento azul con esta información.",
+            })
+            terminal["memory_update"] = memory_update(
+                summary="The visitor asked about the medium and an unidentified blue pigment.")
+            return terminal
+
+        out, _, _ = await self.execute(run, plan, assess)
+        self.assertEqual((out.answer["status"], out.model_calls, out.retrieval_calls,
+                          out.refinement_rounds), ("partially_answered", 2, 2, 0))
+        state, _ = simulate_commit(run, out.result_fields())
+        self.assertIsNone(out.language_decision["explicit_instruction"])
+        self.assertEqual((state["language_preference"], state["auto_language"]), ("es", "zh-CN"))
+        self.assertEqual([entry["chunk_id"] for entry in state["verified_evidence"]],
+                         ["aic-28560-medium"])
+
     async def test_direct_dialogue_never_retrieves_in_four_languages(self):
         for language, message in (("en", "Beautiful!"), ("es", "¡Qué bonito!"),
                                   ("zh-CN", "真好看！"), ("ko", "정말 아름다워요!")):

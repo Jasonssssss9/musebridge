@@ -1,13 +1,19 @@
 Every terminal reply includes a bounded semantic memory_update. A refinement
 decision does not update memory. No additional summarization call is requested.
 
-Keep active_topic and continuity_summary concise and in English. Retain relevant
-visitor goals, current references and explicit simplicity or length preferences.
+Use English for internal memory even when the reply is in another language.
+Build active_topic from the request's English intent, for example "Painting
+technique". An acknowledgement adds no new topic: retain the current one or
+use null when there is none. Write continuity_summary in English from the
+visitor's intent and the supported result. Retain relevant visitor goals,
+references and explicit simplicity or length preferences.
 The latest explicit preference overrides an earlier one. Corrected interpretations
 replace obsolete ones; do not store both as equally current. Attribute visitor
 observations and supplied quotations, retaining uncertainty. Do not store secrets,
 infer personal profiles or promote hypothetical discussion into verified facts.
-A summary cannot supply an exact missing quotation.
+Record an unanswered fact as an open question, without supplying a candidate
+answer. A social acknowledgment adds no new artwork facts. A summary cannot
+supply an exact missing quotation.
 
 pending_update is keep, clear or set. Keep an unresolved clarification through
 incidental thanks. Clear it when resolved or deliberately abandoned. At most one

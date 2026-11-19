@@ -37,6 +37,7 @@ interface Rec {
   state: 'processing' | 'failed' | 'completed' | 'superseded';
   last_error: ErrorBody | null;
   turn_id: string | null;
+  attempt_id?: string; // Older persisted attempts can still settle by their deadline.
   finish_at: number;
   planned_error: { status: number; body: ErrorBody } | null;
 }
@@ -196,12 +197,13 @@ function commitTurn(c: Conv, clientMessageId: string, question: string, override
 // ---- request lifecycle (contract 2.3) ---------------------------------------
 
 /** Finish any attempt whose time is up, whether or not a browser is still waiting. */
-function settle(s: State): void {
+function settle(s: State, elapsedAttempt?: string): void {
   const now = Date.now();
   for (const c of Object.values(s.convs)) {
     const id = c.pending;
     const r = id ? c.records[id] : undefined;
-    if (!id || !r || r.state !== 'processing' || r.finish_at > now) continue;
+    if (!id || !r || r.state !== 'processing') continue;
+    if (r.finish_at > now && !(elapsedAttempt && r.attempt_id === elapsedAttempt)) continue;
     if (r.planned_error) {
       r.state = 'failed';
       r.last_error = r.planned_error.body;
@@ -283,24 +285,27 @@ async function submit(convId: string, body: Wire, signal?: AbortSignal | null): 
   };
   const { ms, error } = plans[s.fault];
   const dropReply = s.fault === 'lost_response';
+  const attemptId = uuidv4();
   c.records[id] = {
-    question, language_override: override, expected_revision: rev, state: 'processing', last_error: null, turn_id: null,
+    attempt_id: attemptId, question, language_override: override, expected_revision: rev, state: 'processing', last_error: null, turn_id: null,
     finish_at: Date.now() + ms, planned_error: error,
   };
   c.pending = id;
   save(s);
 
-  await sleep(ms + 5, signal); // if the browser gives up here, settle() still finishes the attempt later
+  // The live timer measures elapsed time. The saved deadline handles recovery after a reload.
+  await sleep(ms, signal);
   s = load();
-  settle(s);
+  settle(s, attemptId);
   if (dropReply) throw new TypeError('Failed to fetch (mock: reply dropped after commit)');
   const after = s.convs[convId.toLowerCase()];
   const done = after?.records[id];
   if (!after || !done) return fail(404, 'conversation_not_found', false);
+  if (error) return reply(error.status, { request_id: `mock-${++reqCounter}`, error: error.body });
   if (done.state === 'completed') {
     return reply(200, { conversation: after.conversation, turn: after.turns.find((t) => t.turn_id === done.turn_id) });
   }
-  return reply(error?.status ?? 500, { request_id: `mock-${++reqCounter}`, error: done.last_error ?? err('internal_error', 'mock', true) });
+  return fail(500, 'internal_error', true);
 }
 
 export async function mockFetch(path: string, init: RequestInit = {}): Promise<Response> {

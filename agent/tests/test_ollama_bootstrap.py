@@ -9,6 +9,7 @@ import httpx
 
 from agent.app import create_app
 from agent.providers.bootstrap import start_ollama_runtime
+from agent.providers.capabilities import CHECKS, make_record
 from agent.providers.profile import OllamaProfile
 from agent.testing.verify_ollama import verify
 import json
@@ -50,16 +51,31 @@ class BootstrapTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(runtime.startup_error, "agent_internal_error")
         await close()
 
-    async def test_verified_startup_reuses_workflow_and_readiness_expires_with_record(self):
-        record = {"synthetic": True}
-        with patch("agent.providers.bootstrap.read_record", return_value=record), patch("agent.providers.bootstrap.validate_record", return_value=True) as check:
-            runtime, close = await start_ollama_runtime()
-            self.assertTrue(runtime.is_ready())
-            self.model.warm.assert_awaited_once()
-            check.return_value = False
-            self.assertFalse(runtime.is_ready())
-            await close()
-        self.model.aclose.assert_awaited_once()
+    async def test_running_service_observes_capability_renewal_and_revocation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "record.json"
+            record = make_record(self.model, dict.fromkeys(CHECKS, True))
+            path.write_text(json.dumps(record))
+            with patch.dict(os.environ, {"AGENT_CAPABILITY_RECORD": str(path)}):
+                runtime, close = await start_ollama_runtime()
+                self.addAsyncCleanup(close)
+                self.assertTrue(runtime.is_ready())
+                self.model.warm.assert_awaited_once()
+
+                for invalid in ({"valid": False}, {**record, "created_at": "2000-01-01T00:00:00+00:00"}):
+                    replacement = path.with_suffix(".new")
+                    replacement.write_text(json.dumps(invalid))
+                    replacement.replace(path)
+                    self.assertFalse(runtime.is_ready())
+                    path.write_text(json.dumps(record))
+                    self.assertTrue(runtime.is_ready())
+
+                path.unlink()
+                self.assertFalse(runtime.is_ready())
+                path.write_text(json.dumps(record))
+                self.assertTrue(runtime.is_ready())
+                self.model.verified = False
+                self.assertFalse(runtime.is_ready())
 
     async def test_factory_lifespan_uses_selected_real_provider_shell(self):
         token = "SYNTHETIC-TEST-TOKEN-" + "x"*43
@@ -85,9 +101,11 @@ class BootstrapTests(unittest.IsolatedAsyncioTestCase):
             options = SimpleNamespace(base_url="http://synthetic-test.invalid", report=str(Path(directory)/"report.json"),
                                       capability_record=str(path), tokenizer="missing-tokenizer")
             with patch("agent.testing.verify_ollama.QwenPromptSizer", side_effect=ValueError("Synthetic asset error")):
-                with self.assertRaises(ValueError):
-                    await verify(options)
+                self.assertFalse(await verify(options))
             self.assertIs(json.loads(path.read_text())["valid"], False)
+            report = json.loads(Path(options.report).read_text())
+            self.assertEqual(report["fatal_error"], "ValueError")
+            self.assertFalse(report["passed"])
 
 
 if __name__ == "__main__":

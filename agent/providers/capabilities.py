@@ -15,8 +15,10 @@ def implementation_fingerprint():
     root = Path(__file__).resolve().parents[2]
     paths = [root / "docs/contracts/agent-v2.schema.json",
              root / "knowledge/data/aic-seed-v0.1.json",
-             root / "agent/testing/verify_ollama.py"]
-    for directory in ("agent/prompts/v2", "agent/providers", "agent/workflows", "agent/tools"):
+             root / "agent/testing/verify_ollama.py",
+             root / "agent/testing/probe_quality.py",
+             root / "agent/testing/v2.py", root / "agent/service.py"]
+    for directory in ("agent/prompts/v2", "agent/providers", "agent/workflows", "agent/tools", "knowledge"):
         paths.extend(sorted(path for path in (root / directory).iterdir() if path.suffix in {".py", ".md"}))
     paths.extend(sorted((root / "agent/runtime").glob("*.py")))
     digest = hashlib.sha256()

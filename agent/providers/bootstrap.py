@@ -4,7 +4,7 @@ from contextlib import suppress
 import os
 from time import monotonic
 
-from agent.providers.capabilities import read_record, validate_record
+from agent.providers.capabilities import read_record
 from agent.providers.ollama import OllamaModel
 from agent.providers.sizing import QwenPromptSizer
 from agent.runtime.runs import RunRegistry
@@ -29,11 +29,18 @@ async def start_ollama_runtime():
         if record is not None:
             await model.warm(deadline=monotonic()+120)
             manifest = EvidenceManifest.load()
+            def ready():
+                if not model.verified:
+                    return False
+                current = read_record(record_path, model)
+                # A renewed attestation must still describe this running implementation.
+                return current is not None and current["implementation_fingerprint"] == record["implementation_fingerprint"]
+
             registry = create_workflow_runtime(model=model, profile=model.profile, prompt_sizer=model.sizer,
                 manifest=manifest, retrieval=RetrievalTool(manifest,
                     base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001")),
                 identity=ModelIdentity(model.profile.model_name, model.profile.model_digest),
-                readiness=lambda: model.verified and validate_record(record, model))
+                readiness=ready)
 
             async def refresh():
                 while True:

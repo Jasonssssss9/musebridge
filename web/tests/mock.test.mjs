@@ -58,6 +58,20 @@ test('scripted visitor examples produce all six valid public answer states and b
   assert.equal(saved.conversation.agent.revision, 6);
 });
 
+test('a live request completes once when the system clock moves backward during its timer', async (t) => {
+  const c = await create();
+  let wallTime = Date.now();
+  t.mock.method(Date, 'now', () => (wallTime -= 1000));
+  const message = payload(180, 'Thanks');
+  const response = await request(path(c), message);
+  assert.equal(response.status, 200);
+  const replay = await request(path(c), message);
+  assert.deepEqual(replay.body.turn, response.body.turn);
+  const history = parseHistory((await request(path(c))).body);
+  assert.equal(history.pending_request, null);
+  assert.equal(history.turns.length, 1);
+});
+
 test('mock replies support four languages and keep one-off translation separate from preference', async () => {
   const c = await create();
   for (const [index, language] of ['en', 'es', 'zh-CN', 'ko'].entries()) {

@@ -108,22 +108,43 @@ or start it. Then explicitly run the controlled local probe:
   --capability-record ../local-model-results/ollama-capability.json
 ```
 
-This uses real model decisions and a temporary real retrieval HTTP service for
-both artworks. It covers four response languages, direct conversation, full
-schemas, five-pair history, Unicode sizing and a final-operation diagnostic.
-The diagnostic's explicit natural-language query is labeled separately from
-model-planned queries and cannot convert a failed end-to-end case into a pass.
-The published questions are development probes, not an independent quality set.
-Read the generated responses; machine checks cannot prove factual support or
-natural language quality.
+The probe runs the 13 original development cases, four separately authored
+visitor questions and five operation diagnostics. Each visitor case goes through
+the workflow and the real HTTP retrieval service. The standalone final-response
+diagnostic supplies its own query. Its success is reported outside the visitor
+totals.
 
-The CLI exits nonzero when acceptance fails, keeps the failures in its private
-report and does not produce a valid readiness attestation. An earlier attestation
-is invalidated before retesting. **Current local acceptance has not passed:**
-model-planned queries can miss the rule-based retriever, proposed refinements can
-repeat previous queries, and unsupported artwork assertions need semantic review.
-These failures remain open work under the shared B/C plan. Changing the retrieval
-algorithm or weakening source validation is not part of this provider change.
+The private report joins each synthetic question to the model attempts, proposed
+English queries, retrieval candidates, validated citations, final text and memory
+update by request ID. Failed attempts retain any available model output. A failed
+operation can leave later observations unavailable. Inspect the attempt and
+lookup records to distinguish a rejected plan, an empty search and an unsupported
+answer. The five-pair capacity check compares the turn IDs actually sent and the
+server's token count against the pinned budget.
+
+Running the probe invalidates its previous capability record immediately. The CLI
+returns a nonzero status while semantic review is pending, including when every
+machine check has passed. Read the plan, query, retrieved excerpts, answer and
+memory in each case. Review each pending dimension as `pass` or `fail` and retain
+`not_applicable` where the report has no applicable observation. The review JSON
+contains `report_sha256` (the SHA-256 of the unedited report), `cases` keyed by
+case name with the same fields as each `semantic_review`, and optional `notes`
+keyed by case name. Include a `final_diagnostic` object with the three verdicts
+listed under `final_diagnostic_review`. Keep a private copy of the unreviewed
+report if you need to reproduce the review hash. Applying the review updates
+the report without calling the model again:
+
+```bash
+.venv/bin/python -B -m agent.testing.verify_ollama \
+  --report ../local-model-results/ollama-probes.json \
+  --review ../local-model-results/ollama-review.json \
+  --capability-record ../local-model-results/ollama-capability.json
+```
+
+Any failed machine check or semantic judgment keeps the gate closed. A passing
+review requires the matching live run, implementation and unexpired observations.
+Keep the synthetic reports and review files outside Git. Repeated use of these
+published cases makes them development regressions for future releases.
 
 A passing attestation binds model metadata, profile, tokenizer, prompt/provider
 implementation, schema and source release. It is valid for at most 24 hours and
@@ -148,9 +169,48 @@ Without `AGENT_PROVIDER`, the existing disabled shell remains. Explicit Ollama
 mode requires both local asset paths. Startup verifies model/tokenizer identity,
 the capability attestation and the loaded 16K context. Missing, failed, stale or
 mismatched attestations keep the service unready. Infrastructure probes perform
-no inference. A background metadata-only identity check can recover transient
+no inference. Each readiness and admission check reads the current record. Revocation, removal or
+expiry therefore takes effect on the next check. A background metadata-only
+identity check can recover transient
 connectivity, while model/provider changes invalidate readiness. Startup failures
 require operator correction and restart; they never select a test provider.
+
+## November 18 workflow evaluation
+
+The November 14 baseline and this run used the pinned Qwen model, two artworks
+and the same four museum excerpts. The new run used a local Agent and retrieval
+service with a loopback SSH tunnel to the model host. Each model call used the
+production planning or generation deadline. Prompt revisions were tested against
+the development questions. The final six scenarios were separately labeled and
+kept out of prompt development.
+
+| Visitor set | Machine result | Review of meaning and evidence |
+| --- | --- | --- |
+| November 14 development baseline, 13 cases | 4/13 met the old status and language criteria | 2/12 delivered answers stayed grounded. One run returned no answer. |
+| Same 13 development cases, November 18 | 13/13 met the expanded checks | All 13 bodies stayed grounded. 12/13 passed all dimensions. One memory update inferred that a thank-you ended the conversation. |
+| Four additional visitor questions | 3/4 met the expanded checks | 2/4 passed all dimensions. One plan lost an explicit language instruction. A different answer generalized an empty lookup to the entire museum collection and wrote its memory in Spanish. |
+| Six independently labeled scenarios | 2/6 met the scenario checks | Two passed fully, one answered part of the question correctly but omitted its evidence citation, and three failed. |
+
+All nine material questions in the original suite, including the five-turn
+history case, retrieved and cited the correct artwork's medium. All four
+thank-you messages received a short response in the selected language with
+no retrieval. The scored 17-case probe made 33 model calls including the
+five separate diagnostics. All returned schema-valid completions. One plan
+failed the workflow's language consistency check before retrieval. Go's
+contract validator accepted all 17 inputs and all 16 delivered results.
+
+The independent set exposed failures that a citation ID or matching status
+cannot detect. One compound question mixed supported material and unknown
+duration in a single insufficient result. One reaction to a prior turn failed
+language and support validation. A natural question about lines creating depth
+missed the available perspective excerpt, and the answer overstated what the
+empty lookup established. A cached material follow-up chose a direct response
+instead of answering from verified context. An explicit one-turn language
+switch and a question about an unsupported premise both worked.
+
+The capability record remained invalid after review. The public browser route
+still uses the fixture. These counts describe this model run and these small
+sets; they are not estimates of quality across museum visitors.
 
 ## Checks and remaining acceptance
 
