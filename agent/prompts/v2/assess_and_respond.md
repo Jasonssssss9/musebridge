@@ -1,6 +1,9 @@
 Answer the original visitor message, not only the rewritten query. Keep the
 frozen language, requests, resolutions, artwork, release and translation source.
-Produce one result per planned request in order when finishing.
+Produce one result per planned request in order when finishing. For each
+request, decide whether a specific accepted source answers that particular
+question. Cite the supported part even when the next part has no source. Only
+the unresolved request receives the gap and an empty citation list.
 
 A clear catalog_fact uses supported with appropriate catalog IDs, or insufficient
 without citations if the requested precision is not established. A clear
@@ -31,14 +34,17 @@ their canonical support. A visitor-supplied claim may be translated as attribute
 text without endorsement, new museum citations or new verified evidence. Never
 silently summarize a translation; request a shorter passage when needed.
 
-Check each factual clause against the cited excerpt or catalog field. When it
-directly states the requested fact, answer at the visitor's requested level of
-detail. A material label can answer a medium question even when it gives no
-pigment recipe. Do not require greater precision than the visitor requested.
-When support is missing, say what you could not verify from the evidence
-available for this answer. An empty search establishes nothing about the
-museum's other records. Do not fill the gap with a likely answer, artist habits
-or background knowledge. Offer a relevant next step when it helps.
+For each supported request, pick only the words that answer its English intent.
+Translate those words into the visitor's language. The citation already shows
+the original English. If the visitor asks for a physical feature, finish after
+naming that feature. If the visitor asks for an interpretation, preserve who
+or what suggests it and the source's degree of certainty. A suggested object
+remains an appearance. An impression of the picture is not the artist's state
+of mind. Carry the same distinctions into English memory.
+
+For an insufficient request, say what you cannot verify here. Give no other
+artwork facts in that part. complete_scope describes coverage of this release;
+it cannot establish what an institution knows or has recorded elsewhere.
 
 Refine only if allow_refinement is true and an existing clear artwork_fact request
 still needs retrieval support. Use no_candidates, poor_candidate_relevance or

@@ -118,6 +118,7 @@ _DESCRIPTION_OF_REFERENCE = re.compile(
     r"|(?:它(?:们)?|这些|那些)(?:看起来|是?(?:什么样|怎样的)|有(?:什么|何)特点|给人什么感觉)",
     re.I,
 )
+_PICTURE_SPACE = r"(?:the|this) (?:room|painting|picture|scene|composition|image|space)"
 _LINE_MOVEMENT = (
     r"\b(?:recede|receding|go back(?!\s+to\b|\s+in time\b)|run back|extend into"
     r"|(?:run|go|extend|angle|lead|draw) (?:toward(?:s)?|into) (?:the )?(?:back|distance|depth)"
@@ -257,6 +258,15 @@ _SUPPORTED = {
         rf"|\blines\b.{{0,42}}(?:{_LINE_MOVEMENT})"
         r"|透视|线条.{0,10}(?:往里|向纵深|退向|收缩|延伸)|纵深.{0,8}线条"
         rf"|(?:线条|斜线).{{0,12}}(?:{_LINE_MOVEMENT})|(?:{_LINE_MOVEMENT}).{{0,10}}(?:线条|斜线)",
+        # Ask about the spatial effect of lines; a mention inside an angle or pigment question is incidental.
+        r"\b(?:(?:describe|characteri[sz]e) (?:the )?lines (?:that |which )?"
+        r"|(?:what |which |(?:how |which way )(?:(?:do|are) )?(?:the |these |those )?)lines )"
+        r"(?:(?:in|of) [^,;?]{1,60}? )?(?:"
+        rf"(?:create|convey|give|imply|suggest) (?:{_PICTURE_SPACE} )?"
+        r"(?:(?:an?|the) (?:sense|illusion|impression) of )?(?:spatial )?depth"
+        rf"|make {_PICTURE_SPACE} (?:appear|look|feel|seem) deep(?:er)?"
+        r"|(?:extend(?:s|ed|ing)?|lead(?:s|ing)?|angl(?:es?|ing)|run(?:s|ning)?|draw(?:s|ing)?) "
+        r"(?:towards?|into) (?:the )?(?:back|distance|depth|room))\b",
     ),
     "visual_effect": (
         r"\b(?:nervous|energy)\b|紧张",
@@ -414,6 +424,14 @@ _DEICTIC_TOPIC = re.compile(
     re.I,
 )
 _TEMPORAL_PREFIX = re.compile(r"^\s*(?:when|while|as) (?:i|we|you|he|she|they)\b", re.I)
+# A descriptive request can have two nominal objects without repeating its question word.
+_TOPIC_PAIR = re.compile(
+    r"^(?:(?:please )?(?:describe|characteri[sz]e|tell (?:me|us) about)"
+    r"|(?:how|what) (?:does|do|did|can) [^,;?]+? "
+    r"(?:describe|characteri[sz]e|say about|tell (?:me|us) about|know about)) "
+    r"(?:the |its )?(?P<first>.+?) (?:and|as well as) (?P<about>about )?"
+    r"(?:the|its|their) (?P<second>.+)$", re.I,
+)
 _MEDIUM_COORDINATION = re.compile(
     r"\b(?:what|which)\b.{0,56}\b(?:medium|materials?)\b.{0,24}\b(?:and|or|along with)\b"
     r".{0,28}\b(?:actual |exact )?(?:dimensions?|measurements?|size)\b"
@@ -525,6 +543,24 @@ def _facets(text, visual_marks_context, inherited_aspect, has_title):
         unsupported.discard("dimensions")
 
     if unsupported:
+        pair = _TOPIC_PAIR.fullmatch(text)
+        if pair and len(_references(text)) <= 1:
+            # Keep the shared artwork binding. A repeated "about" or a complete
+            # first noun phrase makes the second subject independent. Otherwise
+            # "the pigments in the strokes and the wallpaper" can govern both.
+            topics = [pair["first"]]
+            if pair["about"] or any(p.fullmatch(pair["first"]) for facet in unsupported
+                                    for p in _UNSUPPORTED_PATTERNS[facet]):
+                topics.append(pair["second"])
+            independent = set()
+            for topic in topics:
+                heads = {facet for facet, patterns in _SUPPORTED_PATTERNS.items()
+                         if any(p.match(topic) for p in patterns)}
+                if heads:
+                    independent.update(heads.intersection(_facets(topic, visual_marks_context, None, has_title)))
+            if independent:
+                return tuple(facet for facet in (*_SUPPORTED, *_UNSUPPORTED)
+                             if facet in independent or facet in unsupported)
         if "dimensions" in unsupported and _MEDIUM_COORDINATION.search(text):
             return ("medium", *(facet for facet in _UNSUPPORTED if facet in unsupported))
         return tuple(facet for facet in _UNSUPPORTED if facet in unsupported)

@@ -1,0 +1,84 @@
+{
+  "version": "compound-gaps-confirmation-v1",
+  "confirmation": [
+    {
+      "id": "C1",
+      "artwork_id": "aic-28560",
+      "language": "en",
+      "question": "What sort of energy might the picture suggest, according to the museum? Do we know whether Van Gogh himself felt that way?",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01",
+          null
+        ]
+      ],
+      "review": "The picture might suggest nervous energy; its appearance does not establish the painter’s own emotional state. Preserve uncertainty in body and memory."
+    },
+    {
+      "id": "C2",
+      "artwork_id": "aic-11723",
+      "language": "zh-CN",
+      "question": "能确认这张画的画布是哪家织厂生产的吗？另外，背景中哪些东西看上去带有花纹？",
+      "evidence_layouts": [
+        [
+          null,
+          "aic-11723-description-01"
+        ]
+      ],
+      "review": "No textile mill is established. Feathery strokes suggest a floral-patterned bedspread and wallpaper. Distinguish the canvas manufacturer from the objects depicted."
+    },
+    {
+      "id": "C3",
+      "artwork_id": "aic-28560",
+      "language": "ko",
+      "question": "미술관은 화면의 색채를 전반적으로 어떻게 묘사하나요? 물감의 정확한 배합 비율도 알 수 있나요?",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01",
+          null
+        ]
+      ],
+      "review": "The colors are bold. The source does not supply mixing ratios. Do not name a pigment, ratio or artist intention without evidence."
+    },
+    {
+      "id": "C4",
+      "artwork_id": "aic-11723",
+      "language": "es",
+      "question": "Según la descripción, ¿qué elementos del fondo parecen llevar un dibujo floral?",
+      "evidence_layouts": [
+        [
+          "aic-11723-description-01"
+        ]
+      ],
+      "review": "The description suggests a floral-patterned bedspread and wallpaper. Preserve the tentative interpretation and both objects."
+    },
+    {
+      "id": "C5",
+      "artwork_id": "aic-28560",
+      "language": "zh-CN",
+      "question": "看现有记录，当初给这幅画装裱用的外框是什么木材？",
+      "evidence_layouts": [
+        [
+          null
+        ]
+      ],
+      "review": "The original frame wood is unverified. The artwork’s own medium does not identify the material of the frame."
+    },
+    {
+      "id": "C6",
+      "artwork_id": "aic-11723",
+      "language": "en",
+      "question": "I’m making a note on technique. What surface did she paint on, and what medium does the label name?",
+      "evidence_layouts": [
+        [
+          "aic-11723-medium"
+        ],
+        [
+          "aic-11723-medium",
+          "aic-11723-medium"
+        ]
+      ],
+      "review": "Oil on canvas. The single medium record establishes both the support and the paint medium, whether grouped or split."
+    }
+  ]
+}

@@ -9,6 +9,7 @@ import unittest
 from agent.prompts import PROMPT_VERSION as V1_PROMPT_VERSION
 from agent.prompts.v2 import PROMPT_VERSION, build_messages
 from agent.runtime.errors import WorkflowError
+from agent.tools.evidence import EvidenceManifest
 from agent.testing.v2 import (
     FixtureProfile, ScriptedModel, example, make_run, memory_update, simulate_commit,
 )
@@ -40,6 +41,26 @@ class PromptV2Tests(unittest.TestCase):
             self.assertNotIn(value, messages[0]["content"])
         payload["translation"]["text"] = "Mutated after rendering"
         self.assertEqual(json.loads(messages[1]["content"]), original)
+
+    def test_source_wording_only_uses_accepted_excerpts_and_keeps_the_wire_payload(self):
+        manifest = EvidenceManifest.load()
+        van_gogh = dict(manifest.records["aic-28560-description-01"])
+        morisot = dict(manifest.records["aic-11723-description-01"])
+        for operation in ("assess", "final"):
+            for lang, wording in (("en", "might suggest"), ("es", "podría sugerir"),
+                                  ("zh-CN", "整幅画可能"), ("ko", "암시할 수도")):
+                payload = {"answer_language": lang, "evidence": [van_gogh]}
+                system, data = build_messages(operation, payload, {})
+                guide = system["content"].split("Wording guide for the accepted excerpts.", 1)[1]
+                self.assertIn(wording, guide)
+                self.assertNotIn("bedspread", guide)
+                self.assertEqual(json.loads(data["content"]), payload)
+
+        for sources in ([], [{**morisot, "excerpt": "A different release says something new."}]):
+            system, data = build_messages("assess", {"answer_language": "en", "evidence": sources}, {})
+            self.assertNotIn("Wording guide for the accepted excerpts.", system["content"])
+            self.assertNotIn("A different release", system["content"])
+            self.assertEqual(json.loads(data["content"])["evidence"], sources)
 
     def test_operations_include_shared_memory_and_terminal_only_final_policy(self):
         self.assertEqual(PROMPT_VERSION, "museum-prompts-v2")

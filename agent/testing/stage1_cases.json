@@ -1,0 +1,162 @@
+{
+  "version": "compound-gaps-v1",
+  "development": [
+    {
+      "id": "D1",
+      "artwork_id": "aic-11723",
+      "language": "es",
+      "question": "¿Qué material y soporte constan en la ficha, y cuántas horas tardó la artista en acabar la obra?",
+      "evidence_layouts": [
+        [
+          "aic-11723-medium",
+          null
+        ],
+        [
+          "aic-11723-medium",
+          "aic-11723-medium",
+          null
+        ]
+      ],
+      "review": "Oil on canvas; the duration is unverified. No duration estimate in prose or memory."
+    },
+    {
+      "id": "D2",
+      "artwork_id": "aic-28560",
+      "language": "en",
+      "question": "What is this painting made of, and how long did it take to paint?",
+      "evidence_layouts": [
+        [
+          "aic-28560-medium",
+          null
+        ]
+      ],
+      "review": "Oil on canvas; the time spent painting it is unverified. Do not conflate duration and catalog date."
+    },
+    {
+      "id": "D3",
+      "artwork_id": "aic-28560",
+      "language": "ko",
+      "question": "구도가 깊어 보이게 하는 선을 미술관은 어떻게 묘사하나요?",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01"
+        ]
+      ],
+      "review": "Describe the sharply receding lines; any inference about nervous energy stays tentative."
+    },
+    {
+      "id": "D4",
+      "artwork_id": "aic-11723",
+      "language": "en",
+      "question": "How are the lines that create depth described in this work?",
+      "evidence_layouts": [
+        [
+          null
+        ]
+      ],
+      "review": "The released text describes brushwork and textiles, not depth-producing lines. No speculation or collection-wide absence claim."
+    },
+    {
+      "id": "D5",
+      "artwork_id": "aic-28560",
+      "language": "zh-CN",
+      "question": "画面用了哪些具体的颜料？",
+      "evidence_layouts": [
+        [
+          null
+        ]
+      ],
+      "review": "Specific pigments are unverified; avoid substituting color or medium as a pigment identification."
+    },
+    {
+      "id": "D6",
+      "artwork_id": "aic-11723",
+      "language": "en",
+      "question": "Which flowers are depicted in the pattern? What is the painting made of?",
+      "evidence_layouts": [
+        [
+          null,
+          "aic-11723-medium"
+        ]
+      ],
+      "review": "No identified flower species; oil on canvas. Preserve both questions, citations and order."
+    }
+  ],
+  "fresh": [
+    {
+      "id": "F1",
+      "artwork_id": "aic-28560",
+      "language": "en",
+      "question": "Has a ground layer been identified? Separately, what medium does the label list?",
+      "evidence_layouts": [
+        [
+          null,
+          "aic-28560-medium"
+        ]
+      ],
+      "review": "Prepare/ground layer is unverified; the medium is oil on canvas. Do not identify a primer."
+    },
+    {
+      "id": "F2",
+      "artwork_id": "aic-11723",
+      "language": "es",
+      "question": "¿Cómo describe el museo las pinceladas del fondo? ¿Identifica la especie de las flores del estampado?",
+      "evidence_layouts": [
+        [
+          "aic-11723-description-01",
+          null
+        ]
+      ],
+      "review": "Soft, feathery strokes suggest a floral pattern. No flower species is established."
+    },
+    {
+      "id": "F3",
+      "artwork_id": "aic-28560",
+      "language": "zh-CN",
+      "question": "这幅作品的笔触有什么特点？馆方有没有指出用的是几号画笔？",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01",
+          null
+        ]
+      ],
+      "review": "Thick and broken brushwork; the brush size is unverified. Preserve the difference between visible marks and tools."
+    },
+    {
+      "id": "F4",
+      "artwork_id": "aic-11723",
+      "language": "ko",
+      "question": "이 작품에 사용한 물감의 제조사 이름을 확인해 줄 수 있나요?",
+      "evidence_layouts": [
+        [
+          null
+        ]
+      ],
+      "review": "The paint manufacturer is unverified. Do not invent a brand or infer one from the medium."
+    },
+    {
+      "id": "F5",
+      "artwork_id": "aic-11723",
+      "language": "en",
+      "question": "What kind of brushstrokes suggest the patterns behind the figure?",
+      "evidence_layouts": [
+        [
+          "aic-11723-description-01"
+        ]
+      ],
+      "review": "Soft, feathery brushstrokes suggest patterns on the bedspread and wallpaper."
+    },
+    {
+      "id": "F6",
+      "artwork_id": "aic-28560",
+      "language": "zh-CN",
+      "question": "展签怎样描述画中向远处延伸的线条？",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01"
+        ]
+      ],
+      "review": "The lines recede sharply. Do not claim a measured angle or a vanishing point."
+    }
+  ]
+}

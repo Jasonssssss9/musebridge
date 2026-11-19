@@ -152,6 +152,39 @@ class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([entry["chunk_id"] for entry in state["verified_evidence"]],
                          ["aic-28560-medium"])
 
+    async def test_unverified_detail_stays_an_open_question_in_committed_memory(self):
+        run = make_run(question="Which supplier made the blue pigment?")
+        plan = medium_plan(run)
+        plan["requests"][0]["intent"] = "Which supplier made the pigment?"
+        plan["queries"][0]["query"] = "Who supplied the blue pigment for this painting?"
+        answer = medium_answer(run, text="The museum has no record of a supplier.")
+        answer["results"][0].update(support="insufficient", citation_ids=[])
+        answer["memory_update"] = memory_update(summary="The museum has no record of a supplier.")
+        out, _, _ = await self.execute(run, plan, answer)
+        state, _ = simulate_commit(run, out.result_fields())
+        self.assertNotIn("no record", out.answer["text"])
+        self.assertIn(run["question"], out.answer["text"])
+        self.assertEqual(out.request_results[0]["text"], out.answer["text"])
+        self.assertIn("Open here", state["continuity_summary"])
+        self.assertIn(run["question"], state["continuity_summary"])
+        self.assertNotIn("no record", state["continuity_summary"])
+        self.assertEqual(state["verified_evidence"], [])
+
+    async def test_source_linked_handoff_retains_a_previous_conversation_preference(self):
+        first = make_run(question="Please keep the explanations short.")
+        direct = example("direct_appreciation")
+        direct["requests"][0].update(original_fragment=first["question"], intent="Use short explanations.")
+        direct["results"][0]["text"] = "I'll keep the explanations short."
+        direct["memory_update"] = memory_update(summary="The visitor prefers short explanations.")
+        previous, _, _ = await self.execute(first, direct)
+        prior, turn = simulate_commit(first, previous.result_fields())
+        run = make_run(question="What is it made of?", history=[turn], conversation_state=prior)
+        out, _, _ = await self.execute(run, medium_plan(run), medium_answer(run))
+        state, _ = simulate_commit(run, out.result_fields())
+        self.assertIn("prefers short explanations", state["continuity_summary"])
+        self.assertIn("aic-28560-medium", state["continuity_summary"])
+        self.assertIn("What is it made of?", state["continuity_summary"])
+
     async def test_direct_dialogue_never_retrieves_in_four_languages(self):
         for language, message in (("en", "Beautiful!"), ("es", "¡Qué bonito!"),
                                   ("zh-CN", "真好看！"), ("ko", "정말 아름다워요!")):

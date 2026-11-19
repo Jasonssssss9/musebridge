@@ -102,6 +102,76 @@ class RetrievalTests(unittest.TestCase):
                 expected[field] = source[field]
             self.assertEqual(hit, expected)
 
+    def test_lines_and_depicted_depth_use_only_the_scoped_perspective_excerpt(self):
+        questions = (
+            "How does the museum describe the lines that create depth in The Bedroom by Vincent van Gogh?",
+            "Which lines suggest a sense of depth in this painting?",
+            "How do these lines convey an impression of depth?",
+            "How does the museum describe the lines that make the composition appear deep in The Bedroom?",
+            "Which lines make the room look deeper?",
+            "How does the museum label describe the lines extending into the distance in The Bedroom?",
+            "Which way are the lines leading toward the back of the room?",
+            "How do the lines extend into the room behind the bed?",
+            "How do the lines in this work give the room a sense of depth?",
+        )
+        for question in questions:
+            with self.subTest(question=question):
+                self.assertEqual(chunk_ids(self.search(BEDROOM, question)), [BEDROOM_DESCRIPTION])
+                self.assertEqual(chunk_ids(self.search(TOILETTE, question)), [])
+
+        compound = "What material is the painting made of, and which lines suggest depth?"
+        self.assertCountEqual(chunk_ids(self.search(BEDROOM, compound)), [BEDROOM_MEDIUM, BEDROOM_DESCRIPTION])
+        self.assertEqual(chunk_ids(self.search(TOILETTE, compound)), [TOILETTE_MEDIUM])
+
+    def test_nominal_topics_keep_supported_evidence_without_inventing_support_for_the_other(self):
+        question = (
+            "What does the museum say about the brushstrokes in the background and the species "
+            "of the flowers in the pattern for Woman at Her Toilette by Berthe Morisot?"
+        )
+        response, trace = retrieve_with_trace(
+            self.dataset, query=question, artwork_id=TOILETTE, dataset_version=VERSION,
+        )
+        self.assertEqual(chunk_ids(response), [TOILETTE_DESCRIPTION])
+        self.assertEqual(
+            {r["facet"]: r["status"] for r in trace["requests"]},
+            {"brushwork_appearance": "supported", "flower_species": "insufficient_evidence"},
+        )
+        self.assertEqual(chunk_ids(self.search(BEDROOM, question)), [])
+        for question in (
+            "Tell me about the medium and the vanishing point of The Bedroom.",
+            "Tell me about the vanishing point and the medium of The Bedroom.",
+            "What does the label say about the species of the flowers and about the medium?",
+        ):
+            with self.subTest(question=question):
+                self.assertEqual(chunk_ids(self.search(BEDROOM, question)), [BEDROOM_MEDIUM])
+
+    def test_shared_or_subordinate_details_do_not_create_a_separate_descriptive_request(self):
+        for question in (
+            "What does the museum say about the chemical composition of the brushstrokes and "
+            "the species of the flowers in the pattern?",
+            "What does the label say about the pigments used in the brushstrokes and the wallpaper?",
+            "What does the label say about the brushwork made with a particular pigment and "
+            "the species of the flowers?",
+            "Could the brushstrokes in the background suggest a particular flower species?",
+        ):
+            with self.subTest(question=question):
+                self.assertEqual(chunk_ids(self.search(TOILETTE, question)), [])
+
+    def test_mentions_of_depth_do_not_establish_geometry_pigment_or_artist_intent(self):
+        for question in (
+            "What is the precise angle of the lines that create depth?",
+            "Where do the lines that create depth intersect?",
+            "What pigment was used for the lines that create depth?",
+            "Why did the artist choose the lines that create depth?",
+            "How thick is the paint layer that creates the sense of depth?",
+            "What is the angle of the lines that make the composition appear deep?",
+            "What is the exact angle of the lines extending into the distance?",
+            "Where is the vanishing point of the lines extending into the distance?",
+            "Which lines make the paint layer look deep?",
+        ):
+            with self.subTest(question=question):
+                self.assertEqual(chunk_ids(self.search(BEDROOM, question)), [])
+
     def test_released_dataset_has_two_artworks_two_sources_and_four_chunks(self):
         self.assertEqual(self.dataset.dataset_version, VERSION)
         self.assertEqual(set(self.dataset.artworks), {BEDROOM, TOILETTE})

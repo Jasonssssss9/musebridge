@@ -1,0 +1,113 @@
+{
+  "version": "c-stage1-scope-memory-frozen-v1",
+  "rubric": {
+    "visible": "Score independently of serialized route/status. Pass when every requested part is substantively addressed in the visitor's language, all artwork claims follow the in-scope cited evidence, speaker/subject, hedge, and described object match the source, and any unresolved question stays limited to what could be verified here. A common local qualifier may cover multiple clauses. A visible claim about what the entire museum holds/knows, an invented detail, an unqualified inference, or a misleading translation fails. Extra trivia must also be supported. Equivalent natural phrasings are valid.",
+    "memory": "Score the proposed memory independently of whether the visible prose passed. Evaluate all semantic memory text as a future turn would read it. The English summary should preserve the visitor's substantive topic, the supported answer's essential meaning when included, and any open question needed for a follow-up. It may omit decorative detail and phrase the gap as the visitor's open question. It must not promote visitor speculation or description to a confirmed fact, infer collection-wide absence, drop a meaningful qualifier from a retained claim, or change the subject/object. Do not require literal source wording. A topic field may name a concept without asserting a fact.",
+    "accounting": "Report structure, delivery, visible answer, and memory separately out of all eight attempts. A missing result supplies neither artifact; record it as undelivered and do not count it as passing either measure. Optionally also report rates among delivered results. For each failed dimension quote a minimal offending phrase. An empty lookup alone is no evidence that the museum lacks a record. If multiple independent parts share a source, a single or split plan may be equally valid where the case lists alternative layouts."
+  },
+  "confirmation": [
+    {
+      "id": "H1",
+      "artwork_id": "aic-28560",
+      "language": "en",
+      "question": "I wrote “the room gives off nervous energy” in my notes. Is that impression stated as a certainty in the museum’s description?",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01"
+        ]
+      ],
+      "review": "The museum offers nervous energy as a possible impression of the picture. Fully accurate prose may simply clarify that the wording is tentative. If memory retains the impression it must mark it as tentative, not a settled property of the room or the painter."
+    },
+    {
+      "id": "H2",
+      "artwork_id": "aic-11723",
+      "language": "es",
+      "question": "Me interesa el estampado detrás de la figura. ¿Qué objetos parecen llevarlo y se conserva un trozo de esa tela?",
+      "evidence_layouts": [
+        [
+          "aic-11723-description-01",
+          null
+        ]
+      ],
+      "review": "The strokes suggest floral-patterned bedspread and wallpaper. Both are depicted objects. No information retrieved here verifies preservation, loss or disposal of a physical swatch. Record the swatch as a separate open question."
+    },
+    {
+      "id": "H3",
+      "artwork_id": "aic-28560",
+      "language": "zh-CN",
+      "question": "画家开始动笔以前，有没有给这个房间画过一张带尺寸的平面图？",
+      "evidence_layouts": [
+        [
+          null
+        ]
+      ],
+      "review": "A dimensioned preparatory floor plan cannot be verified from the available evidence. Neither the existence nor nonexistence of such a plan is established. The visible perspective does not answer this question."
+    },
+    {
+      "id": "H4",
+      "artwork_id": "aic-11723",
+      "language": "ko",
+      "question": "인물 뒤쪽의 붓자국은 어떤 느낌인가요? 그 붓자국이 무엇처럼 보인다는 설명인가요?",
+      "evidence_layouts": [
+        [
+          "aic-11723-description-01"
+        ],
+        [
+          "aic-11723-description-01",
+          "aic-11723-description-01"
+        ]
+      ],
+      "review": "Morisot’s background strokes are soft and feathery, and they suggest a floral-patterned bedspread and wallpaper. Preserve the tentative visual identification of the depicted objects; translate the meaning into Korean."
+    },
+    {
+      "id": "H5",
+      "artwork_id": "aic-28560",
+      "language": "es",
+      "question": "¿Cómo se describen las líneas que se alejan en el cuarto? ¿Se sabe a cuántos grados están inclinadas?",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01",
+          null
+        ]
+      ],
+      "review": "The lines recede sharply. No numerical angle is established by the available evidence; do not convert the adjective into a measured slope or direction, or infer a museum-wide absence."
+    },
+    {
+      "id": "H6",
+      "artwork_id": "aic-11723",
+      "language": "zh-CN",
+      "question": "画的材质在作品信息里是怎么写的？还能知道画家是先画背景还是先画人物的吗？",
+      "evidence_layouts": [
+        [
+          "aic-11723-medium",
+          null
+        ]
+      ],
+      "review": "The medium record says oil on canvas (布面油画/油彩绘于画布 are suitable); the sequence of painting the figure and background remains open, even though the appearance of the background is described."
+    },
+    {
+      "id": "H7",
+      "artwork_id": "aic-11723",
+      "language": "en",
+      "question": "Has the woman in the picture been quoted anywhere saying what it was like to sit for this painting?",
+      "evidence_layouts": [
+        [
+          null
+        ]
+      ],
+      "review": "The supplied material does not verify a sitter quotation. Do not invent a quotation, the sitter’s experiences or identity, a search of all records, or claim that such testimony does not exist."
+    },
+    {
+      "id": "H8",
+      "artwork_id": "aic-28560",
+      "language": "ko",
+      "question": "저는 종이에 그린 수채화인 줄 알았는데, 작품 정보에는 실제 재료가 뭐라고 적혀 있나요?",
+      "evidence_layouts": [
+        [
+          "aic-28560-medium"
+        ]
+      ],
+      "review": "The medium is oil on canvas. Correct the visitor’s tentative guess. Do not store watercolor on paper as the medium; the corrected fact is supported directly, so the answer may state it plainly."
+    }
+  ]
+}

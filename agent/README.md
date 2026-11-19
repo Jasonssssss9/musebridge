@@ -109,6 +109,105 @@ combinations passed in this implementation. These are fixed scenarios, not a
 general visitor-question CLI or a measured LLM demonstration. The original
 `python -m agent.testing.demo` remains the v1 diagnostic path.
 
+### Evaluate compound questions and evidence gaps with Qwen
+
+From the repository root, use the tokenizer and model endpoint described in the
+[Ollama guide](../docs/ollama-provider.md). For example:
+
+```bash
+.venv/bin/python -B -m agent.testing.stage1 \
+  --suite development --base-url http://127.0.0.1:11434 \
+  --tokenizer ../local-model-assets/qwen35-tokenizer.json \
+  --report ../local-model-results/stage1-development.json
+```
+
+Use a new private report path for each run. Each case goes through the v2
+workflow and real HTTP retrieval. The runner checks the overall status, response
+language field, ordered support decisions and exact citation IDs. Read the
+replies against the cited excerpts, then read the proposed English memory:
+a missing fact must stay open and must not become a claim about the museum's
+entire collection. Raw model decisions and lookup results are in the report.
+The runner never issues a capability record.
+
+The first additional set (`--suite fresh`) is now regression material. The
+subsequent `--suite confirmation` set was reserved for the final comparison.
+All three sets are available for future regression runs. A new claim about
+unseen visitor questions requires separately authored examples.
+
+On the pinned `qwen3.5:9b-q4_K_M` configuration, the first stage produced
+the following results. Each cell shows baseline (`b973064`) → final candidate.
+Full review includes the visitor-facing answer and proposed conversation memory.
+
+| Test set | Status, language field and citations | Full source and language review |
+| --- | --- | --- |
+| Development (6) | 2 → 5 | 1 → 4 |
+| Additional regression (6) | 4 → 6 | 3 → 4 |
+| Independent confirmation (6) | 3 → 6 | 1 → 2 |
+
+Across the three sets, the retriever returned all required evidence for 14 of
+14 questions with supported facts, up from 9 of 14. Five of six independent
+confirmation answers passed the visitor-facing review. Three of those five
+still proposed a memory that overstated what the museum knows. These results
+describe one run of each set on this model configuration.
+
+### Check answer wording and conversation memory independently
+
+For the scope and uncertainty follow-up, repeat the three former suites as
+regressions. Run the first eight additional cases with the same command, replacing
+the suite arguments with
+`--suite confirmation --case-file agent/testing/stage1_scope_holdout.json`,
+and choose a fresh report path. These eight cases became regressions after
+their first independent run. For the six questions reserved until the last
+implementation freeze, use `agent/testing/stage1_scope_independent.json` with
+the same suite argument. Both files include source-based grading criteria.
+Review the actual reply and the memory proposed for the next turn separately. Count a run that returns neither as a failure in both
+columns. Report machine checks separately.
+
+For supported answers, the prompt can draw on short translations of the
+accepted English excerpts. The wording guide distinguishes physical features
+from the possible effect of a picture and from what marks suggest. A new or
+edited excerpt uses the ordinary evidence path until corresponding translations
+are available. The canonical source remains the citation for every claim.
+
+When a factual part is marked insufficient, the answer identifies that part and
+says what the guide could verify in this turn. It quotes the visitor's own
+fragment when suitable. Across reply languages it refers to the part by
+position. The model still writes the supported and conversational parts.
+
+For a turn made up entirely of clear factual requests, the workflow records the
+question and its support decision after validating the answer. Answered questions
+carry their source IDs; the exact wording, including any qualifier, stays in the
+verified evidence or catalog. An open question describes what was unverified in
+that turn. The handoff keeps a previous complete note when it fits the existing
+memory budget. Other kinds of turns and pinned translations continue to use the
+model's semantic memory. The simulator can apply this update to the next
+request without starting the public API or a persistent database.
+
+A Qwen run on the frozen implementation produced the following results. The
+review used the same source-based rubric for each case and counted a missing
+reply against both scores.
+
+| Set | Replies delivered | Visitor-facing answer passed | Next-turn memory passed |
+| --- | ---: | ---: | ---: |
+| Previous implementation, original 18 | 17/18 | 14/18 | 13/18 |
+| Current implementation, same 18 | 18/18 | 18/18 | 18/18 |
+| First eight new questions, before reuse | 7/8 | 5/8 | 6/8 |
+| Same eight, used for regression | 8/8 | 7/8 | 7/8 |
+| Final six, held out until the last freeze | 5/6 | 4/6 | 5/6 |
+
+One regression still combined a question about a depicted pattern with a
+question about a surviving fabric sample. In the last six cases, the planner
+changed punctuation in a Spanish quotation of the visitor's words and failed
+literal-fragment validation. An English compound query missed the supported
+description of thick marks. That answer omitted an available fact, while its
+memory correctly left the question open for that turn.
+
+Two separate two-turn conversations used actual first-turn replies and
+simulated state commits. Both first turns delivered locally scoped answers and
+memory. One missed available evidence. Both follow-ups failed plan validation
+before an answer or new memory was produced. This run does not establish
+multi-turn readiness.
+
 ## 3. Package map
 
 | Location | Responsibility |

@@ -1,0 +1,92 @@
+{
+  "version": "c-stage1-scope-memory-second-frozen-v1",
+  "rubric": {
+    "visible": "Score independently of serialized route/status. Pass when every requested part is substantively addressed in the visitor's language, all artwork claims follow the in-scope cited evidence, speaker/subject, hedge, and described object match the source, and any unresolved question stays limited to what could be verified here. A common local qualifier may cover multiple clauses. A visible claim about what the entire museum holds/knows, an invented detail, an unqualified inference, or a misleading translation fails. Extra trivia must also be supported. Equivalent natural phrasings are valid.",
+    "memory": "Score the proposed memory independently of whether the visible prose passed. Evaluate all semantic memory text as a future turn would read it. The English summary should preserve the visitor's substantive topic, the supported answer's essential meaning when included, and any open question needed for a follow-up. It may omit decorative detail and phrase the gap as the visitor's open question. It must not promote visitor speculation or description to a confirmed fact, infer collection-wide absence, drop a meaningful qualifier from a retained claim, or change the subject/object. Do not require literal source wording. A topic field may name a concept without asserting a fact.",
+    "accounting": "Report structure, delivery, visible answer, and memory separately out of all eight attempts. A missing result supplies neither artifact; record it as undelivered and do not count it as passing either measure. Optionally also report rates among delivered results. For each failed dimension quote a minimal offending phrase. An empty lookup alone is no evidence that the museum lacks a record. If multiple independent parts share a source, a single or split plan may be equally valid where the case lists alternative layouts."
+  },
+  "confirmation": [
+    {
+      "id": "S1",
+      "artwork_id": "aic-28560",
+      "language": "es",
+      "question": "Quiero distinguir lo que se ve de lo que se interpreta. ¿Cómo son los colores y qué sensación podría sugerir la imagen?",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01"
+        ],
+        [
+          "aic-28560-description-01",
+          "aic-28560-description-01"
+        ]
+      ],
+      "review": "The colors are bold; the picture might suggest nervous energy. A visual observation is direct, the interpretation tentative. Do not attribute the mood to the painter or to the spectator as a certainty."
+    },
+    {
+      "id": "S2",
+      "artwork_id": "aic-11723",
+      "language": "es",
+      "question": "¿Puedo saber si Morisot copió el papel pintado de una casa en particular, y de qué casa sería?",
+      "evidence_layouts": [
+        [
+          null
+        ],
+        [
+          null,
+          null
+        ]
+      ],
+      "review": "The source of the wallpaper design and any particular house remain unverified. A description of its visual appearance does not identify its origin, and does not rule out copying it."
+    },
+    {
+      "id": "S3",
+      "artwork_id": "aic-28560",
+      "language": "en",
+      "question": "How thick do the painted marks look in the description, and do we have an actual thickness measurement?",
+      "evidence_layouts": [
+        [
+          "aic-28560-description-01",
+          null
+        ]
+      ],
+      "review": "The museum describes thick brushwork. The physical thickness is unverified here. The adjective does not entail a measurement. The question asks for both."
+    },
+    {
+      "id": "S4",
+      "artwork_id": "aic-11723",
+      "language": "zh-CN",
+      "question": "我想把画布和画里的布区分开。作品本身画在什么上面？画中床罩的纤维成分也能确认吗？",
+      "evidence_layouts": [
+        [
+          "aic-11723-medium",
+          null
+        ]
+      ],
+      "review": "The painting is on canvas. No fiber of the depicted bedspread is established. Do not transfer the support material to the subject depicted; carry the textile composition as unanswered."
+    },
+    {
+      "id": "S5",
+      "artwork_id": "aic-28560",
+      "language": "ko",
+      "question": "화가가 이 장면을 사진을 보면서 그렸는지 확인할 수 있나요?",
+      "evidence_layouts": [
+        [
+          null
+        ]
+      ],
+      "review": "No available evidence establishes use or nonuse of a photographic reference. Do not invent a photograph, its absence, or an alternative process."
+    },
+    {
+      "id": "S6",
+      "artwork_id": "aic-11723",
+      "language": "en",
+      "question": "The marks behind the woman look woolly to me. What words does the museum use for the brushwork there?",
+      "evidence_layouts": [
+        [
+          "aic-11723-description-01"
+        ]
+      ],
+      "review": "Soft, feathery brushstrokes. “Woolly” is the visitor’s own observation, not a verified museum description or a physical fiber; no need to repeat it. If the textiles are mentioned their identification should stay tentative."
+    }
+  ]
+}

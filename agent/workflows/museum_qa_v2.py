@@ -23,6 +23,7 @@ from agent.runtime.context_v2 import (
     build_answer_input, build_plan_input, fit_history, validate_run_context,
 )
 from agent.runtime.errors import WorkflowError
+from agent.runtime.grounding import grounded_memory, render_evidence_gaps
 from agent.runtime.validation import ContractViolation, TRACE_ID
 from agent.runtime.validation_v2 import (
     ContractValidatorV2, assemble_answer, resolve_language, resolve_translation,
@@ -318,6 +319,10 @@ class MuseumQAWorkflowV2:
                 state["catalog"], self.validator,
             )
             budget.check_active()
+            render_evidence_gaps(state["plan"], answer, results)
+            self.validator.validate("AgentAnswer", answer)
+            memory = grounded_memory(run, state["plan"], results, memory)
+            self.validator.validate("MemoryUpdate", memory)
             return {"answer": answer, "request_results": results, "memory_update": memory}
 
         graph = StateGraph(State)

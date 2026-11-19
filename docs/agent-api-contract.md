@@ -293,7 +293,9 @@ The response envelope still has a 2,000-code-point total and a verified model ou
 
 ### 4.3 MemoryUpdate and pending operations
 
-`MemoryUpdate` has exactly active_topic, continuity_summary and pending_update. Only the terminal model operation proposes it; refine decisions do not. No extra summarizer call is required.
+`MemoryUpdate` has exactly active_topic, continuity_summary and pending_update. The terminal model operation supplies a valid proposal. Refinement produces no update. For a reply made up of clear factual requests, the Agent derives the outgoing topic and summary from those requests and their validated support decisions. It records source IDs for answered parts and marks each gap as open in that turn. The exact English source is available from the scoped evidence or catalog. Pinned translations and other conversations use the proposed semantic fields. Both paths retain the validated pending action and use the same wire schema.
+
+For an `insufficient` factual part, the Agent renders a local verification limit in the resolved answer language. It can identify the part by its literal visitor fragment or its position in the message. This wording applies to this turn only. It leaves the accepted support decision, empty citation list, other parts and pinned translations intact.
 
 | Pending operation | Effect |
 | --- | --- |
