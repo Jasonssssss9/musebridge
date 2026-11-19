@@ -1,0 +1,301 @@
+{
+  "version": "planner-comparison-v1",
+  "cases": [
+    {
+      "id": "P01",
+      "language": "en",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "I'm making a caption about the way the paint was laid down. How does the museum describe the marks?",
+          "parts": [
+            {
+              "intent": "Describe the appearance of the brushwork in The Bedroom.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "How does the museum describe the brushwork in The Bedroom by Vincent van Gogh?"
+            }
+          ],
+          "review": "Give the visitor the physical description, thick and broken. An inference about a tool or about Van Gogh's feelings would require different evidence."
+        },
+        {
+          "question": "Which tool left those marks? And which words about their appearance can I safely keep in my caption?",
+          "parts": [
+            {
+              "intent": "Identify the actual tool that produced the previously discussed marks.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Which tool did Vincent van Gogh use to make the brushstrokes in The Bedroom?"
+            },
+            {
+              "intent": "Recover the supported description of the appearance of those marks.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "What does the museum say the brushstrokes look like in The Bedroom by Vincent van Gogh?"
+            }
+          ],
+          "review": "Connect 'those marks' to the prior turn. Keep the tool open in this context and retain thick and broken for appearance. Do not silently turn the descriptive term brushwork into evidence for a particular implement."
+        }
+      ]
+    },
+    {
+      "id": "P02",
+      "language": "en",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "I'm sketching this scene. What two things do the marks behind the woman bring to mind, according to the label?",
+          "parts": [
+            {
+              "intent": "Identify the two background objects suggested by Morisot's marks.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "Which background objects do the brushstrokes suggest in Woman at Her Toilette by Berthe Morisot?"
+            }
+          ],
+          "review": "The marks suggest a floral-patterned bedspread and wallpaper. Preserve the visual suggestion and name both objects."
+        },
+        {
+          "question": "Which of those two has the larger floral motif? I'd like to draw them to scale.",
+          "parts": [
+            {
+              "intent": "Compare the size of the flower motifs on the suggested bedspread and wallpaper.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Which floral pattern is larger, the one on the bedspread or the one on the wallpaper in Woman at Her Toilette by Berthe Morisot?"
+            }
+          ],
+          "review": "Resolve 'those two' to the suggested bedspread and wallpaper. The excerpt gives no comparative scale; keep the comparison open, without inferring equal size."
+        }
+      ]
+    },
+    {
+      "id": "P03",
+      "language": "es",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "A mí este cuarto me da calma. Solo quería compartirlo.",
+          "parts": [
+            {
+              "intent": "Acknowledge the visitor's personal feeling of calm.",
+              "support": "not_applicable",
+              "citations": [],
+              "manual_query": null
+            }
+          ],
+          "review": "Respond conversationally in Spanish. Calm is the visitor's reaction. A simple acknowledgement needs no artwork citation and should not introduce new facts."
+        },
+        {
+          "question": "¿La ficha lo interpreta como yo o sugiere otra sensación?",
+          "parts": [
+            {
+              "intent": "Compare the visitor's earlier feeling of calm to the possible impression described in The Bedroom's museum text.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "What impression does the museum say The Bedroom by Vincent van Gogh might suggest?"
+            }
+          ],
+          "review": "Resolve the comparison to the visitor's calm. The picture might suggest a nervous energy in the museum's reading. Attribute each view to the right party and retain the hedge; neither view diagnoses the painter."
+        }
+      ]
+    },
+    {
+      "id": "P04",
+      "language": "es",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "¿Qué motivo parecen formar las pinceladas en la pared? ¿Se sabe si Morisot pintó cada pétalo por separado?",
+          "parts": [
+            {
+              "intent": "Describe the visual motif suggested on the wallpaper in the background.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "What pattern do the brushstrokes suggest on the wallpaper in Woman at Her Toilette by Berthe Morisot?"
+            },
+            {
+              "intent": "Determine whether Morisot painted each petal separately.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Did Berthe Morisot paint the petals of the wallpaper pattern individually in Woman at Her Toilette?"
+            }
+          ],
+          "review": "A floral motif is suggested. The excerpt establishes neither individual painted petals nor the process used for each one."
+        },
+        {
+          "question": "Tengo sitio para una sola línea. ¿Cómo describirías esas pinceladas sin adivinar cómo pintó los pétalos?",
+          "parts": [
+            {
+              "intent": "Give a one-line account of the appearance of those background brushstrokes.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "How does the museum describe the brushstrokes in the background of Woman at Her Toilette by Berthe Morisot?"
+            }
+          ],
+          "review": "A short Spanish line describes the strokes as soft and feathery. Treat the earlier production-method question as open if it is mentioned."
+        }
+      ]
+    },
+    {
+      "id": "P05",
+      "language": "zh-CN",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "我想给朋友形容这间卧室画里的用色。馆方是怎么说的？",
+          "parts": [
+            {
+              "intent": "Describe the artwork's colors in the museum's terms.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "How does the museum describe the colors in The Bedroom by Vincent van Gogh?"
+            }
+          ],
+          "review": "Give a Chinese description conveying bold colors. Avoid expanding it into named pigments."
+        },
+        {
+          "question": "凭刚才那个描述，能确定画家用的是哪种蓝色颜料吗？另外，他是画在什么上面的？",
+          "parts": [
+            {
+              "intent": "Determine whether the earlier color description identifies a specific blue pigment.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Which specific blue pigment did Vincent van Gogh use in The Bedroom?"
+            },
+            {
+              "intent": "Identify the support on which the artwork was painted.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-medium"
+              ],
+              "manual_query": "What surface did Vincent van Gogh paint The Bedroom on?"
+            }
+          ],
+          "review": "The blue pigment remains open; the earlier appearance description cannot identify it. Canvas is the documented support. Keep the two decisions distinct."
+        }
+      ]
+    },
+    {
+      "id": "P06",
+      "language": "zh-CN",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "我原以为这是一幅壁画。先不说画里有什么，这件作品本身用的是什么材料？",
+          "parts": [
+            {
+              "intent": "Identify the medium of Woman at Her Toilette, independent of the visitor's mural guess.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-medium"
+              ],
+              "manual_query": "What material is Woman at Her Toilette by Berthe Morisot made of?"
+            }
+          ],
+          "review": "Answer oil on canvas in Chinese. The visitor's mural conjecture should not appear as a verified fact."
+        },
+        {
+          "question": "那块画布的经纬密度也能查到吗？",
+          "parts": [
+            {
+              "intent": "Determine the weave density of the canvas discussed in the previous turn.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "What is the thread count of the canvas used for Woman at Her Toilette by Berthe Morisot?"
+            }
+          ],
+          "review": "Current evidence names canvas but gives no thread count or density; avoid inferring either, and keep the specific question open."
+        }
+      ]
+    },
+    {
+      "id": "P07",
+      "language": "ko",
+      "artwork_id": "aic-28560",
+      "turns": [
+        {
+          "question": "이 방 안의 선들은 어느 쪽으로 뻗어 보이나요? 작품 설명의 표현이 궁금해요.",
+          "parts": [
+            {
+              "intent": "Describe the direction of the lines in the room as characterized in the source.",
+              "support": "supported",
+              "citations": [
+                "aic-28560-description-01"
+              ],
+              "manual_query": "How does the museum describe the receding lines in The Bedroom by Vincent van Gogh?"
+            }
+          ],
+          "review": "Explain in Korean that the lines recede sharply into depth. An untranslated English quote alone will not answer this visitor."
+        },
+        {
+          "question": "그 선을 그릴 때 자를 댔는지도 알 수 있을까요?",
+          "parts": [
+            {
+              "intent": "Determine whether a ruler was used to make the previously discussed lines.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Is there evidence that Vincent van Gogh used a ruler to draw the lines in The Bedroom?"
+            }
+          ],
+          "review": "The direction of the lines cannot establish the artist's tools. Leave ruler use open here without asserting that he drew them freehand."
+        }
+      ]
+    },
+    {
+      "id": "P08",
+      "language": "ko",
+      "artwork_id": "aic-11723",
+      "turns": [
+        {
+          "question": "도록에 ‘feathery’라는 말이 있던데, 화면 어디의 붓질을 가리키는 말인가요?",
+          "parts": [
+            {
+              "intent": "Locate the brushwork described as feathery in Morisot's composition.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "Where are the soft, feathery brushstrokes described in Woman at Her Toilette by Berthe Morisot?"
+            }
+          ],
+          "review": "Locate the strokes in the background. The quoted English term refers to their appearance; answer in Korean, without interpreting it as a material."
+        },
+        {
+          "question": "그 붓질은 무엇을 떠올리게 하나요? 화가가 실제로 깃털을 도구로 쓴 건지도 궁금해요.",
+          "parts": [
+            {
+              "intent": "Identify what the previously discussed background strokes suggest.",
+              "support": "supported",
+              "citations": [
+                "aic-11723-description-01"
+              ],
+              "manual_query": "Which background objects do Morisot's brushstrokes suggest in Woman at Her Toilette?"
+            },
+            {
+              "intent": "Determine whether Morisot actually used a feather as a painting tool.",
+              "support": "insufficient",
+              "citations": [],
+              "manual_query": "Did Berthe Morisot use a real feather as a tool to paint the background of Woman at Her Toilette?"
+            }
+          ],
+          "review": "The strokes suggest floral-patterned bedspread and wallpaper. The physical use of a feather is unverified. Preserve the distinction between appearance and tool in the reply and handoff."
+        }
+      ]
+    }
+  ]
+}

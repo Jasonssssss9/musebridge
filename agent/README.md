@@ -208,6 +208,9 @@ memory. One missed available evidence. Both follow-ups failed plan validation
 before an answer or new memory was produced. This run does not establish
 multi-turn readiness.
 
+The [two-turn planner baseline](../docs/planner-baseline.md) compares Qwen’s
+plans with independent English retrieval controls across eight visitor dialogues.
+
 ## 3. Package map
 
 | Location | Responsibility |
