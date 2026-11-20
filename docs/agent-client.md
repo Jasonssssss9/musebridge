@@ -1,8 +1,9 @@
 # Go private Agent client
 
-Status: **M1 integration step 1 is implemented: a reusable Go POST client with
-controlled HTTP/TLS boundary tests. A live Go-originated FastAPI/retrieval test
-is still pending. Public application routing remains on the fixture path.**
+Status: **M1 integration step 1 implements a reusable Go POST client with
+controlled HTTP/TLS boundary tests. The step-3 Go-originated FastAPI/retrieval
+check also passes with scripted model decisions. Public application routing
+remains on the fixture path.**
 
 `api/internal/agentclient` implements the POST boundary defined by the
 [private Agent contract](agent-api-contract.md#3-private-agent-transport). It
@@ -116,7 +117,7 @@ tokenizer asset is used. These tests do not close the live M1 handoff.
 
 The [step-2 test services](m1-test-services.md) supply a standalone Python launcher
 with scripted model decisions and real FastAPI/workflow/retrieval services.
-The next Go integration step will exercise both artwork scopes and the documented
-foreign-evidence injection.
-That later check must record actual retrieval calls, the rejection boundary,
-trace IDs and conversation commit/isolation outcomes before M1 can close.
+The [step-3 Go integration check](m1-go-integration.md) exercises both artwork
+scopes and the documented foreign-evidence injection. It records actual lookup
+IDs, the rejection boundary, Go trace IDs and conversation commit/isolation
+outcomes. Public application wiring and bounded GET reconciliation remain M2 work.

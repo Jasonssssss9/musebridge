@@ -2,8 +2,8 @@
 
 Status: **B M1 integration step 2 supplies a standalone Python service harness.
 It runs the real private FastAPI service, v2 workflow and retrieval HTTP service
-with a scripted model at the provider boundary. Go-originated acceptance and
-the final M1 trace table are still pending.**
+with a scripted model at the provider boundary. The separate step-3 Go-originated
+acceptance check now passes and prints the M1 trace table.**
 
 The [Go POST client](agent-client.md) is implemented separately. This harness
 provides temporary endpoints for its next integration step. It does not enable
@@ -102,8 +102,9 @@ environment are corrupted; use a separate normal environment for happy cases.
 `EvidenceManifest.validate_candidates` rejects the foreign chunk ID for the
 active artwork. The workflow never reaches assessment or produces a successful
 answer. The private Agent records a failed run and maps the error normally.
-No Go conversation store participates in this step; atomic turn/revision/cache
-assertions belong to the later Go integration check.
+The standalone Python checks do not include a Go conversation store. The separate
+[Go integration check](m1-go-integration.md) verifies atomic turn/revision/cache
+behavior with this same service launcher.
 
 The owner-only state directory contains `audit.jsonl` and, while ready,
 `connection.json`. Files use mode 0600; the directory uses 0700. Each audit entry
@@ -118,6 +119,6 @@ launcher has exited and its report is no longer needed, remove its exact
 temporary state directory. Runtime artifacts must not be copied into the repo.
 
 Implementation: [test-only launcher](../agent/testing/m1_services.py),
-[checks](../agent/tests/test_m1_services.py). Next: originate both normal cases
-and the rejection case in Go using the reusable client and actual conversation
-snapshots, then provide the repeatable Go command and trace/evidence table.
+[checks](../agent/tests/test_m1_services.py). The [Go-originated check](m1-go-integration.md)
+uses the reusable client and actual conversation snapshots, with its own
+repeatable command and trace/evidence table.

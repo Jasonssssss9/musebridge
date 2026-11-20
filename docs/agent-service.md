@@ -2,7 +2,9 @@
 
 Status: **B phase 3 is implemented. Service/lifecycle tests and the real HTTP
 chain through C's v2 workflow and retrieval pass with controlled model decisions.
-Production inference and Go-to-Agent integration remain pending.**
+Production inference and public application integration remain pending. The
+separate [Go-originated M1 check](m1-go-integration.md) now also passes with
+scripted model decisions.**
 
 This implements the private `agent-run-v2` boundary in the
 [interface contract](agent-api-contract.md#3-private-agent-transport). The public

@@ -17,14 +17,15 @@ The [internal Go state store](../docs/agent-state-store.md) supplies revision-aw
 admission and atomic saving. An [opt-in Ollama provider](../docs/ollama-provider.md)
 now implements real transport and token budgets, with readiness still blocked by
 real workflow acceptance failures. The [Go POST client](../docs/agent-client.md)
-is implemented with controlled HTTP tests; its live Python integration and public
-v2 activation remain pending. C returns a validated result and a proposed
+is implemented with controlled HTTP tests. The [Go-originated M1 check](../docs/m1-go-integration.md)
+also passes against real Python services with scripted model decisions; public
+v2 activation remains pending. C returns a validated result and a proposed
 memory update against the input revision.
 
 The [M1 test-service launcher](../docs/m1-test-services.md) can start the real
 private Agent/workflow/retrieval stack for another local client, with only model
-decisions and sizing scripted. Its Python HTTP checks do not close the pending
-Go-originated acceptance item.
+decisions and sizing scripted. Its Python HTTP checks verify the harness itself;
+the separate Go-originated acceptance check reuses these same service endpoints.
 
 ## 1. Implemented workflow
 
