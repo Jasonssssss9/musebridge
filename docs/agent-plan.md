@@ -73,15 +73,15 @@ sequence. Existing contracts, store, transport and service components are reused
 | Step | Work | Current checkpoint / completion condition |
 | --- | --- | --- |
 | M2-B1 | Agent GET status client | Implemented: authenticated single queries; processing/completed/failed handling; original-request validation; safe retained-failure mapping; unit and real Python lookup checks |
-| M2-B2 | Submission orchestration and reconciliation | Planned: connect admission, POST/GET and atomic commit/failure under the original attempt budget; preserve accepted work through browser disconnects |
+| M2-B2 | Submission orchestration and reconciliation | Implemented internally: admission, one POST, original-run GET recovery, canonical errors and guarded commit/failure; cancellation, child/parent deadlines and live scripted-service recovery checked; [guide](agent-submission.md) |
 | M2-B3 | Public v2 routes and integration configuration | Planned: create/history/submit routes, explicit Agent configuration and aligned budgets; give A a documented controlled integration setup |
 | M2-B4 | Public-path reliability checks | Planned: duplicate/stale submissions, lost responses, refresh, late results, capacity/timeouts, scope and four-language state behavior |
 | M2-B5 | Real-model integration and runtime evidence | Planned: coordinate fixed Qwen, A/C integration, model identity, call counts, readiness and latency records |
 | M2-B6 | Candidate acceptance and delivery | Planned: freeze the candidate, run regressions/shared acceptance and publish versioned outcomes, configuration and known limitations |
 
-M2-B1 does not perform automatic polling or attach these capabilities to public
-routes. M2-B2 owns recovery decisions and commit; A and C can prepare independent
-visitor cases and behavior fixes in parallel with B's application work.
+M2-B1 provides individual queries; M2-B2 now owns bounded recovery and commit.
+M2-B3 will attach them to public routes. A and C can prepare independent visitor
+cases and behavior fixes in parallel with B's application work.
 
 | Role | Deliverable |
 | --- | --- |

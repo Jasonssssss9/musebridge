@@ -16,7 +16,10 @@ type Error struct {
 	// RunState is "failed" only for a validated retained failed GET snapshot.
 	// Empty means no terminal run state was established by this error.
 	RunState string
-	cause    error
+	// RunMissing identifies a valid agent_run_not_found envelope. It never
+	// authorizes recreating the run and is not a retained terminal state.
+	RunMissing bool
+	cause      error
 }
 
 func (e *Error) Error() string { return e.Failure.Error.Message }

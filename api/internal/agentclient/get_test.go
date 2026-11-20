@@ -188,8 +188,39 @@ func TestGetLookupErrorsUseEnvelopeMappingRatherThanTerminalState(t *testing.T) 
 			})
 			got, err := client.Get(context.Background(), run, "get-lookup-error")
 			failure := assertFailure(t, got, err, 503, "agent_unavailable", input.reconcile)
-			if failure.RunState != "" || failure.Failure.Error.Retryable != input.retryable {
+			if failure.RunState != "" || failure.Failure.Error.Retryable != input.retryable ||
+				failure.RunMissing != (input.code == "agent_run_not_found") {
 				t.Fatal("a lookup error was reported as a retained terminal run")
+			}
+		})
+	}
+}
+
+func TestGetDoesNotTrustMalformedMissingRunEnvelope(t *testing.T) {
+	for _, kind := range []string{"retryability", "trace", "run", "status"} {
+		t.Run(kind, func(t *testing.T) {
+			run, _ := inputs(t)
+			client := newClient(t, func(w http.ResponseWriter, r *http.Request) {
+				envelope := ac.ErrorEnvelope{RequestID: "missing-invalid", RunID: &run.RunID,
+					Error: ac.AgentError{Code: "agent_run_not_found", Message: "PRIVATE", Retryable: true, Phase: "admission"}}
+				status := 404
+				switch kind {
+				case "retryability":
+					envelope.Error.Retryable = false
+				case "trace":
+					envelope.RequestID = "other"
+				case "run":
+					other := ac.UUID("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")
+					envelope.RunID = &other
+				case "status":
+					status = 503
+				}
+				reply(t, w, r, status, envelope)
+			})
+			got, err := client.Get(context.Background(), run, "missing-invalid")
+			failure := assertFailure(t, got, err, 502, "agent_invalid_response", false)
+			if failure.RunMissing {
+				t.Fatal("malformed metadata established a missing run")
 			}
 		})
 	}

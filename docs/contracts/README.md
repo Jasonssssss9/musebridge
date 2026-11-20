@@ -103,6 +103,9 @@ No competing workflow, conversation store or semantic answer table is created.
   200, using the same embedded policy and validating retryability. It returns
   an error for malformed or contradictory retained failures and never forwards
   diagnostic prose. This is a Go client helper, not a new wire contract.
+- Go's `SafeAgentFailure` canonicalizes public Agent failure tuples from the
+  shared policy for submission orchestration, discarding diagnostic prose and
+  rejecting invalid status/code/retryability/reconciliation combinations.
 
 These checks cannot prove fresh-tool provenance, semantic entailment, language
 detection, translation fidelity, real model identity, successful persistence or

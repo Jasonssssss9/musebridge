@@ -94,3 +94,21 @@ func MapRunFailure(upstream AgentError) (*Failure, error) {
 	}
 	return MapAgentFailure(p.PrivateStatus, upstream), nil
 }
+
+// SafeAgentFailure canonicalizes an application-facing Agent failure using the
+// shared policy. This lets the submission service ignore diagnostic prose from
+// an injected transport and reject impossible public status/code combinations.
+func SafeAgentFailure(input Failure) (*Failure, error) {
+	for _, p := range errorPolicies {
+		if input.Status != p.PublicStatus || input.Error.Code != p.Code || input.Error.Retryable != p.Retryable {
+			continue
+		}
+		if input.Reconcile && (p.Code != "agent_unavailable" || !p.Retryable) {
+			return nil, invalid("PublicError")
+		}
+		result := publicFailure(p.PublicStatus, p.Code, p.Retryable)
+		result.Reconcile = input.Reconcile
+		return result, nil
+	}
+	return nil, invalid("PublicError")
+}

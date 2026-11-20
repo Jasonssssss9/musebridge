@@ -205,7 +205,10 @@ func (c *Client) decodeFailure(status int, data []byte, runID ac.UUID, requestID
 		(envelope.RunID != nil && *envelope.RunID != runID) {
 		return invalidResponse()
 	}
-	return &Error{Failure: *ac.MapAgentFailure(status, envelope.Error)}
+	failure := ac.MapAgentFailure(status, envelope.Error)
+	return &Error{Failure: *failure, RunMissing: status == http.StatusNotFound &&
+		envelope.Error.Code == "agent_run_not_found" && failure.Status == http.StatusServiceUnavailable &&
+		failure.Error.Code == "agent_unavailable" && failure.Error.Retryable}
 }
 
 func visibleASCII(value string, maximum int) bool {

@@ -2,8 +2,9 @@
 
 Status: **M1 POST transport and M2-B1 single GET status queries are implemented,
 with controlled HTTP/TLS tests and real Python completed/failed lookup checks.
-Public application routing remains on the fixture path. Automatic reconciliation
-and accepted-work orchestration remain M2-B2 work.**
+Public application routing remains on the fixture path. The separate
+[M2-B2 submission service](agent-submission.md) now owns automatic reconciliation
+and accepted-work orchestration.**
 
 `api/internal/agentclient` implements the POST and GET boundaries defined by the
 [private Agent contract](agent-api-contract.md#3-private-agent-transport). It
@@ -33,11 +34,11 @@ defer cancel()
 snapshot, err := client.Run(ctx, attempt.Request, requestID)
 ```
 
-The surrounding application owns accepted-work cancellation, the original
-attempt context and the decision to commit or fail the attempt. It must retain
-the same snapshot and run ID for recovery. This package neither creates a
-conversation nor updates its state. Later M2 wiring will connect it to the
-[existing atomic state store](agent-state-store.md).
+The [submission service](agent-submission.md) owns accepted-work cancellation,
+the original attempt budget and the decision to commit or fail the attempt. It
+retains the same snapshot and run ID for recovery and uses the
+[atomic state store](agent-state-store.md). This client package neither creates
+a conversation nor updates its state. Public routing remains M2-B3 work.
 
 ## Query an existing run: M2-B1
 
@@ -79,7 +80,7 @@ if err != nil {
 }
 switch snapshot.State {
 case "processing":
-    // No result to commit. The future reconciler owns waiting and its budget.
+    // No result to commit. The submission service owns waiting and its budget.
 case "completed":
     // The original request has been checked; the store still guards commit.
 }
@@ -90,11 +91,13 @@ The original Go attempt deadline continues to bound encoding, I/O and validation
 an already exhausted context prevents network access. Context failure takes
 priority over a simultaneously observed result or retained failure.
 
-A 404 `agent_run_not_found` is mapped to the documented safe unavailable error;
-it never starts the model or creates a replacement run. GET connection loss
+A valid 404 `agent_run_not_found` is mapped to the documented safe unavailable
+error and marks `Error.RunMissing`, separately from `RunState`. Malformed
+envelopes or invalid status/policy pairs never set this flag. It never starts
+the model or creates a replacement run. GET connection loss
 leaves the run outcome unknown. This method adds no application-level retries,
-polling, POST resubmission, run ID generation or conversation updates. M2-B2 must
-decide whether another query fits within the original attempt budget.
+polling, POST resubmission, run ID generation or conversation updates. M2-B2
+decides whether another query fits within the original attempt budget.
 
 ## Request and response boundary
 
@@ -154,7 +157,7 @@ Context identity is preserved for `errors.Is` with `context.Canceled` or
 observed outcomes. Errors retain no raw network URLs, authorization values or
 provider bodies. Client string formatting redacts its configuration.
 
-`Failure.Reconcile` is a signal to the future application reconciler, not proof
+`Failure.Reconcile` is a signal to the application reconciler, not proof
 that the Agent accepted the POST. These methods add no GET polling, automatic POST
 retry, new run ID, readiness bypass, fixture fallback or model call. Retryable
 does not authorize an automatic resubmission. A final failure/commit decision
@@ -182,6 +185,7 @@ with scripted model decisions and real FastAPI/workflow/retrieval services.
 The [step-3 Go integration check](m1-go-integration.md) exercises both artwork
 scopes and the documented foreign-evidence injection. It records actual lookup
 IDs, the rejection boundary, Go trace IDs and conversation commit/isolation
-outcomes. Public application wiring and bounded GET reconciliation remain M2 work.
+outcomes. Bounded GET reconciliation is implemented in the separate submission
+service; public application wiring remains M2-B3 work.
 That live check now also queries completed and failed records with the Go GET
 client and confirms the original evidence/model-call counts remain unchanged.
