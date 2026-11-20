@@ -15,7 +15,7 @@ The root README introduces the project. This directory provides entry points to 
 | [Go private Agent client](agent-client.md) | M1 integration step 1: authenticated, bounded POST transport and result validation; controlled HTTP/TLS checks and live scripted-service integration |
 | [M1 test services](m1-test-services.md) | M1 integration step 2: standalone real FastAPI/workflow/retrieval servers with provider-only scripting, HTTP audit and foreign-evidence injection |
 | [Go-originated M1 integration](m1-go-integration.md) | M1 integration step 3: one-command Go-to-Python acceptance for both artwork scopes, foreign-evidence rejection, atomic saving and trace/evidence output |
-| [B M1 integration handoff](m1-handoff.md) | M1 integration step 4: tested implementation commit, exact reproduction command, observed trace/evidence table and rejection boundary |
+| [B M1 integration handoff](m1-handoff.md) | M1 integration steps 4–6: final tested commit, reproduction command, observed trace/evidence table, rejection boundary and completed backend regressions |
 | [Private Agent run service](agent-service.md) | B phase 3: FastAPI endpoints, auth, run replay, cancellation, shared inference and capacity; controlled HTTP checks, default not ready |
 | [Local Ollama provider](ollama-provider.md) | B phase 4: pinned Qwen transport, tokenizer budgets, grammar conversion, real probes and gated readiness; workflow acceptance remains open |
 | [C Agent implementation](../agent/README.md) | Runnable v2 workflow, scripted scenarios, real retrieval and B handoff; [preserved v1 runbook](../agent/README-v1.md) |

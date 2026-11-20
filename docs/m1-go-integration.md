@@ -3,8 +3,8 @@
 Status: **B M1 integration step 3 is implemented and passes with the real Go
 store/client, private FastAPI service, v2 workflow and HTTP retrieval service.
 Only model decisions and token sizing are scripted. The three required cases
-pass; the [handoff record](m1-handoff.md) identifies tested commit `6064d01` and
-its actual trace/evidence results.**
+pass; the [handoff record](m1-handoff.md) identifies final tested commit
+`ac40db3`, full backend regression results and actual trace/evidence rows.**
 
 This verifies B's Go-originated integration item. Team M1 includes other gates;
 public browser routing, real-model quality, production readiness and M2 recovery

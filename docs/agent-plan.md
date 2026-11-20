@@ -28,6 +28,10 @@ The architecture and contract examples are already documented. The current check
 
 **B M1 integration step-4 checkpoint:** the [shared handoff record](m1-handoff.md) identifies the full tested implementation commit, prerequisites, exact command, fresh three-case trace/evidence table and HTTP injection/tool rejection boundary. Verification ran on clean commit `6064d01` with no real model or GPU dependency. The record closes B's Go-originated integration handoff; it does not claim a teammate has independently run the command or close the other team M1/M2 gates.
 
+**B M1 integration step-5 checkpoint:** final backend regression verification ran on clean commit `ac40db3`: all nine Go test packages passed with the race detector and integration tag, including the three required Go-originated cases; 270 Agent and 143 knowledge tests passed; generated contracts were current and Python dependency consistency passed. This retains existing fixture and C workflow coverage without requiring real inference.
+
+**B M1 integration step-6 checkpoint:** the [final handoff](m1-handoff.md) now identifies that tested revision and its actual trace/evidence rows, complete regression results and commands. The single-command M1 check still starts and cleans up its own services. This completes this six-step B integration sequence and its delivery evidence; teammate execution, other team M1 gates, public routing, GET reconciliation and real-model/deployment acceptance remain separately scoped.
+
 | Milestone | Outcome | Main dependencies |
 | --- | --- | --- |
 | M1. Establish the Agent foundation | Compatible interfaces, a working service/workflow skeleton and verified model access | Existing architecture and contracts |

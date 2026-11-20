@@ -1,19 +1,20 @@
 # B M1 integration handoff
 
 Status: **The Go-originated M1 integration item passes all three required cases.
-This record supplies the tested commit, repeatable command, actual trace table
-and injection/rejection boundaries. Other team M1 gates and M2 remain separate.**
+Final backend regressions and handoff verification are complete. This record
+supplies the tested commit, repeatable command, actual trace table and
+injection/rejection boundaries. Other team M1 gates and M2 remain separate.**
 
 Owner: Jinqing Zhang (B, Go application backend and system integration).
 Verification date: 2026-11-19.
 
 ## Tested version
 
-Tested commit: [`6064d01070fb3539379e76f113d31947ae56908d`](https://github.com/Jasonssssss9/musebridge/commit/6064d01070fb3539379e76f113d31947ae56908d)
-(`6064d01`, `Verify Go-originated M1 Agent integration`).
-The source checkout was clean when the verification below ran. This handoff
-document is a subsequent documentation change; its commit is not substituted
-for the tested implementation commit.
+Final tested commit: [`ac40db30b9e024d8ac04d1cfd222ab94398c6282`](https://github.com/Jasonssssss9/musebridge/commit/ac40db30b9e024d8ac04d1cfd222ab94398c6282)
+(`ac40db3`, `Document completed B M1 integration handoff`). The integration code
+was introduced in `6064d01`. The full verification below ran on a clean
+`ac40db3` checkout; this documentation update follows that run. A later
+documentation commit is not substituted for the revision actually tested.
 
 Dataset: `aic-seed-v0.1`, checked-in seed SHA-256
 `3703fd4c9fcefb8e9fba20f23a5cb70e612c62ef7cb3f594a15d319ebc18d6ac`.
@@ -50,9 +51,9 @@ a fresh run on the tested commit; future runs generate different trace IDs.
 
 | Case / active artwork | Trace ID | Expected evidence ID | Actual evidence ID or error | Result |
 | --- | --- | --- | --- | --- |
-| The Bedroom / `aic-28560` | `m1-go-bedroom-dd08805e` | `aic-28560-medium` | `aic-28560-medium`, completed and answered | PASS |
-| Woman at Her Toilette / `aic-11723` | `m1-go-toilette-b85fd038` | `aic-11723-medium` | `aic-11723-medium`, completed and answered | PASS |
-| Foreign evidence / `aic-28560` | `m1-go-foreign-05dc2d30` | `aic-28560-medium` | `aic-11723-medium` -> 502 `retrieval_invalid_response`; no successful result | PASS |
+| The Bedroom / `aic-28560` | `m1-go-bedroom-8b463f6a` | `aic-28560-medium` | `aic-28560-medium`, completed and answered | PASS |
+| Woman at Her Toilette / `aic-11723` | `m1-go-toilette-1ab36275` | `aic-11723-medium` | `aic-11723-medium`, completed and answered | PASS |
+| Foreign evidence / `aic-28560` | `m1-go-foreign-777f1511` | `aic-28560-medium` | `aic-11723-medium` -> 502 `retrieval_invalid_response`; no successful result | PASS |
 
 All evidence comes from `aic-seed-v0.1`. Both medium passages say `Oil on canvas`;
 the assertions bind the actual HTTP lookup, evidence IDs, citations and stored
@@ -90,6 +91,42 @@ The release seed and production retrieval/validation code are unchanged by the
 fault. The [Go acceptance test](../api/internal/conversation/agent_integration_test.go)
 and [process/audit checks](../api/internal/conversation/m1_services_integration_test.go)
 exercise the reusable application client rather than a replacement Go transport.
+
+## Final regression and delivery checks
+
+The final check includes the existing fixture regressions as well as the
+explicit Go-originated integration. No application, workflow or test logic
+changed during this final verification.
+
+| Check | Result |
+| --- | --- |
+| All Go test packages, race detector and integration tag enabled | 9 packages passed; no failure events |
+| Required Go-originated acceptance cases | 3/3 passed, with the traces above |
+| Complete Agent Python suite | 270 tests passed |
+| Complete knowledge/retrieval Python suite | 143 tests passed |
+| Generated Go/Python contracts | Current; no generated drift |
+| Installed Python dependency consistency | No broken requirements |
+
+From the repository root, the complete regression commands are:
+
+```bash
+go -C api test -race -tags=integration -count=1 -timeout=120s ./...
+.venv/bin/python -B -m unittest discover -s agent/tests -q
+.venv/bin/python -B -m unittest discover -s knowledge/tests -q
+python3 -B scripts/generate_agent_contracts.py --check
+.venv/bin/python -B -m pip check
+```
+
+The recorded Go run used `-json` to capture machine-readable output; this changes
+the output format, not the selected checks. The single-command M1 reproduction
+entry point remains the focused command above.
+
+This completes the six-step B integration sequence: reusable Go client; real
+test-service harness; three Go-originated acceptance cases; shared handoff;
+final backend regressions; and final versioned delivery verification. The
+checked delivery includes the tested commit, exact command, all required
+trace/evidence rows, the injection/rejection boundary, unchanged committed
+state on failure, orderly cleanup and log-secret checks.
 
 ## Scope and remaining work
 
