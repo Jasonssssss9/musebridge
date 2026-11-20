@@ -3,7 +3,8 @@
 Status: **B M1 integration step 3 is implemented and passes with the real Go
 store/client, private FastAPI service, v2 workflow and HTTP retrieval service.
 Only model decisions and token sizing are scripted. The three required cases
-pass; the handoff must identify the reviewed, tested commit after submission.**
+pass; the [handoff record](m1-handoff.md) identifies tested commit `6064d01` and
+its actual trace/evidence results.**
 
 This verifies B's Go-originated integration item. Team M1 includes other gates;
 public browser routing, real-model quality, production readiness and M2 recovery
@@ -127,6 +128,9 @@ handoff report; do not commit private runtime artifacts.
 Hand back the tested commit, the command above, the actual three-row table and
 the injection/rejection boundary. Uncommitted working-tree checks must be labeled
 as such rather than attributed to the parent commit.
+
+The [completed B M1 handoff](m1-handoff.md) records a clean-source verification
+on the committed implementation and supplies those items for team review.
 
 Implementation: [Go acceptance cases](../api/internal/conversation/agent_integration_test.go),
 [Go process/audit support](../api/internal/conversation/m1_services_integration_test.go),
