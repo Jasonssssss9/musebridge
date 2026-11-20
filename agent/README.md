@@ -21,6 +21,11 @@ is implemented with controlled HTTP tests; its live Python integration and publi
 v2 activation remain pending. C returns a validated result and a proposed
 memory update against the input revision.
 
+The [M1 test-service launcher](../docs/m1-test-services.md) can start the real
+private Agent/workflow/retrieval stack for another local client, with only model
+decisions and sizing scripted. Its Python HTTP checks do not close the pending
+Go-originated acceptance item.
+
 ## 1. Implemented workflow
 
 ```text

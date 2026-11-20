@@ -114,8 +114,9 @@ strict responses, actual/declarative body bounds, redirects, TLS trust and
 connection/deadline/cancellation failures. No GPU, Ollama, Python service or
 tokenizer asset is used. These tests do not close the live M1 handoff.
 
-The next implementation step supplies a test-only Python launcher with scripted
-model decisions and real FastAPI/workflow/retrieval services. The Go client will
-then exercise both artwork scopes and a documented foreign-evidence injection.
+The [step-2 test services](m1-test-services.md) supply a standalone Python launcher
+with scripted model decisions and real FastAPI/workflow/retrieval services.
+The next Go integration step will exercise both artwork scopes and the documented
+foreign-evidence injection.
 That later check must record actual retrieval calls, the rejection boundary,
 trace IDs and conversation commit/isolation outcomes before M1 can close.
