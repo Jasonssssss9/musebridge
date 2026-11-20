@@ -16,8 +16,9 @@ FastAPI endpoints, authentication, replay, run budgets and capacity management.
 The [internal Go state store](../docs/agent-state-store.md) supplies revision-aware
 admission and atomic saving. An [opt-in Ollama provider](../docs/ollama-provider.md)
 now implements real transport and token budgets, with readiness still blocked by
-real workflow acceptance failures. The Go Agent client and public v2 activation
-remain pending. C returns a validated result and a proposed
+real workflow acceptance failures. The [Go POST client](../docs/agent-client.md)
+is implemented with controlled HTTP tests; its live Python integration and public
+v2 activation remain pending. C returns a validated result and a proposed
 memory update against the input revision.
 
 ## 1. Implemented workflow

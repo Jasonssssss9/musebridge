@@ -12,6 +12,7 @@ The root README introduces the project. This directory provides entry points to 
 | [Agent v2 schema](contracts/agent-v2.schema.json) | New machine-readable target; [shape and runtime/semantic examples](contracts/agent-v2.examples.json) define acceptance cases |
 | [Go/Python boundary implementation](contracts/README.md) | B phase 1: generated wire types, strict codecs, pure snapshot validation, shared error mappings and checks |
 | [Go Agent state store](agent-state-store.md) | B phase 2: versioned sessions, frozen attempts, atomic turn/state saving, pending clarification, evidence cache and replay; internal integration layer |
+| [Go private Agent client](agent-client.md) | M1 integration step 1: authenticated, bounded POST transport and result validation; controlled HTTP/TLS tests, live Python integration pending |
 | [Private Agent run service](agent-service.md) | B phase 3: FastAPI endpoints, auth, run replay, cancellation, shared inference and capacity; controlled HTTP checks, default not ready |
 | [Local Ollama provider](ollama-provider.md) | B phase 4: pinned Qwen transport, tokenizer budgets, grammar conversion, real probes and gated readiness; workflow acceptance remains open |
 | [C Agent implementation](../agent/README.md) | Runnable v2 workflow, scripted scenarios, real retrieval and B handoff; [preserved v1 runbook](../agent/README-v1.md) |

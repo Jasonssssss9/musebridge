@@ -20,6 +20,8 @@ The architecture and contract examples are already documented. The current check
 
 ## 1. Milestones
 
+**B M1 integration step-1 checkpoint:** the [Go private POST client](agent-client.md) implements reusable authenticated transport, original-request result binding and shared safe error mappings. Controlled HTTP/TLS, context and concurrent-use checks cover its boundary. The live Go-originated request through FastAPI and the real retrieval service is still required to close B's M1 handoff. GET reconciliation, public v2 routing and normal browser activation remain application integration work.
+
 | Milestone | Outcome | Main dependencies |
 | --- | --- | --- |
 | M1. Establish the Agent foundation | Compatible interfaces, a working service/workflow skeleton and verified model access | Existing architecture and contracts |
