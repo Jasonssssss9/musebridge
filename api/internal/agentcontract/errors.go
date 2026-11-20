@@ -75,3 +75,22 @@ func MapAgentFailure(status int, upstream AgentError) *Failure {
 	result.Reconcile = upstream.Code == "agent_run_in_progress"
 	return result
 }
+
+// MapRunFailure maps a retained failed RunSnapshot, whose HTTP status is 200.
+// The private failure status comes from the same embedded policy as POST errors;
+// retryability and shape must still be valid. An in-progress error contradicts
+// a terminal failed snapshot. No upstream diagnostic message is retained.
+func MapRunFailure(upstream AgentError) (*Failure, error) {
+	v, err := DefaultValidator()
+	if err != nil {
+		return nil, invalid("AgentError")
+	}
+	if _, err := v.Encode("AgentError", upstream); err != nil {
+		return nil, invalid("AgentError")
+	}
+	p, exists := errorPolicies[upstream.Code]
+	if !exists || upstream.Retryable != p.Retryable || upstream.Code == "agent_run_in_progress" {
+		return nil, invalid("AgentError")
+	}
+	return MapAgentFailure(p.PrivateStatus, upstream), nil
+}

@@ -12,7 +12,7 @@ The root README introduces the project. This directory provides entry points to 
 | [Agent v2 schema](contracts/agent-v2.schema.json) | New machine-readable target; [shape and runtime/semantic examples](contracts/agent-v2.examples.json) define acceptance cases |
 | [Go/Python boundary implementation](contracts/README.md) | B phase 1: generated wire types, strict codecs, pure snapshot validation, shared error mappings and checks |
 | [Go Agent state store](agent-state-store.md) | B phase 2: versioned sessions, frozen attempts, atomic turn/state saving, pending clarification, evidence cache and replay; internal integration layer |
-| [Go private Agent client](agent-client.md) | M1 integration step 1: authenticated, bounded POST transport and result validation; controlled HTTP/TLS checks and live scripted-service integration |
+| [Go private Agent client](agent-client.md) | M1 POST transport and M2-B1 single GET status queries; original-request validation, safe retained failures and controlled/live-service checks; automatic reconciliation pending |
 | [M1 test services](m1-test-services.md) | M1 integration step 2: standalone real FastAPI/workflow/retrieval servers with provider-only scripting, HTTP audit and foreign-evidence injection |
 | [Go-originated M1 integration](m1-go-integration.md) | M1 integration step 3: one-command Go-to-Python acceptance for both artwork scopes, foreign-evidence rejection, atomic saving and trace/evidence output |
 | [B M1 integration handoff](m1-handoff.md) | M1 integration steps 4–6: final tested commit, reproduction command, observed trace/evidence table, rejection boundary and completed backend regressions |

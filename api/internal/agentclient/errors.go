@@ -13,7 +13,10 @@ import (
 // Only context sentinels are retained as causes, never URLs or upstream bodies.
 type Error struct {
 	Failure ac.Failure
-	cause   error
+	// RunState is "failed" only for a validated retained failed GET snapshot.
+	// Empty means no terminal run state was established by this error.
+	RunState string
+	cause    error
 }
 
 func (e *Error) Error() string { return e.Failure.Error.Message }

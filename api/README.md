@@ -6,7 +6,7 @@ This implements the Go artwork service, anonymous conversations, bounded questio
 
 The [v2 boundary layer](../docs/contracts/README.md) and [internal Agent state store](../docs/agent-state-store.md) are also implemented. They provide strict wire contracts and atomic revision/memory handling for later integration. The HTTP routes below continue to serve fixture mode; this does not enable the private Agent service or real inference.
 
-The [private Agent POST client](../docs/agent-client.md) provides reusable authenticated transport, response binding and safe error mappings. The [Go-originated M1 check](../docs/m1-go-integration.md) now passes through real FastAPI/workflow/retrieval services with scripted model decisions, covering both artworks, foreign-evidence rejection and Go state commits. Public Agent-mode wiring remains pending.
+The [private Agent client](../docs/agent-client.md) provides reusable authenticated POST transport and M2-B1 single GET status queries, original-request result binding and safe error mappings. Processing is returned as a status; retained failures become safe typed errors. The [Go-originated check](../docs/m1-go-integration.md) passes through real FastAPI/workflow/retrieval services with scripted model decisions and reads back completed/failed records. Public Agent-mode wiring and automatic reconciliation remain pending.
 
 Implemented routes:
 

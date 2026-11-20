@@ -82,6 +82,20 @@ func (c *Client) GoString() string { return c.String() }
 // check retained-run replay before new-run admission deadlines. The caller's
 // original Go attempt deadline still bounds the entire transport and validation.
 func (c *Client) Run(ctx context.Context, input ac.RunRequest, requestID string) (ac.RunSnapshot, error) {
+	return c.call(ctx, input, requestID, http.MethodPost)
+}
+
+// Get queries the original run without starting work or polling. Processing
+// returns a snapshot with no result. Completed results are bound to the frozen
+// original request. A retained failed run returns a safe *Error with RunState
+// "failed" and no snapshot. HTTP/query failures leave RunState empty.
+// An elapsed Agent admission deadline does not prevent retained-run lookup;
+// callers must retain the original Go attempt context and remaining budget.
+func (c *Client) Get(ctx context.Context, input ac.RunRequest, requestID string) (ac.RunSnapshot, error) {
+	return c.call(ctx, input, requestID, http.MethodGet)
+}
+
+func (c *Client) call(ctx context.Context, input ac.RunRequest, requestID, method string) (ac.RunSnapshot, error) {
 	if ctx == nil || !visibleASCII(requestID, 128) {
 		return ac.RunSnapshot{}, invalidResponse()
 	}
@@ -109,13 +123,23 @@ func (c *Client) Run(ctx context.Context, input ac.RunRequest, requestID string)
 	if err := contextFailure(ctx, attempt); err != nil {
 		return ac.RunSnapshot{}, err
 	}
-	request, err := http.NewRequestWithContext(attempt, http.MethodPost, c.endpoint, bytes.NewReader(body))
+	endpoint := c.endpoint
+	var content io.Reader
+	if method == http.MethodPost {
+		content = bytes.NewReader(body)
+	} else {
+		// The shared UUID schema has already validated this path component.
+		endpoint += "/" + string(run.RunID)
+	}
+	request, err := http.NewRequestWithContext(attempt, method, endpoint, content)
 	if err != nil {
 		return failed(invalidResponse())
 	}
 	request.Header.Set("Authorization", "Bearer "+c.token)
 	request.Header.Set("X-Request-ID", requestID)
-	request.Header.Set("Content-Type", "application/json")
+	if method == http.MethodPost {
+		request.Header.Set("Content-Type", "application/json")
+	}
 	request.Header.Set("Accept", "application/json")
 	request.Header.Set("Accept-Encoding", "identity")
 	response, err := c.http.Do(request)
@@ -131,8 +155,8 @@ func (c *Client) Run(ctx context.Context, input ac.RunRequest, requestID string)
 	}
 	data, err := io.ReadAll(io.LimitReader(response.Body, ac.PrivateBodyLimit+1))
 	if err != nil {
-		// A broken response connection leaves the accepted POST outcome unknown.
-		// The caller can query the original run, without a new model execution.
+		// A broken response leaves the run outcome unknown. The caller can query
+		// the original run within its budget, without a new model execution.
 		return failed(unavailable(true, nil))
 	}
 	if err := contextFailure(ctx, attempt); err != nil {
@@ -145,9 +169,28 @@ func (c *Client) Run(ctx context.Context, input ac.RunRequest, requestID string)
 		return failed(c.decodeFailure(response.StatusCode, data, run.RunID, requestID))
 	}
 	var snapshot ac.RunSnapshot
-	if c.validator.Decode("RunSnapshot", data, &snapshot) != nil || snapshot.RunID != run.RunID ||
-		snapshot.State != "completed" || snapshot.Result == nil || snapshot.Error != nil ||
-		c.validator.CheckRunResult(run, *snapshot.Result) != nil {
+	if c.validator.Decode("RunSnapshot", data, &snapshot) != nil || snapshot.RunID != run.RunID {
+		return failed(invalidResponse())
+	}
+	switch snapshot.State {
+	case "completed":
+		if snapshot.Result == nil || snapshot.Error != nil || c.validator.CheckRunResult(run, *snapshot.Result) != nil {
+			return failed(invalidResponse())
+		}
+	case "processing":
+		if method != http.MethodGet || snapshot.Result != nil || snapshot.Error != nil {
+			return failed(invalidResponse())
+		}
+	case "failed":
+		if method != http.MethodGet || snapshot.Result != nil || snapshot.Error == nil {
+			return failed(invalidResponse())
+		}
+		failure, err := ac.MapRunFailure(*snapshot.Error)
+		if err != nil {
+			return failed(invalidResponse())
+		}
+		return failed(&Error{Failure: *failure, RunState: "failed"})
+	default:
 		return failed(invalidResponse())
 	}
 	if err := contextFailure(ctx, attempt); err != nil {

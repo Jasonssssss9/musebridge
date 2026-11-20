@@ -69,6 +69,10 @@ func TestM1GoOriginatedIntegration(t *testing.T) {
 				snapshot.Error != nil || !reflect.DeepEqual(attempt.Request, original) {
 				t.Fatal("the run identity, terminal state or original request changed")
 			}
+			queried, err := normal.client.Get(ctx, original, trace+"-status")
+			if err != nil || !reflect.DeepEqual(queried, snapshot) {
+				t.Fatalf("GET did not recover the real retained completed snapshot: %v", err)
+			}
 			result := *snapshot.Result
 			if validator.CheckRunResult(original, result) != nil || result.Scope != original.Scope ||
 				result.Answer.Status != "answered" || result.AnswerLanguage != "en" ||
@@ -129,6 +133,12 @@ func TestM1GoOriginatedIntegration(t *testing.T) {
 		if snapshot != (ac.RunSnapshot{}) || !errors.As(err, &rejected) || rejected.Failure.Status != 502 ||
 			rejected.Failure.Error.Code != "retrieval_invalid_response" || rejected.Failure.Error.Retryable || rejected.Failure.Reconcile {
 			t.Fatal("Go received a successful answer or wrong mapping for the foreign evidence")
+		}
+		queried, queryError := foreign.client.Get(ctx, attempt.Request, trace+"-status")
+		var retained *agentclient.Error
+		if queried != (ac.RunSnapshot{}) || !errors.As(queryError, &retained) || retained.RunState != "failed" ||
+			retained.Failure != rejected.Failure {
+			t.Fatal("GET did not map the real retained failed snapshot consistently with POST")
 		}
 		actual := assertM1Trace(t, foreign, trace, "aic-28560", true)
 		mapped := rejected.Failure

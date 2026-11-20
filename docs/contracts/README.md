@@ -99,6 +99,10 @@ No competing workflow, conversation store or semantic answer table is created.
 - `MapAgentFailure` / `map_agent_failure` use fixed safe public prose. Invalid
   HTTP/code pairings become `agent_invalid_response`. An in-progress run marks
   reconciliation before its unavailable fallback, never another POST execution.
+- Go's `MapRunFailure` handles a retained failed GET snapshot carried by HTTP
+  200, using the same embedded policy and validating retryability. It returns
+  an error for malformed or contradictory retained failures and never forwards
+  diagnostic prose. This is a Go client helper, not a new wire contract.
 
 These checks cannot prove fresh-tool provenance, semantic entailment, language
 detection, translation fidelity, real model identity, successful persistence or
