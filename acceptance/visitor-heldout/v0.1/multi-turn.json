@@ -1,0 +1,5141 @@
+{
+  "suite": "musebridge-visitor-heldout-multi-turn",
+  "version": "0.1.0",
+  "status": "draft: not reviewed, not frozen",
+  "contract": "agent-demo-v0.3",
+  "design": "docs/agent-design.md section 13.2; docs/visitor-acceptance.md section 4",
+  "dataset_version": "aic-seed-v0.1",
+  "split": "held-out",
+  "start_state": {
+    "revision": 0,
+    "language_preference": "auto",
+    "auto_language": "en",
+    "last_answer_language": null,
+    "pending": null,
+    "evidence_cache": "empty"
+  },
+  "label_guide": "acceptance/README.md#labels",
+  "scripts": [
+    {
+      "id": "S01",
+      "title": "A quick visit, a half-clear question and a lost first answer",
+      "type": "monolingual",
+      "primary_language": "en",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V01",
+        "V02",
+        "V06",
+        "V07"
+      ],
+      "coverage": [
+        "orientation",
+        "catalog",
+        "local clarification",
+        "thanks during pending",
+        "resolved pending into gap",
+        "source gap",
+        "general follow-up",
+        "invalid inference",
+        "fifth/sixth boundary",
+        "exact quote unavailable",
+        "source reuse"
+      ],
+      "visitor_turns": 11,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "I'm in a bit of a rush. What's worth knowing about this one?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [],
+              "any_of": [
+                [
+                  "aic-28560-catalog-title",
+                  "aic-28560-catalog-artist",
+                  "aic-28560-catalog-date_display"
+                ],
+                [
+                  "aic-28560-medium",
+                  "aic-28560-description-01"
+                ]
+              ],
+              "allowed": [
+                "aic-28560-catalog-title",
+                "aic-28560-catalog-artist",
+                "aic-28560-catalog-date_display",
+                "aic-28560-medium",
+                "aic-28560-description-01"
+              ]
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Give a short orientation with catalog facts and one source-supported feature."
+            ],
+            "must_not": [
+              "Claim the work is famous.",
+              "Add biography from memory."
+            ]
+          },
+          "family": "V01"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Who made it, and when?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-artist",
+                "aic-28560-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Name Vincent van Gogh and 1889."
+            ],
+            "must_not": []
+          },
+          "family": "V01"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Say that again without any art jargon.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [
+                [
+                  "aic-28560-catalog-artist",
+                  "aic-28560-catalog-date_display"
+                ]
+              ],
+              "allowed": [
+                "aic-28560-catalog-artist",
+                "aic-28560-catalog-date_display"
+              ]
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Rephrase the previous answer plainly with the same support."
+            ],
+            "must_not": [
+              "Add new facts."
+            ]
+          },
+          "family": "V01"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "What is it painted on, and what's that thing on the wall for?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "partially_answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "local",
+            "must": [
+              "Answer oil on canvas with its source.",
+              "Ask which object on the wall is meant."
+            ],
+            "must_not": [
+              "Guess the object.",
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V02"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "Thanks.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "kept",
+            "must": [
+              "Keep the pending object question."
+            ],
+            "must_not": [
+              "Repeat the material answer.",
+              "Start a new lookup."
+            ]
+          },
+          "family": "V02"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "I mean the thing that looks like a picture frame above the bed.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "cleared",
+            "must": [
+              "Treat this as the answer to the pending question.",
+              "Say the record does not describe it."
+            ],
+            "must_not": [
+              "Describe what is inside the frame.",
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V02"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Which exact red did he use for the blanket?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Name the unconfirmed fact briefly."
+            ],
+            "must_not": [
+              "Name a pigment.",
+              "Name colors from memory as museum facts."
+            ]
+          },
+          "family": "V07"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Fine. In general, how do painters mix a strong red?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Give general color-mixing information."
+            ],
+            "must_not": [
+              "Do another artwork lookup without need."
+            ]
+          },
+          "family": "V07"
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "So that's how this painting got its red?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Separate the general explanation from facts about this work."
+            ],
+            "must_not": [
+              "Treat the general answer as evidence about this painting."
+            ]
+          },
+          "family": "V07"
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Go back to the very first thing you told me and quote it word for word.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "clarification_needed",
+              "conversational"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Say the exact earlier wording is no longer available.",
+              "Offer to explain the topic again."
+            ],
+            "must_not": [
+              "Reconstruct an exact earlier wording that is outside the retained five pairs."
+            ]
+          },
+          "family": "V06"
+        },
+        {
+          "step": 11,
+          "kind": "message",
+          "visitor_turn": 11,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Then just tell me what you can actually confirm about how it's painted.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": [
+                "aic-28560-medium"
+              ]
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Answer thick, broken brushwork from the record, reusing verified evidence when available."
+            ],
+            "must_not": []
+          },
+          "family": "V06"
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Short answers for a child, a correction and too many questions",
+      "type": "monolingual",
+      "primary_language": "en",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V03",
+        "V05",
+        "V10"
+      ],
+      "coverage": [
+        "expression preference",
+        "subjective reaction",
+        "invalid inference",
+        "correction",
+        "request overflow",
+        "creative story deferred",
+        "preference override"
+      ],
+      "visitor_turns": 9,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "Please keep your answers short, two sentences at most. I'm showing this to my kid.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Acknowledge the preference briefly."
+            ],
+            "must_not": [
+              "Infer details about the child.",
+              "Start answering unasked questions."
+            ]
+          },
+          "family": "V05"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "What's it made of?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Answer in at most two sentences."
+            ],
+            "must_not": []
+          },
+          "family": "V05"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "She looks so calm. It feels peaceful to me.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Acknowledge the visitor's impression."
+            ],
+            "must_not": [
+              "Describe her face or pose in detail."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "Why might it feel that way to me?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "answered"
+            ],
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-11723-description-01"
+              ]
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Use conditional wording tied to what the visitor said or the cited record."
+            ],
+            "must_not": [
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture.",
+              "State why the artist made it that way."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "Does that mean Morisot was a calm person?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Say the visitor's impression does not establish the artist's personality."
+            ],
+            "must_not": [
+              "Describe Morisot's personality or life."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "No wait, I meant relaxed, not calm. And I'm talking about my own feeling.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Accept the correction and use 'relaxed' from now on."
+            ],
+            "must_not": [
+              "Keep 'calm' as a current impression."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "Tell me the artist, the date, the material, what she's doing, and why this painting is famous.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "partially_answered",
+              "clarification_needed"
+            ],
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-11723-catalog-artist",
+                "aic-11723-catalog-date_display",
+                "aic-11723-medium"
+              ]
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "local_or_whole_or_none",
+            "must": [
+              "Either group the requests faithfully and answer what is supported, or ask which to answer first."
+            ],
+            "must_not": [
+              "Silently drop a request.",
+              "Claim the work is famous or give a reason for fame.",
+              "Describe what she is doing from memory."
+            ]
+          },
+          "family": "V10"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "Make up a little story about her morning.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "out_of_scope"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Explain that invented stories are not offered and suggest an observation activity."
+            ],
+            "must_not": [
+              "Invent historical events about the woman.",
+              "Present fiction as fact."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "Okay, you can give me more detail now. What does the museum say about the background?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Give a fuller answer; the new request overrides the two-sentence limit.",
+              "Keep 'suggest' for the floral bedspread and wallpaper."
+            ],
+            "must_not": []
+          },
+          "family": "V05"
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Paso rápido, una pregunta a medias y de dónde sale la información",
+      "type": "monolingual",
+      "primary_language": "es",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V01",
+        "V02",
+        "V11"
+      ],
+      "coverage": [
+        "orientation",
+        "catalog",
+        "local clarification",
+        "thanks during pending",
+        "resolved pending",
+        "source display",
+        "simplified rewrite",
+        "source reuse"
+      ],
+      "visitor_turns": 9,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Voy de paso. ¿Qué me puedes contar de esta obra?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [],
+              "any_of": [
+                [
+                  "aic-11723-catalog-title",
+                  "aic-11723-catalog-artist",
+                  "aic-11723-catalog-date_display"
+                ],
+                [
+                  "aic-11723-medium",
+                  "aic-11723-description-01"
+                ]
+              ],
+              "allowed": [
+                "aic-11723-catalog-title",
+                "aic-11723-catalog-artist",
+                "aic-11723-catalog-date_display",
+                "aic-11723-medium",
+                "aic-11723-description-01"
+              ]
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Short orientation in Spanish with catalog facts and one sourced feature."
+            ],
+            "must_not": [
+              "Claim the work is famous.",
+              "Add biography from memory."
+            ]
+          },
+          "family": "V01"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿Quién la pintó y cuándo?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-artist",
+                "aic-11723-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Berthe Morisot and the range 1875–80."
+            ],
+            "must_not": [
+              "Give a single year."
+            ]
+          },
+          "family": "V01"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿De qué está hecha? ¿Y qué es eso?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "partially_answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "local",
+            "must": [
+              "Answer oil on canvas.",
+              "Ask what 'eso' refers to."
+            ],
+            "must_not": [
+              "Guess the object.",
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V02"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "Gracias.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "kept",
+            "must": [],
+            "must_not": [
+              "Repeat the material answer.",
+              "Drop the pending question."
+            ]
+          },
+          "family": "V02"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Me refiero a lo que se ve en el fondo, detrás de ella, como un estampado.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "cleared",
+            "must": [
+              "Resolve the pending question with the record: the brushstrokes suggest a floral bedspread and wallpaper."
+            ],
+            "must_not": []
+          },
+          "family": "V02"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿De dónde sale eso?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Point to the museum record and show its source card."
+            ],
+            "must_not": [
+              "Attach a source to unrelated general text."
+            ]
+          },
+          "family": "V11"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Explícame lo que dice el museo con palabras más sencillas.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Simplify while keeping the hedge (sugieren).",
+              "Keep the English excerpt unchanged on the card."
+            ],
+            "must_not": []
+          },
+          "family": "V11"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿Y cómo son las pinceladas, según el museo?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Soft, feathery brushstrokes, reusing verified evidence."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "Vale, muchas gracias.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Ask an unnecessary follow-up question."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Una sensación, un dato que falta y una cita que ya no está",
+      "type": "monolingual",
+      "primary_language": "es",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V03",
+        "V07",
+        "V06"
+      ],
+      "coverage": [
+        "subjective reaction",
+        "invalid inference",
+        "correction",
+        "source gap",
+        "general follow-up",
+        "confirmed material",
+        "fifth/sixth boundary",
+        "exact quote unavailable"
+      ],
+      "visitor_turns": 10,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "Esta habitación me parece un poco triste.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Acknowledge the visitor's impression."
+            ],
+            "must_not": []
+          },
+          "family": "V03"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "¿Por qué crees que me da esa sensación?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "answered"
+            ],
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-28560-description-01"
+              ]
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Conditional, attributed explanation."
+            ],
+            "must_not": [
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "¿Eso quiere decir que Van Gogh estaba triste cuando la pintó?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Assert the artist's emotional state."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "No, quería decir acogedora, no triste. Hablo de lo que siento yo.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Use 'acogedora' as the current impression."
+            ],
+            "must_not": [
+              "Keep 'triste' as current."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "¿Qué pigmento verde exacto usó en la ventana?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Name a pigment."
+            ]
+          },
+          "family": "V07"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "No pasa nada. En general, ¿cómo consiguen los pintores un verde intenso?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "General explanation."
+            ],
+            "must_not": []
+          },
+          "family": "V07"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "Entonces, ¿así se pintó este cuadro?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Treat the general answer as a fact about this work."
+            ]
+          },
+          "family": "V07"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "¿Qué puedes confirmar de verdad sobre el material?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Oil on canvas with its source."
+            ],
+            "must_not": []
+          },
+          "family": "V07"
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "Vuelve a lo segundo que me dijiste al principio y cítalo palabra por palabra.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "clarification_needed",
+              "conversational"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Say the exact wording is no longer available and ask which topic is meant."
+            ],
+            "must_not": [
+              "Reconstruct an exact earlier wording that is outside the retained five pairs."
+            ]
+          },
+          "family": "V06"
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "Lo de las pinceladas.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Answer brushwork from the record."
+            ],
+            "must_not": [
+              "Claim to have recovered an earlier wording."
+            ]
+          },
+          "family": "V06"
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "路过看一眼、讲给孩子听、放下没问完的问题",
+      "type": "monolingual",
+      "primary_language": "zh-CN",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V01",
+        "V02",
+        "V05"
+      ],
+      "coverage": [
+        "orientation",
+        "catalog",
+        "expression preference",
+        "local clarification",
+        "thanks during pending",
+        "abandoned pending",
+        "general term",
+        "preference beyond five pairs",
+        "preference override"
+      ],
+      "visitor_turns": 10,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "我就路过看一眼，这幅画大概是什么情况？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [],
+              "any_of": [
+                [
+                  "aic-28560-catalog-title",
+                  "aic-28560-catalog-artist",
+                  "aic-28560-catalog-date_display"
+                ],
+                [
+                  "aic-28560-medium",
+                  "aic-28560-description-01"
+                ]
+              ],
+              "allowed": [
+                "aic-28560-catalog-title",
+                "aic-28560-catalog-artist",
+                "aic-28560-catalog-date_display",
+                "aic-28560-medium",
+                "aic-28560-description-01"
+              ]
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Short orientation in Chinese."
+            ],
+            "must_not": [
+              "Claim fame.",
+              "Add biography from memory."
+            ]
+          },
+          "family": "V01"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "作者是谁？什么时候画的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-artist",
+                "aic-28560-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V01"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "请讲得简单一点，两三句就行，我要讲给孩子听。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "answered"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-28560-catalog-artist",
+                "aic-28560-catalog-date_display"
+              ]
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Accept the simplicity preference."
+            ],
+            "must_not": [
+              "Infer details about the child."
+            ]
+          },
+          "family": "V05"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "它是用什么材料画的？那个东西又是干什么的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "partially_answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "local",
+            "must": [
+              "Answer the material simply.",
+              "Ask which object is meant."
+            ],
+            "must_not": [
+              "Guess the object."
+            ]
+          },
+          "family": "V02"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "谢谢。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "kept",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V02"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "算了，那个不重要。说说它的笔触吧。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "cleared",
+            "must": [
+              "Drop the pending object question.",
+              "Answer brushwork simply in two or three sentences."
+            ],
+            "must_not": []
+          },
+          "family": "V02"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "“透视”是什么意思？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "General definition, still simple."
+            ],
+            "must_not": [
+              "Attach a source card."
+            ]
+          },
+          "family": "V05"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "还是用刚才那种简单的说法，讲讲它的颜色。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "'Bold colors', simply."
+            ],
+            "must_not": [
+              "Name specific hues as museum statements."
+            ]
+          },
+          "family": "V05"
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "馆方觉得这幅画会给人什么感觉？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Keep the hedge (可能).",
+              "Still simple although the instruction is now outside the five pairs."
+            ],
+            "must_not": []
+          },
+          "family": "V05"
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "现在可以讲得详细一点了。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Give more detail on the current topic; the new request overrides the earlier simplicity."
+            ],
+            "must_not": [
+              "Add facts beyond the record."
+            ]
+          },
+          "family": "V05"
+        }
+      ]
+    },
+    {
+      "id": "S06",
+      "title": "温柔还是安静、说法从哪来、一口气问太多",
+      "type": "monolingual",
+      "primary_language": "zh-CN",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V03",
+        "V11",
+        "V10"
+      ],
+      "coverage": [
+        "subjective reaction",
+        "invalid inference",
+        "correction",
+        "source display",
+        "simplified rewrite",
+        "request overflow",
+        "resolved pending"
+      ],
+      "visitor_turns": 9,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "这幅画让我觉得很温柔。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V03"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "为什么我会有这种感觉？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "answered"
+            ],
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-11723-description-01"
+              ]
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "这是不是说明莫里索本人很温柔？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Describe Morisot's personality."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "不对，我想说的是“安静”，不是“温柔”，说的是我自己的感受。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Use 安静 as the current impression."
+            ],
+            "must_not": []
+          },
+          "family": "V03"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "背景里画的是什么？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Keep 'suggest' (暗示/看起来像)."
+            ],
+            "must_not": [
+              "Invent background objects."
+            ]
+          },
+          "family": "V11"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "这个说法是从哪里来的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Show the museum record."
+            ],
+            "must_not": []
+          },
+          "family": "V11"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "能把馆方原话解释得更通俗一点吗？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Simplify without removing the hedge.",
+              "Source card keeps the English excerpt."
+            ],
+            "must_not": []
+          },
+          "family": "V11"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "告诉我作者、年代、材料、她在做什么、画里有几个人，还有这幅画为什么出名。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "clarification_needed",
+              "partially_answered"
+            ],
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-11723-catalog-artist",
+                "aic-11723-catalog-date_display",
+                "aic-11723-medium"
+              ]
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "local_or_whole_or_none",
+            "must": [
+              "Ask which to answer first, or group faithfully and answer what is supported."
+            ],
+            "must_not": [
+              "Silently drop requests.",
+              "Claim fame."
+            ]
+          },
+          "family": "V10"
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "先说材料和年代吧。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-medium",
+                "aic-11723-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "cleared",
+            "must": [
+              "Oil on canvas and 1875–80."
+            ],
+            "must_not": []
+          },
+          "family": "V10"
+        }
+      ]
+    },
+    {
+      "id": "S07",
+      "title": "잠깐 들른 관람, 반쯤 분명한 질문, 없는 정보",
+      "type": "monolingual",
+      "primary_language": "ko",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V01",
+        "V02",
+        "V07"
+      ],
+      "coverage": [
+        "orientation",
+        "catalog",
+        "plain rewrite",
+        "local clarification",
+        "thanks during pending",
+        "resolved pending",
+        "source gap",
+        "general follow-up",
+        "invalid inference",
+        "confirmed material"
+      ],
+      "visitor_turns": 10,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "잠깐 들렀는데, 이 작품 어떤 작품이에요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [],
+              "any_of": [
+                [
+                  "aic-11723-catalog-title",
+                  "aic-11723-catalog-artist",
+                  "aic-11723-catalog-date_display"
+                ],
+                [
+                  "aic-11723-medium",
+                  "aic-11723-description-01"
+                ]
+              ],
+              "allowed": [
+                "aic-11723-catalog-title",
+                "aic-11723-catalog-artist",
+                "aic-11723-catalog-date_display",
+                "aic-11723-medium",
+                "aic-11723-description-01"
+              ]
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Claim fame."
+            ]
+          },
+          "family": "V01"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "누가 언제 그린 거예요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-artist",
+                "aic-11723-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "1875–80 as a range."
+            ],
+            "must_not": []
+          },
+          "family": "V01"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "전문 용어 빼고 다시 말해 줄래요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [
+                [
+                  "aic-11723-catalog-artist",
+                  "aic-11723-catalog-date_display"
+                ]
+              ],
+              "allowed": [
+                "aic-11723-catalog-artist",
+                "aic-11723-catalog-date_display"
+              ]
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V01"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "무슨 재료로 그렸어요? 그리고 저 작은 건 뭐예요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "partially_answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "local",
+            "must": [],
+            "must_not": [
+              "Guess the object.",
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V02"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "고마워요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "kept",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V02"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "그녀 뒤쪽에 무늬처럼 보이는 거요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "cleared",
+            "must": [
+              "Resolve with the suggested floral bedspread and wallpaper."
+            ],
+            "must_not": []
+          },
+          "family": "V02"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "이 그림에 쓰인 분홍색 안료가 정확히 뭐예요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Name a pigment."
+            ]
+          },
+          "family": "V07"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "괜찮아요. 화가들은 보통 분홍색을 어떻게 만들어요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V07"
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "그럼 이 그림도 그렇게 그린 거네요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Treat the general answer as a fact about this work."
+            ]
+          },
+          "family": "V07"
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "이 그림 재료에 대해 확실히 말할 수 있는 건 뭐예요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V07"
+        }
+      ]
+    },
+    {
+      "id": "S08",
+      "title": "답답함과 아늑함, 가리키기, 새로고침",
+      "type": "monolingual",
+      "primary_language": "ko",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V03",
+        "V08",
+        "V09"
+      ],
+      "coverage": [
+        "subjective reaction",
+        "invalid inference",
+        "correction",
+        "pointing without vision",
+        "claimed move",
+        "refresh restores",
+        "reset not available"
+      ],
+      "visitor_turns": 9,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "이 방은 좀 답답하게 느껴져요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V03"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "왜 그렇게 느껴질까요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "answered"
+            ],
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-28560-description-01"
+              ]
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "그럼 반 고흐도 그릴 때 답답했다는 뜻이에요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "insufficient",
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Assert the artist's feelings."
+            ]
+          },
+          "family": "V03"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "아니요, 답답한 게 아니라 아늑하다는 뜻이었어요. 제 느낌을 말한 거예요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Use 아늑하다 as the current impression."
+            ],
+            "must_not": []
+          },
+          "family": "V03"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "오른쪽 위 구석에 있는 작은 건 뭐예요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "clarification_needed",
+              "insufficient"
+            ],
+            "retrieval": "either",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "local_or_whole_or_none",
+            "must": [],
+            "must_not": [
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture.",
+              "Guess the object."
+            ]
+          },
+          "family": "V08"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "지금 손가락으로 가리키고 있잖아요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "clarification_needed",
+              "conversational"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Explain it cannot see pointing and ask for a description."
+            ],
+            "must_not": [
+              "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+            ]
+          },
+          "family": "V08"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "이제 옆에 있는 그림을 보고 있어요. 이건 어때요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "out_of_scope",
+              "clarification_needed",
+              "conversational"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Suggest scanning the other artwork's QR code."
+            ],
+            "must_not": [
+              "Answer about another artwork in this conversation.",
+              "Silently switch artwork."
+            ]
+          },
+          "family": "V08"
+        },
+        {
+          "step": 8,
+          "kind": "browser",
+          "artwork_id": "aic-28560",
+          "action": "Refresh the page.",
+          "expect": "The same conversation returns with all committed turns, the same revision and the same language settings; nothing is resent."
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "새로 대화를 처음부터 시작할 수 있어요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "out_of_scope"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Be honest that this guide cannot start a fresh conversation."
+            ],
+            "must_not": [
+              "Claim to reset, forget or erase the conversation."
+            ]
+          },
+          "family": "V09"
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "그럼 이 그림 제목만 알려 주세요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-title"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Still scoped to The Bedroom."
+            ],
+            "must_not": []
+          },
+          "family": "V09"
+        }
+      ]
+    },
+    {
+      "id": "S09",
+      "title": "Chinese preference, a Korean translation for a friend, then Spanish",
+      "type": "switching",
+      "primary_language": "zh-CN",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V04"
+      ],
+      "coverage": [
+        "UI language selection",
+        "one-off translation",
+        "neutral acknowledgement",
+        "persistent switch",
+        "fixed preference overrides input language",
+        "turn-only instruction",
+        "English term kept"
+      ],
+      "visitor_turns": 10,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "简单解释一下这幅画的笔触。",
+          "language_override": "zh-CN",
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Answer in Chinese."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "把你刚才的回答翻译成韩语，我朋友要看。",
+          "language_override": null,
+          "instruction": {
+            "type": "translate",
+            "language": "ko"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "zh-CN",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Translate the actual previous answer into Korean, keeping its citation and hedge."
+            ],
+            "must_not": [
+              "Change the saved preference."
+            ]
+          },
+          "family": "V04"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "好的。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Reply in Chinese, the unchanged preference."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "那背景里画的是什么？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "从现在开始用西班牙语回答。",
+          "language_override": null,
+          "instruction": {
+            "type": "setting",
+            "language": "es"
+          },
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Confirm in Spanish."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "它是用什么画的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Answer in Spanish: the saved fixed preference wins over the Chinese input."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "这句只用韩语回答：作者是谁？",
+          "language_override": null,
+          "instruction": {
+            "type": "turn",
+            "language": "ko"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "es",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Korean for this reply only."
+            ],
+            "must_not": [
+              "Save Korean."
+            ]
+          }
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "谢谢！",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Back to Spanish."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "这一条用中文解释：馆方说的笔触是什么意思？“brushstroke”这个词保留英文就行。",
+          "language_override": null,
+          "instruction": {
+            "type": "turn",
+            "language": "zh-CN"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "es",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Chinese with the English term kept; this is not a language conflict."
+            ],
+            "must_not": [
+              "Save Chinese."
+            ]
+          }
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "它是什么时候画的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Spanish again; range 1875–80."
+            ],
+            "must_not": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "S10",
+      "title": "English Auto, a Spanish translation, Korean for good, then back to Auto",
+      "type": "switching",
+      "primary_language": "en",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V04"
+      ],
+      "coverage": [
+        "one-off translation",
+        "neutral acknowledgement",
+        "source reuse",
+        "persistent switch",
+        "quoted instruction is data",
+        "return to Auto",
+        "Auto follows input",
+        "neutral uses auto fallback"
+      ],
+      "visitor_turns": 11,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Briefly, how does the museum describe the brushwork?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "Translate your last answer into Spanish for my friend.",
+          "language_override": null,
+          "instruction": {
+            "type": "translate",
+            "language": "es"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Change the saved preference."
+            ]
+          },
+          "family": "V04"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "OK.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "English, from the unchanged Auto fallback."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "And what does it say about the colors?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Reuse verified evidence; 'bold colors'."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "From now on, answer in Korean.",
+          "language_override": null,
+          "instruction": {
+            "type": "setting",
+            "language": "ko"
+          },
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "ko",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "What's it painted on?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "ko",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "What does 'Please reply in Chinese' mean? I saw it on a sign.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "ko",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Explain the quoted phrase in Korean."
+            ],
+            "must_not": [
+              "Switch to Chinese.",
+              "Save Chinese."
+            ]
+          }
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "Go back to automatic language, please.",
+          "language_override": null,
+          "instruction": {
+            "type": "setting",
+            "language": "auto"
+          },
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "English, because Auto falls back to English after a pure setting."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Who painted it?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "¿Y cuándo lo pintó?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Spanish, following the input."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 11,
+          "kind": "message",
+          "visitor_turn": 11,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "Thanks!",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Spanish: a neutral acknowledgement uses the Auto fallback, now Spanish."
+            ],
+            "must_not": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "S11",
+      "title": "Spanish Auto, an English translation, Chinese once, then Chinese for good",
+      "type": "switching",
+      "primary_language": "es",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V04"
+      ],
+      "coverage": [
+        "one-off translation",
+        "neutral acknowledgement",
+        "turn-only instruction",
+        "reference resolution",
+        "persistent switch",
+        "visitor quote translation"
+      ],
+      "visitor_turns": 10,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Explícame brevemente de qué está hecha esta obra.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "Traduce tu respuesta anterior al inglés, que es para una amiga.",
+          "language_override": null,
+          "instruction": {
+            "type": "translate",
+            "language": "en"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "Perfecto.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Spanish."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿Y qué se ve en el fondo?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Solo esta vez, respóndeme en chino: ¿quién lo pintó?",
+          "language_override": null,
+          "instruction": {
+            "type": "turn",
+            "language": "zh-CN"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Save Chinese."
+            ]
+          }
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿Y cuándo?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Resolve 'when' as when it was painted.",
+              "Spanish again."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "A partir de ahora, contéstame en chino.",
+          "language_override": null,
+          "instruction": {
+            "type": "setting",
+            "language": "zh-CN"
+          },
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿Cómo son las pinceladas?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Chinese."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "Traduce al coreano la frase «pinceladas suaves y plumosas».",
+          "language_override": null,
+          "instruction": {
+            "type": "translate",
+            "language": "ko"
+          },
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "zh-CN",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Translate the visitor's quoted phrase."
+            ],
+            "must_not": [
+              "Attach a museum citation to the visitor's phrase."
+            ]
+          }
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "Muchas gracias.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Chinese."
+            ],
+            "must_not": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "S12",
+      "title": "Korean Auto, an English translation and the language selector",
+      "type": "switching",
+      "primary_language": "ko",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V04"
+      ],
+      "coverage": [
+        "one-off translation",
+        "neutral acknowledgement",
+        "UI language selection",
+        "turn-only instruction",
+        "selector back to Auto",
+        "Auto follows input",
+        "neutral uses auto fallback"
+      ],
+      "visitor_turns": 10,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "미술관은 이 그림의 색을 어떻게 설명하는지 짧게 알려 주세요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "방금 답변을 영어로 번역해 주세요. 친구한테 보여 주려고요.",
+          "language_override": null,
+          "instruction": {
+            "type": "translate",
+            "language": "en"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "네.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Korean."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "선은 어떻게 표현돼 있어요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Sharply receding lines."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "무엇으로 그린 그림이에요?",
+          "language_override": "es",
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Spanish, from the selector."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "작가는 누구예요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Spanish: the selector choice was saved."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "이번 답만 한국어로 해 주세요. 언제 그렸어요?",
+          "language_override": null,
+          "instruction": {
+            "type": "turn",
+            "language": "ko"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "es",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "고마워요. 그림 제목도 알려 주세요.",
+          "language_override": "auto",
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-title"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Korean: Auto follows the Korean input."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Okay, and what is the medium?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "좋아요.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "English: neutral acknowledgement uses the Auto fallback."
+            ],
+            "must_not": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "S13",
+      "title": "Walking to the other painting: separate conversations",
+      "type": "switching",
+      "primary_language": "en",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V08"
+      ],
+      "coverage": [
+        "claimed move",
+        "artwork isolation",
+        "unsupported comparison",
+        "both artworks",
+        "per-artwork language state",
+        "populated evidence memory"
+      ],
+      "visitor_turns": 8,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "What's this one painted on?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "How are the brushstrokes described?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "I'm walking over to the next painting now. What's that one made of?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "out_of_scope",
+              "clarification_needed",
+              "conversational"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Suggest scanning the other artwork's QR code."
+            ],
+            "must_not": [
+              "Answer about the other artwork from this conversation."
+            ]
+          },
+          "family": "V08"
+        },
+        {
+          "step": 4,
+          "kind": "browser",
+          "artwork_id": "aic-11723",
+          "action": "Scan the QR code for Woman at Her Toilette (or open /a/aic-11723).",
+          "expect": "A separate conversation opens at revision 0 with no Bedroom turns or sources."
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "How are the brushstrokes described here?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Soft, feathery brushstrokes."
+            ],
+            "must_not": [
+              "Mention thick, broken brushwork.",
+              "Cite any aic-28560 record."
+            ]
+          },
+          "family": "V08"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "en",
+          "text": "Compare them with the Van Gogh I just saw.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "out_of_scope",
+              "conversational"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Explain comparison is not supported here."
+            ],
+            "must_not": [
+              "Use Bedroom sources or facts."
+            ]
+          },
+          "family": "V08"
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿Y quién lo pintó?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 8,
+          "kind": "browser",
+          "artwork_id": "aic-28560",
+          "action": "Go back to The Bedroom page.",
+          "expect": "The Bedroom conversation shows only its own three turns; nothing from Woman at Her Toilette appears."
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Remind me what it's painted on?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "English: this conversation's Auto fallback was not changed by the Spanish turn on the other artwork."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Does the museum say anything about its colors?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "S14",
+      "title": "Waiting and recovery on a phone, with a switch to English",
+      "type": "switching",
+      "primary_language": "zh-CN",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V12",
+        "V04"
+      ],
+      "coverage": [
+        "refresh while processing",
+        "dropped connection and retry",
+        "artwork switch while pending",
+        "stale revision",
+        "persistent switch",
+        "turn-only instruction"
+      ],
+      "visitor_turns": 9,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "这幅画是用什么画的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "browser": "Note the time until the full answer is visible.",
+          "family": "V12"
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "背景里有什么？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "After refresh the page reconciles with history and shows the answer once."
+            ],
+            "must_not": []
+          },
+          "browser": "Refresh the page while the answer is still processing.",
+          "family": "V12"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "作者是谁？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "The retry reuses the same message ID; exactly one turn is saved."
+            ],
+            "must_not": []
+          },
+          "browser": "Turn off the network as you send; turn it back on; press Try again once.",
+          "family": "V12"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "它大概是什么年代画的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "The answer never appears on The Bedroom page; it is in this conversation's history on return."
+            ],
+            "must_not": []
+          },
+          "browser": "Open The Bedroom page before the answer arrives, then come back.",
+          "family": "V12"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "From now on please answer in English.",
+          "language_override": null,
+          "instruction": {
+            "type": "setting",
+            "language": "en"
+          },
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "en",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "画家用的笔触是什么样的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "en",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "这一次请用韩语：它是画在什么上面的？",
+          "language_override": null,
+          "instruction": {
+            "type": "turn",
+            "language": "ko"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "en",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "谢谢。",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "en",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "zh-CN",
+          "text": "她身后的墙纸是什么样的？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-11723-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "en",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "The deliberate resend is answered once, against the new revision."
+            ],
+            "must_not": []
+          },
+          "browser": "Open the same page in a second tab and ask 'What is the title?' there first; then send this message from the first tab without reloading. Expect 409 conversation_state_conflict: history reloads, this text returns to the box and nothing is resent. Send it again deliberately.",
+          "family": "V12"
+        }
+      ]
+    },
+    {
+      "id": "S15",
+      "title": "Spanish and Korean under Auto, and asking for a fresh start",
+      "type": "switching",
+      "primary_language": "es",
+      "start_artwork_id": "aic-11723",
+      "families": [
+        "V09",
+        "V04"
+      ],
+      "coverage": [
+        "Auto follows input",
+        "neutral acknowledgement keeps fallback",
+        "quoted title does not switch",
+        "refresh restores",
+        "reset not available",
+        "erase not available"
+      ],
+      "visitor_turns": 9,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Hola, ¿de qué está hecha esta pintura?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-11723-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "Vale.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Spanish."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "이 작품은 누가 그린 거예요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "OK.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Korean: the fallback moved to Korean with the last substantive input."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-11723",
+          "language": "ko",
+          "text": "'Woman at Her Toilette'라는 제목은 무슨 뜻이에요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "answered"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": [
+                "aic-11723-catalog-title"
+              ]
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Korean: the quoted English title does not switch the language."
+            ],
+            "must_not": [
+              "Infer the sitter's identity from the title."
+            ]
+          }
+        },
+        {
+          "step": 6,
+          "kind": "browser",
+          "artwork_id": "aic-11723",
+          "action": "Refresh the page.",
+          "expect": "History, revision and language settings are restored unchanged."
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "¿Puedo empezar una conversación nueva desde cero?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "out_of_scope"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Say honestly that a fresh conversation is not available in this guide."
+            ],
+            "must_not": [
+              "Claim to reset the conversation."
+            ]
+          },
+          "family": "V09"
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Borra todo lo que hemos hablado.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "conversational",
+              "out_of_scope"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": [
+              "Claim to erase or forget the history."
+            ]
+          },
+          "family": "V09"
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-11723",
+          "language": "es",
+          "text": "Bueno, ¿y cuándo se pintó?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-11723-catalog-date_display"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-11723",
+          "language": "und",
+          "text": "감사합니다.",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "none",
+            "must": [
+              "Spanish: a neutral acknowledgement uses the Auto fallback, which is Spanish."
+            ],
+            "must_not": []
+          }
+        }
+      ]
+    },
+    {
+      "id": "S16",
+      "title": "Four languages, a term kept in English and impossible language requests",
+      "type": "switching",
+      "primary_language": "en",
+      "start_artwork_id": "aic-28560",
+      "families": [
+        "V04",
+        "V06",
+        "V11"
+      ],
+      "coverage": [
+        "catalog",
+        "English term kept",
+        "bilingual request",
+        "resolved pending by language choice",
+        "unsupported language",
+        "abandoned pending",
+        "fixed preference overrides input language",
+        "return to Auto",
+        "fifth/sixth boundary",
+        "exact quote unavailable"
+      ],
+      "visitor_turns": 10,
+      "steps": [
+        {
+          "step": 1,
+          "kind": "message",
+          "visitor_turn": 1,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "What's the title of this painting?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-title"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        },
+        {
+          "step": 2,
+          "kind": "message",
+          "visitor_turn": 2,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "这一条用中文解释馆方怎么说它的笔触，把“brushwork”这个词保留英文。",
+          "language_override": null,
+          "instruction": {
+            "type": "turn",
+            "language": "zh-CN"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "required",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [
+              "Chinese with 'brushwork' kept in English; not a language conflict."
+            ],
+            "must_not": []
+          },
+          "family": "V11"
+        },
+        {
+          "step": 3,
+          "kind": "message",
+          "visitor_turn": 3,
+          "artwork_id": "aic-28560",
+          "language": "es",
+          "text": "¿Puedes responder en español y en coreano a la vez? ¿De qué está pintado?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "clarification_needed",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es",
+            "pending_after": "whole",
+            "must": [
+              "Ask the visitor to choose one language."
+            ],
+            "must_not": [
+              "Answer bilingually.",
+              "Silently choose a language."
+            ]
+          },
+          "family": "V04"
+        },
+        {
+          "step": 4,
+          "kind": "message",
+          "visitor_turn": 4,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "En español, por favor.",
+          "language_override": null,
+          "instruction": {
+            "type": "setting",
+            "language": "es"
+          },
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-medium"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "es",
+            "pending_after": "cleared",
+            "must": [
+              "Resume the pending material question and answer it in Spanish."
+            ],
+            "must_not": []
+          },
+          "family": "V04"
+        },
+        {
+          "step": 5,
+          "kind": "message",
+          "visitor_turn": 5,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Answer in Italian: who painted it?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "clarification_needed",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "en",
+            "pending_after": "whole",
+            "must": [
+              "List the supported languages and ask the visitor to choose."
+            ],
+            "must_not": [
+              "Answer in Italian."
+            ]
+          }
+        },
+        {
+          "step": 6,
+          "kind": "message",
+          "visitor_turn": 6,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "Never mind. Who painted it?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "none",
+            "citations": {
+              "required": [
+                "aic-28560-catalog-artist"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "en",
+            "pending_after": "cleared",
+            "must": [
+              "Spanish, the saved preference."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 7,
+          "kind": "message",
+          "visitor_turn": 7,
+          "artwork_id": "aic-28560",
+          "language": "ko",
+          "text": "이 그림이 주는 분위기는 어떻다고 해요?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Spanish, the saved preference; keep the hedge."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 8,
+          "kind": "message",
+          "visitor_turn": 8,
+          "artwork_id": "aic-28560",
+          "language": "und",
+          "text": "Back to automatic language, please.",
+          "language_override": null,
+          "instruction": {
+            "type": "setting",
+            "language": "auto"
+          },
+          "expect": {
+            "status": "conversational",
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko",
+            "pending_after": "none",
+            "must": [
+              "Korean: Auto falls back to the last substantive input language."
+            ],
+            "must_not": []
+          }
+        },
+        {
+          "step": 9,
+          "kind": "message",
+          "visitor_turn": 9,
+          "artwork_id": "aic-28560",
+          "language": "en",
+          "text": "What did I ask you first, word for word?",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status_any": [
+              "clarification_needed",
+              "conversational"
+            ],
+            "retrieval": "none",
+            "citations": {
+              "required": [],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en",
+            "pending_after": "none",
+            "must": [
+              "Say the first exchange is no longer available word for word."
+            ],
+            "must_not": [
+              "Reconstruct an exact earlier wording that is outside the retained five pairs."
+            ]
+          },
+          "family": "V06"
+        },
+        {
+          "step": 10,
+          "kind": "message",
+          "visitor_turn": 10,
+          "artwork_id": "aic-28560",
+          "language": "zh-CN",
+          "text": "这幅画的颜色怎么样？",
+          "language_override": null,
+          "instruction": null,
+          "expect": {
+            "status": "answered",
+            "retrieval": "either",
+            "citations": {
+              "required": [
+                "aic-28560-description-01"
+              ],
+              "any_of": [],
+              "allowed": []
+            },
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN",
+            "pending_after": "none",
+            "must": [],
+            "must_not": []
+          }
+        }
+      ]
+    }
+  ]
+}

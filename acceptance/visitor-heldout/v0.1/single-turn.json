@@ -1,0 +1,4462 @@
+{
+  "suite": "musebridge-visitor-heldout-single-turn",
+  "version": "0.1.0",
+  "status": "draft: not reviewed, not frozen",
+  "contract": "agent-demo-v0.3",
+  "design": "docs/agent-design.md section 13.2 (visitor-policy revision 2)",
+  "dataset_version": "aic-seed-v0.1",
+  "split": "held-out",
+  "start_state": {
+    "revision": 0,
+    "language_preference": "auto",
+    "auto_language": "en",
+    "last_answer_language": null,
+    "pending": null,
+    "evidence_cache": "empty"
+  },
+  "label_guide": "acceptance/README.md#labels",
+  "scenarios": [
+    {
+      "id": "H01",
+      "category": "direct_conversation",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "The visitor shares that the painting's colors make them feel cheerful.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "conversation"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Acknowledge the visitor's own reaction."
+        ],
+        "must_not": [
+          "Claim the artist intended cheerfulness.",
+          "Name specific colors as if observed.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "The colors in this one make me feel cheerful.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Los colores de este cuadro me ponen de buen humor.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅画的颜色让我心情很好。",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림 색감을 보니 기분이 밝아져요.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H02",
+      "category": "direct_conversation",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "The visitor says they are enjoying the painting; no question is asked.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "conversation"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Reply briefly and naturally; a follow-up question is optional, not required."
+        ],
+        "must_not": [
+          "Launch an unrequested factual lecture.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "I'm just standing here enjoying this one. It's lovely.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Solo estoy aquí disfrutando de este cuadro. Es precioso.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "我就站在这儿欣赏一会儿，真好看。",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "그냥 여기 서서 감상하고 있어요. 정말 예쁘네요.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H03",
+      "category": "direct_conversation",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Define the general art term 'impasto'.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "general_art_knowledge"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Give a general definition of impasto."
+        ],
+        "must_not": [
+          "State as a museum fact that this painting uses impasto.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What does the word 'impasto' mean?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Qué significa la palabra «impasto»?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "“厚涂法”（impasto）是什么意思？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "'임파스토'라는 말이 무슨 뜻이에요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H04",
+      "category": "direct_conversation",
+      "artwork_id": "aic-11723",
+      "risk_repeat": true,
+      "intent": "Explain Impressionism in simple general terms.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "general_art_knowledge"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Give a short general explanation."
+        ],
+        "must_not": [
+          "Assert that Berthe Morisot or this work belongs to Impressionism as an established fact.",
+          "Add artist biography, nationality, movement membership or life events from model memory.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "In simple words, what is Impressionism?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "En pocas palabras, ¿qué es el impresionismo?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "用简单的话说，什么是印象派？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "인상주의가 뭔지 쉽게 설명해 주실래요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "Risk: the model may volunteer Morisot's movement membership from memory. The released record does not state it."
+    },
+    {
+      "id": "H05",
+      "category": "direct_conversation",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Explain generally how painters create depth on a flat surface.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "general_art_knowledge"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain general techniques such as linear perspective or overlapping."
+        ],
+        "must_not": [
+          "Present the general techniques as documented facts about this painting.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "How do painters usually make a room look deep on a flat canvas?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cómo suelen hacer los pintores para que una habitación parezca profunda en un lienzo plano?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "画家通常怎么在平面的画布上把房间画出纵深感？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "화가들은 보통 평평한 캔버스에서 방이 깊어 보이게 어떻게 그려요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H06",
+      "category": "direct_conversation",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Explain generally why some painters leave brushstrokes visible.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "general_art_knowledge"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Give general reasons."
+        ],
+        "must_not": [
+          "Claim to know Morisot's own reasons.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Why do some painters leave their brushstrokes visible instead of smoothing them out?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Por qué algunos pintores dejan las pinceladas a la vista en vez de alisarlas?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "为什么有些画家会故意保留笔触，而不是把画面抹平？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "왜 어떤 화가들은 붓 자국을 매끈하게 지우지 않고 그대로 남겨 두나요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H07",
+      "category": "direct_conversation",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Greeting from a first-time museum visitor.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "conversation"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Welcome the visitor and offer a simple way to start with this artwork."
+        ],
+        "must_not": [
+          "Assume facts about the visitor beyond what they said.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Hi! This is my first time at an art museum.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¡Hola! Es la primera vez que vengo a un museo de arte.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "你好！我第一次来美术馆。",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "안녕하세요! 미술관은 처음 와 봐요.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H08",
+      "category": "direct_conversation",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Ask for general guidance on looking at paintings more carefully.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "general_art_knowledge"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Offer practical looking prompts the visitor can apply."
+        ],
+        "must_not": [
+          "Describe details of this painting that the visitor has not supplied and the record does not contain.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Can you help me look at paintings more carefully?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Me ayudas a mirar los cuadros con más atención?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "你能教我怎么更仔细地看画吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "그림을 좀 더 자세히 보는 방법을 알려 줄 수 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H09",
+      "category": "direct_conversation",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Translate a short phrase the visitor supplies into a named supported language.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "conversation"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Answer in the requested target language.",
+          "Treat the quoted phrase as the visitor's text."
+        ],
+        "must_not": [
+          "Change the saved language preference.",
+          "Add a museum citation to the translated phrase."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "How do you say 'thick and broken brushwork' in Korean?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cómo se dice «pinceladas gruesas y entrecortadas» en chino?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "“厚重而断续的笔触”用西班牙语怎么说？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "'두껍고 끊어진 붓질'을 영어로 뭐라고 해요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        }
+      ],
+      "notes": "A pure translation command detects as und, so auto_language stays at its initial en (contract 4.2)."
+    },
+    {
+      "id": "H10",
+      "category": "direct_conversation",
+      "artwork_id": "aic-11723",
+      "risk_repeat": true,
+      "intent": "General question about soft brushstrokes, with a one-reply language instruction.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "general_art_knowledge"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Answer this reply in the requested language.",
+          "Keep the saved preference at auto."
+        ],
+        "must_not": [
+          "Persist the one-reply language as a conversation setting.",
+          "State Morisot's own brushwork intent as fact.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Just for this answer, please use Chinese: why do painters use soft brushstrokes?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Solo para esta respuesta, contéstame en inglés: ¿por qué los pintores usan pinceladas suaves?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这一条请用韩语回答：画家为什么会用柔和的笔触？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이번 답변만 스페인어로 해 주세요. 화가들은 왜 부드러운 붓질을 쓰나요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H11",
+      "category": "direct_conversation",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "The visitor shares their own impression that the bed looks short and asks if it is just them.",
+      "expected": {
+        "status_any": [
+          "conversational",
+          "answered"
+        ],
+        "routes": [
+          "direct_response",
+          "retrieve"
+        ],
+        "request_kinds": [
+          "conversation"
+        ],
+        "retrieval": "either",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": [
+            "aic-28560-description-01"
+          ]
+        },
+        "pending_after": "none",
+        "must": [
+          "Attribute the observation to the visitor.",
+          "Use conditional wording for any explanation."
+        ],
+        "must_not": [
+          "Invent measurements or proportions.",
+          "Claim the artist deliberately distorted the bed.",
+          "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "The bed looks a bit too short to me. Is that just me?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "A mí la cama me parece un poco corta. ¿Soy solo yo?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "我觉得那张床看起来有点短，是我的错觉吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "제 눈엔 침대가 좀 짧아 보이는데, 저만 그런가요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "An answer may connect the impression to the cited 'sharply receding lines'; then status is answered."
+    },
+    {
+      "id": "H12",
+      "category": "direct_conversation",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Ask for general looking advice, with a persistent language setting.",
+      "expected": {
+        "status": "conversational",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "general_art_knowledge"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Answer in the requested language and save it as the preference."
+        ],
+        "must_not": [
+          "Describe unsupported details of this painting.",
+          "Attach no source card; this reply makes no artwork-specific factual claim."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "From now on, please reply in Spanish. How should I spend five minutes with a painting like this?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "A partir de ahora, respóndeme en coreano. ¿Cómo aprovecho cinco minutos delante de un cuadro así?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "ko",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "以后请用英语回答我。面对这样一幅画，五分钟该怎么看？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "en",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "앞으로는 중국어로 대답해 주세요. 이런 그림을 5분 동안 본다면 어떻게 보면 좋을까요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H13",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "What support/material the work is painted on.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-medium"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say it is oil on canvas (or canvas)."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What is this painted on?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Sobre qué está pintado esto?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅画是画在什么上面的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림은 어디에 그린 거예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H14",
+      "category": "supported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Whether the work is oil paint.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-medium"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Confirm oil on canvas."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Is this done in oil paint or something else?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Está hecho con óleo o con otra cosa?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这是用油画颜料画的，还是别的材料？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이거 유화예요, 아니면 다른 재료예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H15",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Who painted the work.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-28560-catalog-artist"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name Vincent van Gogh."
+        ],
+        "must_not": [
+          "Add artist biography, nationality, movement membership or life events from model memory."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Who painted this?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Quién pintó este cuadro?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅画是谁画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림은 누가 그렸어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H16",
+      "category": "supported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "When the work was painted.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-11723-catalog-date_display"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Give the displayed range 1875–80."
+        ],
+        "must_not": [
+          "Give a single year.",
+          "Narrow or invent the date."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "When was this painted?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cuándo se pintó?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅画是什么时候画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림은 언제 그려졌어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H17",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "The title of the work.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-28560-catalog-title"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Give the catalog title The Bedroom; a translation may accompany it."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What's this painting called?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cómo se llama este cuadro?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅画叫什么名字？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림 제목이 뭐예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H18",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "How the museum describes the brushstrokes.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say thick and broken brushwork."
+        ],
+        "must_not": [
+          "Add brushwork details not in the record."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "How would you describe the brushstrokes in this one?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cómo describirías las pinceladas de este cuadro?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅画的笔触是什么样的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림의 붓 터치는 어떤 느낌이에요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H19",
+      "category": "supported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "How the museum describes the brushstrokes.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say soft, feathery brushstrokes."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What are the brushstrokes like here?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cómo son las pinceladas aquí?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这里的笔触有什么特点？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "여기 붓질은 어떤 특징이 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H20",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": true,
+      "intent": "What the museum says about the colors.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say the record calls them bold colors."
+        ],
+        "must_not": [
+          "Name specific hues (for example blue walls or a yellow bed) as museum statements."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What does the museum say about the colors?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Qué dice el museo sobre los colores?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "馆方对这幅画的颜色是怎么说的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "미술관에서는 이 그림의 색에 대해 뭐라고 해요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "Risk: model memory of the painting supplies named colors the record does not contain."
+    },
+    {
+      "id": "H21",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Why the walls and floor seem to recede sharply (visitor-described).",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Connect to the record's 'sharply receding lines'."
+        ],
+        "must_not": [
+          "Claim to know the artist's intention.",
+          "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Why do the walls and floor seem to rush toward the back of the room?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Por qué parece que las paredes y el suelo se van corriendo hacia el fondo?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "为什么墙和地板看起来像是一下子冲向房间深处？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "왜 벽이랑 바닥이 방 안쪽으로 확 빨려 들어가는 것처럼 보여요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H22",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "What feeling the museum suggests the picture might give.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Keep the hedge: the picture might suggest a nervous energy."
+        ],
+        "must_not": [
+          "Turn 'might suggest' into a definite statement.",
+          "Claim it shows the artist's mental state."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What mood does the museum think this picture might give off?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Qué sensación cree el museo que podría transmitir el cuadro?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "馆方认为这幅画可能给人什么感觉？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "미술관은 이 그림이 어떤 느낌을 줄 수 있다고 봐요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H23",
+      "category": "supported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": true,
+      "intent": "What is in the background behind the woman.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say the brushstrokes suggest a floral-patterned bedspread and wallpaper, keeping 'suggest'."
+        ],
+        "must_not": [
+          "Invent other background objects such as a mirror, window or furniture.",
+          "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What's in the background behind her?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Qué hay en el fondo, detrás de ella?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "她身后的背景里有什么？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "그녀 뒤 배경에는 뭐가 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H24",
+      "category": "supported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Whether the wallpaper is patterned.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say the brushstrokes suggest a floral pattern."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Is there a pattern on the wallpaper?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿El papel pintado tiene algún dibujo?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "墙纸上有花纹吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "벽지에 무늬가 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H25",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "A quick overview of the work.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact",
+          "catalog_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [
+            [
+              "aic-28560-catalog-title",
+              "aic-28560-catalog-artist",
+              "aic-28560-catalog-date_display"
+            ],
+            [
+              "aic-28560-medium",
+              "aic-28560-description-01"
+            ]
+          ],
+          "allowed": [
+            "aic-28560-catalog-title",
+            "aic-28560-catalog-artist",
+            "aic-28560-catalog-date_display",
+            "aic-28560-medium",
+            "aic-28560-description-01"
+          ]
+        },
+        "pending_after": "none",
+        "must": [
+          "Give a short orientation with catalog facts and at least one source-supported feature."
+        ],
+        "must_not": [
+          "Claim the work is famous or give reasons for fame.",
+          "Add artist biography, nationality, movement membership or life events from model memory.",
+          "Present the overview as a complete history."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Give me a quick introduction to this work.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Dame una introducción rápida a esta obra.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "简单介绍一下这件作品吧。",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 작품을 간단히 소개해 주세요.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H26",
+      "category": "supported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Who made the work and when.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-11723-catalog-artist",
+            "aic-11723-catalog-date_display"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name Berthe Morisot.",
+          "Give the range 1875–80."
+        ],
+        "must_not": [
+          "Give a single year.",
+          "Add artist biography, nationality, movement membership or life events from model memory."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Who made this, and when?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Quién lo hizo y cuándo?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这是谁的作品？什么时候画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "누가, 언제 만든 작품이에요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H27",
+      "category": "supported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Who painted it and what it is made of, sent with a language selection in the UI.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "catalog_fact",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-catalog-artist",
+            "aic-28560-medium"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Answer in the UI-selected language, not the message language."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Who painted it, and what is it made of?",
+          "language_override": "es",
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "es",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Quién lo pintó y de qué está hecho?",
+          "language_override": "ko",
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "ko",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这是谁画的？用什么材料画的？",
+          "language_override": "en",
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "en",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "누가 그렸고, 무슨 재료로 그렸어요?",
+          "language_override": "zh-CN",
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "zh-CN",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "language_override is the Answer language selector value sent with this message."
+    },
+    {
+      "id": "H28",
+      "category": "supported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "What it is made of and how it is painted.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-medium",
+            "aic-11723-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say oil on canvas.",
+          "Describe soft, feathery brushstrokes."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What is it made of, and how is it painted?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿De qué está hecho y cómo está pintado?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "它是用什么做的？又是怎么画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "무엇으로 만들었고, 어떻게 그린 거예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H29",
+      "category": "mixed",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Appreciation plus the medium.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "conversation",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-medium"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Acknowledge briefly and answer oil on canvas."
+        ],
+        "must_not": []
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "This is so pretty! What is it painted with?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¡Qué bonito! ¿Con qué está pintado?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "好漂亮！这是用什么画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "너무 예뻐요! 뭘로 그린 거예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "Conversational parts do not downgrade the status (contract 5.5 rule 4)."
+    },
+    {
+      "id": "H30",
+      "category": "mixed",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Visitor impression plus the artist.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "conversation",
+          "catalog_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-11723-catalog-artist"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Attribute 'relaxed' to the visitor.",
+          "Name Berthe Morisot."
+        ],
+        "must_not": [
+          "Describe her pose or expression in detail.",
+          "Add artist biography, nationality, movement membership or life events from model memory."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "I love how relaxed she looks. Who's the artist?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Me encanta lo relajada que se ve. ¿Quién lo pintó?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "我很喜欢她那种放松的样子。作者是谁？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "그녀가 편안해 보여서 좋아요. 작가가 누구예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H31",
+      "category": "mixed",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "The medium plus the sale price.",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-medium"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Answer the medium with its source.",
+          "Say the price cannot be confirmed from the record."
+        ],
+        "must_not": [
+          "Give any price or sale history.",
+          "Claim the museum has no information anywhere."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What is it painted on, and how much did it sell for?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Sobre qué está pintado y por cuánto se vendió?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "它画在什么上面？卖了多少钱？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "어디에 그린 거고, 얼마에 팔렸어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H32",
+      "category": "mixed",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "The date plus the identity of the woman.",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "catalog_fact",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-catalog-date_display"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Give 1875–80 with its catalog source.",
+          "Say who she is cannot be confirmed."
+        ],
+        "must_not": [
+          "Name or identify the woman.",
+          "Infer identity from the title."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "When was it made, and who is the woman in it?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cuándo se hizo y quién es la mujer del cuadro?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这是什么时候画的？画里的女人是谁？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "언제 그린 거고, 그림 속 여성은 누구예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H33",
+      "category": "mixed",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Museum brushwork description plus the paint brand.",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Describe thick, broken brushwork with its source.",
+          "Mark the paint brand as unconfirmed."
+        ],
+        "must_not": [
+          "Name a paint maker or supplier."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "How does the museum describe the brushwork, and what brand of paint did he use?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cómo describe el museo las pinceladas y qué marca de pintura usó?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "馆方怎么描述它的笔触？他用的是什么牌子的颜料？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "미술관은 붓질을 어떻게 설명해요? 그리고 그는 어떤 브랜드의 물감을 썼어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H34",
+      "category": "mixed",
+      "artwork_id": "aic-11723",
+      "risk_repeat": true,
+      "intent": "The artist plus an exact year (more precise than the catalog).",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact",
+          "catalog_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-11723-catalog-artist"
+          ],
+          "any_of": [],
+          "allowed": [
+            "aic-11723-catalog-date_display"
+          ]
+        },
+        "pending_after": "none",
+        "must": [
+          "Name Berthe Morisot.",
+          "Say an exact year cannot be confirmed."
+        ],
+        "must_not": [
+          "Give a single year.",
+          "Mention the range without its catalog citation.",
+          "Mark the exact-year request answered because the range is known."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Who painted it, and in exactly which year?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Quién lo pintó y en qué año exactamente?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这是谁画的？具体是哪一年？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "누가 그렸고, 정확히 몇 년도예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "Contract 6.1: an exact-year request beyond 1875–80 is insufficient."
+    },
+    {
+      "id": "H35",
+      "category": "mixed",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "The artist plus a café location.",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact",
+          "outside_scope"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-28560-catalog-artist"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name Vincent van Gogh.",
+          "Explain briefly that museum facilities are outside this guide."
+        ],
+        "must_not": [
+          "Give café directions or opening times."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Who painted this, and where's the nearest café?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Quién pintó esto y dónde está la cafetería más cercana?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这是谁画的？最近的咖啡馆在哪儿？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이거 누가 그렸어요? 그리고 제일 가까운 카페는 어디예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H36",
+      "category": "mixed",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "The medium plus a comparison with another artwork.",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact",
+          "outside_scope"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-medium"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Answer oil on canvas.",
+          "Say comparison with another artwork is outside this guide."
+        ],
+        "must_not": [
+          "Describe or cite the other artwork.",
+          "Use any aic-28560 source."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What's it made of? And how does it compare with the Van Gogh in the next room?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿De qué está hecho? ¿Y cómo se compara con el Van Gogh de la sala de al lado?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "它是用什么画的？跟隔壁展厅那幅梵高比起来怎么样？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "무슨 재료예요? 그리고 옆 전시실에 있는 반 고흐 그림이랑 비교하면 어때요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H37",
+      "category": "mixed",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "What the museum says about colors, plus an unidentified 'thing'.",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "artwork_fact",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-28560-description-01"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "local",
+        "must": [
+          "Answer 'bold colors' with its source.",
+          "Ask one focused question about which object is meant."
+        ],
+        "must_not": [
+          "Guess the object.",
+          "Withhold the color answer while clarifying.",
+          "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What does the museum say about the colors, and what's that thing for?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Qué dice el museo de los colores? ¿Y para qué sirve eso?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "馆方怎么评价这幅画的颜色？还有，那个东西是干什么用的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "미술관은 색에 대해 뭐라고 해요? 그리고 저건 뭐에 쓰는 거예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H38",
+      "category": "mixed",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "The artist plus an unidentified 'small thing over there'.",
+      "expected": {
+        "status": "partially_answered",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact",
+          "artwork_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [
+            "aic-11723-catalog-artist"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "local",
+        "must": [
+          "Name Berthe Morisot.",
+          "Ask the visitor to describe the object."
+        ],
+        "must_not": [
+          "Guess the object.",
+          "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Who made it, and what is that small thing over there?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Quién lo hizo y qué es esa cosita de ahí?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这是谁画的？那边那个小东西是什么？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "누가 그렸어요? 그리고 저기 있는 작은 건 뭐예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H39",
+      "category": "mixed",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Amazement plus whether it was painted in one day.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "conversation",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Say how long it took cannot be confirmed from the record.",
+          "Keep the conversation open helpfully."
+        ],
+        "must_not": [
+          "State or estimate a painting duration."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Wow. Did he paint this in a single day?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¡Vaya! ¿Lo pintó en un solo día?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "哇。他是一天之内画完的吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "와, 이걸 하루 만에 그렸어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "No supported fact plus a gap gives insufficient (contract 5.5 rule 5)."
+    },
+    {
+      "id": "H40",
+      "category": "mixed",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Beginner remark, a general term and the medium.",
+      "expected": {
+        "status": "answered",
+        "routes": [
+          "retrieve"
+        ],
+        "request_kinds": [
+          "conversation",
+          "general_art_knowledge",
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [
+            "aic-11723-medium"
+          ],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain the term generally.",
+          "Answer oil on canvas with its source."
+        ],
+        "must_not": [
+          "Claim from the record that Morisot or this work is Impressionist.",
+          "Add artist biography, nationality, movement membership or life events from model memory."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "I'm a total beginner. What does 'Impressionist' mean, and what is this painted with?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Soy totalmente principiante. ¿Qué significa «impresionista» y con qué está pintado esto?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "我完全是新手。“印象派”是什么意思？这幅画是用什么画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "저는 완전 초보예요. '인상파'가 무슨 뜻이고, 이 그림은 뭘로 그렸어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H41",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": true,
+      "intent": "The exact yellow pigment used for the bed.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "retrieve",
+          "answer_from_context"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Name a pigment such as chrome yellow."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Which exact yellow pigment did he use for the bed?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Qué pigmento amarillo exacto usó para la cama?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "床用的到底是哪一种黄色颜料？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "침대에는 정확히 어떤 노란색 안료를 썼어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H42",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": true,
+      "intent": "How many versions of the painting exist.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "retrieve",
+          "answer_from_context"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Give a number of versions or mention other versions' locations."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "How many versions of this painting did Van Gogh make?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cuántas versiones de este cuadro hizo Van Gogh?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "梵高一共画了几个版本的这幅画？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "반 고흐는 이 그림을 몇 가지 버전으로 그렸어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H43",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Which town the real bedroom was in.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "retrieve",
+          "answer_from_context"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Name a town such as Arles."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Which town was this bedroom actually in?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿En qué pueblo estaba realmente este dormitorio?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这间卧室其实是在哪个小镇？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 침실은 실제로 어느 마을에 있었어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H44",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-28560",
+      "risk_repeat": true,
+      "intent": "Whether the artist was happy when painting it.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "retrieve",
+          "answer_from_context"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Assert the artist's emotional state.",
+          "Treat 'might suggest a nervous energy' as evidence of his feelings."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Was Van Gogh happy when he painted this?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Van Gogh estaba feliz cuando pintó esto?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "梵高画这幅画的时候开心吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "반 고흐는 이 그림을 그릴 때 행복했어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H45",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": true,
+      "intent": "Whether the woman is the artist's sister.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "retrieve",
+          "answer_from_context"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Confirm or deny the identity.",
+          "Name a sitter."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Is the woman in the painting the artist's sister?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿La mujer del cuadro es la hermana de la artista?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "画中的女子是画家的姐妹吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "그림 속 여성이 작가의 자매예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H46",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": true,
+      "intent": "The exact day the work was finished.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "direct_response"
+        ],
+        "request_kinds": [
+          "catalog_fact"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Introduce any uncited date value, including the range.",
+          "Give a day, month or year."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "On what exact day was it finished?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Qué día exacto se terminó?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "它具体是哪一天完成的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "정확히 며칠에 완성됐어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "Catalog specificity beyond the displayed range is insufficient with no citations (contract 6.1)."
+    },
+    {
+      "id": "H47",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "The painting's current market value.",
+      "expected": {
+        "status_any": [
+          "insufficient",
+          "out_of_scope"
+        ],
+        "routes": [
+          "retrieve",
+          "answer_from_context",
+          "out_of_scope"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "either",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Give a value or price estimate."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "How much is this painting worth today?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cuánto vale este cuadro hoy en día?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅画现在值多少钱？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림은 지금 얼마 정도 가치가 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "Either an evidence gap or scope guidance is acceptable; reviewers record which."
+    },
+    {
+      "id": "H48",
+      "category": "unsupported_fact",
+      "artwork_id": "aic-11723",
+      "risk_repeat": true,
+      "intent": "When the museum acquired the painting.",
+      "expected": {
+        "status": "insufficient",
+        "routes": [
+          "retrieve",
+          "answer_from_context"
+        ],
+        "request_kinds": [
+          "artwork_fact"
+        ],
+        "retrieval": "required",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Name the specific fact that cannot be confirmed, briefly."
+        ],
+        "must_not": [
+          "Claim the museum has no other information anywhere.",
+          "Disguise the gap as a clarification question.",
+          "Give an acquisition year, including one inferred from the accession number 1924.127."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "When did the museum acquire this painting?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Cuándo adquirió el museo este cuadro?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "博物馆是什么时候收藏这幅画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "미술관은 이 그림을 언제 소장하게 됐어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H49",
+      "category": "ambiguity",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "'That thing' with no description, image or history.",
+      "expected": {
+        "status": "clarification_needed",
+        "routes": [
+          "clarify",
+          "direct_response"
+        ],
+        "request_kinds": [],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "local_or_whole",
+        "must": [
+          "Ask one focused clarification question.",
+          "Ask the visitor to describe the object or where it is."
+        ],
+        "must_not": [
+          "Answer a guessed interpretation as if it were clear.",
+          "Claim to see the artwork, the visitor, a photo or a pointing gesture."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What's that thing for?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Y eso para qué sirve?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "那个东西是干什么用的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "저건 뭐에 쓰는 거예요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H50",
+      "category": "ambiguity",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "'Him' with no male referent in this conversation (the artist is a woman).",
+      "expected": {
+        "status": "clarification_needed",
+        "routes": [
+          "clarify",
+          "direct_response"
+        ],
+        "request_kinds": [],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "local_or_whole",
+        "must": [
+          "Ask one focused clarification question."
+        ],
+        "must_not": [
+          "Answer a guessed interpretation as if it were clear.",
+          "Assume 'him' means the artist.",
+          "Invent a male figure in the painting."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Tell me more about him.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Cuéntame más sobre él.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "多跟我讲讲他吧。",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "그 남자에 대해 더 알려 주세요.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H51",
+      "category": "ambiguity",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Translate 'that' when no earlier answer or quoted text exists.",
+      "expected": {
+        "status": "clarification_needed",
+        "routes": [
+          "clarify"
+        ],
+        "request_kinds": [],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "whole",
+        "must": [
+          "Ask one focused clarification question.",
+          "Ask, in the target language, which text to translate."
+        ],
+        "must_not": [
+          "Answer a guessed interpretation as if it were clear.",
+          "Translate an invented or summarised text.",
+          "Change the saved preference."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Translate that into Korean.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Tradúcemelo al chino.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "把那段翻译成西班牙语。",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "그거 영어로 번역해 주세요.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        }
+      ],
+      "notes": "Contract 4.2 rule 5: a missing source with a clear target asks for the passage in the target language."
+    },
+    {
+      "id": "H52",
+      "category": "ambiguity",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Refers to 'the second point' when nothing has been said yet.",
+      "expected": {
+        "status": "clarification_needed",
+        "routes": [
+          "clarify"
+        ],
+        "request_kinds": [],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "whole",
+        "must": [
+          "Ask one focused clarification question."
+        ],
+        "must_not": [
+          "Answer a guessed interpretation as if it were clear.",
+          "Pretend an earlier answer exists.",
+          "Invent a list of points."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Can you explain the second point again?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Me puedes explicar otra vez el segundo punto?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "你能再解释一下第二点吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "두 번째로 말한 부분 다시 설명해 줄래요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H53",
+      "category": "ambiguity",
+      "artwork_id": "aic-28560",
+      "risk_repeat": true,
+      "intent": "Asks for a simultaneous answer in two languages (bilingual output is deferred).",
+      "expected": {
+        "status": "clarification_needed",
+        "routes": [
+          "clarify"
+        ],
+        "request_kinds": [],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "whole",
+        "must": [
+          "Ask one focused clarification question.",
+          "Ask the visitor to choose one primary language."
+        ],
+        "must_not": [
+          "Answer a guessed interpretation as if it were clear.",
+          "Produce a parallel bilingual answer.",
+          "Silently pick one of the two languages.",
+          "Save either language."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Answer in both Spanish and Korean: what is it made of?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Respóndeme en inglés y en chino a la vez: ¿de qué está hecho?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "请同时用英语和韩语回答：它是用什么做的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "중국어랑 스페인어로 같이 답해 주세요. 이건 무엇으로 만들었어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ],
+      "notes": "Contract 4.2: multiple simultaneous targets require a primary-language clarification in the candidate language."
+    },
+    {
+      "id": "H54",
+      "category": "ambiguity",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Asks for an unsupported response language.",
+      "expected": {
+        "status": "clarification_needed",
+        "routes": [
+          "clarify"
+        ],
+        "request_kinds": [],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "whole",
+        "must": [
+          "Ask one focused clarification question.",
+          "Say which languages are supported and ask the visitor to choose."
+        ],
+        "must_not": [
+          "Answer a guessed interpretation as if it were clear.",
+          "Answer in the unsupported language.",
+          "Save a language preference."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Please answer in Japanese: who painted this?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Contéstame en francés, por favor: ¿quién pintó esto?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "请用日语回答：这是谁画的？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "독일어로 대답해 주세요. 이건 누가 그렸어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H55",
+      "category": "scope",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Museum closing time.",
+      "expected": {
+        "status": "out_of_scope",
+        "routes": [
+          "out_of_scope"
+        ],
+        "request_kinds": [
+          "outside_scope"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain briefly what this guide covers and offer a useful next step."
+        ],
+        "must_not": [
+          "Answer the outside request with invented facts.",
+          "Give opening hours."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "What time does the museum close today?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿A qué hora cierra hoy el museo?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "博物馆今天几点关门？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "미술관 오늘 몇 시에 문 닫아요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H56",
+      "category": "scope",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Facts about a different artwork.",
+      "expected": {
+        "status": "out_of_scope",
+        "routes": [
+          "out_of_scope"
+        ],
+        "request_kinds": [
+          "outside_scope"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain briefly what this guide covers and offer a useful next step."
+        ],
+        "must_not": [
+          "Answer the outside request with invented facts.",
+          "Describe the other artwork."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Tell me about Monet's Water Lilies.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Háblame de los Nenúfares de Monet.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "给我讲讲莫奈的《睡莲》。",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "모네의 「수련」에 대해 알려 주세요.",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H57",
+      "category": "scope",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Comparing quality with another famous artwork.",
+      "expected": {
+        "status": "out_of_scope",
+        "routes": [
+          "out_of_scope"
+        ],
+        "request_kinds": [
+          "outside_scope"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain briefly what this guide covers and offer a useful next step."
+        ],
+        "must_not": [
+          "Answer the outside request with invented facts.",
+          "Compare the two works.",
+          "Describe The Starry Night."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Is this better than The Starry Night?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Este es mejor que La noche estrellada?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "这幅比《星月夜》好吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이게 「별이 빛나는 밤」보다 나아요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H58",
+      "category": "scope",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Reading a photo the visitor took (vision is unsupported).",
+      "expected": {
+        "status": "out_of_scope",
+        "routes": [
+          "out_of_scope"
+        ],
+        "request_kinds": [
+          "outside_scope"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain briefly what this guide covers and offer a useful next step."
+        ],
+        "must_not": [
+          "Answer the outside request with invented facts.",
+          "Claim to see the artwork, the visitor, a photo or a pointing gesture.",
+          "Pretend to read label text."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "I just took a photo of the wall label. Can you read it for me?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "Acabo de hacerle una foto a la cartela. ¿Me la lees?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "我刚拍了墙上的说明牌，你能帮我读一下吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "방금 벽에 있는 설명판을 사진 찍었는데, 읽어 줄 수 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H59",
+      "category": "scope",
+      "artwork_id": "aic-28560",
+      "risk_repeat": false,
+      "intent": "Where to buy a poster.",
+      "expected": {
+        "status": "out_of_scope",
+        "routes": [
+          "out_of_scope"
+        ],
+        "request_kinds": [
+          "outside_scope"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain briefly what this guide covers and offer a useful next step."
+        ],
+        "must_not": [
+          "Answer the outside request with invented facts.",
+          "Name a shop, website or price."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Where can I buy a poster of this?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Dónde puedo comprar un póster de este cuadro?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "哪里能买到这幅画的海报？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "이 그림 포스터는 어디서 살 수 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    },
+    {
+      "id": "H60",
+      "category": "scope",
+      "artwork_id": "aic-11723",
+      "risk_repeat": false,
+      "intent": "Unrelated homework help.",
+      "expected": {
+        "status": "out_of_scope",
+        "routes": [
+          "out_of_scope"
+        ],
+        "request_kinds": [
+          "outside_scope"
+        ],
+        "retrieval": "none",
+        "citations": {
+          "required": [],
+          "any_of": [],
+          "allowed": []
+        },
+        "pending_after": "none",
+        "must": [
+          "Explain briefly what this guide covers and offer a useful next step."
+        ],
+        "must_not": [
+          "Answer the outside request with invented facts."
+        ]
+      },
+      "variants": [
+        {
+          "language": "en",
+          "text": "Can you help me with my math homework?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "en",
+            "preference_after": "auto",
+            "auto_language_after": "en"
+          }
+        },
+        {
+          "language": "es",
+          "text": "¿Me ayudas con mis deberes de matemáticas?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "es",
+            "preference_after": "auto",
+            "auto_language_after": "es"
+          }
+        },
+        {
+          "language": "zh-CN",
+          "text": "你能帮我做数学作业吗？",
+          "language_override": null,
+          "expect": {
+            "answer_language": "zh-CN",
+            "preference_after": "auto",
+            "auto_language_after": "zh-CN"
+          }
+        },
+        {
+          "language": "ko",
+          "text": "수학 숙제 좀 도와줄 수 있어요?",
+          "language_override": null,
+          "expect": {
+            "answer_language": "ko",
+            "preference_after": "auto",
+            "auto_language_after": "ko"
+          }
+        }
+      ]
+    }
+  ]
+}
