@@ -2,6 +2,10 @@
 
 This guide covers the currently runnable local components: the shared two-artwork dataset, Python evidence retrieval, the Go artwork/conversation/message APIs, reviewed fixture answers, and a mobile frontend with mock and live modes. The local answer path uses actual museum evidence and labeled fixed responses.
 
+For explicit public v2 integration with the private Agent and controlled Qwen,
+use the [M2-B3 native integration guide](public-agent-integration.md). The Compose
+commands below retain the fixture configuration and do not start an Agent/model.
+
 ## Start the full local stack with Compose
 
 Install Docker with Compose v2 and run these commands from the repository root.
@@ -11,7 +15,7 @@ docker compose up --build -d
 docker compose ps
 ```
 
-Open [The Bedroom](http://localhost:8080/a/aic-28560), [Woman at Her Toilette](http://localhost:8080/a/aic-11723), or the [QR cards](http://localhost:8080/qr). Compose serves the production web build in live mode. Its browser contract defaults to fixture mode. `PUBLIC_CONTRACT=agent docker compose build web` selects the Agent frontend at build time once the Go v2 API is available; it does not enable or implement that backend. The browser uses relative `/api/` requests. The proxy forwards them to `api:8000`, and Go retrieves evidence from `http://retrieval:8001`. Both services read the same read-only `aic-seed-v0.1` file. Only web port `8080` is published.
+Open [The Bedroom](http://localhost:8080/a/aic-28560), [Woman at Her Toilette](http://localhost:8080/a/aic-11723), or the [QR cards](http://localhost:8080/qr). Compose serves the production web build in live mode. Its browser contract defaults to fixture mode. `PUBLIC_CONTRACT=agent docker compose build web` selects only the Agent frontend at build time; the Compose Go service remains configured for fixture mode. Use the native integration guide to run the matching v2 stack. The browser uses relative `/api/` requests. The proxy forwards them to `api:8000`, and Go retrieves evidence from `http://retrieval:8001`. Both services read the same read-only `aic-seed-v0.1` file. Only web port `8080` is published.
 
 For a phone on the same network, replace the example IP with the address the phone can reach and start the stack with that exact origin. Open the same origin in the desktop browser when generating the QR cards. The local HTTP profile uses `COOKIE_SECURE=false` and `GENERATION_MODE=fixture`.
 

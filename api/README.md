@@ -4,11 +4,11 @@ Owner: Jinqing Zhang (Go backend and system integration).
 
 This implements the Go artwork service, anonymous conversations, bounded question orchestration, reviewed fixture answers and validating retrieval client. The Go and Python services load the same immutable seed. Artwork cards and conversation recovery remain available independently of retrieval, and a separate Go diagnostic command can call the retrieval service.
 
-The [v2 boundary layer](../docs/contracts/README.md) and [internal Agent state store](../docs/agent-state-store.md) are also implemented. They provide strict wire contracts and atomic revision/memory handling for later integration. The HTTP routes below continue to serve fixture mode; this does not enable the private Agent service or real inference.
+The [v2 boundary layer](../docs/contracts/README.md), [Agent state store](../docs/agent-state-store.md) and public v2 routes are implemented. `GENERATION_MODE=agent` explicitly connects conversation creation, history and submission to the private Agent. The default remains fixture mode. See the [M2-B3 integration guide](../docs/public-agent-integration.md) for A's native configuration and controlled Qwen startup; model quality and browser acceptance remain separate checks.
 
-The [private Agent client](../docs/agent-client.md) provides reusable authenticated POST transport and M2-B1 single GET status queries, original-request result binding and safe error mappings. Processing is returned as a status; retained failures become safe typed errors. The [Go-originated check](../docs/m1-go-integration.md) passes through real FastAPI/workflow/retrieval services with scripted model decisions and reads back completed/failed records. Public Agent-mode wiring remains pending.
+The [private Agent client](../docs/agent-client.md) provides reusable authenticated POST transport and M2-B1 single GET status queries, original-request result binding and safe error mappings. Processing is returned as a status; retained failures become safe typed errors. The [Go-originated M1 check](../docs/m1-go-integration.md) and [public HTTP check](../docs/public-agent-integration.md#repeatable-no-gpu-verification) pass through real FastAPI/workflow/retrieval services with scripted model decisions.
 
-The [M2-B2 Agent submission service](../docs/agent-submission.md) now connects the store and client internally, including bounded original-run GET recovery and atomic commit/failure. Public HTTP integration and its explicit runtime configuration remain M2-B3 work; the routes below still use fixture mode.
+The [M2-B2 Agent submission service](../docs/agent-submission.md) connects the store and client, including bounded original-run GET recovery and atomic commit/failure. M2-B3 attaches it to public routes. Agent failures never select fixture responses.
 
 Implemented routes:
 
@@ -17,11 +17,11 @@ Implemented routes:
 | `GET /api/artworks/{slug}` | Return the local artwork card, or `404 artwork_not_found`. |
 | `POST /api/conversations` | Create or restore the visitor's artwork conversation; set or refresh the visitor cookie. |
 | `GET /api/conversations/{conversation_id}/messages` | Read the owning visitor's conversation and its current history. |
-| `POST /api/conversations/{conversation_id}/messages` | Submit or retry a question, retrieve real evidence, and return a completed fixture turn. |
+| `POST /api/conversations/{conversation_id}/messages` | Submit or retry a question using the configured fixture or Agent contract. |
 | `GET /healthz` | Private process liveness and the loaded dataset version. |
 | `GET /readyz` | Private local readiness; it does not depend on the retrieval service being reachable. |
 
-The B2 public routes and B3 retrieval/fixture answer path are implemented. History exposes completed turns in sequence and the current processing or failed pending request. Submission also implements the server-side reservation, replay and recovery semantics needed by the public contract. Answers remain fixed test responses in `mode: fixture`; cloud model generation, Compose packaging and physical-phone acceptance are later work. See [the API contract](../docs/api-contract.md) for the wire format.
+History exposes completed turns in sequence and the current processing or failed pending request. Both modes use ownership, reservation and replay rules. Fixture mode returns labeled `mode: fixture` answers under [the baseline contract](../docs/api-contract.md). Agent mode returns `mode: llm` under [the v2 contract](../docs/agent-api-contract.md), including revision, saved language preferences and guarded state updates. The examples below describe the default fixture mode; use the M2-B3 guide for v2 requests.
 
 ## Run locally
 
@@ -44,7 +44,7 @@ curl -sS -i http://127.0.0.1:8000/api/artworks/aic-11723
 curl -sS -i http://127.0.0.1:8000/api/artworks/missing
 ```
 
-Stop with Ctrl+C or SIGTERM. The service waits for graceful shutdown for up to ten seconds. Build a standalone executable if needed:
+Stop with Ctrl+C or SIGTERM. Graceful shutdown allows ten seconds in fixture mode or 65 seconds in Agent mode. Build a standalone executable if needed:
 
 ```bash
 go build -o /tmp/musebridge-api ./cmd/server
@@ -183,8 +183,10 @@ go run ./cmd/server
 | `COOKIE_SECURE` | Inferred from the public URL scheme | Controls the visitor cookie. Must be `false` for the local HTTP profile and `true` for HTTPS. |
 | `DATASET_VERSION` | `aic-seed-v0.1` | Exact version required in the seed and its artwork records. |
 | `SEED_PATH` | `../knowledge/data/aic-seed-v0.1.json` | Shared seed file. |
-| `RETRIEVAL_BASE_URL` | `http://127.0.0.1:8001` | Private origin used by question submission and the retrieval diagnostic. Artwork and conversation reads make no retrieval calls. |
-| `GENERATION_MODE` | `fixture` | Reviewed in-process test answers; the only supported local mode. |
+| `RETRIEVAL_BASE_URL` | `http://127.0.0.1:8001` | Used by fixture submission and the retrieval diagnostic; in Agent mode retrieval is owned by Python. |
+| `GENERATION_MODE` | `fixture` | `fixture` or explicit `agent`; selects the public conversation contract at startup. |
+| `AGENT_BASE_URL` | `http://127.0.0.1:8002` in Agent mode | Private HTTP(S) origin without a path or trailing slash. |
+| `AGENT_SERVICE_TOKEN` | None | Required only in Agent mode; private 43+ visible ASCII characters, generated from at least 32 random bytes. Must match FastAPI. |
 
 Do not set `GOROOT` or `GOPATH` to the repository. Go modules locate this project through `go.mod`. Host-specific environment files belong outside version control.
 

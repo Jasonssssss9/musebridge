@@ -8,7 +8,7 @@ This plan defines three milestones and the new A/B/C responsibilities. It follow
 
 The [visitor acceptance plan](visitor-acceptance.md) defines published journey families, multilingual coverage, reviewer expectations and completion records. These are designed cases, not measured results or an independent held-out set.
 
-The architecture and contract examples are already documented. The current checkout still runs fixture generation. Reuse the existing frontend, Go conversation lifecycle, source release and retrieval tests rather than rebuilding them.
+The architecture and contract examples are already documented. The default checkout still runs fixture generation; explicit `GENERATION_MODE=agent` now selects the public v2 path. Reuse the existing frontend, Go conversation lifecycle, source release and retrieval tests rather than rebuilding them.
 
 **B phase-1 checkpoint:** the [Go/Python boundary layer](contracts/README.md) implements generated v2 wire types, strict decoding/encoding, pure snapshot checks and shared error mappings. Shared structural fixtures and the existing fixture/C regressions pass. This is B's first integration phase, not closure of team M1.
 
@@ -74,13 +74,13 @@ sequence. Existing contracts, store, transport and service components are reused
 | --- | --- | --- |
 | M2-B1 | Agent GET status client | Implemented: authenticated single queries; processing/completed/failed handling; original-request validation; safe retained-failure mapping; unit and real Python lookup checks |
 | M2-B2 | Submission orchestration and reconciliation | Implemented internally: admission, one POST, original-run GET recovery, canonical errors and guarded commit/failure; cancellation, child/parent deadlines and live scripted-service recovery checked; [guide](agent-submission.md) |
-| M2-B3 | Public v2 routes and integration configuration | Planned: create/history/submit routes, explicit Agent configuration and aligned budgets; give A a documented controlled integration setup |
+| M2-B3 | Public v2 routes and integration configuration | Implemented: explicit Agent mode, strict create/history/submit routes, 65-second write/drain budgets, controlled Qwen entry point and [A integration guide](public-agent-integration.md); actual public HTTP to scripted-provider/real-retrieval checks pass; browser/Qwen acceptance remains open |
 | M2-B4 | Public-path reliability checks | Planned: duplicate/stale submissions, lost responses, refresh, late results, capacity/timeouts, scope and four-language state behavior |
 | M2-B5 | Real-model integration and runtime evidence | Planned: coordinate fixed Qwen, A/C integration, model identity, call counts, readiness and latency records |
 | M2-B6 | Candidate acceptance and delivery | Planned: freeze the candidate, run regressions/shared acceptance and publish versioned outcomes, configuration and known limitations |
 
 M2-B1 provides individual queries; M2-B2 now owns bounded recovery and commit.
-M2-B3 will attach them to public routes. A and C can prepare independent visitor
+M2-B3 attaches them to public routes. A and C can prepare independent visitor
 cases and behavior fixes in parallel with B's application work.
 
 | Role | Deliverable |

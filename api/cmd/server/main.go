@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Jasonssssss9/musebridge/api/internal/agentclient"
 	"github.com/Jasonssssss9/musebridge/api/internal/catalog"
 	"github.com/Jasonssssss9/musebridge/api/internal/config"
 	"github.com/Jasonssssss9/musebridge/api/internal/httpapi"
@@ -36,21 +37,34 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
-	retriever, err := retrieval.New(cfg.RetrievalBaseURL, dataset)
-	if err != nil {
-		return err
+	settings := httpapi.Settings{PublicBaseURL: cfg.PublicBaseURL, CookieSecure: cfg.CookieSecure}
+	var public http.Handler
+	if cfg.GenerationMode == "agent" {
+		client, err := agentclient.New(cfg.AgentBaseURL, cfg.AgentServiceToken)
+		if err != nil {
+			return err
+		}
+		defer client.CloseIdleConnections()
+		public, err = httpapi.NewAgent(dataset, logger, settings, client)
+		if err != nil {
+			return err
+		}
+	} else {
+		retriever, err := retrieval.New(cfg.RetrievalBaseURL, dataset)
+		if err != nil {
+			return err
+		}
+		defer retriever.CloseIdleConnections()
+		public = httpapi.New(dataset, logger, settings, retriever)
 	}
-	defer retriever.CloseIdleConnections()
 	listener, err := net.Listen("tcp", cfg.Address())
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
 	}
 	server := &http.Server{
-		Handler: httpapi.New(dataset, logger, httpapi.Settings{
-			PublicBaseURL: cfg.PublicBaseURL, CookieSecure: cfg.CookieSecure,
-		}, retriever),
+		Handler:           public,
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second, WriteTimeout: 15 * time.Second,
+		ReadTimeout:       10 * time.Second, WriteTimeout: cfg.WriteTimeout(),
 		IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16 << 10,
 		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
 	}
@@ -59,7 +73,7 @@ func run(logger *slog.Logger) error {
 	serveErr := make(chan error, 1)
 	go func() { serveErr <- server.Serve(listener) }()
 	logger.Info("service_started", "service", "api", "address", listener.Addr().String(),
-		"dataset_version", dataset.Version(), "seed_sha256", dataset.Checksum())
+		"dataset_version", dataset.Version(), "seed_sha256", dataset.Checksum(), "generation_mode", cfg.GenerationMode)
 	select {
 	case err := <-serveErr:
 		if !errors.Is(err, http.ErrServerClosed) {
@@ -67,7 +81,7 @@ func run(logger *slog.Logger) error {
 		}
 		return nil
 	case <-ctx.Done():
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), cfg.DrainTimeout())
 		defer cancel()
 		if err := server.Shutdown(shutdownCtx); err != nil {
 			_ = server.Close()

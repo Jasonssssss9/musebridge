@@ -1,6 +1,6 @@
 # MuseBridge Agent v2 Interface Contract
 
-Status: **Normative visitor-policy revision 2. C workflow, B boundary/state layers and private run service implemented; application/provider integration and real-model acceptance pending.**
+Status: **Normative visitor-policy revision 2. C workflow, B boundary/state layers, private run service and opt-in public Go routing implemented; real browser/model acceptance pending.**
 
 Public contract: `agent-demo-v0.3`. Private contract: `agent-run-v2`. Workflow: `museum_qa_v2`. Schema: `agent-schema-v2`. State format: `conversation-state-v1`. Prompt package: `museum-prompts-v2`. Profile: `local-ollama-v2`.
 
@@ -10,7 +10,7 @@ Revision 2 defines the v2 target selected by the new C workflow. It adds local c
 
 The preserved C M1 entry point reads the unchanged v1 artifacts. The new MuseumQAWorkflowV2 explicitly reads revision-2 v2 artifacts and uses injected provider, sizing, budget and retrieval ports; see the [C runbook](../agent/README.md). The [fixture API contract](api-contract.md) continues to govern fixture mode. Consumers must explicitly migrate; a deployment must not reinterpret a v1 message as v2.
 
-The [private service guide](agent-service.md) records B phase-3 behavior and controlled HTTP checks. Its default factory has no production provider and reports not ready. Public v2 activation and actual model capability verification remain separate work.
+The [private service guide](agent-service.md) records B phase-3 behavior and controlled HTTP checks. Its default factory has no production provider and reports not ready. [M2-B3](public-agent-integration.md) now supplies opt-in public v2 routing and a separate controlled integration factory; actual model quality and formal activation remain separate work.
 
 The [opt-in Ollama provider](ollama-provider.md) now implements real transport, model identity, grammar preparation and tokenizer budgets. Failed local workflow acceptance prevents readiness; these implementation details do not alter the authoritative schemas or their assertions.
 

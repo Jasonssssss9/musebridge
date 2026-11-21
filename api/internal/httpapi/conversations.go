@@ -28,39 +28,9 @@ func reject(status int, code, message string) *requestFailure {
 }
 
 func (h *handler) readPublicPOST(w http.ResponseWriter, r *http.Request, required ...string) (map[string]string, *requestFailure) {
-	origins := r.Header.Values("Origin")
-	if h.settings.PublicBaseURL == "" || len(origins) != 1 || origins[0] != h.settings.PublicBaseURL {
-		return nil, reject(http.StatusForbidden, "origin_not_allowed", "The request origin is not allowed.")
-	}
-	contentTypes := r.Header.Values("Content-Type")
-	if len(contentTypes) != 1 {
-		return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
-	}
-	mediaType, parameters, err := mime.ParseMediaType(contentTypes[0])
-	if err != nil || mediaType != "application/json" {
-		return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
-	}
-	for name, value := range parameters {
-		if name != "charset" || !strings.EqualFold(value, "utf-8") {
-			return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
-		}
-	}
-	if r.ContentLength > maxPostBytes {
-		return nil, reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
-	}
-	if r.Body == nil {
-		return nil, reject(http.StatusBadRequest, "invalid_request", "Provide a JSON object.")
-	}
-	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxPostBytes))
-	if err != nil {
-		var tooLarge *http.MaxBytesError
-		if errors.As(err, &tooLarge) {
-			return nil, reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
-		}
-		return nil, reject(http.StatusBadRequest, "invalid_request", "The request body could not be read.")
-	}
-	if err := jsonwire.Validate(body); err != nil {
-		return nil, reject(http.StatusBadRequest, "invalid_request", "Provide one valid UTF-8 JSON object.")
+	body, failure := h.readPublicBody(w, r, maxPostBytes)
+	if failure != nil {
+		return nil, failure
 	}
 	var fields map[string]json.RawMessage
 	if err := json.Unmarshal(body, &fields); err != nil || len(fields) != len(required) {
@@ -78,6 +48,48 @@ func (h *handler) readPublicPOST(w http.ResponseWriter, r *http.Request, require
 	return values, nil
 }
 
+func (h *handler) readPublicBody(w http.ResponseWriter, r *http.Request, limit int64) ([]byte, *requestFailure) {
+	origins := r.Header.Values("Origin")
+	if h.settings.PublicBaseURL == "" || len(origins) != 1 || origins[0] != h.settings.PublicBaseURL {
+		return nil, reject(http.StatusForbidden, "origin_not_allowed", "The request origin is not allowed.")
+	}
+	contentTypes := r.Header.Values("Content-Type")
+	if len(contentTypes) != 1 {
+		return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
+	}
+	mediaType, parameters, err := mime.ParseMediaType(contentTypes[0])
+	if err != nil || mediaType != "application/json" {
+		return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
+	}
+	for name, value := range parameters {
+		if name != "charset" || !strings.EqualFold(value, "utf-8") {
+			return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send a UTF-8 JSON request.")
+		}
+	}
+	encodings := r.Header.Values("Content-Encoding")
+	if len(encodings) > 1 || len(encodings) == 1 && !strings.EqualFold(encodings[0], "identity") {
+		return nil, reject(http.StatusUnsupportedMediaType, "unsupported_media_type", "Send uncompressed UTF-8 JSON.")
+	}
+	if r.ContentLength > limit {
+		return nil, reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
+	}
+	if r.Body == nil {
+		return nil, reject(http.StatusBadRequest, "invalid_request", "Provide a JSON object.")
+	}
+	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, limit))
+	if err != nil {
+		var tooLarge *http.MaxBytesError
+		if errors.As(err, &tooLarge) {
+			return nil, reject(http.StatusRequestEntityTooLarge, "payload_too_large", "The request body is too large.")
+		}
+		return nil, reject(http.StatusBadRequest, "invalid_request", "The request body could not be read.")
+	}
+	if err := jsonwire.Validate(body); err != nil {
+		return nil, reject(http.StatusBadRequest, "invalid_request", "Provide one valid UTF-8 JSON object.")
+	}
+	return body, nil
+}
+
 func (h *handler) createConversation(w http.ResponseWriter, r *http.Request) (any, string, *requestFailure) {
 	fields, failure := h.readPublicPOST(w, r, "artwork_id")
 	if failure != nil {
@@ -91,15 +103,19 @@ func (h *handler) createConversation(w http.ResponseWriter, r *http.Request) (an
 		return nil, "", reject(http.StatusNotFound, "artwork_not_found", "The requested artwork is not in the catalog.")
 	}
 	token, current, created := h.sessions.Open(visitorCookie(r), artworkID, h.dataset.Version())
+	h.setVisitorCookie(w, token)
+	return struct {
+		Conversation conversation.Conversation `json:"conversation"`
+		Created      bool                      `json:"created"`
+	}{current, created}, artworkID, nil
+}
+
+func (h *handler) setVisitorCookie(w http.ResponseWriter, token string) {
 	http.SetCookie(w, &http.Cookie{
 		Name: visitorCookieName, Value: token, Path: "/",
 		HttpOnly: true, SameSite: http.SameSiteLaxMode, Secure: h.settings.CookieSecure,
 		MaxAge: int(conversation.Lifetime / time.Second),
 	})
-	return struct {
-		Conversation conversation.Conversation `json:"conversation"`
-		Created      bool                      `json:"created"`
-	}{current, created}, artworkID, nil
 }
 
 func (h *handler) conversationHistory(r *http.Request, id string) (any, string, *requestFailure) {

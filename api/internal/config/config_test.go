@@ -1,14 +1,46 @@
 package config
 
 import (
+	"fmt"
 	"strings"
 	"testing"
+	"time"
 )
 
 func environment(values map[string]string) func(string) (string, bool) {
 	return func(key string) (string, bool) {
 		value, ok := values[key]
 		return value, ok
+	}
+}
+
+func TestAgentConfigurationAndBudgets(t *testing.T) {
+	token := strings.Repeat("x", 43)
+	cfg, err := Load(environment(map[string]string{"GENERATION_MODE": "agent", "AGENT_SERVICE_TOKEN": token}))
+	if err != nil || cfg.AgentBaseURL != "http://127.0.0.1:8002" || cfg.AgentServiceToken != token ||
+		cfg.WriteTimeout() != 65*time.Second || cfg.DrainTimeout() != 65*time.Second {
+		t.Fatal("Agent integration configuration or deadline hierarchy is invalid", err)
+	}
+	if strings.Contains(fmt.Sprintf("%v %+v %#v", cfg, cfg, cfg), token) {
+		t.Fatal("configuration formatting revealed the service credential")
+	}
+	fixture, err := Load(environment(nil))
+	if err != nil || fixture.WriteTimeout() != 15*time.Second || fixture.DrainTimeout() != 10*time.Second || fixture.AgentServiceToken != "" {
+		t.Fatal("fixture configuration changed unexpectedly")
+	}
+	for _, tc := range []struct{ key, value string }{
+		{"AGENT_SERVICE_TOKEN", ""}, {"AGENT_SERVICE_TOKEN", strings.Repeat("x", 42)},
+		{"AGENT_SERVICE_TOKEN", token + " "}, {"AGENT_SERVICE_TOKEN", token + "\n"}, {"AGENT_SERVICE_TOKEN", token + "中"},
+		{"AGENT_BASE_URL", ""}, {"AGENT_BASE_URL", "http://agent:8002/"},
+		{"AGENT_BASE_URL", "http://agent/path"}, {"AGENT_BASE_URL", "http://user:PRIVATE@agent"},
+		{"AGENT_BASE_URL", "http://agent:99999"}, {"AGENT_BASE_URL", "http://agent?"},
+	} {
+		t.Run(tc.key+"-invalid", func(t *testing.T) {
+			_, err := Load(environment(map[string]string{"GENERATION_MODE": "agent", "AGENT_SERVICE_TOKEN": token, tc.key: tc.value}))
+			if err == nil || !strings.Contains(err.Error(), tc.key) || strings.Contains(err.Error(), "PRIVATE") || strings.Contains(err.Error(), token) {
+				t.Fatal("invalid Agent configuration did not produce a safe actionable error", err)
+			}
+		})
 	}
 }
 

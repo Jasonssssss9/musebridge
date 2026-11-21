@@ -7,20 +7,41 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 )
 
 // Config describes the native development profile. Container deployments can
 // override the host, seed path, public origin and private retrieval address.
 type Config struct {
-	Host             string
-	Port             string
-	PublicBaseURL    string
-	CookieSecure     bool
-	DatasetVersion   string
-	SeedPath         string
-	RetrievalBaseURL string
-	GenerationMode   string
+	Host              string
+	Port              string
+	PublicBaseURL     string
+	CookieSecure      bool
+	DatasetVersion    string
+	SeedPath          string
+	RetrievalBaseURL  string
+	GenerationMode    string
+	AgentBaseURL      string
+	AgentServiceToken string
+}
+
+// Formatting configuration must never reveal a private service credential.
+func (c Config) String() string   { return "config.Config (credentials redacted)" }
+func (c Config) GoString() string { return c.String() }
+
+func (c Config) WriteTimeout() time.Duration {
+	if c.GenerationMode == "agent" {
+		return 65 * time.Second
+	}
+	return 15 * time.Second
+}
+
+func (c Config) DrainTimeout() time.Duration {
+	if c.GenerationMode == "agent" {
+		return 65 * time.Second
+	}
+	return 10 * time.Second
 }
 
 // Load reads environment variables through lookup. Explicitly empty values are
@@ -72,15 +93,29 @@ func Load(lookup func(string) (string, bool)) (Config, error) {
 	if secure != (publicURL.Scheme == "https") {
 		return Config{}, fmt.Errorf("COOKIE_SECURE must match the PUBLIC_BASE_URL HTTP or HTTPS profile")
 	}
-	if values["GENERATION_MODE"] != "fixture" {
-		return Config{}, fmt.Errorf("GENERATION_MODE must be fixture in this release")
+	if values["GENERATION_MODE"] != "fixture" && values["GENERATION_MODE"] != "agent" {
+		return Config{}, fmt.Errorf("GENERATION_MODE must be fixture or agent")
 	}
-	return Config{
+	cfg := Config{
 		Host: values["HOST"], Port: values["PORT"],
 		PublicBaseURL: browserOrigin(publicURL), CookieSecure: secure,
 		DatasetVersion: values["DATASET_VERSION"], SeedPath: values["SEED_PATH"],
 		RetrievalBaseURL: values["RETRIEVAL_BASE_URL"], GenerationMode: values["GENERATION_MODE"],
-	}, nil
+	}
+	if cfg.GenerationMode == "agent" {
+		cfg.AgentBaseURL = "http://127.0.0.1:8002"
+		if value, exists := lookup("AGENT_BASE_URL"); exists {
+			cfg.AgentBaseURL = value
+		}
+		if _, err := origin(cfg.AgentBaseURL); err != nil {
+			return Config{}, fmt.Errorf("AGENT_BASE_URL: %w", err)
+		}
+		cfg.AgentServiceToken, _ = lookup("AGENT_SERVICE_TOKEN")
+		if len(cfg.AgentServiceToken) < 43 || strings.ContainsFunc(cfg.AgentServiceToken, func(r rune) bool { return r < 33 || r > 126 }) {
+			return Config{}, fmt.Errorf("AGENT_SERVICE_TOKEN must encode at least 32 random bytes as visible ASCII")
+		}
+	}
+	return cfg, nil
 }
 
 // Address is suitable for net.Listen, including when Host is an IPv6 address.

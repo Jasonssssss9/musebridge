@@ -29,11 +29,11 @@ Open <http://localhost:8080/a/aic-28560> or <http://localhost:8080/a/aic-11723>.
 | --- | --- |
 | `npm run dev` | **Mock mode, agent contract.** An in-browser stand-in for the Go API (`src/api/mock.ts`). No backend needed. |
 | `npm run dev:live` | **Live mode, fixture contract.** `/api` is proxied to the Go API at `http://127.0.0.1:8000` (override with `API_TARGET`). |
-| `PUBLIC_CONTRACT=agent npm run dev:live` | **Live mode, agent contract.** For the Go API once it serves `agent-demo-v0.3`. |
+| `PUBLIC_CONTRACT=agent npm run dev:live` | **Live mode, agent contract.** Pair with Go's explicit `GENERATION_MODE=agent`; see the [M2-B3 integration configuration](../docs/public-agent-integration.md). |
 | `npm run build` | Type-checks and builds the live app into `dist/` (fixture contract unless `PUBLIC_CONTRACT=agent`). |
 | `npm test` | Protocol, React DOM, conversation recovery, scripted mock and build-configuration regressions; no model service is used. |
 
-Live mode loads artwork, creates or restores real Go conversations, reads history and submits questions through Go to the Python retriever. Start both backend services using the [setup guide](../docs/getting-started.md). Go returns reviewed fixture answers with validated museum citations; all three outcomes retain the fixed-test-answer label. Browser and physical-phone acceptance still need to be recorded against the real stack. The Go API must be started with `PUBLIC_BASE_URL` set to the exact origin in the browser's address bar (for example `http://192.168.1.20:8080`), because it rejects POSTs from any other origin.
+Live mode loads artwork, creates or restores real Go conversations and reads history. Default fixture mode submits through Go to retrieval and returns reviewed fixed answers. Explicit Agent mode submits through Go to the private Agent, model and retrieval; use the [controlled native integration guide](../docs/public-agent-integration.md) or the [fixture setup guide](../docs/getting-started.md) as appropriate. Browser and physical-phone acceptance still need to be recorded against the real stack. The Go API must be started with `PUBLIC_BASE_URL` set to the exact origin in the browser's address bar (for example `http://192.168.1.20:8080`), because it rejects POSTs from any other origin.
 
 The interface labels are English. The **Answer language** selector sits under the question box:
 

@@ -2,7 +2,8 @@
 
 Status: **M2-B2 is implemented as an internal Go service. Admission, one POST,
 bounded GET reconciliation, validation and atomic commit/failure are connected.
-Public HTTP routing and integration configuration remain M2-B3 work.**
+Public HTTP routing and integration configuration are now supplied by
+[M2-B3](public-agent-integration.md).**
 
 `api/internal/agentchat` composes the existing
 [state store](agent-state-store.md) and [private client](agent-client.md).
@@ -141,4 +142,6 @@ Model/profile identity and full performance evidence remain part of M2-B5.
 
 M2-B3 connects this service and `OpenAgent`/`AgentHistory` to public v2 routes,
 supplies explicit integration configuration and aligns server/browser/proxy
-budgets. The current server still serves fixture mode.
+budgets. The server defaults to fixture mode; `GENERATION_MODE=agent` explicitly
+selects v2. See the [integration guide](public-agent-integration.md) for setup
+and the separate public HTTP check.

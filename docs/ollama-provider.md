@@ -213,6 +213,16 @@ The capability record remained invalid after review. The public browser route
 still uses the fixture. These counts describe this model run and these small
 sets; they are not estimates of quality across museum visitors.
 
+## Controlled M2 application integration
+
+The [M2-B3 guide](public-agent-integration.md) supplies explicit public Go v2
+configuration and the separate `agent.testing.integration_app:create_app`
+entry point for A/B/C integration. That entry point uses real Qwen, sizing,
+identity and workflow validators without claiming a passing semantic capability
+record. The normal production factory and its attestation gate are unchanged.
+This is a later infrastructure checkpoint; the November 18 quality results above
+remain unresolved observations, not public-browser acceptance.
+
 ## Checks and remaining acceptance
 
 ```bash
@@ -229,4 +239,5 @@ readiness failures without downloading assets or needing a GPU. Real probe
 failures remain distinct from a passing deterministic test suite. Resolve the
 recorded B/C workflow failures and rerun probes before claiming model readiness;
 complete independent semantic and phone/deployment acceptance under the team
-plan. Browser/Go activation is still phase 5.
+plan. Public Go routing is available by explicit opt-in; real browser/Qwen
+acceptance and formal release activation remain pending.

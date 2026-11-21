@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Jasonssssss9/musebridge/api/internal/agentchat"
 	"github.com/Jasonssssss9/musebridge/api/internal/catalog"
 	"github.com/Jasonssssss9/musebridge/api/internal/chat"
 	"github.com/Jasonssssss9/musebridge/api/internal/conversation"
@@ -23,6 +24,7 @@ type handler struct {
 	settings  Settings
 	sessions  *conversation.Store
 	questions *chat.Service
+	agent     *agentchat.Service
 }
 
 // Settings carries the browser profile validated by the application config.
@@ -36,12 +38,28 @@ type apiError = conversation.Error
 // New serves the public artwork/conversation API and private health checks.
 // A nil dataset exposes liveness but reports that local state is not ready.
 func New(dataset *catalog.Dataset, logger *slog.Logger, settings Settings, retriever chat.Retriever) http.Handler {
+	h := newHandler(dataset, logger, settings)
+	h.questions = chat.New(h.sessions, dataset, retriever, fixture.Adapter{}, h.logger)
+	return h
+}
+
+// NewAgent explicitly selects the v2 contract for all conversation routes.
+// The browser cannot select providers or fall back to fixture generation.
+func NewAgent(dataset *catalog.Dataset, logger *slog.Logger, settings Settings, client agentchat.Agent) (http.Handler, error) {
+	h := newHandler(dataset, logger, settings)
+	service, err := agentchat.New(h.sessions, client, h.logger)
+	if err != nil {
+		return nil, err
+	}
+	h.agent = service
+	return h, nil
+}
+
+func newHandler(dataset *catalog.Dataset, logger *slog.Logger, settings Settings) *handler {
 	if logger == nil {
 		logger = slog.New(slog.NewJSONHandler(io.Discard, nil))
 	}
-	sessions := conversation.New(nil)
-	return &handler{dataset: dataset, logger: logger, settings: settings, sessions: sessions,
-		questions: chat.New(sessions, dataset, retriever, fixture.Adapter{}, logger)}
+	return &handler{dataset: dataset, logger: logger, settings: settings, sessions: conversation.New(nil)}
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -113,11 +131,23 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		var payload any
 		var err *requestFailure
 		if isCreate {
-			payload, artworkID, err = h.createConversation(w, r)
+			if h.agent != nil {
+				payload, artworkID, err = h.createAgentConversation(w, r)
+			} else {
+				payload, artworkID, err = h.createConversation(w, r)
+			}
 		} else if r.Method == http.MethodPost {
-			payload, artworkID, err = h.submitMessage(w, r, conversationID, requestID)
+			if h.agent != nil {
+				payload, artworkID, err = h.submitAgentMessage(w, r, conversationID, requestID)
+			} else {
+				payload, artworkID, err = h.submitMessage(w, r, conversationID, requestID)
+			}
 		} else {
-			payload, artworkID, err = h.conversationHistory(r, conversationID)
+			if h.agent != nil {
+				payload, artworkID, err = h.agentHistory(r, conversationID)
+			} else {
+				payload, artworkID, err = h.conversationHistory(r, conversationID)
+			}
 		}
 		if err != nil {
 			fail(err.status, err.Code, err.Message, err.Retryable)
