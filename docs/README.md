@@ -15,6 +15,7 @@ The root README introduces the project. This directory provides entry points to 
 | [Go private Agent client](agent-client.md) | M1 POST transport and M2-B1 single GET status queries; original-request validation, safe retained failures and controlled/live-service checks |
 | [Go Agent submission service](agent-submission.md) | M2-B2: admission, one POST, bounded GET reconciliation, browser-cancellation ownership and atomic state/turn completion |
 | [Public Go Agent integration](public-agent-integration.md) | M2-B3: explicit v2 routes/configuration, controlled Qwen startup for A, timing alignment and real HTTP/scripted-provider verification |
+| [Public Agent reliability](public-agent-reliability.md) | M2-B4: concurrent requests, physical response loss/recovery, production-budget and late-result checks, scoped cache/pending and language state scripts |
 | [M1 test services](m1-test-services.md) | M1 integration step 2: standalone real FastAPI/workflow/retrieval servers with provider-only scripting, HTTP audit and foreign-evidence injection |
 | [Go-originated M1 integration](m1-go-integration.md) | M1 integration step 3: one-command Go-to-Python acceptance for both artwork scopes, foreign-evidence rejection, atomic saving and trace/evidence output |
 | [B M1 integration handoff](m1-handoff.md) | M1 integration steps 4–6: final tested commit, reproduction command, observed trace/evidence table, rejection boundary and completed backend regressions |

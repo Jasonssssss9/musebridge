@@ -206,6 +206,12 @@ The health routes are private service endpoints. During later web integration, p
 
 ## Checks
 
+The [M2-B4 public reliability guide](../docs/public-agent-reliability.md) provides
+one command for concurrent submissions, physical response loss with the real
+Python workflow/retrieval, error and state checks, four-language protocol scripts
+and one approximately 60-second production-budget check. It requires no Ollama
+or GPU and does not measure model or browser quality.
+
 From `api/`:
 
 ```bash

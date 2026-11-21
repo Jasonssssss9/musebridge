@@ -193,7 +193,9 @@ go -C api vet ./...
 python3 -B scripts/generate_agent_contracts.py --check
 ```
 
-Public-path fault coverage continues in M2-B4. Actual Qwen/browser acceptance,
+The [M2-B4 public reliability checks](public-agent-reliability.md) now cover
+concurrency, physical response loss, production recovery timing and state faults.
+Actual Qwen/browser acceptance,
 call counts, model/profile identity, latency and disputed-answer review remain
 M2-B5/B6 and A/C work. No independent visitor questions are used by these
 deterministic checks.

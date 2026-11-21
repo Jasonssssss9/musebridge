@@ -95,7 +95,7 @@ is discarded. This protects application state, not an assertion that a remote
 model immediately stopped computing. The actual Agent still owns its retained
 run, capacity and execution deadline.
 
-Browser cancellation after admission does not cancel accepted work. The future
+Browser cancellation after admission does not cancel accepted work. The public
 HTTP handler can return the saved outcome or let browser history recovery find
 it. This remains in-memory lifecycle handling, without durable restart recovery.
 
@@ -145,3 +145,7 @@ supplies explicit integration configuration and aligns server/browser/proxy
 budgets. The server defaults to fixture mode; `GENERATION_MODE=agent` explicitly
 selects v2. See the [integration guide](public-agent-integration.md) for setup
 and the separate public HTTP check.
+
+The [M2-B4 reliability suite](public-agent-reliability.md) additionally exercises
+physical private/public connection loss with real Python services, public
+concurrency/state behavior and the actual unchanged production recovery budget.

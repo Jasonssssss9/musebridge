@@ -60,6 +60,18 @@ type Services struct {
 	stopped    bool
 }
 
+// ClientAt routes authenticated test traffic through a loopback fault proxy
+// without exposing the harness token to test output or public configuration.
+func (h *Services) ClientAt(t *testing.T, origin string) *agentclient.Client {
+	t.Helper()
+	client, err := agentclient.New(origin, h.token)
+	if err != nil {
+		t.Fatal("cannot configure the loopback test proxy client")
+	}
+	t.Cleanup(client.CloseIdleConnections)
+	return client
+}
+
 // Start never skips or substitutes an in-process transport. Missing
 // prerequisites, failed readiness and unavailable dependencies fail the check.
 func Start(t *testing.T, fault string) *Services {
