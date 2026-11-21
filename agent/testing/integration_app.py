@@ -12,6 +12,7 @@ from agent.runtime.service_errors import safe_failure
 from agent.service import ModelIdentity, create_workflow_runtime
 from agent.tools.evidence import EvidenceManifest
 from agent.tools.retrieval import RetrievalTool
+from agent.testing.runtime_evidence import EvidenceExecution, EvidenceModel, EvidenceRetrieval, RuntimeEvidence
 
 
 def create_app():
@@ -33,20 +34,35 @@ def create_app():
     async def lifespan(_app):
         model = None
         watcher = None
+        evidence = None
         runtime = app.state.runtime
         try:
+            if os.environ.get("AGENT_RUNTIME_EVIDENCE"):
+                evidence = RuntimeEvidence(os.environ["AGENT_RUNTIME_EVIDENCE"],
+                    include_decisions=os.environ.get("AGENT_PRIVATE_DECISIONS") == "development-only")
             try:
-                model = OllamaModel(base_url=os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434"),
-                                    sizer=QwenPromptSizer(tokenizer))
+                options = dict(base_url=os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434"),
+                               sizer=QwenPromptSizer(tokenizer))
+                model = EvidenceModel(evidence=evidence, **options) if evidence else OllamaModel(**options)
                 await model.verify(deadline=monotonic()+60)
                 await model.warm(deadline=monotonic()+120)
                 manifest = EvidenceManifest.load()
+                retrieval = RetrievalTool(manifest,
+                    base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001"))
+                if evidence:
+                    from agent.providers.capabilities import implementation_fingerprint
+                    evidence.record("integration_ready", mode="controlled-ollama-not-quality-approved",
+                        profile_id=model.profile.profile_id, profile_fingerprint=model.profile.fingerprint(),
+                        model_name=model.profile.model_name, model_digest=model.profile.model_digest,
+                        implementation_fingerprint=implementation_fingerprint())
+                    retrieval = EvidenceRetrieval(retrieval, evidence)
                 runtime = create_workflow_runtime(model=model, profile=model.profile,
                     prompt_sizer=model.sizer, manifest=manifest,
-                    retrieval=RetrievalTool(manifest,
-                        base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001")),
+                    retrieval=retrieval,
                     identity=ModelIdentity(model.profile.model_name, model.profile.model_digest),
                     readiness=lambda: model.verified)
+                if evidence:
+                    runtime.executor = EvidenceExecution(runtime.executor, evidence)
 
                 async def refresh():
                     while True:
@@ -62,6 +78,8 @@ def create_app():
                 if model:
                     model.verified = False
                 runtime.startup_error = safe_failure(exc).code
+                if evidence:
+                    evidence.record("integration_unready", code=runtime.startup_error)
             app.state.runtime = runtime
             yield
         finally:
@@ -72,6 +90,9 @@ def create_app():
             await runtime.close()
             if model:
                 await model.aclose()
+            if evidence:
+                evidence.record("integration_stopped")
+                evidence.close()
 
     app.router.lifespan_context = lifespan
     return app

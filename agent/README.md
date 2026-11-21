@@ -18,8 +18,10 @@ admission and atomic saving. An [opt-in Ollama provider](../docs/ollama-provider
 now implements real transport and token budgets, with readiness still blocked by
 real workflow acceptance failures. The [Go POST client](../docs/agent-client.md)
 is implemented with controlled HTTP tests. The [Go-originated M1 check](../docs/m1-go-integration.md)
-also passes against real Python services with scripted model decisions; public
-v2 activation remains pending. C returns a validated result and a proposed
+also passes against real Python services with scripted model decisions. Public
+v2 routing and [B5 controlled real-model/browser checks](../docs/m2-runtime.md)
+are now available by explicit opt-in; formal quality activation remains pending.
+C returns a validated result and a proposed
 memory update against the input revision.
 
 The [M1 test-service launcher](../docs/m1-test-services.md) can start the real

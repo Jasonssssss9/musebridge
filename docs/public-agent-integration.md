@@ -199,3 +199,7 @@ Actual Qwen/browser acceptance,
 call counts, model/profile identity, latency and disputed-answer review remain
 M2-B5/B6 and A/C work. No independent visitor questions are used by these
 deterministic checks.
+
+The [B5 runtime guide](m2-runtime.md) now supplies explicit real-Qwen development
+execution and actual browser automation. The [B6 handoff](m2-handoff.md) records
+the remaining independent review and release gates; development failures remain.

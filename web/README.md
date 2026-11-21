@@ -9,7 +9,7 @@ The browser can speak two public contracts:
 | `local-demo-v0.1` (fixture answers) | [api-contract.md](../docs/api-contract.md) | Live builds by default, so the current Go API and Compose stack keep working |
 | `agent-demo-v0.3` (model answers) | [agent-api-contract.md](../docs/agent-api-contract.md) | Mock mode always; live builds when started with `PUBLIC_CONTRACT=agent` |
 
-Agent-contract status (M1, role A): the types, parsing, mock and rendering are done and checked against the mock only. Nothing here has run against a real Go agent endpoint or a real model yet; that is M2.
+Agent-contract M1 delivered the types, parsing, mock and rendering. B's [M2 runtime checks](../docs/m2-runtime.md) now exercise the real Go/Agent/Qwen path and an actual browser, with remaining model failures recorded. A's independent visitor acceptance and language reviews remain open; automated development checks do not replace them.
 
 ## Run it
 

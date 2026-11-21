@@ -5,9 +5,10 @@ token accounting and structured generation have been exercised. Workflow
 readiness acceptance remains open; the default service stays disabled/unready.**
 
 The provider implements the asynchronous port in `agent/workflows/ports.py` and
-reuses the [private run service](agent-service.md). It does not enable public Go
-Agent routing or frontend v2 mode. Those are B phase 5. Readiness and eventual
-visitor-quality release are separate gates; an HTTP 200 alone proves neither.
+reuses the [private run service](agent-service.md). Public Go Agent routing is
+separately opt-in; the [B5 runtime runner](m2-runtime.md) now exercises real Qwen
+through that path and records remaining failures. Infrastructure readiness and
+visitor-quality release are separate gates; HTTP 200 alone proves neither.
 
 ## Pinned profile
 

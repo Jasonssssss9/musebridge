@@ -42,9 +42,27 @@ class IntegrationAppTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(app.state.integration_mode, "controlled-ollama-not-quality-approved")
                 self.model.verify.assert_awaited_once()
                 self.model.warm.assert_awaited_once()
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://agent") as client:
+                    self.assertEqual((await client.get("/readyz")).status_code, 200)
                 self.model.verified = False
                 self.assertFalse(app.state.runtime.is_ready())
         self.model.aclose.assert_awaited_once()
+
+    async def test_http_routes_use_the_runtime_installed_by_lifespan(self):
+        from agent.testing.service import service_run, service_result
+        run = service_run()
+        snapshot = {"contract_version": "agent-run-v2", "run_id": run["run_id"],
+                    "state": "completed", "result": service_result(run), "error": None}
+        app = create_app()
+        async with app.router.lifespan_context(app):
+            submit, get = AsyncMock(return_value=snapshot), AsyncMock(return_value=snapshot)
+            with patch.object(app.state.runtime, "submit", submit), patch.object(app.state.runtime, "get", get):
+                async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://agent",
+                        headers={"Authorization": "Bearer "+os.environ["AGENT_SERVICE_TOKEN"], "X-Request-ID": "runtime-replacement"}) as client:
+                    self.assertEqual((await client.post("/internal/v2/agent/runs", json=run)).status_code, 200)
+                    self.assertEqual((await client.get("/internal/v2/agent/runs/"+run["run_id"])).status_code, 200)
+            submit.assert_awaited_once()
+            get.assert_awaited_once_with(run["run_id"])
 
     async def test_identity_or_warm_failure_keeps_private_service_unready(self):
         for operation in ("verify", "warm"):

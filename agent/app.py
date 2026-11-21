@@ -190,8 +190,8 @@ def create_app(runtime: RunRegistry | None = None, *, service_token: str | None 
         return _reply("HealthResponse", {"status": "ok"})
 
     @app.get("/readyz")
-    async def ready():
-        if not runtime.is_ready():
+    async def ready(request: Request):
+        if not request.app.state.runtime.is_ready():
             raise failure("service_not_ready", "capacity")
         return _reply("ReadinessResponse", {
             "status": "ok", "contract_version": "agent-run-v2", "workflow_id": "museum_qa_v2",
@@ -208,7 +208,7 @@ def create_app(runtime: RunRegistry | None = None, *, service_token: str | None 
         except ContractViolation as exc:
             raise failure("invalid_request") from exc
         request.state.run_id = run["run_id"]
-        snapshot = await runtime.submit(run, request_id=request.state.request_id)
+        snapshot = await request.app.state.runtime.submit(run, request_id=request.state.request_id)
         return _reply("RunSnapshot", snapshot)
 
     @app.get("/internal/v2/agent/runs/{run_id}")
@@ -216,6 +216,6 @@ def create_app(runtime: RunRegistry | None = None, *, service_token: str | None 
         if _UUID.fullmatch(run_id) is None:
             raise failure("invalid_request")
         request.state.run_id = run_id
-        return _reply("RunSnapshot", await runtime.get(run_id))
+        return _reply("RunSnapshot", await request.app.state.runtime.get(run_id))
 
     return app

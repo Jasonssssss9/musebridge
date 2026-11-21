@@ -1,0 +1,119 @@
+# M2 real-model runtime checks (B5)
+
+Status: **Controlled real-Qwen execution is available through Vite, public Go,
+private FastAPI, the workflow and real retrieval. Development failures remain.**
+This guide reproduces infrastructure observations; it does not grant independent
+visitor-quality acceptance or change formal provider readiness.
+
+## Prerequisites
+
+Use the existing pinned Qwen/Ollama profile, verified tokenizer, Python 3.12
+environment, Go 1.27+, Node 20+ and the checked-in dependencies. See the
+[provider guide](ollama-provider.md) and [public integration setup](public-agent-integration.md).
+Ollama must already be running. No command below pulls a model or starts a system
+service. If frontend dependencies are missing, install the existing lock with
+`npm ci` in `web/`; no additional browser package is required by the runtime CLI.
+
+Run from the repository root, using a new directory outside the checkout:
+
+```bash
+.venv/bin/python -B -m agent.testing.m2_smoke \
+  --tokenizer /absolute/path/to/existing/tokenizer.json \
+  --report-dir ../m2-runtime-new-run
+```
+
+The CLI builds Go, starts temporary loopback retrieval/Agent/Go/Vite processes,
+warms the existing model at 16K context and sends published development journeys
+through Vite's actual public proxy. Every scenario starts with an independent
+visitor; follow-ups retain their actual successful first answer and Go state.
+If a prerequisite turn fails, its dependent follow-up is recorded as blocked,
+not silently sent with different context. Requests are sequential and failures
+are not automatically resubmitted to the model. A nonzero exit retains failures.
+
+Optional filters and explicit private diagnostics:
+
+```bash
+.venv/bin/python -B -m agent.testing.m2_smoke \
+  --tokenizer /absolute/path/to/existing/tokenizer.json \
+  --report-dir ../m2-followup-new-run \
+  --case-prefix aic-28560-followup --case-prefix aic-11723-followup \
+  --case-prefix language-switch --private-decisions
+```
+
+These cases are development/regression material, not independent held-out data.
+Do not point the runner at A's draft independent suite or report the development
+pass rate as the agreed independent quality metric.
+
+## What is recorded
+
+| Artifact | Meaning |
+| --- | --- |
+| `report.json` | Original development messages, public responses/traces, expected status/language/source IDs, atomicity, replay/history and joined operation counts |
+| `agent-events.jsonl` | Per-trace workflow/model/retrieval metadata, actual chat attempts, accepted token counts, durations and fixed model identity |
+| `source-manifest.json` | Input source hashes; the report also pins the starting Git commit and manifest hash |
+| `connection.json` | Temporary local URLs/profile while services are active; no token; removed on shutdown |
+| `api.log`, `agent.log`, `retrieval.log`, `web.log` | Private local process diagnostics |
+| `musebridge-api` | The Go binary built for this run; removable after the run |
+
+Directories use owner-only permissions and evidence files are created with mode
+0600. Existing output directories/files are rejected. Service credentials are
+generated per run, passed through private backend environments only, stripped
+from the frontend environment and scanned out of text artifacts. Never copy raw
+reports, model decisions, local paths or credentials into Git.
+
+Normal metadata omits prompts, questions, source excerpts and semantic memory.
+`--private-decisions` explicitly enables **development-only** run snapshots and
+validated model decisions in the owner-only evidence file, for diagnosing failed
+plans. It never enables production logging. Public visitor routes cannot select
+this option. Reports containing these snapshots remain private.
+
+`workflow_returned` is an executor observation before the registry's final check;
+the public Go response/history establishes whether it became a committed turn.
+Model HTTP attempts are counted even when a later decision is invalid. This
+distinguishes attempted inference from successfully validated completions.
+
+## Actual browser automation on Windows/WSL
+
+Use `--hold-seconds 600` to keep the owned stack available after the CLI journeys.
+Read its private `connection.json` for `web_url`. On Windows, run the checked-in
+script with an already installed Chrome or Edge:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File web/scripts/m2-browser.ps1 `
+  -BaseUrl http://127.0.0.1:REPLACE_PORT `
+  -OutputDirectory C:\path\to\an\existing\private\output-directory
+```
+
+From WSL, convert the script/output paths with `wslpath -w`. The file includes a
+UTF-8 BOM for Windows PowerShell 5.1 so Chinese and Korean test messages remain
+unchanged. This process-only execution policy does not alter Windows policy.
+The script uses Chrome DevTools directly, a unique temporary browser profile and
+a phone-sized viewport. It installs nothing and removes its profile on exit.
+
+The script records real form submission, source visibility, refresh, follow-up,
+artwork isolation, language changes and switch-back. Outputs are
+`browser-report.json` and `browser.png` outside Git. Cases that return model errors
+stay failed. This is automated development evidence, not A's independent browser
+sign-off or a physical-phone check. Physical-phone acceptance belongs to M3.
+
+While held, create a file named `release` in the run directory to finish early.
+Otherwise the bounded hold expires. Owned processes are stopped on normal exit
+or interruption; the pre-existing Ollama server is not stopped. The model retains
+the pinned 30-minute keep-alive. Clean up an exact run directory only after its
+children have stopped and its evidence is no longer needed.
+
+## Readiness and remaining quality
+
+The controlled factory's HTTP routes now read the runtime installed by lifespan
+from application state. Positive readiness and authenticated POST/GET regression
+checks protect against the initial empty shell being retained by route closures.
+The normal factory and its capability attestation requirements are unchanged.
+
+HTTP 200, valid JSON and a real citation ID do not establish faithful question
+interpretation, source entailment or safe memory. Follow-up and mixed-language
+planning failures require workflow review. Preserve these results and reproduce
+them before changing prompts; reclassify any used independent case as regression.
+
+See the [M2 handoff checklist](m2-handoff.md) for reviewer dependencies and formal
+closure. The [B4 reliability suite](public-agent-reliability.md) remains the
+deterministic public-path fault gate.
