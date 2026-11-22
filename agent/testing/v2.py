@@ -20,7 +20,9 @@ from uuid import UUID, uuid4, uuid5
 from jsonschema import Draft202012Validator, FormatChecker, validators
 from jsonschema.exceptions import ValidationError
 
+from agent.prompts.v2.readings import uses_source_checks
 from agent.runtime.errors import WorkflowError
+from agent.runtime.validation_v2 import ContractValidatorV2
 from agent.runtime.validation import ContractViolation, strict_json
 from agent.testing.fakes import (
     FixtureCompletion, RecordedModelCall, TestBudget, fixture_prompt_sizer,
@@ -71,6 +73,33 @@ def example(name: str, section: str = "schema_cases") -> dict:
     raise KeyError(name)
 
 
+def _scripted_factual_finish(decision, payload):
+    """Translate a canonical test fixture's explicit support and source annotations."""
+    ContractValidatorV2().validate("FinishDecision", decision)
+    by_request = {r["id"]: r for r in payload["requests"]}
+    if [part["request_id"] for part in decision["results"]] != list(by_request):
+        raise ContractViolation("A scripted finish must cover the planned requests in order.")
+    statements = payload["available_statements"]
+    checks, other = [], []
+    for part in decision["results"]:
+        request = by_request[part["request_id"]]
+        if request["kind"] != "artwork_fact" or request["resolution"] != "clear":
+            other.append(part)
+            continue
+        if part["support"] not in {"supported", "insufficient"}:
+            raise ContractViolation("Invalid support for a clear scripted artwork request.")
+        ids = [key for key, row in statements.items() if row["citation_id"] in part["citation_ids"]]
+        if set(part["citation_ids"]) != {statements[key]["citation_id"] for key in ids}:
+            raise ContractViolation("A scripted citation is absent from the accepted evidence.")
+        checks.append({"request_id": request["id"], "requested_detail": request["intent"][:300],
+                       "evidence_relation": "direct_answer" if part["support"] == "supported" else "not_addressed",
+                       "statement_ids": ids})
+    result = {"action": "finish", "source_checks": checks, "memory_update": decision["memory_update"]}
+    if other:
+        result["other_results"] = other
+    return result
+
+
 class ScriptedModel:
     """Emit explicit decisions and validate the actual supplied v2 schema.
 
@@ -101,10 +130,28 @@ class ScriptedModel:
                 response = await response
         try:
             data = strict_json(response) if isinstance(response, str) else deepcopy(response)
+            # Legacy canonical fixtures do not label the social act. Preserve their
+            # explicitly scripted conversational task unless a test supplies a real classification.
+            if "ConversationActs" in output_schema.get("$defs", {}) and isinstance(data, dict):
+                payload = json.loads(messages[-1]["content"])
+                terminal = data.get("plan", data)
+                if isinstance(terminal, dict) and terminal.get("action") in {"finish", "direct_response"}:
+                    requests = terminal.get("requests", payload.get("requests", []))
+                    translation = terminal.get("language_decision", {}).get("translation") or payload.get("translation")
+                    terminal.setdefault("conversation_acts", [
+                        {"request_id": r["id"], "act": "request_discussion_or_instruction"}
+                        for r in requests if r["kind"] == "conversation" and r["resolution"] == "clear"
+                        and translation is None])
             # Existing scripted fixtures describe the public workflow plan.
             if ("StandardPlan" in output_schema.get("$defs", {}) and isinstance(data, dict)
                     and "action" in data and "visitor_task" not in data):
-                data = {"visitor_task": "other_request", "plan": data}
+                data = {"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests", "plan": data}
+            if (uses_source_checks(output_schema) and isinstance(data, dict)
+                    and data.get("action") == "finish" and "results" in data):
+                acts = data.pop("conversation_acts", None)
+                data = _scripted_factual_finish(data, json.loads(messages[-1]["content"]))
+                if acts is not None:
+                    data["conversation_acts"] = acts
             # Validate the supplied reachable schema, not the old v1 registry.
             _StrictValidator(output_schema, format_checker=FormatChecker()).validate(data)
         except (ContractViolation, ValidationError, ValueError, TypeError) as exc:

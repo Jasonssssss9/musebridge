@@ -16,8 +16,10 @@ class PlannerReplayTests(IsolatedAsyncioTestCase):
         self.run_input = make_run(question="This painting is beautiful.")
         self.payload = build_plan_input(self.run_input, EvidenceManifest.load())
         self.plan = example("direct_appreciation")
+        self.plan["conversation_acts"] = [{"request_id": "r1", "act": "share_impression"}]
+        wire = {"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests", "plan": self.plan}
         self.attempt = {"operation": "plan", "schema_result": "valid", "model_input": self.payload,
-                        "completion": {"data": self.plan}}
+                        "completion": {"data": wire}}
         self.validator = ContractValidatorV2()
 
     def test_quote_drift_fails_a_schema_valid_plan(self):

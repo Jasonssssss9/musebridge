@@ -41,8 +41,9 @@ class DialogueProbeModel(ProbeModel):
             return await super().complete_structured(messages=messages, **kwargs)
         finally:
             payload = json.loads(messages[-1]["content"])
-            if "source_sentences" in payload:
-                self.attempts[start]["source_sentences"] = payload.pop("source_sentences")
+            for display_field in ("source_sentences", "available_statements"):
+                if display_field in payload:
+                    self.attempts[start][display_field] = payload.pop(display_field)
             self.attempts[start]["model_input"] = payload
 
 

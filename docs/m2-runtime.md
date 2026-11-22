@@ -40,6 +40,17 @@ Optional filters and explicit private diagnostics:
   --case-prefix language-switch --private-decisions
 ```
 
+The full runner schedules 25 development scenarios across 37 journeys and 48
+visitor messages. Language and artwork variants of a scenario share its ID.
+One eight-turn conversation crosses the fifth/sixth-turn history boundary, changes
+the interface language mid-conversation and requests a one-reply language switch.
+A failed prerequisite blocks each dependent turn. The summary counts those turns
+against the scheduled total. Runtime success includes committed history, replay,
+model/tool counts and a clean credential scan. Warm latency is measured from
+public message submission to its HTTP response. The report gives nearest-rank
+p95 and completed-turn counts per route. Failures and blocked turns remain in
+the main table; an unobserved route has no p95.
+
 These cases are development/regression material, not independent held-out data.
 Do not point the runner at A's draft independent suite or report the development
 pass rate as the agreed independent quality metric.
@@ -63,8 +74,8 @@ reports, model decisions, local paths or credentials into Git.
 
 Normal metadata omits prompts, questions, source excerpts and semantic memory.
 `--private-decisions` explicitly enables **development-only** run snapshots and
-validated model decisions in the owner-only evidence file, for diagnosing failed
-plans. It never enables production logging. Public visitor routes cannot select
+validated model decisions and canonical workflow results in the owner-only
+evidence file, for diagnosing failed plans and reviewing actual next-state memory. It never enables production logging. Public visitor routes cannot select
 this option. Reports containing these snapshots remain private.
 
 `workflow_returned` is an executor observation before the registry's final check;
@@ -90,8 +101,14 @@ unchanged. This process-only execution policy does not alter Windows policy.
 The script uses Chrome DevTools directly, a unique temporary browser profile and
 a phone-sized viewport. It installs nothing and removes its profile on exit.
 
-The script records real form submission, source visibility, refresh, follow-up,
-artwork isolation, language changes and switch-back. Outputs are
+The script checks rendered reply text and its language tag against the saved turn,
+and verifies both localized material terms, the active artwork’s source link
+and the quoted museum passage. This narrow wording check applies only to the
+known medium questions.
+It also records real form submission, refresh, follow-up,
+artwork isolation, language changes and switch-back. A browser-only fault hides
+one successful HTTP response after the real commit. The check observes the waiting
+indicator and requires exactly one recovered turn from public history. Outputs are
 `browser-report.json` and `browser.png` outside Git. Cases that return model errors
 stay failed. This is automated development evidence, not A's independent browser
 sign-off or a physical-phone check. Physical-phone acceptance belongs to M3.
@@ -114,6 +131,6 @@ interpretation, source entailment or safe memory. Follow-up and mixed-language
 planning failures require workflow review. Preserve these results and reproduce
 them before changing prompts; reclassify any used independent case as regression.
 
-See the [M2 handoff checklist](m2-handoff.md) for reviewer dependencies and formal
+See the [public development results](m2-public-results.md) for measured outcomes and the [M2 handoff checklist](m2-handoff.md) for reviewer dependencies and formal
 closure. The [B4 reliability suite](public-agent-reliability.md) remains the
 deterministic public-path fault gate.

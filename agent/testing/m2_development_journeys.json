@@ -1,0 +1,283 @@
+[
+  {
+    "scenario": "displayed-date",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "What date is listed for this painting?",
+        "language": "en",
+        "status": "answered",
+        "sources": [
+          "aic-28560-catalog-date_display"
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": "catalog-title-and-artist",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "What title and artist should I write on the label?",
+        "language": "en",
+        "status": "answered",
+        "sources": [
+          "aic-11723-catalog-title",
+          "aic-11723-catalog-artist"
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": "general-art-term",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "What does the word “brushstroke” mean in painting generally?",
+        "language": "en",
+        "status": "conversational",
+        "sources": []
+      }
+    ]
+  },
+  {
+    "scenario": "personal-impression",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "This room makes me feel calm.",
+        "language": "en",
+        "status": "conversational",
+        "sources": []
+      }
+    ]
+  },
+  {
+    "scenario": "attributed-picture-mood",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "Según la descripción del museo, ¿qué energía podría sugerir el cuadro?",
+        "language": "es",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": "artist-emotion",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "Did Van Gogh personally feel anxious while painting this room?",
+        "language": "en",
+        "status": "insufficient",
+        "sources": []
+      }
+    ]
+  },
+  {
+    "scenario": "background-motif",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "据馆方说明，背景中的笔触让人联想到哪两种陈设？",
+        "language": "zh-CN",
+        "status": "answered",
+        "sources": [
+          "aic-11723-description-01"
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": "flower-species",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "Can the museum identify the exact species of flower in the background pattern?",
+        "language": "en",
+        "status": "insufficient",
+        "sources": []
+      }
+    ]
+  },
+  {
+    "scenario": "background-not-sided",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "Does the source place the patterned wallpaper on the left side?",
+        "language": "en",
+        "status": "insufficient",
+        "sources": []
+      }
+    ]
+  },
+  {
+    "scenario": "brushwork-wording",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "미술관은 이 그림의 붓질을 어떻게 묘사하나요?",
+        "language": "ko",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": "perspective-lines",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "How does the museum describe the lines going back into the room?",
+        "language": "en",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": "pigment-versus-color",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "What does the museum say about the colors, and does it name the exact blue pigment?",
+        "language": "en",
+        "status": "partially_answered",
+        "sources": [
+          "aic-28560-description-01"
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": "real-feather-versus-description",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "La ficha habla de pinceladas. ¿Menciona que Morisot pintó con una pluma de verdad?",
+        "language": "es",
+        "status": "insufficient",
+        "sources": []
+      }
+    ]
+  },
+  {
+    "scenario": "missing-translation-source",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "Translate your previous reply into Korean.",
+        "language": "ko",
+        "status": "clarification_needed",
+        "sources": [],
+        "language_override": null
+      }
+    ]
+  },
+  {
+    "scenario": "ambiguous-pointing",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "What is that thing I am pointing at?",
+        "language": "en",
+        "status": "clarification_needed",
+        "sources": []
+      }
+    ]
+  },
+  {
+    "scenario": "explicit-answer-language",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "question": "请用西班牙语回答：这幅作品的作者是谁？",
+        "language": "es",
+        "status": "answered",
+        "sources": [
+          "aic-11723-catalog-artist"
+        ],
+        "language_override": null
+      }
+    ]
+  },
+  {
+    "scenario": "five-pair-continuity",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "question": "What is the title of this work?",
+        "language": "en",
+        "status": "answered",
+        "sources": [
+          "aic-28560-catalog-title"
+        ]
+      },
+      {
+        "question": "Who painted it?",
+        "language": "en",
+        "status": "answered",
+        "sources": [
+          "aic-28560-catalog-artist"
+        ]
+      },
+      {
+        "question": "Thank you!",
+        "language": "en",
+        "status": "conversational",
+        "sources": []
+      },
+      {
+        "question": "¿Qué soporte y medio figuran para esta pintura?",
+        "language": "es",
+        "status": "answered",
+        "sources": [
+          "aic-28560-medium"
+        ],
+        "language_override": "es",
+        "expected_preference": "es"
+      },
+      {
+        "question": "Gracias, ya lo tengo.",
+        "language": "es",
+        "status": "conversational",
+        "sources": [],
+        "expected_preference": "es"
+      },
+      {
+        "question": "¿Cómo describe el museo los colores?",
+        "language": "es",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ],
+        "expected_preference": "es"
+      },
+      {
+        "question": "请用中文回答这一次：刚才提到的是哪位画家？",
+        "language": "zh-CN",
+        "status": "answered",
+        "sources": [
+          "aic-28560-catalog-artist"
+        ],
+        "expected_preference": "es"
+      },
+      {
+        "question": "¿Se conoce el precio de la primera venta?",
+        "language": "es",
+        "status": "insufficient",
+        "sources": [],
+        "expected_preference": "es"
+      }
+    ]
+  }
+]

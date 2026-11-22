@@ -194,7 +194,7 @@ Go selects exactly the most recent five committed turns in ascending sequence, o
 
 Each history turn contains ID, sequence, original message, actual answer language, mode/status and response text. The latest historical answer language must equal the state's last_answer_language before token fitting. Saved evidence is supplied separately through ConversationState. The summary may overlap the recent window, but duplicate descriptions are not independent corroboration.
 
-Before each model call, count full policy, output schema, payload and model-template overhead with the verified sizer. Reserve output tokens and the safety margin. If necessary, drop only the oldest whole historical pair and record the retained count. The five-turn setting is the selection limit before token fitting; it is not permission to exceed the model context.
+Before each model call, count full policy, output schema, payload and model-template overhead with the verified sizer. Reserve output tokens and the safety margin. When the original messages exceed that budget, first shorten the schema instructions shown to the model while preserving the full generation and validation schema. If more space is needed, drop the oldest whole historical pair and record the retained count. The five-turn setting is the selection limit before token fitting; it is not permission to exceed the model context.
 
 Never truncate the current message, plan, canonical catalog, accepted retrieval evidence, selected exact translation source or required memory fields. If those cannot fit even without historical turns, fail with `agent_context_limit`. The fixed length bounds on topic/summary/cache are enforced when saving, not by silently slicing arbitrary text during a run.
 
@@ -213,7 +213,7 @@ Go is the sole owner of committed state. The Agent proposes semantic updates and
 | `auto_language` | Supported fallback under Auto, initially English |
 | `last_answer_language` | Actual language of the latest completed reply, or null initially |
 | `active_topic` | Short English description of the current conversational focus, or null |
-| `continuity_summary` | Bounded English summary of visitor interests, questions, goals and conversational references |
+| `continuity_summary` | Bounded English guide notes with attributed visitor quotations in their original language |
 | `pending_clarification` | Original message, optional literal fragment and focused English unresolved intent, the actual clarification question and creation sequence, or null |
 | `verified_evidence` | Canonical source snapshots retained from previously cited evidence |
 
@@ -221,7 +221,7 @@ At revision 0, preference is `auto`, automatic fallback is `en`, last language/t
 
 Explicit simplicity and length preferences can be retained in the bounded summary while relevant, with the latest explicit instruction taking precedence. Corrections replace obsolete interpretations. Do not preserve an abandoned misunderstanding as a second active topic. Exact wording and numbered references beyond retained history are not guaranteed; ask for restatement when the target cannot be recovered reliably.
 
-The summary is lossy context. Attribute visitor observations to the visitor; do not turn them into museum facts. Do not infer personal attributes or store secrets. A remembered topic such as “the visitor prefers the color discussion” guides dialogue but cannot support a factual claim about the artwork.
+The summary is lossy context. Attribute visitor observations to the visitor; do not turn them into museum facts. Do not infer personal attributes or extract credentials into a visitor profile. Literal visitor text may contain personal information and follows the same conversation retention as the visible history. A remembered topic such as “the visitor prefers the color discussion” guides dialogue but cannot support a factual claim about the artwork.
 
 ### 4.2 Updating memory without another model call
 
@@ -301,7 +301,9 @@ These actions describe the canonical workflow plan. With a retained history pair
 the model first chooses a visitor task within the same planning call. For one
 or two clear noncatalog artwork facts it selects the visitor's words and writes
 one English question per fact. It also chooses whether to search or use the
-verified cache. The Agent binds each selected sentence or excerpt to the
+verified cache. A numbered selection and an exact copy of the same complete sentence identify
+the same literal span. Shorter excerpts are matched only inside their selected
+sentence. The Agent binds each selected sentence or excerpt to the
 current message and creates the canonical requests and query links. All other
 tasks use the full plan, including translation, catalog questions, mixed kinds
 and clarification. The same plan validator runs before either path may use a
@@ -332,6 +334,51 @@ Whole-message clarification still has no parts/citations and creates a pending i
 | Whole-message clarification | clarification_needed |
 
 Supported facts cite canonical retrieval or catalog records as appropriate. Insufficient, conversational, outside and clarifying parts have no citations. Only answered/partially_answered public replies contain citations. Code joins parts with blank lines, deduplicates sources by first use and enforces 2,000 code points for the complete reply including separators. A single part may use that budget when a detailed explanation is requested; the limit is not multiplied by the number of requests. Avoid repetitive openings and unnecessary closing questions across parts.
+
+When the accepted artwork excerpts have reviewed multilingual wording, the
+assessment model identifies the exact detail each clear artwork request asks
+for and compares it with the available source statements. It selects a direct
+answer, related information, or a detail the statements do not address. Direct
+answers use the selected statements' wording in the reply language and cite
+their original records. A grouped introduction may also refer to the validated
+catalog. Related or missing details receive a scoped gap. For an explicit location question, an absent spatial qualifier can also rule out the selected artwork statement. The presence of that qualifier alone cannot establish support. The memory proposal
+quotes the original visitor message once in its original language. Separate
+English notes identify which part the guide checked, which sources it used and
+which checks remain open. The planner's English paraphrase does not become an
+attributed visitor goal. The 1,000-character summary prioritizes the utterance,
+each outcome and its references, adds complete source wording when it fits, and
+retains the newest consecutive complete prior notes in order.
+
+In direct dialogue and mixed answers, the model classifies each clear
+conversational part. A greeting, thanks, farewell, acknowledgement or personal
+impression receives a localized source-free reply. An impression is saved as
+the visitor's own words; a simple social gesture preserves the previous topic
+and pending question. Translations, settings, corrections and substantive
+discussion retain their ordinary response paths. Every supported catalog part
+is rendered from its validated title, artist or date fields, including when a
+visitor asks a compound question.
+
+This comparison runs in the existing assessment or final call. Its statement
+IDs are local to that call. Translation uses its exact pinned source. New or
+revised excerpts without reviewed wording use the ordinary assessment format.
+Structural checks bind IDs and text to real records. For explicit English
+placement questions, a missing spatial qualifier in the selected wording can
+only downgrade an answer. The presence of a location word cannot establish the
+relationship, subject, or truth of a proposed answer. Semantic review still
+checks whether a selected statement actually answers the visitor's question.
+The checked-in multilingual wording also remains subject to independent
+language review for release acceptance.
+
+The private planning schema offers compact tasks for a visitor's own reaction,
+a general art term copied from the current message, a catalog lookup, the
+listed medium, missing translation input and an unidentified visual detail.
+Catalog fields can share a literal visitor phrase and retain separate results
+and citations. The factual path binds each rewritten question to a literal
+passage. When two questions point to the same sentence, the binder can use a
+single unambiguous grammatical boundary if both English question types match
+the original clauses in order. The ordinary Plan handles mixed and remaining
+tasks. All choices produce the same public v2 contract and consume the existing
+planning call.
 
 ### 6.3 Catalog facts and evidence gaps
 
@@ -367,7 +414,7 @@ The visitor can request simple language, short replies or greater detail. Preser
 
 The target skill is `artwork_qa`, version `artwork-qa-v2`; prompt package `museum-prompts-v2`. The v2 policy package is implemented separately under agent/prompts/v2; existing v1 Markdown assets are preserved. The blocks below define the matching v2 policy.
 
-Every system message contains common policy, the shared memory policy, operation policy and the self-contained output schema. Planning and assessment can both produce terminal replies, so memory instructions apply there as well as in final generation. Runtime input is one JSON-encoded data message. User text, memory and evidence are never interpolated into executable templates. No private reasoning transcript is requested or retained.
+Every system message contains common policy, the shared memory policy, operation policy and an output schema guide. Ordinary messages reproduce the complete schema. Under token pressure the guide keeps its fields, required properties, references and action choices while omitting repeated validation bounds and regular expressions. Planning and assessment can both produce terminal replies, so memory instructions apply there as well as in final generation. Runtime input is one JSON-encoded data message. User text, memory and evidence are never interpolated into executable templates. No private reasoning transcript is requested or retained.
 
 **Common policy**
 
@@ -450,7 +497,7 @@ When finishing or clarifying, include the semantic memory update.
 **Shared memory policy — included in every operation**
 
 ~~~text
-Keep active_topic and continuity_summary concise and in English.
+Write concise English guide notes. Preserve an attributed literal visitor quotation in its original language.
 Preserve visitor goals, interests, topic continuity and unresolved references.
 Attribute visitor observations and do not turn them into verified artwork facts.
 Preserve a pending clarification through incidental acknowledgements; clear it
@@ -607,6 +654,6 @@ This is a versioned contract change, not a prompt-only edit. Implement public pa
 | P7. Browser | Normal conversation, language overrides, new status and revision-aware recovery |
 | P8. Deployment | Reproducible startup, phone checks, endpoint/profile verification and release evidence |
 
-The [three-milestone plan](agent-plan.md) retains A/B/C ownership. C's v2 core and deterministic mock-model checks are complete. Coordinated application/provider migration, independent model-quality evaluation and phone acceptance remain open gates.
+The [three-milestone plan](agent-plan.md) records ownership. Go, the browser and the Python Agent have exercised the public v2 flow with Qwen and real retrieval. The [M2 verification record](m2-verification.md) tracks independent quality evaluation and the remaining release gates. Physical phone acceptance is part of M3.
 
 The C implementation explicitly selects v2 schemas and prompt assets while preserving agent-v1.schema.json, agent-v1.examples.json, v1 prompts and regression tests. Other consumers must migrate together before enabling v2 in the application. Do not change a live conversation's contract or source release in place. No automatic state migration, production model installation or deployment is implemented by the C workflow.

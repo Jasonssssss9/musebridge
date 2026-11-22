@@ -69,7 +69,7 @@ def retrieve_with_trace(
     if artwork_id not in dataset.artworks:
         raise RetrievalError("artwork_not_found", "The requested artwork is not in the dataset.")
 
-    normalized_query, requests = parse_requests(query, artwork_id)
+    normalized_query, requests = parse_requests(query, artwork_id, active_artist=dataset.artworks[artwork_id]["artist"])
     scoped_chunks = {
         chunk["chunk_id"]: chunk
         for chunk in dataset.chunks if chunk["artwork_id"] == artwork_id

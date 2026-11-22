@@ -5,8 +5,10 @@ import json
 from pathlib import Path
 import unittest
 
+from agent.prompts.v2 import build_messages
+from agent.runtime.followup_plan import planning_schema
 from agent.runtime.context_v2 import (
-    build_answer_input, build_plan_input, fit_history, validate_run_context,
+    build_answer_input, build_plan_input, fit_history, fit_model_call, validate_run_context,
 )
 from agent.runtime.errors import WorkflowError
 from agent.runtime.validation import ContractValidator
@@ -210,6 +212,35 @@ class ContextV2Tests(unittest.TestCase):
             with self.assertRaises(WorkflowError):
                 build_answer_input(run, [factual_request()], [], evidence, answer_language="en",
                                    complete_scope=complete, allow_refinement=refine)
+
+    def test_schema_presentation_changes_before_any_complete_pair_is_removed(self):
+        payload = build_plan_input(self.validate(with_history()), self.manifest)
+        original = deepcopy(payload)
+        base = _VALIDATOR.schema("Plan")
+        schema = planning_schema(base, payload)
+        normal = build_messages("plan", payload, schema)
+        compact = build_messages("plan", payload, schema, compact_schema=True)
+        self.assertEqual(compact[1], normal[1])
+        self.assertLess(len(compact[0]["content"]), len(normal[0]["content"]))
+        self.assertIn("check_artwork_facts", compact[0]["content"])
+        self.assertIn("explicit_instruction", compact[0]["content"])
+
+        def size(messages, authoritative):
+            self.assertEqual(authoritative, schema)
+            return sum(len(m["content"]) for m in messages)
+
+        for expected in (normal, compact):
+            fitted, actual_schema, sent = fit_model_call(
+                "plan", payload, base, prompt_sizer=size, context_limit=size(expected, schema) + 2560,
+                output_tokens=2048)
+            self.assertEqual(fitted, original)
+            self.assertEqual(actual_schema, schema)
+            self.assertEqual(sent, expected)
+
+        fitted, _, _ = fit_model_call("plan", payload, base, prompt_sizer=size,
+                                      context_limit=size(compact, schema) + 2559, output_tokens=2048)
+        self.assertEqual(fitted["recent_turns"], original["recent_turns"][1:])
+        self.assertEqual(payload, original)
 
     def test_history_fitting_keeps_required_catalog_memory_and_translation(self):
         run = self.validate(with_history())

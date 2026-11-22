@@ -238,8 +238,8 @@ Retain terminal runs up to ten minutes, capped at 1,000; never evict active runs
 | `language_preference` | Auto or supported fixed language |
 | `auto_language` | Supported fallback language; initially English |
 | `last_answer_language` | Supported language; null only at revision 0 |
-| `active_topic` | Null or nonblank English text, at most 300 code points |
-| `continuity_summary` | English contextual summary, 0–1,000 code points |
+| `active_topic` | Null or nonblank guide note, at most 300 code points. English labels may introduce the visitor’s literal wording. |
+| `continuity_summary` | English guide notes and attributed original-language quotations, 0–1,000 code points |
 | `pending_clarification` | Null or `{original_question, original_fragment, unresolved_intent, question, created_sequence}` |
 | `verified_evidence` | 0–8 canonical Evidence records; current artwork has at most two |
 
@@ -293,7 +293,7 @@ The response envelope still has a 2,000-code-point total and a verified model ou
 
 ### 4.3 MemoryUpdate and pending operations
 
-`MemoryUpdate` has exactly active_topic, continuity_summary and pending_update. The terminal model operation supplies a valid proposal. Refinement produces no update. For a reply made up of clear factual requests, the Agent derives the outgoing topic and summary from those requests and their validated support decisions. It records source IDs for answered parts and marks each gap as open in that turn. The exact English source is available from the scoped evidence or catalog. Pinned translations and other conversations use the proposed semantic fields. Both paths retain the validated pending action and use the same wire schema.
+`MemoryUpdate` has exactly active_topic, continuity_summary and pending_update. The terminal model operation supplies a valid proposal. Refinement produces no update. For factual replies the Agent records the current visitor message once in its original language. Each checked part carries a support outcome and a source ID or a local evidence gap. Relevant English source wording is retained within the summary budget. An attributed visitor impression may also be quoted. A greeting or thanks can preserve the preceding state. Exact translations retain their pinned source and the validated proposal. These choices use the same wire schema and pending-state validation.
 
 For an `insufficient` factual part, the Agent renders a local verification limit in the resolved answer language. It can identify the part by its literal visitor fragment or its position in the message. This wording applies to this turn only. It leaves the accepted support decision, empty citation list, other parts and pinned translations intact.
 

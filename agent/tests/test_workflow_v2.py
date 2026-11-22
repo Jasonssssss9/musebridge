@@ -323,6 +323,20 @@ class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(out.request_results[0]["citation_ids"], ["aic-28560-medium"])
                 self.assertEqual(len(model.calls), 2)
 
+    async def test_recalled_medium_uses_the_selected_language_and_verified_source(self):
+        question = "I finished my note. What belongs in its medium field?"
+        run = cached_run(self.manifest, question=question)
+        run["language_override"] = "es"
+        plan = {"visitor_task": "look_up_listed_medium", "detected_language": "en"}
+        out, model, _ = await self.execute(run, plan, medium_answer(run))
+        self.assertEqual(out.retrieval_calls, 0)
+        self.assertEqual(len(model.calls), 2)
+        self.assertEqual(out.answer_language, "es")
+        self.assertEqual(out.requests[0]["original_fragment"], question)
+        self.assertEqual(out.request_results[0]["citation_ids"], ["aic-28560-medium"])
+        self.assertIn("óleo sobre lienzo", out.request_results[0]["text"].lower())
+        self.assertEqual(out.language_decision["explicit_instruction"], None)
+
     async def test_complete_cache_reuses_without_lookup_and_catalog_stays_direct(self):
         run = cached_run(self.manifest, question="What is the material?",
                          chunks=["aic-28560-medium", "aic-28560-description-01"])
@@ -442,6 +456,21 @@ class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
             return 16000 if len(json.loads(messages[1]["content"])["recent_turns"]) > 1 else 1000
         with self.assertRaises(WorkflowError):
             await self.execute(run, plan, sizer=sizer)
+
+    async def test_provider_receives_the_measured_messages_and_full_output_schema(self):
+        run = make_run(question="Hello!")
+        measured = []
+
+        def sizer(messages, schema):
+            measured.append((deepcopy(messages), deepcopy(schema)))
+            return 20000 if "Required JSON output schema:" in messages[0]["content"] else 1000
+
+        _, model, _ = await self.execute(run, direct(run), sizer=sizer)
+        self.assertEqual(len(measured), 2)
+        self.assertEqual(measured[0][0][1], measured[1][0][1])
+        self.assertEqual(measured[0][1], measured[1][1])
+        self.assertEqual(model.calls[0].messages, measured[1][0])
+        self.assertEqual(model.calls[0].output_schema, measured[0][1])
 
     async def test_required_context_overflow_prevents_all_model_calls(self):
         run = make_run(); model = ScriptedModel(); workflow, tool = self.workflow(model, sizer=lambda *_: 20000)

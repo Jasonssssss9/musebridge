@@ -18,13 +18,14 @@ from langchain_core.globals import get_debug, get_verbose
 from langchain_core.tracers.context import tracing_v2_callback_var
 from langsmith import tracing_context
 
-from agent.prompts.v2 import PROMPT_VERSION, build_messages
+from agent.prompts.v2 import PROMPT_VERSION
 from agent.runtime.context_v2 import (
-    build_answer_input, build_plan_input, fit_history, validate_run_context,
+    build_answer_input, build_plan_input, fit_model_call, validate_run_context,
 )
 from agent.runtime.errors import WorkflowError
-from agent.runtime.followup_plan import expand_plan, planning_schema
-from agent.runtime.grounding import grounded_memory, render_evidence_gaps
+from agent.runtime.followup_plan import expand_plan
+from agent.runtime.source_check import expand_assessment
+from agent.runtime.grounding import grounded_memory, render_catalog_facts, render_evidence_gaps
 from agent.runtime.validation import ContractViolation, TRACE_ID
 from agent.runtime.validation_v2 import (
     ContractValidatorV2, assemble_answer, resolve_language, resolve_translation,
@@ -125,7 +126,7 @@ class MuseumQAWorkflowV2:
             output_tokens = (self.profile.plan_output_tokens if operation == "plan"
                              else self.profile.answer_output_tokens)
             schema = self.validator.schema(schema_name)
-            fitted = fit_history(
+            fitted, schema, messages = fit_model_call(
                 operation, payload, schema, prompt_sizer=self.prompt_sizer,
                 context_limit=self.profile.context_tokens, output_tokens=output_tokens,
                 safety_tokens=512,
@@ -136,7 +137,7 @@ class MuseumQAWorkflowV2:
                 fitted["allow_refinement"] = False
                 schema_name = "FinalDecision"
                 schema = self.validator.schema(schema_name)
-                fitted = fit_history(
+                fitted, schema, messages = fit_model_call(
                     operation, fitted, schema, prompt_sizer=self.prompt_sizer,
                     context_limit=self.profile.context_tokens, output_tokens=output_tokens,
                     safety_tokens=512,
@@ -148,8 +149,6 @@ class MuseumQAWorkflowV2:
             except ContractViolation as exc:
                 raise WorkflowError("agent_internal_error", "The prepared model context is invalid.",
                                     phase="context") from exc
-            if operation == "plan":
-                schema = planning_schema(schema, fitted)
             phase = {"plan": "planning", "assess": "assessment", "final": "final_generation"}[operation]
             budget.check_active()
             remaining = budget.remaining_seconds()
@@ -160,7 +159,7 @@ class MuseumQAWorkflowV2:
             deadline = started + min(10.0 if operation == "plan" else 15.0, remaining)
             try:
                 completion = await self.model.complete_structured(
-                    operation=operation, messages=build_messages(operation, fitted, schema),
+                    operation=operation, messages=messages,
                     output_schema=deepcopy(schema), profile=self.profile, deadline=deadline,
                     trace_context={"request_id": request_id},
                 )
@@ -175,6 +174,8 @@ class MuseumQAWorkflowV2:
                 decision = deepcopy(completion.data)
                 if operation == "plan":
                     decision = expand_plan(decision, fitted)
+                else:
+                    decision = expand_assessment(decision, fitted, schema)
                 self.validator.validate(schema_name, decision)
             except (ContractViolation, AttributeError, RecursionError) as exc:
                 raise WorkflowError("generation_invalid_response", "The provider returned an invalid decision.",
@@ -324,9 +325,10 @@ class MuseumQAWorkflowV2:
                 state["catalog"], self.validator,
             )
             budget.check_active()
+            render_catalog_facts(state["plan"], answer, results, state["catalog"])
             render_evidence_gaps(state["plan"], answer, results)
             self.validator.validate("AgentAnswer", answer)
-            memory = grounded_memory(run, state["plan"], results, memory)
+            memory = grounded_memory(run, state["plan"], results, memory, state["evidence"])
             self.validator.validate("MemoryUpdate", memory)
             return {"answer": answer, "request_results": results, "memory_update": memory}
 

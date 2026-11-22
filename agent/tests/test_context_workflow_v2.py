@@ -113,7 +113,10 @@ class ContextWorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(WorkflowError) as caught:
             await workflow.run(run, request_id="translation-overflow", budget=TestBudget())
         self.assertEqual((caught.exception.code, caught.exception.phase), ("agent_context_limit", "context"))
-        self.assertEqual([len(payload["recent_turns"]) for payload in attempted_inputs], [5, 4, 3, 2, 1, 0])
+        # Both schema presentations retain the identical visitor payload at each window size.
+        self.assertEqual([len(payload["recent_turns"]) for payload in attempted_inputs],
+                         [n for n in range(5, -1, -1) for _ in range(2)])
+        self.assertEqual(attempted_inputs[::2], attempted_inputs[1::2])
         self.assertTrue(all(payload["translation"]["text"] == exact_source for payload in attempted_inputs))
         self.assertTrue(all(payload["evidence"][0]["excerpt"] == "Oil on canvas" for payload in attempted_inputs))
         self.assertTrue(all(len(payload["catalog_facts"]) == 3 for payload in attempted_inputs))

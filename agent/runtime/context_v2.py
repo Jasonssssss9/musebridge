@@ -12,6 +12,7 @@ from typing import Any
 from agent.prompts.v2 import build_messages
 from agent.runtime.context import PromptSizer
 from agent.runtime.errors import WorkflowError
+from agent.runtime.source_check import assessment_schema
 from agent.runtime.followup_plan import planning_schema
 from agent.runtime.validation import ContractValidator, ContractViolation
 from agent.tools.catalog import validate_catalog
@@ -164,25 +165,34 @@ def fit_history(
     operation: str, payload: dict[str, Any], output_schema: dict[str, Any], *,
     prompt_sizer: PromptSizer, context_limit: int, output_tokens: int, safety_tokens: int = 512,
 ) -> dict[str, Any]:
-    """Fit whole history pairs using the verified injected provider sizer.
+    """Fit callers that render the ordinary prompt themselves, retaining the payload-only API."""
+    fitted, _, _ = fit_model_call(operation, payload, output_schema, prompt_sizer=prompt_sizer,
+                                  context_limit=context_limit, output_tokens=output_tokens,
+                                  safety_tokens=safety_tokens, allow_compact=False)
+    return fitted
 
-    Catalog, semantic memory, current message, plan, accepted evidence and exact
-    selected translation text are required inputs. Only recent_turns may shrink.
-    Model/template token accounting and output reserves are supplied by B.
-    """
+
+def fit_model_call(
+    operation: str, payload: dict[str, Any], output_schema: dict[str, Any], *,
+    prompt_sizer: PromptSizer, context_limit: int, output_tokens: int, safety_tokens: int = 512,
+    allow_compact: bool = True,
+) -> tuple[dict, dict, list[dict[str, str]]]:
+    """Return the fitted payload, authoritative schema and exact measured messages."""
     if (type(context_limit) is not int or context_limit <= 0
             or type(output_tokens) is not int or output_tokens <= 0
             or type(safety_tokens) is not int or safety_tokens < 0):
         raise ValueError("Context sizing configuration must use positive integer limits.")
     fitted = deepcopy(payload)
     while True:
-        schema = planning_schema(output_schema, fitted) if operation == "plan" else output_schema
-        messages = build_messages(operation, fitted, schema)
-        count = prompt_sizer(messages, deepcopy(schema))
-        if type(count) is not int or count < 0:
-            raise ValueError("The prompt sizer must return a nonnegative integer token count.")
-        if count + output_tokens + safety_tokens <= context_limit:
-            return fitted
+        schema = (planning_schema(output_schema, fitted) if operation == "plan"
+                  else assessment_schema(output_schema, fitted))
+        for compact in ((False, True) if allow_compact else (False,)):
+            messages = build_messages(operation, fitted, schema, compact_schema=compact)
+            count = prompt_sizer(messages, deepcopy(schema))
+            if type(count) is not int or count < 0:
+                raise ValueError("The prompt sizer must return a nonnegative integer token count.")
+            if count + output_tokens + safety_tokens <= context_limit:
+                return fitted, schema, messages
         if not fitted["recent_turns"]:
             raise WorkflowError(
                 "agent_context_limit", "The required inputs exceed the model context limit.",

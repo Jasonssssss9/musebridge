@@ -7,7 +7,7 @@ The root README introduces the project. This directory provides entry points to 
 | [Getting started](getting-started.md) | Compose startup, native development and verification |
 | [System design](design.md) | Stage-one target behavior, module boundaries and later decisions |
 | [API and data contract](api-contract.md) | Request/response formats, identity, evidence, errors and retries |
-| [Agent v2 architecture](agent-design.md) | Four-language conversation, optional English retrieval, direct responses, five-turn context and conversation state; C core implemented, application/model integration pending |
+| [Agent v2 architecture](agent-design.md) | Four-language conversation, optional English retrieval, direct responses, five-turn context and conversation state; public Go integration implemented, independent model acceptance pending |
 | [Agent v2 interface contract](agent-api-contract.md) | Public/private requests, model decisions, language policy, state updates, citations, errors and recovery |
 | [Agent v2 schema](contracts/agent-v2.schema.json) | New machine-readable target; [shape and runtime/semantic examples](contracts/agent-v2.examples.json) define acceptance cases |
 | [Go/Python boundary implementation](contracts/README.md) | B phase 1: generated wire types, strict codecs, pure snapshot validation, shared error mappings and checks |
@@ -17,6 +17,8 @@ The root README introduces the project. This directory provides entry points to 
 | [Public Go Agent integration](public-agent-integration.md) | M2-B3: explicit v2 routes/configuration, controlled Qwen startup for A, timing alignment and real HTTP/scripted-provider verification |
 | [Public Agent reliability](public-agent-reliability.md) | M2-B4: concurrent requests, physical response loss/recovery, production-budget and late-result checks, scoped cache/pending and language state scripts |
 | [M2 real-model runtime](m2-runtime.md) | B5: real public-proxy journeys, private operation/token/identity evidence and existing Windows-browser automation |
+| [M2 verification record](m2-verification.md) | Current development results, measured limitations and release decision |
+| [Independent evaluation runbook](../acceptance/evaluation-runbook.md) | Review and freeze an external suite, run the public application, and score the resulting observations |
 | [M2 candidate handoff](m2-handoff.md) | B6 preparation: regressions, read-only independent-label preflight, private handoff summary and outstanding human/quality gates |
 | [M1 test services](m1-test-services.md) | M1 integration step 2: standalone real FastAPI/workflow/retrieval servers with provider-only scripting, HTTP audit and foreign-evidence injection |
 | [Go-originated M1 integration](m1-go-integration.md) | M1 integration step 3: one-command Go-to-Python acceptance for both artwork scopes, foreign-evidence rejection, atomic saving and trace/evidence output |

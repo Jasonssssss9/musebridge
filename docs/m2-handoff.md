@@ -1,9 +1,13 @@
 # M2 candidate handoff and outstanding gates (B6 preparation)
 
-Status: **B runtime instrumentation, reproducible real-model/browser development
-checks and label-preflight tooling are prepared. Team M2 acceptance remains open.**
+Status: **The public real-model path, browser recovery checks and independent
+evaluation tooling have run on development data. Team M2 acceptance remains open.**
 No independent reviews, passing capability attestation, release tag or signed-off
 candidate commit are fabricated by the tooling.
+
+See the [M2 verification record](m2-verification.md) for the latest measured results
+and the [evaluation runbook](../acceptance/evaluation-runbook.md) for independent
+review, freeze and scoring commands.
 
 ## Candidate inputs and checks
 
@@ -84,8 +88,7 @@ checks cannot replace the missing independent and human reviews.
 
 The agreed full evaluation includes at least 24 development scenarios, a separate
 60-scenario/four-language independent set (240 trials), 16 scripts of at least
-eight meaningful turns and repeated risk cases. The small development smoke is
-not a substitute. Use the [architecture release gates](agent-design.md#13-evaluation-and-release-gates)
+eight meaningful turns and repeated risk cases. The expanded development suite covers 25 scenarios. Independent visitor acceptance still requires the separate frozen set. Use the [architecture release gates](agent-design.md#13-evaluation-and-release-gates)
 and [visitor plan](visitor-acceptance.md) for denominators and scoring.
 
 M2 remains incomplete while independent review/evaluation or known model failures

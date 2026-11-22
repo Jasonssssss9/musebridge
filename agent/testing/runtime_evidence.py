@@ -110,6 +110,9 @@ class EvidenceExecution:
             self.evidence.record("workflow_returned", request_id=request_id, run_id=run["run_id"],
                 status=result["answer"]["status"], answer_language=result["answer_language"],
                 execution=result["execution"], duration_ms=int((monotonic()-started)*1000))
+            if self.evidence.include_decisions:
+                self.evidence.record("private_workflow_result", request_id=request_id, run_id=run["run_id"],
+                                     result=result)
             return result
         except BaseException as exc:
             safe = safe_failure(exc)

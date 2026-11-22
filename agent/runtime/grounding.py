@@ -1,5 +1,7 @@
 """Render local evidence gaps and build a source-linked factual handoff."""
+from agent.prompts.v2.readings import catalog_statement, source_statements, statement_sentence
 from agent.runtime.errors import WorkflowError
+from agent.runtime.memory_notes import append_notes
 from agent.runtime.validation_v2 import FACT_KINDS
 
 
@@ -17,6 +19,34 @@ _GAP = {
     "ko": ("질문하신 “{}”에 대해서는 지금 주어진 정보만으로 확인할 수 없습니다.",
            "{}번째 질문은 지금 주어진 정보만으로 확인할 수 없습니다.", "여기서는 확인할 수 없습니다."),
 }
+
+
+def render_catalog_facts(plan, answer, parts, catalog):
+    """Replace supported catalog prose with the exact fields accepted for that result."""
+    decision = plan["language_decision"]
+    if decision["translation"] is not None:
+        return
+    accepted = {record["fact_id"]: record for record in catalog}
+    rendered = []
+    for request, part in zip(plan.get("requests", []), parts):
+        if request["kind"] == "catalog_fact" and part["support"] == "supported":
+            # assemble_answer has already checked citation membership, kind and scope.
+            records = [accepted[key] for key in part["citation_ids"]]
+            part["text"] = " ".join(catalog_statement(r, decision["answer_language"])["wording"] for r in records)
+            rendered.append((part, records))
+    if not rendered:
+        return
+    text = "\n\n".join(part["text"] for part in parts)
+    if len(text) > 2000:
+        # Bare catalog values also answer these fields. Preserve other complete
+        # parts verbatim without cutting names or silently dropping a question.
+        for part, records in rendered:
+            part["text"] = ", ".join(record["value"] for record in records)
+        text = "\n\n".join(part["text"] for part in parts)
+        if len(text) > 2000:
+            raise WorkflowError("generation_invalid_response", "The complete sourced answer exceeds its limit.",
+                                phase="validation")
+    answer["text"] = text
 
 
 def render_evidence_gaps(plan, answer, parts):
@@ -45,44 +75,58 @@ def render_evidence_gaps(plan, answer, parts):
     answer["text"] = "\n\n".join(p["text"] for p in parts)
 
 
-def grounded_memory(run, plan, results, proposal):
+def grounded_memory(run, plan, results, proposal, evidence=()):
     """Record factual decisions once; their exact wording lives in the cited sources."""
     requests = plan.get("requests", [])
     if (not results or plan["language_decision"]["translation"] is not None
-            or not all(r["kind"] in FACT_KINDS and r["resolution"] == "clear" for r in requests)):
+            or not any(r["kind"] in FACT_KINDS and r["resolution"] == "clear" for r in requests)):
         return proposal
 
     state = run["conversation_state"]
     turn = state["revision"] + 1
-    # The visitor's own English words best preserve the predicate. For other
-    # languages the frozen plan already supplies a standalone English intent.
-    field = "original_fragment" if plan["language_decision"]["detected_language"] == "en" else "intent"
-    topics = [request[field] for request in requests]
-    if len(requests) == 1 and field == "original_fragment":
-        # The literal fragment may be just the quotation the visitor challenged.
-        # Preserve the whole question so the quotation is never saved as its premise.
-        topics = [run["question"]]
-    lines = []
-    # MemoryUpdate has a 1,000-character limit. Keep every support decision
-    # even when one question (or its list of citations) consumes the whole budget.
-    line_limit = (1000 - len(results) + 1) // len(results)
-    for index, (part, topic) in enumerate(zip(results, topics), 1):
-        label = "Open here" if part["support"] == "insufficient" else "Answered"
-        source = ", ".join(part["citation_ids"])
-        citation = f" [source: {source}]" if source else ""
-        prefix = f"Turn {turn}, visitor question {index} ({label}): "
-        line = prefix + topic + citation
-        if len(line) > line_limit:
-            line = prefix + "see the visitor's question in this turn" + citation
-            if len(line) > line_limit:
-                line = prefix + "see this turn's question and citations"
-        lines.append(line)
-    summary = "\n".join(lines)
-    # Keep previous goals and preferences as their own complete note if they
-    # fit. The recent-turn window still holds the original conversations.
-    prior = state["continuity_summary"]
-    if prior and len(prior) + 1 + len(summary) <= 1000:
-        summary = prior + "\n" + summary
-    topic = "Visitor asked: " + " / ".join(topics)
-    return {**proposal, "active_topic": topic if len(topic) <= 300 else run["context"]["artwork_title"][:300],
-            "continuity_summary": summary}
+    question = run["question"]
+    language = plan["language_decision"]["answer_language"]
+    statements = source_statements(evidence, language, run["context"].get("catalog_facts", []),
+                                   include_catalog_only=True)
+    header = f"Turn {turn}, visitor message: ({len(question)} characters) “{question}”"
+    lines, details, cited = [], [], []
+    for index, (request, part) in enumerate(zip(requests, results), 1):
+        fragment = request["original_fragment"]
+        # Positions refer to the literal message above; they identify what the
+        # guide checked without turning a statement or conjecture into a question.
+        start = question.find(fragment)
+        locator = f" (characters {start + 1}–{start + len(fragment)})" if len(results) > 1 and start >= 0 else ""
+        label = {"supported": "Source returned", "insufficient": "Open here"}.get(part["support"], "Visitor context")
+        lines.append(f"Guide check {index}{locator}: {label}")
+        cited.append(part["citation_ids"])
+        selected = [row["english"] for row in statements.values() if row["citation_id"] in part["citation_ids"]
+                    and statement_sentence(row["wording"], language) in part.get("text", "")]
+        details.append(" | Source wording: " + " / ".join(selected) if selected else "")
+
+    # Reserve room for the literal utterance, every decision and its citations
+    # before adding complete English source statements. A short verified list
+    # at the end avoids repeating long identifiers across different checks.
+    refs = list(dict.fromkeys(key for ids in cited for key in ids))
+    citations = [" [source: " + ", ".join(ids) + "]" if ids else "" for ids in cited]
+    bare = [line + cite for line, cite in zip(lines, citations)]
+    if len("\n".join([header, *bare])) > 1000:
+        reference = {key: str(i) for i, key in enumerate(refs, 1)}
+        bare = [line + (" [" + ",".join(reference[key] for key in ids) + "]" if ids else "")
+                for line, ids in zip(lines, cited)]
+        bare.append("Sources: " + ", ".join(f"[{reference[key]}] {key}" for key in refs))
+    if len("\n".join([header, *bare])) > 1000:
+        # An unusually long future source ID can exceed the semantic summary
+        # cap. The validated citations remain in the run result and source cache.
+        bare = [line + (" (see this turn’s citations)" if ids else "") for line, ids in zip(lines, cited)]
+
+    remaining = 1000 - len("\n".join([header, *bare]))
+    for i, detail in enumerate(details):
+        if len(detail) <= remaining:
+            bare[i] += detail
+            remaining -= len(detail)
+    note = "\n".join([header, *bare])
+    summary = append_notes(state["continuity_summary"], [note])
+    topic = f"Visitor message: “{question}”"
+    if len(topic) > 300:
+        topic = f"The visitor’s message in turn {turn}"
+    return {**proposal, "active_topic": topic, "continuity_summary": summary}

@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import hashlib
 from http.cookiejar import CookieJar
 import json
+from math import ceil
 import os
 from pathlib import Path
 import secrets
@@ -100,28 +101,35 @@ def journeys():
     thanks = {"en": "Thank you!", "es": "¡Muchas gracias!", "zh-CN": "谢谢你的介绍！", "ko": "설명해 주셔서 감사합니다!"}
     for artwork in ("aic-28560", "aic-11723"):
         for language, question in materials.items():
-            yield {"name": f"{artwork}-material-{language}", "artwork": artwork,
+            yield {"name": f"{artwork}-material-{language}", "scenario": "museum-medium", "artwork": artwork,
                    "turns": [{"question": question, "language": language, "status": "answered",
                               "sources": [artwork+"-medium"]}]}
-        yield {"name": artwork+"-followup", "artwork": artwork, "turns": [
+        yield {"name": artwork+"-followup", "scenario": "cached-medium-reminder", "artwork": artwork, "turns": [
             {"question": materials["en"], "language": "en", "status": "answered", "sources": [artwork+"-medium"]},
             {"question": "Could you remind me of that material?", "language": "en", "status": "answered", "sources": [artwork+"-medium"]}]}
-        yield {"name": artwork+"-compound", "artwork": artwork, "turns": [
+        yield {"name": artwork+"-compound", "scenario": "medium-and-duration", "artwork": artwork, "turns": [
             {"question": "What is the painting made of, and how many hours did the artist spend painting it?", "language": "en",
              "status": "partially_answered", "sources": [artwork+"-medium"]}]}
     for language, question in thanks.items():
-        yield {"name": "direct-"+language, "artwork": "aic-28560", "turns": [
+        yield {"name": "direct-"+language, "scenario": "neutral-acknowledgement", "artwork": "aic-28560", "turns": [
             {"question": question, "language": language, "status": "conversational", "sources": []}]}
-    yield {"name": "catalog", "artwork": "aic-11723", "turns": [
+    yield {"name": "catalog", "scenario": "catalog-artist", "artwork": "aic-11723", "turns": [
         {"question": "Who painted this work?", "language": "en", "status": "answered", "sources": ["aic-11723-catalog-artist"]}]}
-    yield {"name": "scope", "artwork": "aic-28560", "turns": [
+    yield {"name": "scope", "scenario": "unrelated-weather", "artwork": "aic-28560", "turns": [
         {"question": "What is today's weather in Seattle?", "language": "en", "status": "out_of_scope", "sources": []}]}
-    yield {"name": "evidence-gap", "artwork": "aic-28560", "turns": [
+    yield {"name": "evidence-gap", "scenario": "unknown-sale-price", "artwork": "aic-28560", "turns": [
         {"question": "How much did the first buyer pay for this painting?", "language": "en", "status": "insufficient", "sources": []}]}
-    yield {"name": "language-switch", "artwork": "aic-11723", "turns": [
+    yield {"name": "language-switch", "scenario": "interface-language-changes", "artwork": "aic-11723", "turns": [
         {"question": materials["zh-CN"], "language": "zh-CN", "status": "answered", "sources": ["aic-11723-medium"]},
         {"question": materials["es"], "language": "es", "language_override": "es", "status": "answered", "sources": ["aic-11723-medium"]},
         {"question": materials["ko"], "language": "ko", "language_override": "ko", "status": "answered", "sources": ["aic-11723-medium"]}]}
+
+    # Additional published development scenarios have one designated wording each.
+    # Language/artwork variants above share a scenario ID for coverage reporting.
+    extra = json.loads(Path(__file__).with_name("m2_development_journeys.json").read_text(encoding="utf-8"))
+    for case in extra:
+        yield {"name": case["scenario"], **case}
+
 
 
 def exercise(base_url, records=None, prefixes=None):
@@ -136,13 +144,14 @@ def exercise(base_url, records=None, prefixes=None):
             "contract_version": "agent-demo-v0.3", "artwork_id": journey["artwork"]}, base_url)
         codec.validate("PublicConversationResponse", opened["body"])
         conversation = opened["body"]["conversation"]
+        committed_turns = []
         path = base_url+f"/api/conversations/{conversation['conversation_id']}/messages"
         for index, turn in enumerate(journey["turns"]):
             message = {"contract_version": "agent-demo-v0.3", "client_message_id": str(uuid4()),
                        "question": turn["question"], "language_override": turn.get("language_override", turn["language"] if index == 0 else None),
                        "expected_revision": conversation["revision"]}
             reply = call(opener, "POST", path, message, base_url)
-            row = {"name": journey["name"], "turn": index+1, "artwork_id": journey["artwork"],
+            row = {"name": journey["name"], "scenario": journey.get("scenario", journey["name"]), "turn": index+1, "artwork_id": journey["artwork"],
                    "input": message, "expected": turn, "response": reply, "machine_pass": False,
                    "semantic_review": "pending"}
             if reply["http_status"] == 200:
@@ -151,25 +160,63 @@ def exercise(base_url, records=None, prefixes=None):
                 sources = [source.get("chunk_id", source.get("fact_id")) for source in actual["answer"]["citations"]]
                 row["machine_pass"] = (actual["answer"]["status"] == turn["status"]
                     and actual["answer_language"] == turn["language"] and sorted(sources) == sorted(turn["sources"])
-                    and reply["body"]["conversation"]["revision"] == conversation["revision"]+1)
+                    and reply["body"]["conversation"]["revision"] == conversation["revision"]+1
+                    and ("expected_preference" not in turn or
+                         reply["body"]["conversation"]["language_preference"] == turn["expected_preference"]))
                 conversation = reply["body"]["conversation"]
                 replay = call(opener, "POST", path, message, base_url)
                 row["replay_pass"] = replay["http_status"] == 200 and replay["body"]["turn"] == actual
                 row["replay_request_id"] = replay["request_id"]
                 history = call(opener, "GET", path)
                 codec.validate("PublicHistoryResponse", history["body"])
-                row["history_pass"] = history["body"]["conversation"] == conversation and len(history["body"]["turns"]) == conversation["revision"]
+                committed_turns.append(actual)
+                row["history_pass"] = (history["http_status"] == 200 and
+                    history["body"]["conversation"] == conversation and
+                    history["body"]["turns"] == committed_turns and history["body"]["pending_request"] is None)
             else:
                 row["error"] = reply["body"].get("error")
                 history = call(opener, "GET", path)
-                row["failure_atomicity_pass"] = history["body"]["conversation"]["revision"] == conversation["revision"]
+                codec.validate("PublicHistoryResponse", history["body"])
+                row["failure_atomicity_pass"] = (history["http_status"] == 200 and
+                    history["body"]["conversation"] == conversation and history["body"]["turns"] == committed_turns)
             records.append(row)
             print(json.dumps({"case": row["name"], "turn": index+1, "http_status": reply["http_status"],
                               "request_id": reply["request_id"], "machine_pass": row["machine_pass"]}), flush=True)
             if not row["machine_pass"] and index+1 < len(journey["turns"]):
-                records.append({"name": journey["name"], "turn": index+2, "blocked": "prior turn did not establish expected context"})
+                records.extend({"name": journey["name"], "scenario": journey.get("scenario", journey["name"]),
+                                "turn": skipped + 1,
+                                "blocked": "prior turn did not establish expected context"}
+                               for skipped in range(index + 1, len(journey["turns"])))
                 break
     return records
+
+
+def warm_latencies(cases):
+    """Nearest-rank p95 of end-to-end successful public submissions on a warm stack."""
+    groups = {"direct": [], "retrieval_or_reuse": [], "refined": []}
+    for row in cases:
+        execution = row.get("execution")
+        response = row.get("response", {})
+        if not execution or response.get("http_status") != 200:
+            continue
+        if execution["refinement_rounds"]:
+            route = "refined"
+        elif execution["model_calls"] == 1:
+            route = "direct"
+        else:
+            route = "retrieval_or_reuse"
+        groups[route].append(response["duration_ms"])
+    return {route: {"completed_turns": len(values),
+                    "p95_ms": sorted(values)[ceil(len(values) * .95) - 1] if values else None}
+            for route, values in groups.items()}
+
+
+def development_passed(report):
+    """Require an observed, committed and replay-safe result for every scheduled turn."""
+    cases = report.get("cases", [])
+    fields = ("machine_pass", "replay_pass", "history_pass", "runtime_counts_match", "replay_no_inference")
+    return (bool(cases) and not report.get("fatal_error") and report.get("credential_scan") == "passed"
+            and all(all(case.get(field) is True for field in fields) for case in cases))
 
 
 def main():
@@ -256,6 +303,8 @@ def main():
             events = [json.loads(line) for line in (directory/"agent-events.jsonl").read_text().splitlines()]
             for case in report.get("cases", []):
                 trace = case.get("response", {}).get("request_id")
+                if not trace:
+                    continue
                 joined = [event for event in events if event.get("request_id") == trace]
                 case["runtime_counts"] = dict(Counter(event["event"] for event in joined))
                 returned = [event for event in joined if event["event"] == "workflow_returned"]
@@ -268,6 +317,12 @@ def main():
                     case["replay_no_inference"] = not any(event.get("request_id") == case["replay_request_id"]
                         and event["event"] in {"model_http_attempt", "retrieval_attempt"} for event in events)
             report["event_counts"] = dict(Counter(event["event"] for event in events))
+        report["warm_public_latency"] = warm_latencies(report.get("cases", []))
+        report["development_coverage"] = {
+            "selected_scenarios": len({row["scenario"] for row in report.get("cases", [])}),
+            "scheduled_turns": len(report.get("cases", [])),
+            "blocked_turns": sum("blocked" in row for row in report.get("cases", [])),
+        }
         credential = environment["AGENT_SERVICE_TOKEN"].encode()
         report["credential_scan"] = "passed"
         for path in directory.rglob("*"):
@@ -278,7 +333,7 @@ def main():
         print(json.dumps({"report_saved": True, "attempted": len([c for c in report.get('cases',[]) if 'response' in c]),
                           "machine_passed": sum(c.get("machine_pass", False) for c in report.get("cases", [])),
                           "formal_m2_acceptance": "pending"}), flush=True)
-    return int("fatal_error" in report or any(not c.get("machine_pass", False) for c in report.get("cases", [])))
+    return int(not development_passed(report))
 
 
 if __name__ == "__main__":

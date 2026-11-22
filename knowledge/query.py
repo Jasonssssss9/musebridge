@@ -87,6 +87,10 @@ _SUPPORT_CHOICE = (
 )
 _PAINT_AND_SUPPORT = re.compile(
     r"\b(?:paint and (?:the )?(?:surface|support)|(?:surface|support) and (?:the )?paint)\b"
+    # In a catalog, a paired technique/support field names the recorded medium.
+    r"|\b(?:technique and (?:the )?support|support and (?:the )?technique) "
+    r"(?:(?:are|were|does the (?:museum|catalog|label)) )?"
+    r"(?:record(?:ed)?|list(?:ed)?|appear|feature)\b"
     r"|\bpaint(?:ed)?(?: (?:it|this|that))? (?:with and (?:on|onto)|on and with)\b"
     r"|颜料(?:和|与|以及|及)底材|(?:用|拿)什么(?:颜料|画).{0,14}(?:画|绘)在.{0,10}(?:什么|哪种)", re.I,
 )
@@ -119,8 +123,16 @@ _DESCRIPTION_OF_REFERENCE = re.compile(
     re.I,
 )
 _PICTURE_SPACE = r"(?:the|this) (?:room|painting|picture|scene|composition|image|space)"
+# A directional verb with an explicit destination describes pictorial depth.
+# The destination keeps "going back in time" or "back into storage" distinct.
+_DEPICTED_PATH = (
+    r"(?:go(?:es|ing)?|went|run(?:s|ning)?|ran|lead(?:s|ing)?|led|"
+    r"stretch(?:es|ed|ing)?|extend(?:s|ed|ing)?) (?:back|away) (?:into|towards?|through) "
+    r"(?:(?:the|this) )?(?:(?:pictured|depicted|painted) )?"
+    r"(?:room|scene|interior|picture|composition|space|distance|background)"
+)
 _LINE_MOVEMENT = (
-    r"\b(?:recede|receding|go back(?!\s+to\b|\s+in time\b)|run back|extend into"
+    rf"\b(?:{_DEPICTED_PATH}|recedes?|receded|receding|(?:go|run) back(?!\s+(?:to|into|in|through|towards?)\b)|extend into"
     r"|(?:run|go|extend|angle|lead|draw) (?:toward(?:s)?|into) (?:the )?(?:back|distance|depth)"
     r"|lead (?:the |your )?eye)\b"
     r"|(?:向|往|朝)(?:(?:房间|画面)?(?:里|远处|深处|纵深)|后)(?:延伸|收缩|收拢|收|退|伸|斜)"
@@ -132,6 +144,22 @@ _NONPAINT_MARKS = re.compile(
     r"\b(?:handwritten|inventory|stamped) marks?\b"
     r"|\bmarks?\s+on\s+(?:(?:the|its) )?(?:back|reverse|frame)\b"
     r"|(?:画背|背面|画框)(?:上)?(?:的)?(?:印记|记号|标记)", re.I,
+)
+# A museum description can characterize paint handling through its visible marks.
+# A bare process term does not establish that the visitor is asking about appearance.
+_PAINT_HANDLING_DESCRIPTION = re.compile(
+    r"\b(?:describe|characteri[sz]e|description of|say (?:anything )?about|tell (?:us|me) about) "
+    r"(?:(?:the|its|this) )?(?:(?:facture|surface facture)(?:,? (?:or|and)|,) )?"
+    r"(?:(?:the )?handling of (?:the )?paint|paint handling"
+    r"|(?:way (?:in which )?|how )(?:(?:the )?(?:artist|painter) handled (?:the )?paint"
+    r"|(?:the )?paint (?:was|is) handled)"
+    r"|(?:the )?visible (?:painted marks|marks (?:left by (?:the )?(?:artist|painter)"
+    r"|(?:the )?(?:artist|painter) left)))\b",
+    re.I,
+)
+_HANDLING_PROCESS_DETAIL = re.compile(
+    r"\b(?:who|when|why|where|conservators?|restorers?|tools?|knives|knife|pigments?|"
+    r"techniques?|methods?|procedures?|steps?|stages?|instruments?)\b", re.I,
 )
 _STROKE_DESCRIPTION = re.compile(
     r"\b(?:describe|characteri[sz]e)\b.{0,60}\b(?:brushwork|brush[- ]?strokes?|strokes?|marks?)\b"
@@ -254,6 +282,8 @@ _SUPPORTED = {
     ),
     "color_appearance": (_ASPECT_NOUNS["color_appearance"].pattern,),
     "line_recession": (
+        r"\b(?:description of|describe) (?:the |these |those )?lines (?:in|of) (?:the |this )?"
+        r"(?:room|scene|picture|painting|composition)\b",
         r"\b(?:perspective|receding lines|recession of (?:the )?lines)\b"
         rf"|\blines\b.{{0,42}}(?:{_LINE_MOVEMENT})"
         r"|透视|线条.{0,10}(?:往里|向纵深|退向|收缩|延伸)|纵深.{0,8}线条"
@@ -301,6 +331,7 @@ _UNSUPPORTED = {
         r"|颜色.{0,10}(?:名称|名字)|具体是哪些颜色|色彩.{0,12}逐一(?:列出|列明)",
     ),
     "brush_tool": (
+        r"\b(?:palette|painting) kni(?:fe|ves)\b",
         r"\b(?:brush (?:size|width)|(?:size|width) of (?:the |her |his |their )?brush(?:es)?"
         r"|(?:small|large|big|wide|narrow|thick|thin|flat|round|pointed|fan)"
         r"(?: or (?:small|large|big|wide|narrow|thick|thin|flat|round|pointed|fan))?"
@@ -364,7 +395,7 @@ _UNSUPPORTED = {
     "dimensions": (
         r"\b(?:(?:actual|real|exact|physical) )?(?:measurements?|dimensions?)\b"
         r"|\bhow (?:wide|tall|large|big) (?:is|was|are|were)\b"
-        r"|\b(?:actual|real|exact|physical) (?:size|width|height)\b"
+        r"|\b(?:actual|real|exact|physical) (?:size|width|height|angle)\b"
         r"|\bhow many (?:inches|feet|centimet(?:er|re)s|millimet(?:er|re)s|met(?:er|re)s)"
         r"\b.{0,12}\b(?:wide|high|tall|long)\b"
         r"|尺寸|多宽|多高|多大|宽度是多少|高度是多少|实测|实际比例"
@@ -393,6 +424,15 @@ _EFFECT_REQUEST = re.compile(
     r"(?:什么(?:样的)?|怎样的)(?:感觉|感受|情绪|气氛|氛围|气息|观感)"
     r"|(?:色彩|线条).{0,26}什么感觉|哪些.{0,18}(?:感觉|不安|紧张)", re.I,
 )
+# Museum wording about the work's effect can be phrased in either direction.
+# A person's reported thoughts or feelings are a different predicate.
+_ATTRIBUTED_EFFECT = re.compile(
+    r"\b(?:suggests?|conveys?|evokes?) (?:(?:an?|another|some|different|particular) ){0,2}"
+    r"(?:feeling|mood|impression|atmosphere)\b"
+    r"|\b(?:feeling|mood|impression|atmosphere) (?:that |which )?"
+    r"(?:it|the (?:painting|work|scene|picture)) (?:gives?|conveys?|suggests?|evokes?)\b", re.I,
+)
+_LABEL = re.compile(r"\b(?:label|museum|catalog(?:ue)?)\b", re.I)
 _EFFECT_OF_TITLED_WORK = re.compile(
     r"\bwhat (?:(?:kind|sort|type) of )?(?:effect|feeling|mood)\b.{0,96}"
     r"\b(?:give off|evoke|convey|suggest)\b"
@@ -400,8 +440,8 @@ _EFFECT_OF_TITLED_WORK = re.compile(
     r"(?:感觉|感受|情绪|气氛|氛围|气息|观感)", re.I,
 )
 _OBJECT_REQUEST = re.compile(
-    r"\b(?:what|which) (?:objects?|things?|items?)\b.{0,96}"
-    r"\b(?:suggest|depict|show|represent|evoke|look like|hint(?:ed)? at)\b"
+    r"\b(?:what|which) (?:(?:two|three|different|depicted) )?(?:objects?|things?|items?)\b.{0,96}"
+    r"\b(?:suggest|depict|show|represent|evoke|brings? to mind|look like|hint(?:ed)? at)\b"
     r"|(?:联想到|暗示|表现|描绘|勾勒|画出|看起来像|看出|看见).{0,18}"
     r"(?:什么|哪些|哪几件)(?:物件|物品|东西)", re.I,
 )
@@ -524,7 +564,17 @@ def _is_request(text, question_mark):
     )
 
 
-def _facets(text, visual_marks_context, inherited_aspect, has_title):
+def _describes_paint_handling(text, active_artist):
+    if _HANDLING_PROCESS_DETAIL.search(text):
+        return False
+    if active_artist:
+        # Only the artist in the active catalog record can stand in for "the artist".
+        subject = rf"\b{re.escape(active_artist)}(?= handled (?:the )?paint\b)"
+        text = re.sub(subject, "the artist", text, flags=re.I)
+    return _PAINT_HANDLING_DESCRIPTION.search(text)
+
+
+def _facets(text, visual_marks_context, inherited_aspect, has_title, active_artist=None):
     unsupported = {
         facet for facet, patterns in _UNSUPPORTED_PATTERNS.items()
         if any(pattern.search(text) for pattern in patterns)
@@ -557,7 +607,7 @@ def _facets(text, visual_marks_context, inherited_aspect, has_title):
                 heads = {facet for facet, patterns in _SUPPORTED_PATTERNS.items()
                          if any(p.match(topic) for p in patterns)}
                 if heads:
-                    independent.update(heads.intersection(_facets(topic, visual_marks_context, None, has_title)))
+                    independent.update(heads.intersection(_facets(topic, visual_marks_context, None, has_title, active_artist)))
             if independent:
                 return tuple(facet for facet in (*_SUPPORTED, *_UNSUPPORTED)
                              if facet in independent or facet in unsupported)
@@ -589,10 +639,12 @@ def _facets(text, visual_marks_context, inherited_aspect, has_title):
     if _OBJECT_REQUEST.search(text) or (visual_marks_context and _MARKS.search(text) and _MARK_SUGGESTION.search(text)):
         supported.add("background_objects")
         supported.discard("brushwork_appearance")
-    elif visible_marks and _STROKE_DESCRIPTION.search(text):
+    elif visible_marks and (_STROKE_DESCRIPTION.search(text) or
+                            _describes_paint_handling(text, active_artist)):
         supported.add("brushwork_appearance")
         supported.discard("background_objects")
-    if _EFFECT_REQUEST.search(text) or (has_title and _EFFECT_OF_TITLED_WORK.search(text)):
+    if (_EFFECT_REQUEST.search(text) or (has_title and _EFFECT_OF_TITLED_WORK.search(text))
+            or (_LABEL.search(text) and _ATTRIBUTED_EFFECT.search(text))):
         supported.add("visual_effect")
         supported.difference_update(("color_appearance", "line_recession", "brushwork_appearance"))
 
@@ -647,7 +699,7 @@ def _inherited_aspect(text, mentioned, earlier, recent):
     return None
 
 
-def parse_requests(query: str, artwork_id: str) -> tuple[str, tuple[QueryRequest, ...]]:
+def parse_requests(query: str, artwork_id: str, *, active_artist: str | None = None) -> tuple[str, tuple[QueryRequest, ...]]:
     """Return case-preserving normalized text and its scoped fact requests."""
     normalized = " ".join(unicodedata.normalize("NFKC", query).split())
     requests = []
@@ -694,6 +746,7 @@ def parse_requests(query: str, artwork_id: str) -> tuple[str, tuple[QueryRequest
         if is_request:
             facets = _facets(
                 text, bool(has_scene and refers_to_scene), inherited, has_title=bool(references),
+                active_artist=active_artist if targets == (artwork_id,) else None,
             )
             for target in targets:
                 for facet in facets:

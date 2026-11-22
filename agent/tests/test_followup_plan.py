@@ -36,10 +36,10 @@ class FollowupPlanTests(unittest.TestCase):
         for ref in wire["$defs"]["Plan"]["oneOf"]:
             branch = wire["$defs"][ref["$ref"].split("/")[-1]]
             self.assertEqual(next(iter(branch["properties"])), "visitor_task")
-        for name in snapshot["$defs"].keys() - {"Plan"}:
+        for name in snapshot["$defs"].keys() - {"Plan", "DirectResponsePlan"}:
             self.assertEqual(wire["$defs"][name], snapshot["$defs"][name])
         public = medium_plan(make_run())
-        wrapped = {"visitor_task": "other_request", "plan": public}
+        wrapped = {"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests", "plan": public}
         StrictValidator(wire).validate(wrapped)
         self.assertIs(expand_plan(wrapped, self.payload), public)
         with self.assertRaises(ValidationError):
@@ -52,10 +52,17 @@ class FollowupPlanTests(unittest.TestCase):
             StrictValidator(self.schema).validate(decision)
         for changed in ({"recent_turns": []}, {"original_question": " "}):
             payload = {**self.payload, **changed}
-            self.assertIs(planning_schema(self.schema, payload), self.schema)
-            self.assertIs(expand_plan(public, payload), public)
-            with self.assertRaises(ContractViolation):
-                expand_plan(decision, payload)
+            wire = planning_schema(self.schema, payload)
+            if payload["original_question"].strip():
+                StrictValidator(wire).validate(wrapped)
+                StrictValidator(wire).validate(decision)
+                self.assertEqual(expand_plan(decision, payload)["action"], "retrieve")
+            else:
+                StrictValidator(wire).validate(public)
+                with self.assertRaises(ValidationError):
+                    StrictValidator(wire).validate(decision)
+                with self.assertRaises(ContractViolation):
+                    expand_plan(decision, payload)
         other = self.validator.schema("AssessmentDecision")
         self.assertIs(planning_schema(other, self.payload), other)
         self.assertEqual(planning_schema({}, self.payload), {})
@@ -97,12 +104,58 @@ class FollowupPlanTests(unittest.TestCase):
         with self.assertRaises(WorkflowError):
             validate_plan(make_run(question=self.question), plan, self.validator, plan_input=self.payload)
 
+    def test_listed_medium_uses_scoped_record_and_ui_language(self):
+        payload = {**self.payload, "artwork_context": {"artwork_title": "Example"},
+                   "conversation_context": {"language_preference": "auto", "auto_language": "en"},
+                   "language_override": "es"}
+        wire = {"visitor_task": "look_up_listed_medium", "detected_language": "ko"}
+        for history in ([], self.payload["recent_turns"]):
+            current = {**payload, "recent_turns": history}
+            StrictValidator(planning_schema(self.schema, current)).validate(wire)
+            self.assertEqual(expand_plan(wire, current)["action"], "retrieve")
+        plan = expand_plan(wire, payload)
+        self.assertEqual(plan["action"], "retrieve")
+        self.assertEqual(plan["queries"][0]["query"], "What material is Example made of?")
+        self.assertEqual(plan["requests"][0]["kind"], "artwork_fact")
+        self.assertEqual(plan["requests"][0]["original_fragment"], self.question)
+        self.assertEqual(plan["language_decision"],
+                         {"detected_language": "ko", "answer_language": "es",
+                          "explicit_instruction": None, "translation": None})
+        for locator, expected in (("data.medium_display", "answer_from_context"),
+                                  ("data.description", "retrieve")):
+            reused = expand_plan(wire, {**payload, "cached_evidence": [{"source_locator": locator}],
+                                        "language_override": None})
+            self.assertEqual(reused["action"], expected)
+            self.assertEqual(reused["language_decision"]["answer_language"], "ko")
+        with self.assertRaises(ContractViolation):
+            expand_plan({**wire, "source": {"excerpt": "invented"}}, payload)
+
+    def test_unavailable_translation_and_pointing_bind_whole_message_clarifications(self):
+        for history in ([], self.payload["recent_turns"]):
+            payload = {**self.payload, "conversation_context": {
+                "language_preference": "es", "auto_language": "en",
+                "active_topic": "Earlier topic", "continuity_summary": "Earlier note."},
+                "language_override": None, "recent_turns": history}
+            for task, expected in (({"visitor_task": "ask_for_translation_source", "target_language": "ko"}, "ko"),
+                                   ({"visitor_task": "ask_which_detail", "detected_language": "en"}, "es")):
+                StrictValidator(planning_schema(self.schema, payload)).validate(task)
+                plan = expand_plan(task, payload)
+                StrictValidator(self.schema).validate(plan)
+                self.assertEqual(plan["action"], "clarify")
+                self.assertEqual(plan["language_decision"]["answer_language"], expected)
+                self.assertEqual(plan["memory_update"]["continuity_summary"], "Earlier note.")
+                self.assertEqual(plan["memory_update"]["pending_update"],
+                                 {"action": "set", "source": "current_message", "request_id": None})
+                if expected == "ko":
+                    self.assertEqual(plan["language_decision"]["translation"],
+                                     {"target_language": "ko", "source": None, "original_fragment": self.question})
+
     def test_invalid_provider_data_is_rejected_before_conversion(self):
         valid = facts({"sentence": 1})
-        malformed = [{"visitor_task": "other_request", "plan": [], "extra": True},
-                     {"visitor_task": "other_request", "plan": {}, "ignored": True},
-                     {"visitor_task": "other_request"}, {"visitor_task": "unknown"},
-                     {"visitor_task": "other_request", "plan": "guess"}, [],
+        malformed = [{"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests", "plan": [], "extra": True},
+                     {"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests", "plan": {}, "ignored": True},
+                     {"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests"}, {"visitor_task": "unknown"},
+                     {"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests", "plan": "guess"}, [],
                      {**valid, "extra": "ignored"}, {**valid, "evidence_action": "guess"},
                      {**valid, "facts": []}, {**valid, "facts": valid["facts"] * 3},
                      {**valid, "language_decision": {"answer_language": "ko"}}]

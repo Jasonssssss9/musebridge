@@ -9,6 +9,7 @@ import unittest
 from agent.prompts import PROMPT_VERSION as V1_PROMPT_VERSION
 from agent.prompts.v2 import PROMPT_VERSION, build_messages
 from agent.runtime.errors import WorkflowError
+from agent.runtime.followup_plan import planning_schema
 from agent.tools.evidence import EvidenceManifest
 from agent.testing.v2 import (
     FixtureProfile, ScriptedModel, example, make_run, memory_update, simulate_commit,
@@ -42,22 +43,26 @@ class PromptV2Tests(unittest.TestCase):
         payload["translation"]["text"] = "Mutated after rendering"
         self.assertEqual(json.loads(messages[1]["content"]), original)
 
-    def test_followup_policy_only_runs_for_planning_with_retained_history(self):
+    def test_task_policy_applies_to_initial_and_followup_planning(self):
         history = [{"answer_text": "Private previous visitor answer"}]
-        for operation, turns, expected in (("plan", history, True), ("plan", [], False),
+        for operation, turns, expected in (("plan", history, True), ("plan", [], True),
                                             ("assess", history, False), ("final", history, False)):
             with self.subTest(operation=operation, has_history=bool(turns)):
-                payload = {"recent_turns": turns}
-                system, data = build_messages(operation, payload, {})
-                self.assertEqual("Plan this follow-up" in system["content"], expected)
+                payload = {"original_question": "Which mark?", "recent_turns": turns}
+                wire = planning_schema(schema("Plan"), payload) if operation == "plan" else {}
+                system, data = build_messages(operation, payload, wire)
+                self.assertEqual("Plan from the visitor" in system["content"], expected)
                 self.assertNotIn("Private previous visitor answer", system["content"])
-                self.assertEqual(json.loads(data["content"]), payload)
+                user_data = json.loads(data["content"])
+                if expected:
+                    self.assertEqual(user_data.pop("source_sentences"), [{"sentence": 1, "text": "Which mark?"}])
+                self.assertEqual(user_data, payload)
 
     def test_numbered_sources_stay_verbatim_in_the_user_message(self):
         question = "¿Qué material usó?   第二句保留  空格！"
         payload = {"original_question": question, "recent_turns": [{"answer_text": "history"}]}
         original = deepcopy(payload)
-        system, data = build_messages("plan", payload, {})
+        system, data = build_messages("plan", payload, planning_schema(schema("Plan"), payload))
         wire = json.loads(data["content"])
         self.assertEqual(wire.pop("source_sentences"), [
             {"sentence": 1, "text": "¿Qué material usó?"},

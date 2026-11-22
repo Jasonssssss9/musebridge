@@ -31,18 +31,24 @@ def run_for(question=None):
 
 class GroundingTests(unittest.TestCase):
     def test_long_requests_keep_every_decision_within_the_memory_budget(self):
+        fragments = [f"질문 {n} " + "가" * 118 + "?" for n in range(1, 5)]
+        question = " ".join(fragments)
         requests = [{"id": f"r{n}", "kind": "artwork_fact", "resolution": "clear",
-                     "intent": "A" * 1000, "original_fragment": "long question"} for n in range(1, 5)]
-        plan = {"requests": requests, "language_decision": {"detected_language": "ko", "translation": None}}
-        run = {"conversation_state": {"revision": 5, "continuity_summary": "P" * 1000},
+                     "intent": "A" * 1000, "original_fragment": fragment}
+                    for n, fragment in enumerate(fragments, 1)]
+        plan = {"requests": requests, "language_decision": {
+            "detected_language": "ko", "answer_language": "ko", "translation": None}}
+        run = {"question": question, "conversation_state": {"revision": 5, "continuity_summary": "P" * 1000},
                "context": {"artwork_title": "Example work"}}
         parts = [{"support": "supported", "citation_ids": ["source-id"]},
                  *[{"support": "insufficient", "citation_ids": []} for _ in range(3)]]
         result = grounded_memory(run, plan, parts, {"pending_update": {"action": "keep"}})
         self.assertLessEqual(len(result["continuity_summary"]), 1000)
-        self.assertEqual(result["continuity_summary"].count("Turn 6, visitor question"), 4)
+        self.assertEqual(result["continuity_summary"].count(question), 1)
+        self.assertEqual(result["continuity_summary"].count("Guide check "), 4)
+        self.assertEqual(result["continuity_summary"].count("Open here"), 3)
         self.assertIn("source-id", result["continuity_summary"])
-        self.assertEqual(result["active_topic"], "Example work")
+        self.assertEqual(result["active_topic"], "The visitor’s message in turn 6")
         self.assertEqual(result["pending_update"], {"action": "keep"})
 
     def test_cross_language_gap_uses_reply_language_and_preserves_supported_part(self):

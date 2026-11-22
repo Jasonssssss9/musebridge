@@ -13,8 +13,8 @@ from agent.providers.profile import TOKENIZER_BYTES, TOKENIZER_SHA256, TOKENIZER
 class QwenPromptSizer:
     """Use both raw and NFC BPE counts, plus 64 renderer/parser tokens.
 
-    The full authoritative schema is already in C's system message. The format
-    grammar is not another prompt. No character-to-token ratio is used. The
+    Count the exact messages sent to the model, including their schema guide.
+    Ollama's format grammar is not another prompt. No character-to-token ratio is used. The
     bound must be compared with server prompt counts during capability probes.
     """
 

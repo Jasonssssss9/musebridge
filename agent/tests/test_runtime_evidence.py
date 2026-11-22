@@ -83,7 +83,21 @@ class EvidenceTests(unittest.IsolatedAsyncioTestCase):
         rows = [json.loads(line) for line in path.read_text().splitlines()]
         self.assertEqual(rows[1]["event"], "private_run_input")
         self.assertEqual(rows[1]["request"]["question"], "PRIVATE development question")
+        verdict = next(row for row in rows if row["event"] == "private_workflow_result")
+        self.assertEqual(verdict["result"]["answer"], {"status": "conversational"})
+        self.assertEqual(verdict["request_id"], "explicit-development")
         self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+
+    async def test_success_omits_canonical_answer_and_memory_from_default_log(self):
+        result = {"answer": {"status": "answered", "text": "PRIVATE answer"},
+                  "answer_language": "en", "execution": {"model_calls": 1},
+                  "memory_update": {"continuity_summary": "PRIVATE memory"}}
+        executor = EvidenceExecution(AsyncMock(return_value=result), self.evidence)
+        run = {"run_id": "run", "scope": {"artwork_id": "aic-28560", "dataset_version": "release"},
+               "conversation_state": {"revision": 0}}
+        self.assertEqual(await executor(run, request_id="default", budget=object()), result)
+        self.assertEqual([row["event"] for row in self.events()], ["workflow_started", "workflow_returned"])
+        self.assertNotIn("PRIVATE", self.path.read_text())
 
 
 if __name__ == "__main__":

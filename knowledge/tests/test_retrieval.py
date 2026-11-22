@@ -111,6 +111,9 @@ class RetrievalTests(unittest.TestCase):
             "Which lines make the room look deeper?",
             "How does the museum label describe the lines extending into the distance in The Bedroom?",
             "Which way are the lines leading toward the back of the room?",
+            "How does the museum describe the lines going back into the room in The Bedroom by Vincent van Gogh?",
+            "Describe the lines stretching away toward the distance.",
+            "Which lines run back through the depicted interior?",
             "How do the lines extend into the room behind the bed?",
             "How do the lines in this work give the room a sense of depth?",
         )
@@ -122,6 +125,52 @@ class RetrievalTests(unittest.TestCase):
         compound = "What material is the painting made of, and which lines suggest depth?"
         self.assertCountEqual(chunk_ids(self.search(BEDROOM, compound)), [BEDROOM_MEDIUM, BEDROOM_DESCRIPTION])
         self.assertEqual(chunk_ids(self.search(TOILETTE, compound)), [TOILETTE_MEDIUM])
+
+    def test_paint_handling_questions_need_a_visual_description(self):
+        descriptions = (
+            "What does the museum say about the handling of the paint in this work?",
+            "How does the label describe the way the artist handled the paint?",
+            "Describe how the paint was handled in the picture.",
+            "How does the catalog characterize the visible painted marks in this artwork?",
+            "What does the museum say about the facture or visible marks left by the painter?",
+        )
+        exclusions = (
+            "What is facture?",
+            "Who handled the paint in the studio?",
+            "Can the label identify when the artist handled the paint?",
+            "Describe the handling of the paint during restoration.",
+            "What does the museum say about the handling of the paint by the conservator?",
+            "What does the label say about the handling of the paint with a palette knife?",
+            "Does the catalog describe the exact technique for handling the paint?",
+            "Which pigment was used for the visible painted marks?",
+        )
+        for artwork, expected in ((BEDROOM, BEDROOM_DESCRIPTION), (TOILETTE, TOILETTE_DESCRIPTION)):
+            for question in descriptions:
+                with self.subTest(artwork=artwork, question=question):
+                    self.assertEqual(chunk_ids(self.search(artwork, question)), [expected])
+            for question in exclusions:
+                with self.subTest(artwork=artwork, question=question):
+                    self.assertEqual(chunk_ids(self.search(artwork, question)), [])
+
+    def test_only_the_active_catalog_artist_can_describe_the_paint_handling(self):
+        for artwork, artist, other, expected in (
+            (BEDROOM, "Vincent van Gogh", "Berthe Morisot", BEDROOM_DESCRIPTION),
+            (TOILETTE, "Berthe Morisot", "Vincent van Gogh", TOILETTE_DESCRIPTION),
+        ):
+            for subject, hits in ((artist, [expected]), (other, []), ("a visiting restorer", [])):
+                with self.subTest(artwork=artwork, subject=subject):
+                    question = f"How does the museum describe the way {subject} handled the paint here?"
+                    self.assertEqual(chunk_ids(self.search(artwork, question)), hits)
+
+    def test_spatial_line_movement_excludes_history_storage_and_measurements(self):
+        for question in (
+            "Do those lines go back to the artist's childhood?",
+            "Did the artist's sketches of the lines go back into storage?",
+            "What is the exact angle of the lines going back into the pictured room?",
+            "Which pigment outlines the lines stretching away toward the distance?",
+        ):
+            with self.subTest(question=question):
+                self.assertEqual(chunk_ids(self.search(BEDROOM, question)), [])
 
     def test_nominal_topics_keep_supported_evidence_without_inventing_support_for_the_other(self):
         question = (
@@ -890,6 +939,25 @@ class RetrievalTests(unittest.TestCase):
         self.assertNotEqual(result, untouched)
         self.assertEqual(self.search(BEDROOM, query), untouched)
         self.assert_scoped_evidence(untouched, BEDROOM)
+
+    def test_recorded_technique_and_support_select_the_active_medium(self):
+        for artwork, expected in ((BEDROOM, BEDROOM_MEDIUM), (TOILETTE, TOILETTE_MEDIUM)):
+            with self.subTest(artwork=artwork):
+                result = self.search(artwork, "Which technique and support are recorded on the label?")
+                self.assertEqual([item["chunk_id"] for item in result["evidence"]], [expected])
+        process = self.search(BEDROOM, "Which technique did the painter use to prepare the support?")
+        self.assertEqual(process["evidence"], [])
+
+    def test_artwork_effects_and_implied_objects_preserve_the_subject(self):
+        for work, query, expected in (
+            (BEDROOM, "Does the museum label suggest a different mood?", [BEDROOM_DESCRIPTION]),
+            (BEDROOM, "What does the label say about the impression the painting gives?", [BEDROOM_DESCRIPTION]),
+            (BEDROOM, "Does the label tell us how the person in the room felt?", []),
+            (BEDROOM, "What is the description of the lines in this composition?", [BEDROOM_DESCRIPTION]),
+            (TOILETTE, "What things do the marks behind the sitter bring to mind?", [TOILETTE_DESCRIPTION]),
+        ):
+            with self.subTest(query=query):
+                self.assertEqual([e["chunk_id"] for e in self.search(work, query)["evidence"]], expected)
 
     def test_invalid_top_k_is_a_typed_error(self):
         for top_k in (False, True, 2.0, 2.5, "2", None, 0, -1, 6):

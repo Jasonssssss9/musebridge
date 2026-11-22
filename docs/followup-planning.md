@@ -1,6 +1,8 @@
 # Follow-up planning on the pinned 9B model
 
-The revised planner delivered all 16 scheduled follow-ups across two sets of visitor
+This report records the earlier two-task planner baseline. The [M2 verification record](m2-verification.md) covers the subsequent candidate and its separate development results.
+
+The earlier planner delivered all 16 scheduled follow-ups across two sets of visitor
 dialogues. Independent review passed the reply itself on five of eight regression
 follow-ups and three of eight held-out follow-ups. Two held-out replies made
 unsupported claims about the artwork, including one that persisted in memory.

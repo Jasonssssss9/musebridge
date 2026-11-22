@@ -3,7 +3,7 @@ import argparse
 import json
 from pathlib import Path
 
-from agent.testing.m2_smoke import ROOT, save
+from agent.testing.m2_smoke import ROOT, development_passed, save
 
 
 def summarize(runtime, browser, labels):
@@ -12,13 +12,16 @@ def summarize(runtime, browser, labels):
                "http_status": case["response"]["http_status"], "error": (case.get("error") or {}).get("code")}
               for case in cases if not case.get("machine_pass")]
     browser_cases = browser.get("cases", [])
-    browser_passed = sum(bool(case.get("pass", case.get("http_pass", False))) for case in browser_cases)
+    browser_passed = sum(case.get("pass") is True for case in browser_cases)
     valid_transport = {case["artwork_id"] for case in cases if case["response"]["http_status"] == 200}
+    label_preflight = (labels.get("review_kind") == "automated-source-and-annotated-state-preflight"
+                       and labels.get("single_scenarios") == 60 and labels.get("single_trials") == 240
+                       and labels.get("multi_scripts") == 16 and labels.get("issues") == [])
     gates = {
         "both_artworks_real_public_path": "passed" if valid_transport == {"aic-28560", "aic-11723"} else "incomplete",
-        "development_expectations": "passed" if cases and not failed else "failures_recorded",
+        "development_expectations": "passed" if development_passed(runtime) else "failures_recorded",
         "automated_browser": "passed" if browser_cases and browser_passed == len(browser_cases) and not browser.get("fatal_error") else "partial",
-        "heldout_label_preflight": "passed" if not labels.get("issues") else "issues_recorded",
+        "heldout_label_preflight": "passed" if label_preflight else "incomplete_or_issues_recorded",
         "human_language_and_semantic_reviews": "pending",
         "independent_quality_evaluation": "not_run_unfrozen_suite",
         "candidate_commit_and_team_release_review": "pending",
@@ -26,6 +29,9 @@ def summarize(runtime, browser, labels):
     }
     return {"base_commit": runtime.get("base_commit"), "source_manifest_sha256": runtime.get("source_manifest_sha256"),
         "mode": runtime["mode"], "m2_complete": False, "formal_activation_allowed": False, "gates": gates,
+        "warm_public_latency": runtime.get("warm_public_latency", {}),
+        "scheduled_development_trials": len(runtime.get("cases", [])),
+        "blocked_development_trials": sum("blocked" in row for row in runtime.get("cases", [])),
         "development_trials": len(cases), "machine_expectations_passed": sum(bool(case.get("machine_pass")) for case in cases),
         "failed_development_cases": failed, "browser_cases": len(browser_cases), "browser_checks_passed": browser_passed,
         "failure_atomicity": {"checked": sum("failure_atomicity_pass" in case for case in cases),

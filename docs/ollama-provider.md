@@ -60,10 +60,7 @@ It takes the larger raw/NFC BPE token count and adds 64 tokens for renderer/pars
 differences. It is a tokenizer-based conservative envelope, not a character ratio
 or a claim of exact equality with server counts.
 
-C already includes the complete authoritative output schema in the system
-message; it is counted there. The separate generation grammar is not counted a
-second time as prose. C may remove oldest whole history pairs to fit, while
-required source/context remains. The provider independently checks the fitted
+The sizer counts the actual system and user messages. Ordinary calls show the full schema in the system message. When that presentation would evict history, the Agent tries a compact schema guide before removing a complete pair. Both presentations use the same authoritative provider schema and retain required sources and context. The provider independently checks the fitted
 input plus output/safety reserves before inference and checks server prompt
 usage against the bound. `truncate: false` prevents server-side prompt removal.
 

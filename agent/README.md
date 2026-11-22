@@ -1,8 +1,9 @@
 # MuseBridge Agent: C v2 workflow
 
-Status: **C's v2 workflow is implemented and verified with a scripted model and
-real HTTP retrieval. Full application integration and real-model acceptance
-remain open.**
+The v2 workflow runs behind the public Go API with a scripted provider for
+deterministic tests and real Qwen in controlled integration. The [M2 verification
+record](../docs/m2-verification.md) gives the development results and remaining
+independent quality checks.
 
 This package implements C's Agent intelligence and evidence responsibilities from
 the [v2 design](../docs/agent-design.md), [interface contract](../docs/agent-api-contract.md)
@@ -221,6 +222,21 @@ The [two-turn planner baseline](../docs/planner-baseline.md) compares Qwen’s
 plans with independent English retrieval controls across eight visitor dialogues.
 The [follow-up planning evaluation](../docs/followup-planning.md) covers exact
 input replay, end-to-end regression and a separate four-language visitor set.
+To isolate assessment from the upstream plan and lookup, run the following command
+on a private full dialogue report:
+
+```sh
+.venv/bin/python -B -m agent.testing.replay_assessments \
+  --baseline ../local-model-results/followup-heldout.json \
+  --base-url http://127.0.0.1:11434 --tokenizer ../local-model-assets/qwen35-tokenizer.json \
+  --report ../local-model-results/assessment-replay.json
+```
+
+This probe reuses the actual fitted requests, language, history and evidence.
+It scores ordered support decisions and citation IDs. It records refinement or
+clarification as a separate outcome and performs no follow-up lookup. Review
+visitor-facing prose and next-state memory on the complete dialogue path.
+
 
 ## 3. Package map
 
@@ -317,7 +333,7 @@ The v2 starting profile is 16,384 context tokens, 2,048 planning output tokens,
 values to verify on the actual model. C uses the injected tokenizer/template-aware
 sizer; the fixed test sizer is not a production token estimate. Required context,
 catalog, evidence and any pinned translation source are never silently truncated.
-Only the oldest whole historical pairs may be removed. Required input that still
+Before removing a history pair, the workflow tries a compact schema guide with the same full provider schema. If space is still needed, only the oldest whole historical pairs may be removed. Required input that still
 does not fit fails with agent_context_limit.
 
 Model stage caps are ten seconds for planning and fifteen seconds for assessment
@@ -420,17 +436,11 @@ language detection, reference resolution, query quality, semantic support,
 subjective-discussion quality, translation quality, real token sizing, inference
 latency or resistance to prompt injection by an LLM.
 
-Remaining integration belongs to the shared plan:
-
-- B has implemented the private run service/lifecycle and internal Go state
-  store and the opt-in provider/profile/sizer. Real workflow readiness and Go
-  Agent/public HTTP integration remain to be accepted.
-- A supplies v2 browser behavior, source rendering, language/recovery handling and
-  independent visitor scripts.
-- C integrates the real provider and measures the workflow on independently
-  labeled multilingual and multi-turn cases, diagnosing semantic failures.
-- The team executes the [visitor journeys](../docs/visitor-acceptance.md), full
-  application checks and physical-phone acceptance before claiming readiness.
+The Go service, browser and private Qwen workflow have since run together. The
+[current M2 verification record](../docs/m2-verification.md) links the public
+results, outstanding model failures and independent review requirements. The
+[visitor journeys](../docs/visitor-acceptance.md) also define the later physical
+phone checks.
 
 Routine diagnostics are counts, versions, phase timings and retained history size.
 Full messages, queries, summaries and source payloads belong only in deliberate
