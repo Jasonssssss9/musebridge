@@ -28,6 +28,56 @@ accepts either the worktree root or its versioned suite directory. Only a verifi
 freeze manifest and attributable sign-offs can open the messages for inference. Structural checks and a count of
 the schedule can run on the draft.
 
+### Human review and freeze handoff
+
+The draft at `8da4cbf` has four unsigned language sheets and no freeze manifest.
+All 32 rows of its separate browser record are marked **not run**. Use the
+[authored review directory](https://github.com/Jasonssssss9/musebridge/tree/visitor-acceptance/acceptance)
+for the questions and signed records. Engineering needs only the coverage totals
+until the suite is frozen.
+
+| Owner | Complete before collection | Evidence to retain |
+| --- | --- | --- |
+| A | Read the scenarios and scripts for visitor realism, intent and expected outcome. Resolve changes with the reviewers. | Named and dated decision on the final reviewed revision. |
+| Language reviewers | Read the English, Spanish, Simplified Chinese and Korean sheets for natural visitor language and meaning. | Signed row or other durable reference for each language. |
+| B | Check evidence IDs against the released museum sources. Verify routes, gaps, language expectations and state transitions against the contract. | Named, dated source/state review on that revision. |
+| A with B | Use the separate browser record on the live Go and Agent stack. Enter tester, revision, environment and an observed outcome or reason for every row. | Completed browser record and references to its observations. The M2 record allows a mobile-sized desktop browser. |
+
+**Preserve signatures.** The draft’s `render_review.py` rewrites the language
+sheets, including their sign-off tables. Generate sheets after wording changes
+and before signing. If wording or expected labels change after review, regenerate
+and review the affected material again. Keep durable copies of completed
+sign-offs. An automated browser result can support a row when its setup and
+observation match; A records the actual independent review decision.
+
+Once the human reviews are complete, A changes only the two dataset status
+fields to `frozen`, runs the [authored freeze and verify steps](https://github.com/Jasonssssss9/musebridge/tree/visitor-acceptance/acceptance#freezing)
+on the separate checkout, and pins the resulting commit or tag. Preserve the
+final signed sheets when following those steps. From **main**, create an unsigned
+index for those exact frozen bytes in an existing private directory:
+
+```sh
+python3 -B -m acceptance.reviewed_suite template --suite-root ../visitor-review \
+  --output /private/freeze-review.json
+```
+
+A collects the six named and dated sign-offs. Enter the reviewer and reference
+to each completed review, then set the corresponding `approved` field to
+`true`. A commit and file/section, a signed sheet, or an accessible internal
+review record gives the operator something to verify. A blank index has six
+negative decisions. The following offline command checks the hashes and all
+six entries, printing the suite and review digests without printing questions
+or contacting a model:
+
+```sh
+python3 -B -m acceptance.reviewed_suite verify --suite-root ../visitor-review \
+  --review-record /private/freeze-review.json
+```
+
+Give the operator the pinned suite revision, the completed index and its
+references, both digests and the separate browser record. The collector uses
+the same freeze check immediately before inference.
+
 ## Rehearse using public development cases
 
 Start the [controlled Qwen stack](../docs/m2-runtime.md) with

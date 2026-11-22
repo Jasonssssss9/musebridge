@@ -6,7 +6,9 @@ import re
 from jsonschema import FormatChecker, ValidationError
 
 from agent.runtime.language_binding import bind_setting_scope, ordinary_language
+from agent.runtime.passage_plan import bind_passages, passage_items
 from agent.runtime.social_reply import bind_social_acts, social_plan, social_schema, with_social_acts
+from agent.runtime.cache_coverage import needs_scoped_lookup
 from agent.runtime.catalog_reply import catalog_field_for_query, catalog_plan
 from agent.runtime.general_reply import general_plan, general_schema, offers_definition
 from agent.runtime.validation import ContractViolation, StrictValidator
@@ -64,6 +66,15 @@ def _branch(definitions, sentence_limit):
     })
 
 
+def _passage_branch(definitions, count):
+    branch = _branch(definitions, count)
+    fields = branch["properties"]
+    fields.pop("facts")
+    fields["passages"] = passage_items(definitions, count)
+    branch["required"] = list(fields)
+    return branch
+
+
 def _single_tasks(definitions):
     detected = definitions["LanguageDecision"]["properties"]["detected_language"]
     return {
@@ -100,7 +111,8 @@ def planning_schema(schema: dict, payload: dict) -> dict:
     definitions.update(extra)
     shortcuts = [{"$ref": "#/$defs/" + name} for name in extra]
     sentence_count = len(source_sentences(payload["original_question"]))
-    fact_plan = _branch(definitions, sentence_count)
+    fact_plan = (_passage_branch(definitions, sentence_count) if 2 <= sentence_count <= 4
+                 else _branch(definitions, sentence_count))
     if payload.get("complete_scope") or not payload.get("cached_evidence"):
         route = "reuse_cache" if payload.get("complete_scope") else "search"
         fact_plan["properties"]["evidence_action"] = {"type": "string", "const": route}
@@ -122,7 +134,7 @@ def _fact_validator():
     definitions = ContractValidatorV2().schema("Plan")["$defs"]
     # The input contract caps the whole visitor message at 500 characters. The
     # actual sentence count is checked against the current message at binding.
-    schema = {"oneOf": [_branch(definitions, None), _medium_branch(definitions),
+    schema = {"oneOf": [_branch(definitions, None), _passage_branch(definitions, None), _medium_branch(definitions),
                         *_single_tasks(definitions).values()], "$defs": definitions}
     return StrictValidator(schema, format_checker=FormatChecker())
 
@@ -240,10 +252,13 @@ def _expand_plan(data: dict, payload: dict) -> dict:
         _fact_validator().validate(data)
     except ValidationError as error:
         raise ContractViolation("The factual follow-up decision has an invalid shape.") from error
+    sentences = source_sentences(question)
+    if "passages" in data:
+        data = bind_passages(data, len(sentences))
 
     spans = []
     cursor = 0
-    for sentence in source_sentences(question):
+    for sentence in sentences:
         start = question.index(sentence, cursor)
         cursor = start + len(sentence)
         spans.append((start, cursor))
@@ -256,15 +271,8 @@ def _expand_plan(data: dict, payload: dict) -> dict:
         fragment = question[start:end]
         if bindings:
             previous_start, previous_end = bindings[0]
-            if start <= previous_start or fragment == question[previous_start:previous_end]:
-                raise ContractViolation("Select distinct passages in visitor-message order.")
-            # A shared sentence needs a shorter excerpt for each independent fact.
-            for left, right in spans:
-                if start < right and left < min(previous_end, end):
-                    both_shorter = all(left <= a and b <= right and b - a < right - left
-                                       for a, b in ((previous_start, previous_end), (start, end)))
-                    if not both_shorter:
-                        raise ContractViolation("Select a distinct excerpt for each fact in the same sentence.")
+            if start < previous_end or fragment == question[previous_start:previous_end]:
+                raise ContractViolation("Select distinct, nonoverlapping passages in visitor-message order.")
         bindings.append((start, end))
         query = fact["english_search_question"]
         if query != query.strip():
@@ -281,6 +289,7 @@ def _expand_plan(data: dict, payload: dict) -> dict:
         if field:
             return catalog_plan([field], question, data["language_decision"], payload)
     plan = {"language_decision": deepcopy(data["language_decision"]), "requests": requests}
-    if data["evidence_action"] == "search":
+    if (data["evidence_action"] == "search"
+            or (not plan["language_decision"]["translation"] and needs_scoped_lookup(queries, payload))):
         return {"action": "retrieve", **plan, "queries": queries}
     return {"action": "answer_from_context", **plan}

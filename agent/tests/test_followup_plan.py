@@ -46,7 +46,10 @@ class FollowupPlanTests(unittest.TestCase):
             StrictValidator(wire).validate(public)
         with self.assertRaises(ContractViolation):
             expand_plan(public, self.payload)
-        decision = facts({"sentence": 1}, {"sentence": 2})
+        old = facts({"sentence": 1}, {"sentence": 2})
+        decision = {key: value for key, value in old.items() if key != "facts"}
+        decision["passages"] = [{"role": "one_evidence_request", "english_search_question": fact["english_search_question"]}
+                                for fact in old["facts"]]
         StrictValidator(wire).validate(decision)
         with self.assertRaises(ValidationError):
             StrictValidator(self.schema).validate(decision)

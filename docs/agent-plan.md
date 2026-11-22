@@ -1,6 +1,6 @@
 # MuseBridge Agent Implementation Plan
 
-The Go-initiated M1 integration is verified. The public M2 Agent path has run with real retrieval, Qwen and a browser. The [M2 verification record](m2-verification.md) tracks current results and open release gates. The dated checkpoints below describe the state at each stage.
+The Go-initiated M1 integration is verified. The [M2 verification record](m2-verification.md) separates the last live Qwen results from the subsequent offline engineering checkpoint. The team has moved candidate requalification, independent evaluation and deployed visitor acceptance into [M3](#m3-deploy-and-complete-acceptance). The dated checkpoints below describe the state at each stage.
 
 This plan defines three milestones and the new A/B/C responsibilities. It follows the [Agent architecture](agent-design.md) and [v2 interface contract](agent-api-contract.md), including protocols, call limits and [release gates](agent-design.md#13-evaluation-and-release-gates). It supersedes the earlier personal assignments for new Agent work. The [fixture-stage plan](plan.md) remains a historical reference.
 
@@ -36,7 +36,7 @@ The architecture and contract examples are already documented. The default check
 | --- | --- | --- |
 | M1. Establish the Agent foundation | Compatible interfaces, a working service/workflow skeleton and verified model access | Existing architecture and contracts |
 | M2. Complete and validate the Agent | Full bounded workflow, integrated application behavior and measured answer quality | M1 service, tool and provider interfaces |
-| M3. Deploy and complete acceptance | A repeatable phone experience and complete delivery evidence | M2 acceptance and the chosen deployment |
+| M3. Deploy and complete acceptance | A qualified candidate, independently scored visitor outcomes, a repeatable phone experience and delivery evidence | M2 engineering checkpoint, independent reviewers and a reachable inference host |
 
 These are acceptance stages, not three sequential work queues. A, B and C work in parallel against shared interfaces. Assign calendar dates after checking team availability and the submission deadline.
 
@@ -89,7 +89,7 @@ cases and behavior fixes in parallel with B's application work.
 | B | Complete Go result validation and atomic turn/ConversationState saving, expected-revision conflicts, Agent run replay/reconciliation, deadline/capacity handling and provider failures. Align application, Agent, browser and proxy budgets. |
 | C | Integrate the implemented routes, sources, memory proposals and bounded refinement with the real provider. Evaluate faithful English queries, support assessment, useful gap replies, translations, subjective interpretation and conversational continuity; correct measured semantic failures. Run the shared workflow through the evaluation harness and analyze failures. |
 
-**M2 is complete when:**
+**Original M2 acceptance criteria.** The engineering checkpoint is recorded separately. The remaining live-model and independent quality criteria carry into M3 with their original thresholds.
 
 - A real request travels through browser -> Go -> Agent -> retrieval/model -> Go -> browser for both artworks.
 - Direct dialogue/early clarification uses one model call and no retrieval; evidence retrieval/reuse uses two; refinement uses at most three.
@@ -105,23 +105,21 @@ Use a controlled integration environment while quality work is in progress. Prom
 
 ### M3. Deploy and complete acceptance
 
-**Goal:** make the accepted system reproducible on the actual phone and deployment.
+The offline M2 checkpoint delivers a candidate for testing. M3 owns the remaining model-quality decision as well as deployment, phone acceptance and course delivery. The team can start the human review while the model host is offline.
 
-| Role | Deliverable |
-| --- | --- |
-| A | Run both artwork QR flows on a physical phone. Verify source links, all four answer languages, mid-conversation language changes, five-turn follow-ups and interrupted-request recovery. Execute the visitor acceptance plan on the actual deployed phone path, recording perceived waiting as well as timing. Coordinate the final walkthrough and video assembly. |
-| B | Verify the Agent-to-model route from the deployed environment, including containers where used. Finalize startup, configuration, warm-up and troubleshooting instructions. Record model/GPU identity and deployment logs. |
-| C | Run the final evaluation and regression checks against the release candidate. Publish the evidence-quality report, known limitations and workflow/prompt/schema versions. Prepare the Agent explanation for the project report. |
+| Stage | A · Frontend and visitors | B · Services and deployment | C · Agent and evidence |
+| --- | --- | --- | --- |
+| **1. Prepare the candidate and freeze the questions** | Coordinate review of visitor intent and naturalness in English, Spanish, Simplified Chinese and Korean on the separate visitor branch. Keep signed sheets, freeze the reviewed files and give the operator the revision, digests and references. | Review evidence and state labels independently against the release. Restore the authorized model endpoint, verify the route from the deployed Agent, and record startup, warm-up, GPU, runtime, model digest, tokenizer, settings and code revision. | With the pinned Qwen profile, rerun the 17 provider scenarios, the 32-turn Agent study and the 48-message public suite. Add fresh development questions in all four languages. Compare interpreted intent, rewritten English queries, available sources, actual answer and committed memory separately. |
+| **2. Measure the frozen candidate** | Complete the separate 32-row browser record on the public application. Record the environment, tester, outcome and observation for each row. Review language, relevance and usefulness of independent replies. | Pin the candidate, dataset, prompts, models and private trace locations. Operate collection, check end-to-end timing by observed route, and join run IDs to committed turns. Review the provider report and capability record against this build before activating normal service. | Run the reviewed suite through the public system. Score evidence, unsupported claims, intent, language and references across turns. Publish counts, denominators, failures and conditions by language and route. All three resolve disputed labels against the original sources. |
+| **3. Deploy and deliver** | Scan both artwork QR codes on a physical phone. Check source links, all four languages, a temporary and a persistent language switch, the fifth/sixth-turn boundary, refresh, interrupted submissions, artwork switching and perceived waiting. Assemble the walkthrough and video. | Provide a phone-reachable deployment, confirm connectivity through any containers, and run outage/recovery and duplicate/late-commit checks. Have another teammate start the stack from the documented instructions. Record a hosted GPU run if the course requires it. | Repeat release regressions on the pinned deployment. Publish the Agent/RAG explanation, prompt/schema versions, quality findings and known limits. Supply the evaluation logs and the technical contribution for the video. |
 
-**M3 is complete when:**
+**Stage 1 handoff.** A and B use the [review and freeze runbook](../acceptance/evaluation-runbook.md). There are six review roles covering visitor realism, source/state and the four languages. The review index must identify actual people, dates and durable records for the exact frozen bytes. C uses published development material until that handoff. On the live model, specifically check preambles versus genuine compound questions, requests for an overview, historical referents, appearance versus ownership, partial-cache coverage and uncertainty in the next turn's memory. Carry the stable five-pair token reserve, one-refinement bound and fail-closed source checks through the changed planning grammar. A failed development gate returns to development before the independent collection starts.
 
-- A physical phone completes both artwork journeys and the applicable visitor acceptance scenarios; a desktop mobile viewport alone does not close this item.
-- Visitor outcomes distinguish implemented behavior, known failures and deferred capabilities. Published design scenarios do not count as blind tests, and successful HTTP responses do not by themselves establish useful conversation.
-- Another teammate can start the system and reproduce the checks using the documented instructions.
-- Model outages and interrupted requests produce the agreed errors and recovery behavior.
-- Final evaluation, deployment and phone results identify the tested commit and configuration.
-- GitHub changes, test/evaluation logs and each person's video contribution are ready.
-- Any confirmed course requirements, including a hosted/cloud GPU run, have their own recorded evidence. A teammate-hosted local GPU run is not automatically equivalent.
+**Stage 2 handoff.** The schedule totals 490 model-bearing messages across 352 visitor sessions. It includes 60 scenarios in four languages (240 variants), 96 additional risk repetitions and 154 messages in 16 long scripts. Four browser actions have separate observations. Include omitted, failed and blocked attempts in the published denominators. Keep the independent data isolated from developers tuning the workflow. If independent results inform a change, move those cases into regression and obtain a new independent set before claiming generalization on the changed build.
+
+**Release decision.** Apply the [existing numerical gates](agent-design.md#133-release-targets). Report first-pass validity and correct language/preference at 98% or above per language, all explicit switches correct, and at least 95% routing/query fidelity per language. Supported-request completion must reach 95%, whole/mixed completion and direct/gap helpfulness 90%, and annotated state transitions 95%. Require zero observed false citations or unsupported artwork claims and all deterministic scope/revision checks passing. Warm p95 targets are 12 seconds for direct replies, 30 for retrieval/reuse and 50 for refinement. Report each route's observed count. An unobserved refinement has no p95 and needs a measured live sample identified as such. Record integration, independent and targeted diagnostic measurements separately.
+
+M3 closes when the team records its quality decision and all release gates pass on the identified candidate, with phone evidence, a second operator's startup record and any required course-hosted run. Each person supplies their GitHub changes, logs and video segment. A assembles the submission. Document outstanding failures or unavailable infrastructure for any gate that remains open.
 
 ## 2. A/B/C responsibilities
 
@@ -171,7 +169,7 @@ The P1-P8 packages in the architecture document remain implementation units, not
 | P2. Agent core | C for graph/context; B for service/run infrastructure | Review the shared boundaries together | M1-M2 |
 | P3. Evidence tool | C | B for service connectivity | M1 |
 | P4. Model integration | B for provider/profile; C for prompts/model behavior | A for language/visitor feedback | M1-M2 |
-| P5. Agent evaluation | C | A authors independent questions; B reviews gold and runtime results | M2 |
+| P5. Agent evaluation | C | A authors independent questions and B reviews gold and runtime results | M2 development, M3 independent evaluation |
 | P6. Application integration | B | C for Agent results; A for client behavior | M2 |
 | P7. Browser integration | A | B for recovery; C for evidence semantics | M1-M2 |
 | P8. Deployment acceptance | B for deployment; A for physical-phone acceptance | C for final quality checks | M3 |

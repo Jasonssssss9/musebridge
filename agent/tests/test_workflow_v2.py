@@ -61,6 +61,30 @@ def cached_run(manifest, *, question="Explain the brushwork.", chunks=None, hist
     return run
 
 
+def passage_choice(language, *passages):
+    return {"visitor_task": "check_artwork_facts", "language_decision": language_decision(language),
+            "evidence_action": "search", "passages": [
+                {"role": "one_evidence_request", "english_search_question": passage}
+                if passage is not None else {"role": "context_for_the_request"} for passage in passages]}
+
+
+def choose_statements(*topics):
+    """Script the assessment by topic, then bind only records actually delivered through HTTP."""
+    def decision(call):
+        context = json.loads(call.messages[-1]["content"])
+        statements = context["available_statements"]
+        checks = []
+        for request, topic in zip(context["requests"], topics, strict=True):
+            selected = [key for key, row in statements.items() if row["topic"] == topic]
+            if topic and not selected:
+                raise AssertionError(f"No accepted source statement for {topic}")
+            checks.append({"request_id": request["id"], "requested_detail": request["intent"],
+                           "evidence_relation": "direct_answer" if topic else "not_addressed",
+                           "statement_ids": selected})
+        return {"action": "finish", "source_checks": checks, "memory_update": memory_update()}
+    return decision
+
+
 class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
     @classmethod
     def setUpClass(cls):
@@ -84,6 +108,154 @@ class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
         workflow, tool = self.workflow(model, tool=tool, sizer=sizer)
         outcome = await workflow.run(run, request_id="c-v2-integration", budget=budget or TestBudget())
         return outcome, model, tool
+
+    async def test_fresh_passages_drop_context_in_four_languages_before_real_lookup(self):
+        cases = {
+            "en": ("I am filling out a sketchbook. What medium is listed?", "What medium is listed?", (None, "ask")),
+            "es": ("¿De qué material está hecha? Necesito una nota corta.", "¿De qué material está hecha?", ("ask", None)),
+            "zh-CN": ("我本来以为这是纸上的作品。馆藏标注的材质是什么？", "馆藏标注的材质是什么？", (None, "ask")),
+            "ko": ("작품 재료가 무엇인가요? 수첩에 짧게 적으려고 해요.", "작품 재료가 무엇인가요?", ("ask", None)),
+        }
+        query = "What material is The Bedroom made of?"
+        for language, (message, fragment, roles) in cases.items():
+            with self.subTest(language=language):
+                run = make_run(question=message)
+                plan = passage_choice(language, *(query if role else None for role in roles))
+                result, model, tool = await self.execute(run, plan, choose_statements("Medium and support"))
+                self.assertEqual([r["original_fragment"] for r in result.requests], [fragment])
+                self.assertEqual([c["query"] for c in tool.calls], [query])
+                self.assertEqual(result.request_results[0]["citation_ids"], ["aic-28560-medium"])
+                self.assertEqual((result.answer_language, result.answer["status"]), (language, "answered"))
+                self.assertIn(message, result.conversation_update["memory"]["continuity_summary"])
+                self.assertEqual([c.operation for c in model.calls], ["plan", "assess"])
+
+    async def test_two_substantive_sentences_each_reach_http_and_receive_separate_support(self):
+        run = make_run(question="¿De qué está hecha? También quisiera saber cómo se describe su color.")
+        queries = ["What material is The Bedroom made of?", "How does the museum describe the colors in The Bedroom?"]
+        result, _, tool = await self.execute(run, passage_choice("es", *queries),
+                                             choose_statements("Medium and support", "Color"))
+        self.assertEqual([c["query"] for c in tool.calls], queries)
+        self.assertEqual([r["citation_ids"] for r in result.request_results],
+                         [["aic-28560-medium"], ["aic-28560-description-01"]])
+        self.assertEqual(result.answer["text"], "Óleo sobre lienzo.\n\nColores intensos.")
+
+    async def test_appearance_and_documented_possession_receive_independent_source_decisions(self):
+        text = "Which furnishings do the marks suggest, and did the sitter own the bedspread?"
+        run = make_run(artwork_id="aic-11723", question=text)
+        clauses = ["Which furnishings do the marks suggest", "did the sitter own the bedspread?"]
+        queries = ["What do the brushstrokes in Woman at Her Toilette suggest?",
+                   "Who owned the floral bedspread in Woman at Her Toilette?"]
+        plan = {"visitor_task": "check_artwork_facts", "language_decision": language_decision(),
+                "evidence_action": "search", "facts": [
+                    {"source": {"sentence": 1, "excerpt": part}, "english_search_question": query}
+                    for part, query in zip(clauses, queries)]}
+        result, _, tool = await self.execute(run, plan, choose_statements("Objects suggested by the marks", None))
+        self.assertEqual([c["query"] for c in tool.calls], queries)
+        self.assertEqual([r["original_fragment"] for r in result.requests], clauses)
+        self.assertEqual([(r["support"], r["citation_ids"]) for r in result.request_results],
+                         [("supported", ["aic-11723-description-01"]), ("insufficient", [])])
+        self.assertIn("Open here", result.conversation_update["memory"]["continuity_summary"])
+
+    async def test_real_sourced_history_does_not_prove_a_prior_residents_feeling(self):
+        run = make_run(question="I am writing a museum note. What mood might the picture suggest?")
+        first, _, _ = await self.execute(run, passage_choice("en", None, "What mood might The Bedroom suggest?"),
+                                         choose_statements("Possible impression of the whole picture"))
+        state, turn = simulate_commit(run, first.result_fields())
+        question = "Can I say the person who used to live there felt anxious?"
+        next_run = make_run(question=question, history=[turn], conversation_state=state)
+        query = "Does the account establish that a former resident of the depicted room felt anxious?"
+        plan = {"visitor_task": "check_artwork_facts", "language_decision": language_decision(),
+                "evidence_action": "search", "facts": [{"source": {"sentence": 1}, "english_search_question": query}]}
+        result, _, tool = await self.execute(next_run, plan, choose_statements(None))
+        self.assertEqual(result.requests[0]["intent"], query)
+        self.assertEqual([c["query"] for c in tool.calls], [query])
+        self.assertEqual((result.request_results[0]["support"], result.request_results[0]["citation_ids"]),
+                         ("insufficient", []))
+        note = result.conversation_update["memory"]["continuity_summary"]
+        self.assertIn("might suggest a nervous energy", note)
+        self.assertIn(question, note)
+        self.assertIn("Open here", note)
+
+    async def test_broad_introduction_can_combine_catalog_and_a_retrieved_description(self):
+        for artwork, topic in (("aic-28560", "Brushwork"), ("aic-11723", "Background brushwork")):
+            with self.subTest(artwork=artwork):
+                question = "Could you give me a short introduction?"
+                run = make_run(artwork_id=artwork, question=question)
+                title = run["context"]["artwork_title"]
+                query = f"How does the museum describe {title}?"
+                plan = {"action": "retrieve", "language_decision": language_decision(),
+                        "requests": [{"id": "r1", "original_fragment": question,
+                                      "intent": f"Give a short museum introduction to {title}.",
+                                      "kind": "artwork_fact", "resolution": "clear"}],
+                        "queries": [{"id": "q1", "request_ids": ["r1"], "query": query}]}
+
+                def introduction(call):
+                    statements = json.loads(call.messages[-1]["content"])["available_statements"]
+                    ids = [next(key for key, row in statements.items() if row["topic"] == name)
+                           for name in ("title", "artist", topic)]
+                    return {"action": "finish", "source_checks": [
+                        {"request_id": "r1", "requested_detail": "A short sourced introduction",
+                         "evidence_relation": "direct_answer", "statement_ids": ids}],
+                        "memory_update": memory_update()}
+
+                result, _, tool = await self.execute(run, plan, introduction)
+                self.assertEqual([c["query"] for c in tool.calls], [query])
+                self.assertEqual(result.requests, plan["requests"])
+                self.assertEqual(result.answer["status"], "answered")
+                self.assertIn(title, result.answer["text"])
+                self.assertIn(run["context"]["artist"], result.answer["text"])
+                self.assertEqual(result.request_results[0]["citation_ids"],
+                                 [artwork + "-catalog-title", artwork + "-catalog-artist", artwork + "-description-01"])
+
+    async def test_full_plan_preserves_three_actual_requests_in_two_sentences_and_two_lookups(self):
+        fragments = ["What is the medium", "how does the brushwork look?", "What colors does the label describe?"]
+        run = make_run(question=fragments[0] + " and " + fragments[1] + " " + fragments[2])
+        queries = ["What material is The Bedroom made of?", "How does the museum describe its brushwork and colors?"]
+        intents = [queries[0], "How does the brushwork look?", "How does the museum describe the colors?"]
+        plan = {"action": "retrieve", "language_decision": language_decision(),
+                "requests": [{"id": f"r{i}", "original_fragment": fragment, "intent": intent,
+                              "kind": "artwork_fact", "resolution": "clear"}
+                             for i, (fragment, intent) in enumerate(zip(fragments, intents), 1)],
+                "queries": [{"id": "q1", "request_ids": ["r1"], "query": queries[0]},
+                            {"id": "q2", "request_ids": ["r2", "r3"], "query": queries[1]}]}
+        choice = {"visitor_task": "chat_translate_read_catalog_or_handle_mixed_requests", "plan": plan}
+        result, _, tool = await self.execute(run, choice, choose_statements("Medium and support", "Brushwork", "Color"))
+        self.assertEqual([c["query"] for c in tool.calls], queries)
+        self.assertEqual([r["original_fragment"] for r in result.requests], fragments)
+        self.assertEqual([r["citation_ids"] for r in result.request_results],
+                         [["aic-28560-medium"], ["aic-28560-description-01"], ["aic-28560-description-01"]])
+
+    async def test_incomplete_cache_fetches_requested_category_and_keeps_unknown_detail_open(self):
+        pigments = "Which specific blue pigment was used?"
+        material = "What is the support material?"
+        run = cached_run(self.manifest, question=pigments + " " + material,
+                         chunks=["aic-28560-description-01"])
+        questions = ["Which specific blue pigment was used in The Bedroom?",
+                     "What support material was used for The Bedroom?"]
+        choice = {"visitor_task": "check_artwork_facts", "language_decision": language_decision(),
+                  "evidence_action": "reuse_cache", "passages": [
+                      {"role": "one_evidence_request", "english_search_question": q} for q in questions]}
+
+        def assess(call):
+            payload = json.loads(call.messages[1]["content"])
+            self.assertEqual({e["chunk_id"] for e in payload["evidence"]},
+                             {"aic-28560-medium", "aic-28560-description-01"})
+            answer = medium_answer(run)
+            answer["results"][0]["request_id"] = "r2"
+            answer["results"].insert(0, {"request_id": "r1", "support": "insufficient", "citation_ids": [],
+                                         "text": "I cannot identify the pigment from these sources."})
+            return answer
+
+        outcome, model, tool = await self.execute(run, choice, assess)
+        self.assertEqual([(q["query_id"], q["request_ids"], q["query"]) for q in tool.calls],
+                         [("q1", ["r1"], questions[0]), ("q2", ["r2"], questions[1])])
+        self.assertEqual([c.operation for c in model.calls], ["plan", "assess"])
+        self.assertEqual(outcome.answer["status"], "partially_answered")
+        self.assertEqual([e["chunk_id"] for e in outcome.answer["citations"]], ["aic-28560-medium"])
+        state, _ = simulate_commit(run, outcome.result_fields())
+        self.assertIn(pigments, state["continuity_summary"])
+        self.assertIn("Open here", state["continuity_summary"])
+        self.assertIn("aic-28560-medium", state["continuity_summary"])
 
     async def test_both_artworks_and_all_languages_use_real_retrieval(self):
         messages = {

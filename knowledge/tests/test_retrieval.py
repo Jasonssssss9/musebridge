@@ -126,6 +126,45 @@ class RetrievalTests(unittest.TestCase):
         self.assertCountEqual(chunk_ids(self.search(BEDROOM, compound)), [BEDROOM_MEDIUM, BEDROOM_DESCRIPTION])
         self.assertEqual(chunk_ids(self.search(TOILETTE, compound)), [TOILETTE_MEDIUM])
 
+    def test_open_line_direction_and_qualified_visual_effect_stay_artwork_scoped(self):
+        for query in ("In which direction do the lines in The Bedroom extend?",
+                      "In which direction do the lines in this painting extend",
+                      "Which way do its painted lines run?",
+                      "Where do the lines in this composition appear to lead?",
+                      "Does the museum label describe the feeling of The Bedroom with certainty or with qualified language?",
+                      "Is the museum tentative about the atmosphere conveyed by this painting?",
+                      "Does the label qualify its description of the atmosphere evoked by the picture?",
+                      "Does the label present this composition’s overall mood as a possibility?"):
+            with self.subTest(query=query):
+                self.assertEqual(chunk_ids(self.search(BEDROOM, query)), [BEDROOM_DESCRIPTION])
+                self.assertEqual(chunk_ids(self.search(TOILETTE, query)), [])
+
+    def test_quoted_work_titles_preserve_the_subject_of_label_qualification(self):
+        archived = "Does the museum label describe the feeling of 'The Bedroom' with certainty or with qualified language?"
+        for title in ("'The Bedroom'", "‘The Bedroom’", '"The Bedroom"', "“The Bedroom”", "'the bedroom'"):
+            with self.subTest(title=title):
+                query = archived.replace("'The Bedroom'", title)
+                self.assertEqual(chunk_ids(self.search(BEDROOM, query)), [BEDROOM_DESCRIPTION])
+                self.assertEqual(chunk_ids(self.search(TOILETTE, query)), [])
+        self.assertEqual(chunk_ids(self.search(BEDROOM, "Is the museum tentative about ‘The Bedroom’'s mood?")),
+                         [BEDROOM_DESCRIPTION])
+
+    def test_visual_interpretation_does_not_supply_measurements_feelings_or_provenance(self):
+        for query in ("At what angle do the lines in this painting extend?",
+                      "Which way do the lines point on the compass?",
+                      "What is the exact vanishing point of the lines in The Bedroom?",
+                      "Does the label describe the artist’s feeling about the painting with certainty?",
+                      "Is the museum certain about the mood of the painting’s first buyer?",
+                      "Is the label tentative about the first owner of this painting?",
+                      "Does the museum describe the mood of 'The Bedroom' with certainty about the owner's feelings?",
+                      "Does the label describe the feeling of “The Bedroom” with certainty about its first owner?",
+                      "Is the museum tentative about the mood of ‘The Bedroom’'s first owner?",
+                      "Is the museum certain about the mood of The Bedroom's buyer?",
+                      "Is the museum certain who owned the picture, regardless of the mood of this painting?",
+                      "Which direction do the shipping routes for this painting run?"):
+            with self.subTest(query=query):
+                self.assertEqual(chunk_ids(self.search(BEDROOM, query)), [])
+
     def test_paint_handling_questions_need_a_visual_description(self):
         descriptions = (
             "What does the museum say about the handling of the paint in this work?",

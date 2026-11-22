@@ -2,6 +2,8 @@
 
 In controlled integration, a visitor can open either artwork, ask a question in English, Spanish, Chinese or Korean, read a Qwen answer with its sources, and continue the conversation. Go owns the conversation, the Python Agent decides when to retrieve, and Ollama serves the model. Independent visitor-quality acceptance remains open.
 
+The live measurements below apply to the implementation recorded at [69c5333](https://github.com/Jasonssssss9/musebridge/commit/69c53334cf12cfeed59261637f35201465647731). The [offline engineering checkpoint](#offline-engineering-checkpoint) describes the later candidate. The [M3 plan](agent-plan.md#m3-deploy-and-complete-acceptance) assigns its outstanding qualification and release work.
+
 ## Public development result
 
 All 48 scheduled messages reached a committed public reply. The automated expectations passed on 47/48, development review passed 47/48 whole answers and 48/48 next-state memories. None were rejected or blocked. The eight-turn conversation answered the artist question in Chinese for one reply and returned to the saved Spanish preference on the next turn. One Spanish question asked whether Morisot used a real feather. The guide correctly left that fact open, but treated the visitor’s brushwork preamble as a second request and added a description of the furnishings.
@@ -76,3 +78,25 @@ The independent suite remains on the visitor-acceptance branch. Structural prefl
 The agreed schedule contains 240 single-turn messages, 96 additional risk repetitions and 154 messages in 16 long scripts. It spans 352 fresh conversations, 490 model-bearing messages and four separate browser actions. Missing or blocked turns stay in the appropriate denominators. Independent language, grounding, state, browser review and observed route latency determine release eligibility. The development run does not authorize a readiness record or a release tag.
 
 Use the [public results](m2-public-results.md) for end-to-end measurements, the [evaluation runbook](../acceptance/evaluation-runbook.md) for review and freeze, and the [M2 handoff](m2-handoff.md) for the release gates.
+
+## Offline engineering checkpoint
+
+The model host was unavailable for this revision. The tests below used the released two-artwork corpus, local services and published development cases. The previous live model scores above remain the comparison point for M3.
+
+**Agent planning and evidence.** In a two- to four-sentence factual message, the model can mark each sentence as context, one evidence request, or two separate factual clauses. Only requested facts become English queries. A full plan handles mixed tasks and more than two facts. A factual rewrite can also request a source category absent from an incomplete cache. The Agent then runs the usual scoped lookup with the original rewritten questions. Source-topic matching can trigger retrieval. Support still requires the selected source statement to address the actual claim. A visual description leaves an unsupported claim about ownership, a tool or a particular pigment open.
+
+**Replay of the last live planning decisions.** We held the 32 recorded development inputs, their original model decisions and their incoming conversation states fixed. We compared the chunks actually present at the first historical assessment with the chunks the current planner adapter and retrieval implementation would supply. Twenty-four turns required at least one released evidence chunk. All required chunks were available in **20/24** historically and **24/24** on this replay. Two partial-cache decisions gained a missing medium or description. Two original English queries gained the description through better matching of line direction or qualified language about the work's effect. The replay produced no new answers or memory updates. It cannot measure whether a new model call will choose the intended passage, preserve a historical reference or use a source appropriately.
+
+Reproduce the comparison with the archived combined development report outside the checkout:
+
+```sh
+python -B -m agent.testing.replay_evidence_availability --baseline /private/c-verified.json
+```
+
+**Public engineering regression.** All 48 public submissions passed their machine checks. Each committed history and replay matched, with zero additional provider invocations on replay. This used the local Go API, Python Agent and HTTP retrieval service. The provider returned archived development decisions, except for the Spanish feather turn, where an explicit planning decision and an explicit assessment exercised the new format. That case verified that the public response and memory keep the unknown tool open. Choosing those decisions unaided is a live-model test. Desktop Chrome passed all 10 browser and recovery checks at a mobile viewport. The Agent passed all 366 tests and the knowledge module passed all 154. The frontend passed 47 tests, built in both modes, and the generated contracts were current. Go passed the race and integration tests in all ten packages with tests.
+
+**Retrieval regression.** Whole-work introductions now retrieve the current work's reviewed description, including when the visitor asks for the label's account of its overall appearance. Targeted tests cover both paintings, quoted titles, qualifiers and nearby unsupported requests about position, ownership or exact materials. Eighteen reports across nine existing suites produced identical row results to the starting checkout: 60 whole queries at each of top-1 and top-2 plus 96 subquestions each in full and isolated mode (312 row evaluations). All 57 archived or scripted public-path lookups retained their candidate order and request classification across 20 distinct artwork/query pairs. These repeated evaluations reuse questions.
+
+**Context budget.** The production fitter and pinned tokenizer retained all five 2,000-character answers in the two-, three- and four-sentence planning probes. The estimated prompts used 13,048–13,148 of 13,824 available input tokens after reserving 2,048 output tokens and a 512-token margin. All 59 archived development planning inputs retained their supplied history. Actual server token counts for the revised prompts still require the live host.
+
+**Independent review and release.** The review tooling can prepare a blank index for frozen files and verify the six attributable approvals against the exact hashes. A's separate 32-row browser record and all independent model messages await their own observations. The previous implementation's model qualification belongs to its recorded fingerprint. The new candidate requires the [M3 qualification, evaluation and phone checks](agent-plan.md#m3-deploy-and-complete-acceptance).

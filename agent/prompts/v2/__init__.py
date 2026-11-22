@@ -97,7 +97,9 @@ def build_messages(operation: str, payload: dict[str, Any],
         schema_json = json.dumps(output_schema, ensure_ascii=False, allow_nan=False)
         policies.append("Required JSON output schema:\n" + schema_json)
     if operation == "plan" and "FollowupFactPlan" in output_schema.get("$defs", {}):
-        policies.append((_PROMPT_DIRECTORY / "followup_planning.md").read_text(encoding="utf-8").strip())
+        factual_fields = output_schema["$defs"]["FollowupFactPlan"]["properties"]
+        guide = "passage_planning.md" if "passages" in factual_fields else "followup_planning.md"
+        policies.append((_PROMPT_DIRECTORY / guide).read_text(encoding="utf-8").strip())
         cached_medium = any(item.get("source_locator") == "data.medium_display"
                             for item in payload.get("cached_evidence", []))
         policies.append("The scoped medium record is " + ("already verified and available to reuse."

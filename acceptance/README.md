@@ -16,3 +16,5 @@ message was sent during this verification.
 
 See the [evaluation runbook](evaluation-runbook.md) for public development
 rehearsal, use of the external reviewed suite and interpretation of the results.
+
+Reviewers can follow the [human review and freeze handoff](evaluation-runbook.md#human-review-and-freeze-handoff) to preserve their signatures and verify the final suite offline.

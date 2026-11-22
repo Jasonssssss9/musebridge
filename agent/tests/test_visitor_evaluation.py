@@ -6,7 +6,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from acceptance.reviewed_suite import digest, frozen_inputs, suite_directory, validate_reviews, verify
+from acceptance.reviewed_suite import digest, frozen_inputs, suite_directory, unsigned_record, validate_reviews, verify
 from acceptance.quality_gates import quality_checklist, threshold
 from acceptance.evaluation import check_independent_coverage, development_schedule, pending_check, public_checks, schedule, trace_verdict
 from acceptance.run_evaluation import RuntimeLog, execute
@@ -74,6 +74,21 @@ class VisitorEvaluationTests(unittest.TestCase):
             (root / files[0]).write_text("{}")
             self.assertEqual(documents[0], {"status": "frozen"})
             self.assertRaisesRegex(ValueError, "differ", verify, root, record)
+
+    def test_offline_review_index_requires_frozen_bytes_and_real_signoffs(self):
+        with TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            for name in ("single-turn.json", "multi-turn.json"):
+                (directory / name).write_text('{"status":"frozen"}')
+            hashes = {p.name: digest(p) for p in directory.iterdir()}
+            (directory / "MANIFEST.json").write_text(json.dumps({"sha256": hashes}))
+            draft = unsigned_record(directory)
+            self.assertEqual(draft["sha256"], hashes)
+            self.assertEqual(len(draft["approvals"]), 6)
+            self.assertTrue(all(not item["approved"] and not item["reviewer"] for item in draft["approvals"].values()))
+            self.assertRaisesRegex(ValueError, "sign-off", validate_reviews, draft, hashes)
+            (directory / "single-turn.json").write_text('{"status":"frozen","changed":true}')
+            self.assertRaisesRegex(ValueError, "differ", unsigned_record, directory)
 
     def test_public_and_private_checks_use_correlated_committed_result(self):
         public, run = example("public_submission_response"), example("run_request_initial")

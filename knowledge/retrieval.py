@@ -11,6 +11,7 @@ from .query import parse_requests
 # covers the medium and support families, but says nothing about fiber,
 # dimensions, pigment identities, or an artist's choice of materials.
 _FACT_TOPICS = {
+    "description_overview": "description",
     "medium": "material",
     "paint_medium": "material",
     "painting_support": "material",
@@ -20,6 +21,20 @@ _FACT_TOPICS = {
     "visual_effect": "energy",
     "background_objects": "background",
 }
+
+
+def source_topics(topics, source_locator):
+    """A reviewed museum description also supports a request for a general introduction."""
+    if source_locator.partition(",")[0] == "data.description":
+        return frozenset(topics) | {"description"}
+    return frozenset(topics)
+
+
+def requested_topics(query: str, artwork_id: str, artist: str | None) -> frozenset[str]:
+    """Identify released topic categories in a query without accessing any records."""
+    _, requests = parse_requests(query, artwork_id, active_artist=artist)
+    return frozenset(_FACT_TOPICS[item.facet] for item in requests
+                     if item.artwork_id == artwork_id and item.facet in _FACT_TOPICS)
 
 
 def retrieve(
@@ -74,6 +89,8 @@ def retrieve_with_trace(
         chunk["chunk_id"]: chunk
         for chunk in dataset.chunks if chunk["artwork_id"] == artwork_id
     }
+    available_topics = {key: source_topics(chunk["topics"], chunk["source_locator"])
+                        for key, chunk in scoped_chunks.items()}
     ranking_topics = {chunk_id: set() for chunk_id in scoped_chunks}
     trace_requests = []
     for request in requests:
@@ -84,7 +101,7 @@ def retrieve_with_trace(
         elif request.facet == "unknown":
             status = "unknown_intent"
         else:
-            chunk_ids = [key for key, chunk in scoped_chunks.items() if topic in chunk["topics"]]
+            chunk_ids = [key for key, topics in available_topics.items() if topic in topics]
             status = "supported" if chunk_ids else "insufficient_evidence"
             for chunk_id in chunk_ids:
                 ranking_topics[chunk_id].add(topic)

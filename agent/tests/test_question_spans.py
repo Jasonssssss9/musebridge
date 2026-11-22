@@ -67,14 +67,15 @@ class CurrentSentenceSelectionTests(unittest.TestCase):
         self.queries = ["Does the label describe blue?", "How does the label describe the texture?"]
         self.wire = StrictValidator(planning_schema(ContractValidatorV2().schema("Plan"), self.payload))
 
-    def test_live_multisentence_schema_requires_an_id_and_binds_exactly_within_it(self):
-        decision_data = decision("en", self.queries, [{"sentence": 2, "excerpt": "blue"},
-                                                       {"sentence": 2, "excerpt": "what is the texture?"}])
-        self.wire.validate(decision_data)
-        out = expand_plan(decision_data, self.payload)
-        self.assertEqual([r["original_fragment"] for r in out["requests"]], ["blue", "what is the texture?"])
+    def test_live_multisentence_schema_binds_clauses_inside_the_selected_passage(self):
         ordinary = decision("en", self.queries, [{"sentence": 1}, {"sentence": 2}])
-        self.wire.validate(ordinary)
+        wire = {key: value for key, value in ordinary.items() if key != "facts"}
+        wire["passages"] = [{"role": "context_for_the_request"}, {"role": "two_independent_evidence_requests",
+                            "clauses": [{"original_excerpt": fragment, "english_search_question": query}
+                                        for fragment, query in zip(("blue", "what is the texture?"), self.queries)]}]
+        self.wire.validate(wire)
+        out = expand_plan(wire, self.payload)
+        self.assertEqual([r["original_fragment"] for r in out["requests"]], ["blue", "what is the texture?"])
         self.assertEqual(expand_plan(ordinary, self.payload)["requests"][1]["original_fragment"],
                          "Does blue appear here, and what is the texture?")
         old = decision("en", self.queries, [{"excerpt": "appear here"}, {"excerpt": "texture"}])

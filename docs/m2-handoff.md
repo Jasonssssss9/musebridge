@@ -9,6 +9,8 @@ See the [M2 verification record](m2-verification.md) for the latest measured res
 and the [evaluation runbook](../acceptance/evaluation-runbook.md) for independent
 review, freeze and scoring commands.
 
+The current [M3 plan](agent-plan.md#m3-deploy-and-complete-acceptance) assigns the outstanding live-model, independent-review and phone gates alongside the final deployment work. M2's latest offline measurements appear in the [verification record](m2-verification.md#offline-engineering-checkpoint).
+
 ## Candidate inputs and checks
 
 1. Start from the reviewed B4 base and include the B5 routing fix, evidence
@@ -91,5 +93,4 @@ The agreed full evaluation includes at least 24 development scenarios, a separat
 eight meaningful turns and repeated risk cases. The expanded development suite covers 25 scenarios. Independent visitor acceptance still requires the separate frozen set. Use the [architecture release gates](agent-design.md#13-evaluation-and-release-gates)
 and [visitor plan](visitor-acceptance.md) for denominators and scoring.
 
-M2 remains incomplete while independent review/evaluation or known model failures
-are unresolved. Reproducible deployment and physical-phone acceptance are M3.
+Formal quality acceptance remains open. The M3 plan carries this decision forward with reproducible deployment and physical-phone acceptance.

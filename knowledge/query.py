@@ -15,13 +15,22 @@ class QueryRequest:
 
 _BEDROOM = "aic-28560"
 _TOILETTE = "aic-11723"
+
+
+def _quoted_title(title):
+    # Match paired title punctuation. Keep any separate possessive on the work.
+    return "(?:" + "|".join(left + title + right for left, right in
+                           (('"', '"'), ("'", "'"), ("“", "”"), ("‘", "’"))) + r")(?!\w)"
+
+
 _ARTWORK_REFERENCES = {
     _BEDROOM: re.compile(
-        r"(?i:\baic-28560\b|[\"“]the bedroom[\"”])"
+        rf"(?i:\baic-28560\b|{_quoted_title('the bedroom')})"
         r"|(?i:\bvan gogh[’']s) (?:[Tt]he )?Bedroom\b"
         r"|\b(?:[Tt]he Bedroom|THE BEDROOM)\b|《\s*卧室\s*》|[\"“]卧室[\"”]"
     ),
-    _TOILETTE: re.compile(r"\baic-11723\b|\bwoman at her toilette\b|梳妆(?:的)?女[子人]", re.I),
+    _TOILETTE: re.compile(rf"\baic-11723\b|{_quoted_title('woman at her toilette')}|\bwoman at her toilette\b"
+                          r"|梳妆(?:的)?女[子人]", re.I),
 }
 _CURRENT_REFERENCE = re.compile(
     r"\b(?:(?:this|current|selected) (?:artwork|painting|picture|work|canvas)|here"
@@ -52,7 +61,7 @@ _RESTART = re.compile(
 _COMMA = re.compile(r"[,，]\s*")
 _QUESTION = re.compile(
     r"^\s*(?:what|which|how|why|who|when|where|did|do|does|is|are|was|were|can|could|would"
-    r"|has|have|will|on which|on what|in what)\b"
+    r"|has|have|will|(?:on|in) (?:which|what))\b"
     r"|什么|多少|多宽|多高|多大|怎么|怎样|如何|何种|有何|何处|哪[里儿]|哪(?:一)?[个种类件些样]"
     r"|是否|是不是|有没有|还是|谁|[吗呢]\s*$", re.I,
 )
@@ -439,6 +448,42 @@ _EFFECT_OF_TITLED_WORK = re.compile(
     r"|(?:给(?:人|观者|观众)|让人|令人).{0,12}(?:什么(?:样的)?|怎样的)"
     r"(?:感觉|感受|情绪|气氛|氛围|气息|观感)", re.I,
 )
+# Work titles can occupy the same grammatical position as “this painting”.
+# Restrict these predicates to the picture's lines and to the picture's effect.
+_WORK_NOUN = r"(?:(?:this|that|the) (?:artwork|work|painting|picture|image|composition|scene|room))"
+_LINE_DIRECTION = re.compile(
+    rf"^(?:(?:in|towards?) )?(?:(?:which|what) (?:general )?direction|which way|where) "
+    rf"(?:do|did) (?:the |these |those |its )?(?:(?:painted|compositional) )?lines "
+    rf"(?:(?:in|of|across) {_WORK_NOUN} )?(?:(?:seem|appear) to )?"
+    r"(?:extend|run|lead|point|recede|stretch)\s*[?.!]*$", re.I,
+)
+_EFFECT_NOUN = r"(?:feeling|mood|impression|atmosphere|visual effect)"
+_WORK_EFFECT = (
+    rf"(?:{_EFFECT_NOUN} (?:of|suggested by|conveyed by|evoked by) {_WORK_NOUN}\b(?![’']s)"
+    rf"|{_WORK_NOUN}[’']s (?:overall |visual )?{_EFFECT_NOUN}\b)"
+)
+_MODAL_DESCRIPTION = (
+    r"(?:with (?:absolute )?certainty|(?:with|in) (?:qualified|tentative|cautious|definitive) "
+    r"(?:language|terms|wording)|as (?:a possibility|certain|tentative|definite))"
+)
+_EFFECT_QUALIFICATION = re.compile(
+    rf"\b(?:{_WORK_EFFECT} {_MODAL_DESCRIPTION}(?: or {_MODAL_DESCRIPTION})?"
+    rf"|(?:certain|tentative|cautious|definitive) (?:about|when describing|in describing) (?:the )?{_WORK_EFFECT}"
+    rf"|(?:qualif(?:y|ies)|hedg(?:e|es)) (?:its (?:description|account) of )?(?:the )?{_WORK_EFFECT})"
+    r"\s*[?.!]*$", re.I,
+)
+
+
+def _scoped_visual_question(text):
+    for title in _ARTWORK_REFERENCES.values():
+        text = title.sub("this artwork", text)
+    if _LINE_DIRECTION.search(text):
+        return "line_recession"
+    if _LABEL.search(text) and _EFFECT_QUALIFICATION.search(text):
+        return "visual_effect"
+    return None
+
+
 _OBJECT_REQUEST = re.compile(
     r"\b(?:what|which) (?:(?:two|three|different|depicted) )?(?:objects?|things?|items?)\b.{0,96}"
     r"\b(?:suggest|depict|show|represent|evoke|brings? to mind|look like|hint(?:ed)? at)\b"
@@ -574,6 +619,43 @@ def _describes_paint_handling(text, active_artist):
     return _PAINT_HANDLING_DESCRIPTION.search(text)
 
 
+# Require an explicit whole-work object and a complete overview question.
+# Leaving the object grammar closed keeps a feature or historical qualifier
+# from silently becoming evidence about the work's general appearance.
+_OVERVIEW_WORK = (r"(?:(?:this|(?:the )?(?:active|current|selected)) (?:artwork|painting|picture|work(?: of art)?)"
+                  r"|the (?:artwork|painting|picture|work) in front of (?:me|us))")
+_OVERVIEW_LABEL = r"the (?:museum|(?:museum(?:['’]s)? )?(?:label|wall text|description|catalog(?:ue)? entry))"
+_OVERVIEW_NOUN = r"(?:(?:brief|quick|short|general) )?(?:overview|introduction|visual description)"
+_LOOKS = r"(?:overall |visual )?appearance"
+_WHOLE_WORK_OVERVIEW = re.compile(
+    rf"how does {_OVERVIEW_LABEL} (?:briefly )?describe (?:"
+    rf"{_OVERVIEW_WORK}(?:['’]s {_LOOKS}| as a whole| overall)?|the {_LOOKS} of {_OVERVIEW_WORK})"
+    rf"|what does {_OVERVIEW_LABEL} (?:say about|tell (?:us|me) about) "
+    rf"(?:the {_LOOKS} of {_OVERVIEW_WORK}|{_OVERVIEW_WORK}(?:['’]s {_LOOKS}| as a whole| overall)?)"
+    rf"|what {_OVERVIEW_NOUN} does {_OVERVIEW_LABEL} (?:give|provide|offer) (?:of|for) {_OVERVIEW_WORK}"
+    rf"|(?:please |(?:can|could) you (?:please )?)?(?:give|provide) (?:me |us )?an? {_OVERVIEW_NOUN} "
+    rf"(?:of|to) {_OVERVIEW_WORK}"
+    rf"|what does {_OVERVIEW_WORK} look like(?: as a whole| overall)?"
+    rf"|(?:please )?describe (?:the {_LOOKS} of {_OVERVIEW_WORK}|{_OVERVIEW_WORK} as a whole)", re.I,
+)
+_OVERVIEW_WORK_ZH = r"(?:《?this artwork》?|这[幅件](?:画|作品)|本作品)"
+_WHOLE_WORK_OVERVIEW_ZH = re.compile(
+    rf"(?:馆方|展签|标签|博物馆)(?:如何|怎样|怎么)(?:描述|介绍){_OVERVIEW_WORK_ZH}(?:的(?:整体)?(?:外观|面貌))?"
+    rf"|请(?:简短|简要|简单)?(?:地)?(?:介绍|描述)(?:一下)?{_OVERVIEW_WORK_ZH}(?:的整体(?:外观|面貌))?"
+    rf"|{_OVERVIEW_WORK_ZH}整体看起来(?:是)?什么样(?:子)?", re.I,
+)
+
+
+def _whole_work_overview(text, active_artist):
+    if active_artist:
+        text = re.sub(rf"\b{re.escape(active_artist)}['’]s ", "", text, flags=re.I)
+    for title in _ARTWORK_REFERENCES.values():
+        text = title.sub("this artwork", text)
+    if active_artist:
+        text = re.sub(rf"(?<=this artwork) by {re.escape(active_artist)}\b", "", text, flags=re.I)
+    return bool(_WHOLE_WORK_OVERVIEW.fullmatch(text) or _WHOLE_WORK_OVERVIEW_ZH.fullmatch(text))
+
+
 def _facets(text, visual_marks_context, inherited_aspect, has_title, active_artist=None):
     unsupported = {
         facet for facet, patterns in _UNSUPPORTED_PATTERNS.items()
@@ -619,6 +701,8 @@ def _facets(text, visual_marks_context, inherited_aspect, has_title, active_arti
         facet for facet, patterns in _SUPPORTED_PATTERNS.items()
         if any(pattern.search(text) for pattern in patterns)
     }
+    if visual_question := _scoped_visual_question(text):
+        supported.add(visual_question)
     if _PAINT_AND_SUPPORT.search(text) or _PAINT_COMPOUND.search(text):
         supported.update(("paint_medium", "painting_support"))
     if _MEDIUM_CHECK.search(text) and not {"paint_medium", "painting_support"} <= supported:
@@ -647,6 +731,9 @@ def _facets(text, visual_marks_context, inherited_aspect, has_title, active_arti
             or (_LABEL.search(text) and _ATTRIBUTED_EFFECT.search(text))):
         supported.add("visual_effect")
         supported.difference_update(("color_appearance", "line_recession", "brushwork_appearance"))
+
+    if not supported and _whole_work_overview(text, active_artist):
+        return ("description_overview",)
 
     if not supported and inherited_aspect:
         if inherited_aspect == "brushwork_appearance" and _MARK_SUGGESTION.search(text):
@@ -711,7 +798,7 @@ def parse_requests(query: str, artwork_id: str, *, active_artist: str | None = N
         text = normalized[start:end]
         references = _references(text)
         current_reference = _CURRENT_REFERENCE.search(text)
-        is_request = _is_request(text, question_mark)
+        is_request = _is_request(text, question_mark) or _whole_work_overview(text, active_artist)
         scene_mentioned = bool(_BEHIND.search(text) or _SCENE_SETTING.search(text))
         mentioned = _mentioned_aspects(text)
         inherited = _inherited_aspect(text, mentioned, earlier_aspects, recent_aspects)

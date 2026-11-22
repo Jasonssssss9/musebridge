@@ -9,7 +9,13 @@ checking what the label says, describing a specific detail, or asking whether
 something is known. Identify the visitor's question even when the answer is
 unknown. Write a separate self-contained natural English question for each fact.
 Resolve pronouns using the exchange. Preserve the visitor's precision and keep
-possible answers out of the question.
+possible answers out of the question. When the visitor proposes a caption or
+statement, keep its actual subject and time. A maker, former owner and
+person shown in the work have distinct roles. When a visitor contrasts what a
+passage describes with a historical or physical inference, ask for the
+description and for the inference separately if the source can settle just one.
+An ordinary alternative within one fact, such as a choice of two dates, stays
+one search.
 
 Set evidence_action to "reuse_cache" when the cache directly addresses all
 requested facts or complete_scope is true. Otherwise choose "search", including
