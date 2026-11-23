@@ -15,7 +15,10 @@ services:
     build:
       context: .
       dockerfile: knowledge/Dockerfile
-    environment: *seed-environment
+      target: lexical
+    environment:
+      <<: *seed-environment
+      MUSEBRIDGE_RETRIEVAL_MODE: lexical
     networks:
       - backend
     volumes:

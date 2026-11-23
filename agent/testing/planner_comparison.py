@@ -20,7 +20,7 @@ from agent.testing.probe_quality import operation_summary
 from agent.testing.v2 import make_run, simulate_commit
 from agent.testing.verify_ollama import ProbeModel, ProbeRetrieval, ensure_probe_identity, save
 from agent.tools.evidence import EvidenceManifest
-from agent.tools.retrieval import RetrievalTool
+from agent.tools.retrieval import RetrievalTool, configured_mode
 
 
 CASES = Path(__file__).with_name("planner_comparison_cases.json")
@@ -138,20 +138,22 @@ async def evaluate(options):
               "cases": [], "model_attempts": [], "lookups": [], "manual_controls": []}
     manifest = EvidenceManifest.load()
     model = DialogueProbeModel(report, base_url=options.base_url, sizer=QwenPromptSizer(options.tokenizer))
-    server = create_server("127.0.0.1", 0)
+    mode = configured_mode()
+    report["retrieval_mode"] = mode
+    server = create_server("127.0.0.1", 0, mode=mode)
     thread = Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True)
     thread.start()
     origin = f"http://127.0.0.1:{server.server_port}"
     runtime = None
     try:
-        await manual_controls(cases, report, RetrievalTool(manifest, base_url=origin), manifest.dataset_version)
+        await manual_controls(cases, report, RetrievalTool(manifest, mode=mode, base_url=origin), manifest.dataset_version)
         save(options.report, report)
         await model.verify(deadline=monotonic() + 60)
         report.update(profile=asdict(model.profile), metadata_fingerprint=model.metadata_fingerprint)
         await model.warm(deadline=monotonic() + 120)
         runtime = create_workflow_runtime(
             model=model, profile=model.profile, prompt_sizer=model.sizer, manifest=manifest,
-            retrieval=ProbeRetrieval(report, manifest, base_url=origin),
+            retrieval=ProbeRetrieval(report, manifest, mode=mode, base_url=origin),
             identity=ModelIdentity(model.profile.model_name, model.profile.model_digest),
             readiness=lambda: model.verified,
         )

@@ -786,6 +786,33 @@ def _inherited_aspect(text, mentioned, earlier, recent):
     return None
 
 
+def scoped_vector_query(normalized, requests, artwork, excluded_spans=()):
+    """Select the active artwork's searchable text without requiring a lexical hit."""
+    artwork_id = artwork["artwork_id"]
+    if (set(_references(normalized)) - {artwork_id}
+            or any(request.artwork_id != artwork_id for request in requests)):
+        local_spans = dict.fromkeys((r.start, r.end) for r in requests if r.artwork_id == artwork_id)
+        passages = [normalized[start:end] for start, end in local_spans if (start, end) not in excluded_spans]
+        return " ".join(text for text in passages if not (set(_references(text)) - {artwork_id}))
+
+    if excluded_spans:
+        # A mixed query may contain a new, unparsed request after a known evidence gap.
+        # Keep its words, but do not search for a related passage using the gap itself.
+        parts = [normalized[start:end] for start, end, _, _ in _parts(normalized)
+                 if (start, end) not in excluded_spans]
+        return " ".join(parts)
+
+    if not requests and not _QUESTION.search(normalized) and "?" not in normalized:
+        # A compact planner query may repeat the work and artist metadata absent from the excerpts.
+        artist = artwork["artist"].split(maxsplit=1)
+        names = (artwork["title"], artwork["artist"], artist[-1], artwork_id)
+        pattern = r"(?<!\w)(?:" + "|".join(re.escape(name) for name in names) + r")(?!\w)"
+        subject = " ".join(re.sub(pattern, " ", normalized, flags=re.I).split()).strip(" ,:-")
+        if subject and any(character.isalnum() for character in subject):
+            return subject
+    return normalized
+
+
 def parse_requests(query: str, artwork_id: str, *, active_artist: str | None = None) -> tuple[str, tuple[QueryRequest, ...]]:
     """Return case-preserving normalized text and its scoped fact requests."""
     normalized = " ".join(unicodedata.normalize("NFKC", query).split())

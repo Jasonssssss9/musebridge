@@ -14,6 +14,8 @@ from uuid import uuid4
 
 from . import DATASET_VERSION, DatasetValidationError, RetrievalError, load_dataset, retrieve
 
+from .strategy import MODES, VERSIONS, configured_index
+
 DEFAULT_SEED = Path(__file__).resolve().parent / "data" / f"{DATASET_VERSION}.json"
 MAX_BODY_BYTES = 8192
 READ_TIMEOUT_SECONDS = 5
@@ -21,6 +23,7 @@ LOGGER = logging.getLogger("musebridge.retrieval")
 ROUTES = {"/retrieve": "POST", "/healthz": "GET", "/readyz": "GET"}
 RETRIEVAL_ERRORS = {
     "invalid_request": (400, False),
+    "retrieval_unavailable": (503, True),
     "artwork_not_found": (404, False),
     "dataset_version_mismatch": (409, False),
 }
@@ -57,8 +60,10 @@ class RetrievalHTTPServer(ThreadingHTTPServer):
 
     daemon_threads = True
 
-    def __init__(self, address, dataset):
+    def __init__(self, address, dataset, *, mode="lexical", vector_index=None):
         self.dataset = dataset
+        self.vector_index = vector_index
+        self.strategy_version = VERSIONS[mode]
         super().__init__(address, _Handler)
 
     def handle_error(self, request, client_address):
@@ -129,6 +134,7 @@ class _Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(encoded)))
             self.send_header("X-Request-ID", self._request_id)
+            self.send_header("X-Retrieval-Strategy", self.server.strategy_version)
             self.send_header("Cache-Control", "no-store")
             self.send_header("Connection", "close")
             if allow is not None:
@@ -242,7 +248,7 @@ class _Handler(BaseHTTPRequestHandler):
             candidate = payload["artwork_id"]
             if isinstance(candidate, str) and candidate in dataset.artworks:
                 self._artwork_id = candidate
-            response = retrieve(dataset, **payload)
+            response = retrieve(dataset, vector_index=self.server.vector_index, **payload)
             self._chunk_ids = [item["chunk_id"] for item in response["evidence"]]
             self._send_json(200, response)
         except _HTTPError as exc:
@@ -266,7 +272,7 @@ class _Handler(BaseHTTPRequestHandler):
 
 def create_server(
     host="127.0.0.1", port=0, *,
-    seed_path=DEFAULT_SEED, dataset_version=DATASET_VERSION,
+    seed_path=DEFAULT_SEED, dataset_version=DATASET_VERSION, mode="lexical", vector_index=None,
 ):
     """Validate the seed before binding; port zero is useful for isolated tests."""
     if not isinstance(host, str) or not host.strip():
@@ -274,7 +280,11 @@ def create_server(
     if type(port) is not int or not 0 <= port <= 65535:
         raise ValueError("port must be an integer from 0 to 65535.")
     dataset = load_dataset(seed_path, expected_version=dataset_version)
-    return RetrievalHTTPServer((host, port), dataset)
+    if vector_index is None:
+        vector_index = configured_index(dataset, mode)
+    elif mode != "hybrid":
+        raise ValueError("An injected vector index requires hybrid mode.")
+    return RetrievalHTTPServer((host, port), dataset, mode=mode, vector_index=vector_index)
 
 
 def main(argv=None):
@@ -283,15 +293,16 @@ def main(argv=None):
     parser.add_argument("--port", type=int, default=os.environ.get("PORT", "8001"))
     parser.add_argument("--seed", type=Path, default=os.environ.get("SEED_PATH", str(DEFAULT_SEED)))
     parser.add_argument("--dataset-version", default=os.environ.get("DATASET_VERSION", DATASET_VERSION))
+    parser.add_argument("--mode", choices=MODES, default=os.environ.get("MUSEBRIDGE_RETRIEVAL_MODE", "hybrid"))
     args = parser.parse_args(argv)
     if not 1 <= args.port <= 65535:
         parser.error("--port must be an integer from 1 to 65535.")
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     try:
         server = create_server(
-            args.host, args.port, seed_path=args.seed, dataset_version=args.dataset_version,
+            args.host, args.port, seed_path=args.seed, dataset_version=args.dataset_version, mode=args.mode,
         )
-    except (DatasetValidationError, OSError, ValueError) as exc:
+    except (DatasetValidationError, RetrievalError, OSError, ValueError) as exc:
         LOGGER.error(json.dumps({
             "event": "startup_failed", "service": "retrieval", "message": str(exc),
         }))
@@ -308,6 +319,7 @@ def main(argv=None):
                 "service": "retrieval",
                 "host": args.host,
                 "port": server.server_port,
+                "retrieval_strategy": server.strategy_version,
                 "dataset_version": server.dataset.dataset_version,
             }))
             server.serve_forever(poll_interval=0.1)

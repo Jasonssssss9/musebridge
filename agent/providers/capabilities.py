@@ -5,6 +5,7 @@ from pathlib import Path
 
 from agent.providers.profile import OllamaProfile, TOKENIZER_SHA256
 from agent.runtime.validation import ContractViolation, strict_json
+from agent.tools.retrieval import STRATEGIES, configured_mode
 
 RECORD_VERSION = "ollama-capability-v1"
 CHECKS = ("four_language_workflows", "full_schema", "five_pair_context", "sizing",
@@ -33,6 +34,7 @@ def make_record(model, checks):
         raise ValueError("Verify the actual model before recording capabilities.")
     return {"record_version": RECORD_VERSION, "created_at": datetime.now(timezone.utc).isoformat(),
             "profile_fingerprint": model.profile.fingerprint(),
+            "retrieval_strategy_version": STRATEGIES[configured_mode()],
             "implementation_fingerprint": implementation_fingerprint(),
             "metadata_fingerprint": model.metadata_fingerprint,
             "tokenizer_sha256": TOKENIZER_SHA256,
@@ -42,7 +44,7 @@ def make_record(model, checks):
 def validate_record(record, model, *, now=None):
     """A trusted local file is an attestation, not a signed quality certificate."""
     expected = {"record_version", "created_at", "profile_fingerprint", "implementation_fingerprint",
-                "metadata_fingerprint", "tokenizer_sha256", "languages", "checks"}
+                "metadata_fingerprint", "tokenizer_sha256", "languages", "checks", "retrieval_strategy_version"}
     try:
         now = now or datetime.now(timezone.utc)
         created = datetime.fromisoformat(record["created_at"])
@@ -51,6 +53,7 @@ def validate_record(record, model, *, now=None):
                 and -300 <= age <= 86400 and created.utcoffset() is not None
                 and record["profile_fingerprint"] == OllamaProfile().fingerprint()
                 and record["implementation_fingerprint"] == implementation_fingerprint()
+                and record["retrieval_strategy_version"] == STRATEGIES[configured_mode()]
                 and record["metadata_fingerprint"] == model.metadata_fingerprint
                 and record["tokenizer_sha256"] == TOKENIZER_SHA256
                 and record["languages"] == ["en", "es", "zh-CN", "ko"]

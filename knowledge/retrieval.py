@@ -4,7 +4,7 @@ import unicodedata
 
 from .dataset import Dataset
 from .errors import RetrievalError
-from .query import parse_requests
+from .query import parse_requests, scoped_vector_query
 
 
 # These are capabilities of the reviewed seed topics. For example, material
@@ -37,31 +37,27 @@ def requested_topics(query: str, artwork_id: str, artist: str | None) -> frozens
                      if item.artwork_id == artwork_id and item.facet in _FACT_TOPICS)
 
 
-def retrieve(
-    dataset: Dataset,
-    *,
-    artwork_id: str,
-    query: str,
-    dataset_version: str,
-    top_k: int = 2,
-) -> dict:
-    """Return ranked evidence without the evaluation-only request trace."""
-    result, _ = retrieve_with_trace(
-        dataset, artwork_id=artwork_id, query=query,
-        dataset_version=dataset_version, top_k=top_k,
-    )
-    return result
+# Candidate relevance only. Qwen determines what the returned passage actually supports.
+DENSE_MIN_COSINE = 0.30
+RRF_OFFSET = 60
 
 
-def retrieve_with_trace(
-    dataset: Dataset,
-    *,
-    artwork_id: str,
-    query: str,
-    dataset_version: str,
-    top_k: int = 2,
-) -> tuple[dict, dict]:
-    """Return evidence and its request bindings over the normalized query."""
+def fuse_rankings(lexical, dense):
+    """Fuse ordinal ranks without comparing topic counts with cosine scores."""
+    lexical_positions = {key: rank for rank, key in enumerate(lexical, 1)}
+    dense_positions = {key: rank for rank, key in enumerate(dense, 1)}
+
+    def order(key):
+        score = 0.0
+        for positions in (lexical_positions, dense_positions):
+            if key in positions:
+                score += 1 / (RRF_OFFSET + positions[key])
+        return (-score, lexical_positions.get(key, float("inf")), dense_positions.get(key, float("inf")), key)
+
+    return sorted(lexical_positions.keys() | dense_positions.keys(), key=order)
+
+
+def validate_request(dataset, *, artwork_id, query, dataset_version, top_k):
     if not isinstance(artwork_id, str) or not artwork_id.strip():
         raise RetrievalError("invalid_request", "artwork_id must be a nonempty string.")
     if not isinstance(dataset_version, str) or not dataset_version.strip():
@@ -83,6 +79,36 @@ def retrieve_with_trace(
         raise RetrievalError("dataset_version_mismatch", "The requested dataset version is not loaded.")
     if artwork_id not in dataset.artworks:
         raise RetrievalError("artwork_not_found", "The requested artwork is not in the dataset.")
+
+
+def retrieve(
+    dataset: Dataset,
+    *,
+    artwork_id: str,
+    query: str,
+    dataset_version: str,
+    top_k: int = 2,
+    vector_index=None,
+) -> dict:
+    """Return ranked evidence without the evaluation-only request trace."""
+    result, _ = retrieve_with_trace(
+        dataset, artwork_id=artwork_id, query=query,
+        dataset_version=dataset_version, top_k=top_k, vector_index=vector_index,
+    )
+    return result
+
+
+def retrieve_with_trace(
+    dataset: Dataset,
+    *,
+    artwork_id: str,
+    query: str,
+    dataset_version: str,
+    top_k: int = 2,
+    vector_index=None,
+) -> tuple[dict, dict]:
+    """Return evidence and its request bindings over the normalized query."""
+    validate_request(dataset, artwork_id=artwork_id, query=query, dataset_version=dataset_version, top_k=top_k)
 
     normalized_query, requests = parse_requests(query, artwork_id, active_artist=dataset.artworks[artwork_id]["artist"])
     scoped_chunks = {
@@ -114,10 +140,30 @@ def retrieve_with_trace(
             "chunk_ids": chunk_ids,
         })
 
-    selected = sorted(
+    lexical = sorted(
         (key for key, topics in ranking_topics.items() if topics),
         key=lambda key: (-len(ranking_topics[key]), key),
-    )[:top_k]
+    )
+    selected = lexical
+    dense_hits = []
+    if vector_index is not None:
+        # Some explicit facets (e.g. pigment identity) fall outside the reviewed seed.
+        # An unknown paraphrase has no such exclusion and can be recovered by vectors.
+        gaps, searchable = set(), set()
+        for request in requests:
+            if request.artwork_id == artwork_id:
+                span = (request.start, request.end)
+                if request.facet == "unknown" or request.facet in _FACT_TOPICS:
+                    searchable.add(span)
+                else:
+                    gaps.add(span)
+        search_text = scoped_vector_query(normalized_query, requests, dataset.artworks[artwork_id],
+                                          excluded_spans=gaps - searchable)
+        if search_text:
+            dense_hits = vector_index.rank(artwork_id, search_text)
+            eligible = [key for key, score in dense_hits if key in scoped_chunks and score >= DENSE_MIN_COSINE]
+            selected = fuse_rankings(lexical, eligible)
+    selected = selected[:top_k]
     for request in trace_requests:
         candidates = request["chunk_ids"]
         request["chunk_ids"] = [key for key in selected if key in candidates]
@@ -143,4 +189,8 @@ def retrieve_with_trace(
             }
         )
     result = {"dataset_version": dataset.dataset_version, "evidence": evidence}
-    return result, {"normalized_query": normalized_query, "requests": trace_requests}
+    trace = {"normalized_query": normalized_query, "requests": trace_requests}
+    if vector_index is not None:
+        trace["lexical_ranking"] = lexical
+        trace["dense_ranking"] = [{"chunk_id": key, "cosine": score} for key, score in dense_hits]
+    return result, trace

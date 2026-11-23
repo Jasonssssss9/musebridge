@@ -77,6 +77,24 @@ class BootstrapTests(unittest.IsolatedAsyncioTestCase):
                 self.model.verified = False
                 self.assertFalse(runtime.is_ready())
 
+    async def test_attestation_and_readiness_identify_the_configured_retrieval_mode(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "capability.json"
+            with patch.dict(os.environ, {"AGENT_CAPABILITY_RECORD": str(path), "MUSEBRIDGE_RETRIEVAL_MODE": "lexical"}):
+                path.write_text(json.dumps(make_record(self.model, dict.fromkeys(CHECKS, True))))
+                with patch.dict(os.environ, {"MUSEBRIDGE_RETRIEVAL_MODE": "hybrid"}):
+                    runtime, close = await start_ollama_runtime()
+                    self.assertFalse(runtime.is_ready())
+                    await close()
+                    path.write_text(json.dumps(make_record(self.model, dict.fromkeys(CHECKS, True))))
+                    runtime, close = await start_ollama_runtime()
+                    self.addAsyncCleanup(close)
+                    app = create_app(runtime=runtime, service_token="x"*43)
+                    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://agent") as client:
+                        response = await client.get("/readyz")
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response.headers["X-Retrieval-Strategy"], "openai-hybrid-v1")
+
     async def test_factory_lifespan_uses_selected_real_provider_shell(self):
         token = "SYNTHETIC-TEST-TOKEN-" + "x"*43
         with patch("agent.providers.bootstrap.read_record", return_value=None):

@@ -17,6 +17,7 @@ from threading import Thread
 from time import monotonic
 
 from knowledge.http_service import create_server
+from agent.tools.retrieval import configured_mode
 from agent.providers.capabilities import implementation_fingerprint
 from agent.providers.sizing import QwenPromptSizer
 from agent.runtime.errors import WorkflowError
@@ -55,7 +56,9 @@ async def evaluate(options):
               "cases": [], "model_attempts": [], "lookups": []}
     manifest = EvidenceManifest.load()
     model = ProbeModel(report, base_url=options.base_url, sizer=QwenPromptSizer(options.tokenizer))
-    server = create_server("127.0.0.1", 0)
+    mode = configured_mode()
+    report["retrieval_mode"] = mode
+    server = create_server("127.0.0.1", 0, mode=mode)
     thread = Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True)
     thread.start()
     runtime = None
@@ -63,7 +66,7 @@ async def evaluate(options):
         await model.verify(deadline=monotonic() + 60)
         report.update(profile=asdict(model.profile), metadata_fingerprint=model.metadata_fingerprint)
         await model.warm(deadline=monotonic() + 120)
-        tool = ProbeRetrieval(report, manifest, base_url=f"http://127.0.0.1:{server.server_port}")
+        tool = ProbeRetrieval(report, manifest, mode=mode, base_url=f"http://127.0.0.1:{server.server_port}")
         runtime = create_workflow_runtime(model=model, profile=model.profile, prompt_sizer=model.sizer,
             manifest=manifest, retrieval=tool, identity=ModelIdentity(model.profile.model_name, model.profile.model_digest),
             readiness=lambda: model.verified)

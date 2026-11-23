@@ -43,7 +43,7 @@ async def run_demo(base_url, artwork_id, scenario):
     model = ScriptedModel(*responses)
     manifest = EvidenceManifest.load()
     workflow = MuseumQAWorkflow(
-        model=model, retrieval=RetrievalTool(manifest, base_url=base_url),
+        model=model, retrieval=RetrievalTool(manifest, mode="lexical", base_url=base_url),
         manifest=manifest, profile=FixtureProfile(), prompt_sizer=fixture_prompt_sizer,
     )
     outcome = await workflow.run(run, request_id="c-m1-demo", budget=TestBudget())
@@ -61,7 +61,7 @@ def main():
     parser.add_argument("--artwork-id", choices=["aic-28560", "aic-11723"], default="aic-28560")
     parser.add_argument("--scenario", choices=["medium", "partial", "clarify"], default="medium")
     args = parser.parse_args()
-    server = create_server("127.0.0.1", 0)
+    server = create_server("127.0.0.1", 0, mode="lexical")
     thread = threading.Thread(target=server.serve_forever,
                               kwargs={"poll_interval": 0.01}, daemon=True)
     thread.start()

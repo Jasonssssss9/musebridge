@@ -268,7 +268,7 @@ Construct one reusable workflow with the production dependencies supplied by B:
 
 ```python
 from agent.tools.evidence import EvidenceManifest
-from agent.tools.retrieval import RetrievalTool
+from agent.tools.retrieval import RetrievalTool, configured_mode
 from agent.workflows.museum_qa_v2 import MuseumQAWorkflowV2
 
 manifest = EvidenceManifest.load()
@@ -277,7 +277,7 @@ workflow = MuseumQAWorkflowV2(
     profile=verified_profile,
     prompt_sizer=verified_prompt_sizer,
     manifest=manifest,
-    retrieval=RetrievalTool(manifest, base_url=configured_retrieval_origin),
+    retrieval=RetrievalTool(manifest, base_url=configured_retrieval_origin, mode=configured_mode()),
 )
 outcome = await workflow.run(
     validated_run_request,
@@ -383,8 +383,15 @@ source links, released-seed locators and normalization labels are canonical.
 Catalog citations are not invented quotations and never enter the retrieval
 cache or count toward retrieval completeness.
 
-The existing HTTP tool and retrieval algorithm remain unchanged. Runtime injects
-artwork_id, dataset_version and top_k=2. The model cannot choose another scope or
+The real-model service and quality probes default to hybrid retrieval.
+The retrieval service combines the reviewed lexical matcher with OpenAI embeddings;
+the Agent verifies the service's strategy header and records the version with each
+run. Set `MUSEBRIDGE_RETRIEVAL_MODE=lexical` on both services to reproduce the
+lexical baseline. Controlled M2 smoke defaults to lexical and accepts the same
+setting for hybrid runs. Capability records are valid only for the tested mode.
+See the [knowledge service guide](../knowledge/README.md) for index and key setup.
+
+Runtime injects artwork_id, dataset_version and top_k=2. The model cannot choose another scope or
 endpoint. Tool/source validation rejects wrong releases, foreign works, altered
 canonical records, malformed responses and invalid identities. Every cached
 retrieval record is checked before use; invalid cache does not produce a partial

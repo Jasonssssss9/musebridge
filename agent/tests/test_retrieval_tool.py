@@ -102,6 +102,30 @@ class RetrievalToolTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([item["chunk_id"] for item in result["candidates"]], [item["chunk_id"] for item in payload["evidence"]])
         self.assertNotIn("score", result["candidates"][0])
 
+    async def test_http_strategy_is_verified_before_labelling_candidates(self):
+        for mode, version, accepted in (
+            ("hybrid", "openai-hybrid-v1", True),
+            ("hybrid", None, False),
+            ("hybrid", "legacy-facet-v0.1", False),
+            ("lexical", "legacy-facet-v0.1", True),
+            ("lexical", None, True),
+            ("lexical", "openai-hybrid-v1", False),
+        ):
+            with self.subTest(mode=mode, version=version):
+                headers = {"X-Request-ID": REQUEST_ID}
+                if version:
+                    headers["X-Retrieval-Strategy"] = version
+                reply = httpx.Response(200, json=self.payload(), headers=headers)
+                async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _: reply)) as client:
+                    tool = RetrievalTool(self.manifest, base_url="http://retrieval.test", mode=mode, client=client)
+                    if accepted:
+                        result = await tool.search(tool_input(), request_id=REQUEST_ID)
+                        self.assertEqual(result["retrieval_strategy_version"], version or "legacy-facet-v0.1")
+                    else:
+                        with self.assertRaises(WorkflowError) as caught:
+                            await tool.search(tool_input(), request_id=REQUEST_ID)
+                        self.assertEqual(caught.exception.code, "retrieval_invalid_response")
+
     async def test_valid_empty_lookup_is_a_successful_empty_candidate_list(self):
         result = await self.run_response(response({"dataset_version": DATASET_VERSION, "evidence": []}))
         self.assertEqual(result["candidates"], [])

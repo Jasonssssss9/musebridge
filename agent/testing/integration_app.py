@@ -11,7 +11,7 @@ from agent.runtime.runs import RunRegistry
 from agent.runtime.service_errors import safe_failure
 from agent.service import ModelIdentity, create_workflow_runtime
 from agent.tools.evidence import EvidenceManifest
-from agent.tools.retrieval import RetrievalTool
+from agent.tools.retrieval import RetrievalTool, configured_mode
 from agent.testing.runtime_evidence import EvidenceExecution, EvidenceModel, EvidenceRetrieval, RuntimeEvidence
 
 
@@ -48,7 +48,7 @@ def create_app():
                 await model.warm(deadline=monotonic()+120)
                 manifest = EvidenceManifest.load()
                 retrieval = RetrievalTool(manifest,
-                    base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001"))
+                    mode=configured_mode(default="lexical"), base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001"))
                 if evidence:
                     from agent.providers.capabilities import implementation_fingerprint
                     evidence.record("integration_ready", mode="controlled-ollama-not-quality-approved",

@@ -30,7 +30,7 @@ from agent.testing.probe_quality import (aggregate, expected, five_pair_capacity
                                          project_plan, review_slots, visitor_cases)
 from agent.testing.v2 import make_run, medium_plan
 from agent.tools.evidence import EvidenceManifest
-from agent.tools.retrieval import RetrievalTool
+from agent.tools.retrieval import RetrievalTool, configured_mode
 
 
 def save(path, value):
@@ -234,10 +234,12 @@ async def verify(options):
         report["loaded"] = await model.warm(deadline=monotonic()+120)
         report["checks"]["loaded_context"] = True
         manifest = EvidenceManifest.load()
-        server = create_server("127.0.0.1", 0)
+        mode = configured_mode()
+        report["retrieval_mode"] = mode
+        server = create_server("127.0.0.1", 0, mode=mode)
         thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True)
         thread.start()
-        tool = ProbeRetrieval(report, manifest, base_url=f"http://127.0.0.1:{server.server_address[1]}")
+        tool = ProbeRetrieval(report, manifest, mode=mode, base_url=f"http://127.0.0.1:{server.server_address[1]}")
         registry = create_workflow_runtime(model=model, profile=model.profile, prompt_sizer=model.sizer,
             manifest=manifest, retrieval=tool, identity=ModelIdentity(model.profile.model_name, model.profile.model_digest),
             readiness=lambda: model.verified)

@@ -10,7 +10,8 @@ import sys
 import tempfile
 import unicodedata
 
-from knowledge import DatasetValidationError, load_dataset, retrieve
+from knowledge import DatasetValidationError, RetrievalError, load_dataset, retrieve
+from knowledge.strategy import MODES, VERSIONS, configured_index
 from knowledge import dataset as dataset_module
 from knowledge import query as query_module
 from knowledge import retrieval as retrieval_module
@@ -208,7 +209,7 @@ def summarize(results, top_k):
     }
 
 
-def evaluate(dataset, suite, *, top_k=2):
+def evaluate(dataset, suite, *, top_k=2, vector_index=None):
     if type(top_k) is not int or not 1 <= top_k <= 5:
         raise SuiteValidationError("top_k must be an integer from 1 to 5.")
     validate_suite(suite, dataset)
@@ -229,6 +230,7 @@ def evaluate(dataset, suite, *, top_k=2):
             response = retrieve(
                 dataset, artwork_id=case["artwork_id"], query=case["query"],
                 dataset_version=suite["dataset_version"], top_k=top_k,
+                vector_index=vector_index,
             )
         except Exception:
             result["issues"] = ["retrieval_error"]
@@ -306,6 +308,7 @@ def main(argv=None):
     parser.add_argument("--suite", type=Path, default=DEFAULT_SUITE)
     parser.add_argument("--top-k", type=int, choices=range(1, 6), default=2)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--mode", choices=MODES, default="lexical", help="Use hybrid for a live OpenAI-backed evaluation.")
     args = parser.parse_args(argv)
     try:
         inputs = [args.seed, args.suite, Path(__file__),
@@ -314,8 +317,10 @@ def main(argv=None):
             raise SuiteValidationError("The report path must not overwrite an input or implementation file.")
         dataset = load_dataset(args.seed)
         suite = load_suite(args.suite, dataset)
-        report = evaluate(dataset, suite, top_k=args.top_k)
+        index = configured_index(dataset, args.mode)
+        report = evaluate(dataset, suite, top_k=args.top_k, vector_index=index)
         report["provenance"] = {
+            "retrieval_strategy_version": VERSIONS[args.mode],
             "python_version": platform.python_version(),
             "unicode_version": unicodedata.unidata_version,
             "seed_sha256": _sha256(args.seed),
@@ -325,6 +330,11 @@ def main(argv=None):
             "loader_sha256": _sha256(dataset_module.__file__),
             "evaluator_sha256": _sha256(__file__),
         }
+        if index is not None:
+            from knowledge import vector_index as vector_module
+            report["provenance"].update(embedding_model=vector_module.MODEL,
+                                        vector_index_sha256=_sha256(vector_module.__file__),
+                                        min_cosine=retrieval_module.DENSE_MIN_COSINE)
         encoded = json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
         if args.output:
             _write_report(args.output, encoded)
@@ -335,7 +345,7 @@ def main(argv=None):
             }, ensure_ascii=False), file=sys.stderr)
         else:
             print(encoded, end="")
-    except (DatasetValidationError, SuiteValidationError, OSError, UnicodeError) as exc:
+    except (DatasetValidationError, RetrievalError, SuiteValidationError, OSError, UnicodeError) as exc:
         print(f"Evaluation failed: {exc}", file=sys.stderr)
         return 2
     return 1 if report["summary"]["invalid_case_count"] else 0

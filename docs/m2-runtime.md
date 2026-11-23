@@ -14,6 +14,10 @@ Ollama must already be running. No command below pulls a model or starts a syste
 service. If frontend dependencies are missing, install the existing lock with
 `npm ci` in `web/`; no additional browser package is required by the runtime CLI.
 
+For a hybrid run, complete the [embedding setup](../knowledge/README.md#run-hybrid-retrieval)
+in the launcher terminal first. This installs the splitter and provides the API
+key to retrieval. Use the same Qwen model and tokenizer.
+
 Run from the repository root, using a new directory outside the checkout:
 
 ```bash

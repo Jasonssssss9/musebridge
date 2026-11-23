@@ -265,7 +265,7 @@ State/history share the conversation's fixed 24-hour expiry and Go process lifet
 
 ## 5. Agent to retrieval tool contract
 
-The registered tool remains `search_artwork_evidence`, version `evidence-tool-v1`. The adapter strategy remains `legacy-facet-v0.1`, calling the existing `POST /retrieve`. The [tool contract](agent-api-contract.md#6-retrieval-tool-contract) keeps the existing service compatible.
+The registered tool remains `search_artwork_evidence`, version `evidence-tool-v1`. The adapter calls `POST /retrieve`. Production uses `openai-hybrid-v1`: the service embeds the English query and ranks the selected artwork’s original excerpts alongside facet matches. Lexical fixtures and baseline evaluations use `legacy-facet-v0.1`. The model assesses support from the returned passages. The [tool contract](agent-api-contract.md#6-retrieval-tool-contract) keeps the existing service compatible.
 
 ### 5.1 Query requirements
 

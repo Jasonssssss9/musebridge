@@ -55,7 +55,7 @@ Run `docker compose down` to stop the stack. Go keeps history in memory for the 
 - Node.js 20 or later and npm when running the optional frontend.
 - A local checkout of this repository.
 
-Python uses its standard library. Go uses its standard library and the pinned `golang.org/x/text` package for Unicode normalization; the first build downloads that module. The backend does not require Node.js, a model, API key or database. The frontend uses Node.js to run Vite and build React/TypeScript assets.
+The fixture retrieval service uses Python's standard library. For hybrid retrieval with the Agent, use the [embedding setup](../knowledge/README.md#run-hybrid-retrieval). Go uses its standard library and the pinned `golang.org/x/text` package for Unicode normalization; the first build downloads that module. The backend does not require Node.js, a model, API key or database. The frontend uses Node.js to run Vite and build React/TypeScript assets.
 
 Start each terminal in the repository root unless a command explicitly changes directories. Both services use the immutable `knowledge/data/aic-seed-v0.1.json` release.
 
@@ -64,7 +64,7 @@ Start each terminal in the repository root unless a command explicitly changes d
 In the first terminal:
 
 ```bash
-python3 -m knowledge.http_service --host 127.0.0.1
+python3 -m knowledge.http_service --mode lexical --host 127.0.0.1
 ```
 
 The service listens on `http://127.0.0.1:8001`. It loads and validates the dataset before serving requests. See the [retrieval guide](../knowledge/README.md) for configuration, direct queries, source provenance and Docker instructions.

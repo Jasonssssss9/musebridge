@@ -1,129 +1,102 @@
-# Artwork data and keyword retrieval
+# Artwork evidence and hybrid retrieval
 
-Owner: Jason Zichen He (source data, retrieval and evaluation).
+MuseBridge serves four reviewed passages from two Art Institute of Chicago artworks in `aic-seed-v0.1`. The Agent supplies an English retrieval query and a trusted artwork ID. The service returns original museum excerpts with stable IDs and provenance. Qwen uses those excerpts to decide what the sources support and to write the visitor's reply.
 
-This package implements the seed loader, deterministic evidence retriever and private HTTP service for `aic-seed-v0.1`. It uses the Python standard library and serves evidence from the local seed without fetching museum content at runtime.
+## Run hybrid retrieval
 
-Use Python 3.10 or later. Development checks run on Python 3.12 in WSL. Run the commands below from the repository root.
-
-## Run a query
+Use Python 3.12 in WSL. From the repository root, activate the project virtual environment and install the retrieval dependencies once.
 
 ```bash
-python3 -m knowledge \
-  --artwork-id aic-28560 \
-  --query '这件作品用了什么材料？'
+source .venv/bin/activate
+python -m pip install -c agent/requirements.txt -r knowledge/requirements.txt
 ```
 
-The command returns JSON containing the loaded `dataset_version` and the matching `evidence` records. Each record includes the original excerpt, artwork and chunk IDs, source URL, locator, language, attribution and license.
-
-Compare the two works with the same question:
+In the retrieval terminal, set the API key without adding it to shell history.
 
 ```bash
-python3 -m knowledge \
-  --artwork-id aic-28560 \
-  --query '馆方如何描述这件作品的笔触？' \
-  --top-k 1
-
-python3 -m knowledge \
-  --artwork-id aic-11723 \
-  --query '馆方如何描述这件作品的笔触？' \
-  --top-k 1
+read -rsp 'OpenAI API key: ' OPENAI_API_KEY
+echo
+export OPENAI_API_KEY
 ```
 
-The first call returns `aic-28560-description-01`; the second returns `aic-11723-description-01`. A valid query with no matching topic returns `"evidence": []` and exits successfully.
+The first hybrid run builds a persistent index from the seed. Repeated runs reuse a matching index. Each hybrid search that requests semantic candidates sends the query to OpenAI. Allow outbound HTTPS from the retrieval process to `api.openai.com`. The browser, Go API, Qwen and Agent use their existing interfaces and do not need the embedding key.
 
-The default seed path is resolved relative to the package, not the current directory. Use `--seed PATH` to choose a file and `--dataset-version VERSION` to pin the version that file must declare. `--top-k` defaults to 2 and accepts integers from 1 to 5. A successful query writes JSON to stdout and exits 0. Data or retrieval failures write a diagnostic JSON object to stderr and exit 2; malformed CLI options use argparse's usual diagnostic and exit 2. These are local CLI diagnostics, not HTTP responses.
-
-## Run the private retrieval service
-
-From the repository root, start the retrieval service on loopback for local testing.
+Run the same English question for both works. Each lookup should rank the description for the requested artwork first. Inspect its ID, excerpt and source URL.
 
 ```bash
-python3 -m knowledge.http_service --host 127.0.0.1
+python -m knowledge --artwork-id aic-28560 \
+  --query 'How does the museum describe the marks left by the brush?' --top-k 1
+python -m knowledge --artwork-id aic-11723 \
+  --query 'How does the museum describe the marks left by the brush?' --top-k 1
 ```
 
-The retrieval service loads and validates the seed before binding. An invalid configuration, unreadable seed, invalid seed or version mismatch exits with a nonzero status. Check the diagnostic on stderr before trying to connect.
+For an offline comparison, run the lexical strategy explicitly. It uses the seed and rules alone.
 
-| Environment variable | CLI override | Default |
-| --- | --- | --- |
-| `HOST` | `--host` | `0.0.0.0` |
-| `PORT` | `--port` | `8001` |
-| `SEED_PATH` | `--seed` | `data/aic-seed-v0.1.json` relative to the `knowledge` package |
-| `DATASET_VERSION` | `--dataset-version` | `aic-seed-v0.1` |
+```bash
+python -m knowledge --mode lexical --artwork-id aic-28560 \
+  --query 'What material is this artwork made of?' --top-k 1
+```
 
-CLI flags take precedence over environment variables. `HOST=0.0.0.0` lets other containers reach the retrieval service on the private service network. Use the loopback command above when testing a native Python process on the same host.
+### Ranking
 
-The local transport requires one `Content-Length` header and an uncompressed UTF-8 JSON body of at most 8 KiB. Chunked transfer is not supported in this demo. Curl's `--data-raw` and Go requests created from a byte buffer supply a known body length. Each response closes its connection. A five-second socket timeout bounds incomplete request reads; the Go API still enforces its own three-second retrieval deadline.
+1. Validate the dataset version, artwork ID, query and limit. Candidate selection stays within the active artwork.
+2. The lexical branch maps phrases to reviewed facets such as medium or brushwork. The semantic branch uses LangChain's `CharacterTextSplitter` with a 500-character target within each evidence record. All four seed excerpts fit individually. OpenAI `text-embedding-3-small` encodes these passages at index time and the English query at lookup time. For an unparsed keyword fragment, the semantic branch omits redundant current-work and artist labels when they accompany a search subject. The lexical branch still sees the original text. A span that asks exclusively for an explicitly classified detail outside the reviewed seed, such as pigment identity, is excluded from semantic search. Unrecognized requests remain eligible, including an open part of a compound question.
+3. Semantic retrieval ranks passages by cosine similarity. Multiple windows of one evidence record count once. A starting cosine cutoff of 0.30 filters weak candidates. Both ranked lists contribute to reciprocal rank fusion with a rank constant of 60. Ties favor the lexical ranking, then the vector ranking and chunk ID.
+4. Return up to `top_k` distinct canonical evidence records from the released seed. The Agent evaluates coverage. For example, a passage describing blue paint can be relevant to a pigment question even though it gives no pigment identity.
+
+The cutoff is provisional. Validate it against paraphrases and unanswerable questions using live embeddings. An empty successful result describes this lookup only. A failed embedding call is a retrieval error.
+
+## Run the private HTTP service
+
+```bash
+python -m knowledge.http_service --host 127.0.0.1 --port 8001
+```
+
+| Setting | Purpose |
+| --- | --- |
+| `MUSEBRIDGE_RETRIEVAL_MODE` | `hybrid` by default for CLI and HTTP startup. Use `lexical` for offline fixtures. Both commands accept `--mode`. |
+| `OPENAI_API_KEY` | Retrieval-process credential for OpenAI embeddings in hybrid mode. |
+| `MUSEBRIDGE_VECTOR_INDEX` | Persistent index path. The native default is `~/.cache/musebridge/embeddings-v1.json`. Its parent must be writable on initial build or when the index needs rebuilding. |
+| `HOST`, `PORT` | HTTP bind address and port. Defaults are `0.0.0.0` and `8001`. Use loopback for native development. |
+| `SEED_PATH`, `DATASET_VERSION` | HTTP service's source file and expected release. Both command entry points accept explicit `--seed` and `--dataset-version` flags. |
+
+The local transport requires one `Content-Length` header and an uncompressed UTF-8 JSON body of at most 8 KiB. Chunked transfer is not supported in this demo. Curl's `--data-raw` and Go requests created from a byte buffer supply a known body length. Each response closes its connection. A five-second socket timeout bounds incomplete request reads. The retrieval caller enforces a separate three-second tool deadline.
 
 A single printable ASCII `X-Request-ID` of at most 128 characters is echoed. An absent, blank, malformed or duplicated request ID is replaced with a generated one. No visitor cookie or browser Origin header is required on the retrieval service's private endpoints.
 
-The service uses Python's standard-library HTTP server for the private local demo. Keep it on the internal service network; choose the hosted HTTP runtime during the later deployment review.
-
-### Smoke-test the service
-
-In a second terminal, check liveness and readiness. The healthy response identifies the loaded dataset version.
+From a second terminal, run:
 
 ```bash
-curl -fsS http://127.0.0.1:8001/healthz
 curl -fsS http://127.0.0.1:8001/readyz
-```
-
-Send a complete retrieval request. `-i` shows the status and response headers, including the echoed request ID.
-
-```bash
-curl -sS -i http://127.0.0.1:8001/retrieve \
+curl -isS http://127.0.0.1:8001/retrieve \
   -H 'Content-Type: application/json' \
-  -H 'X-Request-ID: musebridge-local-001' \
-  --data-raw '{"artwork_id":"aic-28560","query":"What material is this artwork made of?","top_k":2,"dataset_version":"aic-seed-v0.1"}'
+  -H 'X-Request-ID: musebridge-brushwork-001' \
+  --data-raw '{"artwork_id":"aic-28560","query":"How did the artist lay down the paint?","top_k":1,"dataset_version":"aic-seed-v0.1"}'
 ```
 
-The response is HTTP 200 with `dataset_version: "aic-seed-v0.1"` and the `aic-28560-medium` evidence record. For a valid query with no topic match, the retrieval service also returns HTTP 200, with `evidence: []`.
+The body contains `dataset_version` and `evidence`. Each candidate carries the source language, URL, locator, attribution and license. The hybrid service identifies its strategy with `X-Retrieval-Strategy: openai-hybrid-v1`. The Agent verifies each record against the released manifest and enforces a three-second tool deadline. Missing or unusable credentials prevent live hybrid operation. An upstream failure during lookup returns a technical error. See the [private retrieval contract](../docs/api-contract.md#4-go-api-and-retrieval-service-retrieval-contract) and the [native Agent startup guide](../docs/public-agent-integration.md).
 
-An incorrect version returns HTTP 409 with `error.code: "dataset_version_mismatch"`. Keep `-i` to see the status and JSON error body.
+### Run in Docker
 
-```bash
-curl -sS -i http://127.0.0.1:8001/retrieve \
-  -H 'Content-Type: application/json' \
-  -H 'X-Request-ID: musebridge-local-002' \
-  --data-raw '{"artwork_id":"aic-28560","query":"material","top_k":2,"dataset_version":"wrong-version"}'
-```
-
-See [the retrieval contract](../docs/api-contract.md#4-go-api-and-retrieval-service-retrieval-contract) for validation, status codes and the exact evidence fields.
-
-### Run the retrieval service in Docker
-
-Build from the repository root. The image uses the [official Python 3.12 slim base](https://hub.docker.com/_/python), the service package and the released seed. The service runs as UID/GID 10001. Its container health check calls `/readyz` on the configured port.
+Build the default hybrid image. Pass the exported key only to retrieval. The named volume keeps the index writable by UID 10001 and preserves it across container restarts. The published port accepts connections on loopback.
 
 ```bash
 docker build -f knowledge/Dockerfile -t musebridge-retrieval:local .
-docker run --rm --read-only \
-  --publish 127.0.0.1:8001:8001 \
-  musebridge-retrieval:local
+docker run --rm --read-only --env OPENAI_API_KEY \
+  --mount type=volume,source=musebridge-vectors,target=/var/cache/musebridge \
+  --publish 127.0.0.1:8001:8001 musebridge-retrieval:local
 ```
 
-Run the same curl commands from the Docker host. The published address is loopback for local integration. To test with the same on-disk seed that the Go API will read, mount the file read-only at the retrieval service's default seed path.
-
-```bash
-docker run --rm --read-only \
-  --publish 127.0.0.1:8001:8001 \
-  --mount "type=bind,source=$PWD/knowledge/data/aic-seed-v0.1.json,target=/app/knowledge/data/aic-seed-v0.1.json,readonly" \
-  musebridge-retrieval:local
-```
-
-Stop the first container before starting the second on the same host port. For a different container port, set `PORT` in the container environment and update the publish mapping so the health check uses the same port as the service.
-
-### Go API integration handoff
-
-- For the Go API running on the same host as the standalone retrieval process or the Docker loopback port, set `RETRIEVAL_BASE_URL=http://127.0.0.1:8001`. In the planned Compose deployment, the Go API calls `http://retrieval:8001` on the private network. The browser calls the public Go API.
-- Send `POST /retrieve` with `artwork_id`, `query`, `dataset_version` and `top_k: 2`. Forward the Go API's `X-Request-ID`, allow up to three seconds for the call, and validate every returned evidence record against the same immutable seed mounted by the Go API.
-- Distinguish a successful empty list from a technical failure. The retrieval service only returns ranked evidence. The Go API decides the fixture answer status and owns the public error mapping.
+The repository's `docker compose up --build` starts the fixture web demo. Its retrieval container uses the lexical image target and the private network. Use the native Agent guide for a complete Qwen-backed visitor session.
 
 ## Call the Python API
 
 ```python
 from knowledge import load_dataset, retrieve
+from knowledge.strategy import configured_index
 
 dataset = load_dataset("knowledge/data/aic-seed-v0.1.json")
+index = configured_index(dataset, "hybrid")
 
 result = retrieve(
     dataset,
@@ -131,11 +104,12 @@ result = retrieve(
     query="What material is this artwork made of?",
     dataset_version="aic-seed-v0.1",
     top_k=2,
+    vector_index=index,
 )
 print(result["evidence"][0]["chunk_id"])
 ```
 
-Load once and reuse the returned `Dataset`. Its artwork/source mappings, chunk records and topic collections are immutable. Each retrieval call returns new response dictionaries, so changing a response cannot alter later results or the loaded evidence.
+Load the dataset and index once per process. Pass the index to each query. Omit `vector_index` for the lexical baseline. Its artwork/source mappings, chunk records and topic collections are immutable. Each retrieval call returns new response dictionaries, so changing a response cannot alter later results or the loaded evidence.
 
 `load_dataset` raises `DatasetValidationError` for unreadable files or invalid data. It validates exact fields, types, release cardinalities and IDs, duplicate JSON properties, source relationships, version consistency, UTC timestamps, field-specific licenses, source URLs and published topic assignments. It preserves the excerpt text.
 
@@ -145,52 +119,28 @@ The loader implements the current two-artwork schema. A new version pin alone do
 
 | Code | Meaning |
 | --- | --- |
+| `retrieval_unavailable` | Hybrid embeddings or the vector index could not be used. |
 | `invalid_request` | Invalid argument type, blank/oversized query, forbidden control character, unpaired surrogate or invalid limit. |
 | `artwork_not_found` | The artwork is absent from the loaded dataset. |
 | `dataset_version_mismatch` | The requested release differs from the loaded release. |
 
 The function requires explicit artwork and version arguments. It does not accept chat history, expected answers or evaluation case IDs. Unknown Python keyword arguments raise `TypeError`; the HTTP service handles JSON request validation and maps retrieval errors to the private API contract.
 
-## How ranking works
-
-The implementation follows [API contract section 4.3](../docs/api-contract.md#43-deterministic-evidence-selection):
-
-1. Validate the query, artwork and dataset version.
-2. Normalize the query with Unicode NFKC and collapsed whitespace. Identify actual requests, context and known artwork references.
-3. Classify each request by the fact it asks for. Bind eligible evidence only if that fact is supported by a chunk's reviewed topic.
-4. Rank chunks in the selected artwork by distinct supporting topics. Sort ties by chunk ID and return up to `top_k` unique records.
-
-The query normalization never rewrites stored museum excerpts. No hit in the current artwork causes an empty result, with no fallback to the other work. Source records are joined from the loaded seed; retrieval never fetches a URL.
-
-The retriever returns evidence only. The Go API owns the final `answered`, `insufficient` and `unsupported_question` decisions. An empty `expected_chunk_ids` in an insufficient evaluation case means that no seed evidence sufficiently answers the question; it is not a general assertion that retrieval must return zero related chunks.
-
-## Run the checks
+## Checks and evaluation
 
 ```bash
-python3 -m unittest discover -s knowledge/tests -v
+python -m unittest discover -s knowledge/tests -v
+python -m eval.retrieval_eval --mode lexical --top-k 1
+python -m eval.retrieval_eval --mode hybrid --top-k 1
 ```
 
-The suite covers seed loading and malformed data, all six frozen cases, both variants of the same-query artwork check, `top_k: 1` rankings, English and Chinese aliases, normalization, word boundaries, stable ties, repeated queries, output isolation, request errors and the CLI. The frozen evaluation inputs come from [the evaluation JSON](../eval/aic-seed-v0.1.tests.json); runtime retrieval does not import that file.
+Unit tests use controlled embedding responses. The last command uses live OpenAI embeddings and requires the key. Compare top-1 correctness, missing evidence, returns on unsupported questions and artwork isolation. Each work currently has only two records, so returning both at top-2 is a weak test of ranking. In a separate end-to-end run, check whether Qwen's answer and memory stay within the cited source. See the [evaluation guide](../eval/README.md) for suite labels and historical lexical results.
 
-The suite also starts real loopback HTTP servers to verify request framing, body limits, status codes, request IDs, liveness/readiness, concurrent artwork isolation and safe errors. Subprocess checks verify startup failure and configuration precedence. Use the HTTP smoke tests above to check a separately started service.
+### Live embedding check (2026-11-23)
 
-## Broader retrieval evaluation
+Using `text-embedding-3-small`, the 48-case original suite and 12-case independent suite both returned at least one labeled passage for every answerable case at rank 1. Rank 2 recovered all labeled passages. The final hybrid run returned candidates on 0/20 and 0/6 labeled negative cases, respectively, and had no artwork-scope violations. The lexical baseline achieved the same aggregate results on these previously used suites.
 
-The [retrieval evaluation guide](../eval/README.md) documents 48 additional English/Chinese questions, reviewed evidence labels, a standalone runner and recorded top-1/top-2 baselines. The cases cover paraphrases, multiple topics, misleading keywords, artwork scope and missing evidence.
-
-```bash
-python3 -m eval.retrieval_eval --top-k 2
-```
-
-This command measures the current retriever's combined evidence list. The evaluation guide preserves the original baseline and compares both retrieval revisions on the original and independently authored suites. It needs no model or Go service and does not change the retrieval API. The report separates missed evidence, related-but-insufficient hits and artwork scope violations; a successful evaluator run does not imply good retrieval quality.
-
-The subquestion evaluator checks the binding to each request as well as the combined evidence. It can distinguish a valid medium answer from a medium chunk incorrectly returned for a size question.
-
-```bash
-python3 -m eval.subquestion_eval --suite eval/aic-subquestions-v0.1.json
-```
-
-The trace is for local evaluation. The private HTTP contract continues to return only the evidence envelope.
+The more informative comparison was a pair of planner fragments: `The Bedroom van Gogh brushwork description` and `Woman at Her Toilette Morisot brushwork description`. Lexical search returned nothing for either. The live Agent HTTP tool ranked the correct description first for both and validated its original excerpt and ID. On five additional English probes, both answerable paraphrases ranked the correct description first, one unsupported paint-thickness query returned nothing, and two unsupported queries about flower models and brush manufacture returned related passages. These are retrieval-level results; answer and memory quality require a run with Qwen.
 
 ## Released data
 

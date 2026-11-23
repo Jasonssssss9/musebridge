@@ -185,7 +185,7 @@ async def running_services(*, service_token, fault="none", audit_path=None):
     retrieval = thread = sock = server = serving = runtime = None
     try:
         manifest = EvidenceManifest.load()
-        retrieval = create_server("127.0.0.1", 0)
+        retrieval = create_server("127.0.0.1", 0, mode="lexical")
         _observe_http(retrieval, manifest, audit, fault)
         thread = threading.Thread(target=retrieval.serve_forever,
                                   kwargs={"poll_interval": 0.01}, daemon=True)
@@ -194,7 +194,7 @@ async def running_services(*, service_token, fault="none", audit_path=None):
         runtime = create_workflow_runtime(
             model=MaterialScript(audit), profile=FixtureProfile(),
             prompt_sizer=fixture_prompt_sizer, manifest=manifest,
-            retrieval=_ObservedRetrieval(RetrievalTool(manifest, base_url=retrieval_url), audit),
+            retrieval=_ObservedRetrieval(RetrievalTool(manifest, mode="lexical", base_url=retrieval_url), audit),
             identity=ModelIdentity(MODEL_NAME, "SYNTHETIC-NOT-A-REAL-MODEL-DIGEST"),
             readiness=lambda: True,
         )

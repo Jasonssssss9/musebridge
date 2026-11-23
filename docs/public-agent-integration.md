@@ -47,8 +47,9 @@ replay skips inference and preserves the saved turn with the current projection.
 Use the existing Python 3.12 virtual environment and pinned Agent dependencies,
 Go 1.27+, and the installed frontend dependencies with Node 20+. Real Qwen also
 needs the already prepared tokenizer, pinned model and a running Ollama server;
-see the [provider guide](ollama-provider.md). These commands install or download
-nothing. All terminals below start in the repository root.
+see the [provider guide](ollama-provider.md). The retrieval setup below also
+needs an OpenAI embedding credential and HTTPS access. All terminals below
+start in the repository root.
 
 Create one temporary, owner-only token file outside the repository:
 
@@ -67,10 +68,13 @@ Only the path is printed. In the **Agent and Go terminals**, run
 must receive the same token. Never put it in browser variables, command arguments,
 logs or Git. Remove this exact temporary file after stopping both services.
 
-In terminal 1, start real retrieval:
+In terminal 1, follow the [hybrid retrieval setup](../knowledge/README.md#run-hybrid-retrieval)
+to install its dependencies in the existing virtual environment and set
+`OPENAI_API_KEY` in this terminal. The first run builds a persistent index.
+Then start the private service:
 
 ```bash
-.venv/bin/python -B -m knowledge.http_service --host 127.0.0.1 --port 8001
+.venv/bin/python -B -m knowledge.http_service --mode hybrid --host 127.0.0.1 --port 8001
 ```
 
 In terminal 2, load the private token file, then explicitly select controlled
@@ -81,6 +85,7 @@ export AGENT_INTEGRATION_MODE=controlled-ollama
 export AGENT_TOKENIZER_PATH=/absolute/path/to/the/existing/tokenizer.json
 export OLLAMA_BASE_URL=http://127.0.0.1:11434
 export RETRIEVAL_BASE_URL=http://127.0.0.1:8001
+export MUSEBRIDGE_RETRIEVAL_MODE=hybrid
 .venv/bin/python -B -m uvicorn agent.testing.integration_app:create_app --factory \
   --host 127.0.0.1 --port 8002 --workers 1 --no-access-log \
   --timeout-graceful-shutdown 65

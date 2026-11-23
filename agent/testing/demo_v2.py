@@ -34,7 +34,7 @@ def dialogue_plan(run):
 
 async def run_demo(base_url, artwork_id, scenario):
     manifest = EvidenceManifest.load()
-    tool = RetrievalTool(manifest, base_url=base_url)
+    tool = RetrievalTool(manifest, mode="lexical", base_url=base_url)
     turns = []
 
     async def execute(run, responses):
@@ -123,7 +123,7 @@ def main():
     parser.add_argument("--artwork-id", choices=["aic-28560", "aic-11723"], default="aic-28560")
     parser.add_argument("--scenario", choices=SCENARIOS, default="medium")
     args = parser.parse_args()
-    server = create_server("127.0.0.1", 0)
+    server = create_server("127.0.0.1", 0, mode="lexical")
     thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True)
     thread.start()
     try:

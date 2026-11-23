@@ -121,7 +121,7 @@ Retrieval errors map to `502 retrieval_invalid_response`, `503 retrieval_unavail
 Start the existing Python service from the repository root:
 
 ```bash
-python3 -m knowledge.http_service --host 127.0.0.1
+python3 -m knowledge.http_service --mode lexical --host 127.0.0.1
 ```
 
 In another terminal, run the Go diagnostic from `api/`:

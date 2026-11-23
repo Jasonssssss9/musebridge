@@ -38,21 +38,21 @@ def create_workflow_runtime(*, model, profile, prompt_sizer, manifest, retrieval
     No production handler imports testing fakes or fabricates provider identity.
     A caller can inject synthetic dependencies in a controlled test environment.
     """
+    gate = InferenceGate()
+    workflow = MuseumQAWorkflowV2(model=gate.wrap(model), profile=profile,
+                                   prompt_sizer=prompt_sizer, manifest=manifest, retrieval=retrieval)
     codec = ContractCodec()
     codec.validate("ExecutionRecord", {
         "workflow_id": "museum_qa_v2", "prompt_version": "museum-prompts-v2",
-        "schema_version": "agent-schema-v2", "retrieval_strategy_version": "legacy-facet-v0.1",
+        "schema_version": "agent-schema-v2", "retrieval_strategy_version": workflow.retrieval_strategy_version,
         **identity.fields(), "model_calls": 1, "retrieval_calls": 0,
         "refinement_rounds": 0, "duration_ms": 0,
     })
     if profile.profile_id != identity.profile_id:
         raise ValueError("The provider identity and workflow profile must agree.")
-    gate = InferenceGate()
-    workflow = MuseumQAWorkflowV2(model=gate.wrap(model), profile=profile,
-                                   prompt_sizer=prompt_sizer, manifest=manifest,
-                                   retrieval=retrieval)
     runtime = RunRegistry(WorkflowExecutor(workflow, identity),
                           validate_input=lambda run: validate_run_context(run, manifest),
                           ready=readiness)
+    runtime.retrieval_strategy_version = workflow.retrieval_strategy_version
     runtime.inference_gate = gate
     return runtime

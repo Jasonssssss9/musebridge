@@ -2,7 +2,7 @@
 
 Contract revision: `local-demo-v0.1`. Dataset: `aic-seed-v0.1`.
 
-> Fixture-stage baseline: the new Agent-mode target is defined separately in the [v2 interface contract](agent-api-contract.md). This body remains `local-demo-v0.1`.
+> Fixture-stage baseline: this file documents the lexical fixture contract `local-demo-v0.1`. The Agent uses the same private retrieval request and evidence records with [hybrid ranking](../knowledge/README.md#ranking). Hybrid responses identify the strategy in the `X-Retrieval-Strategy` header. See the [v2 interface contract](agent-api-contract.md) for Agent behavior.
 
 This is the implementation baseline for stage one. It specifies intended behavior; publishing this document does not mean the endpoints already exist. [design.md](design.md) explains the system, and [plan.md](plan.md) assigns implementation and acceptance work. Jeremiah Lim owns the browser client, Jinqing Zhang owns the Go application API and generation adapter, and Jason Zichen He owns the Python retriever and source release.
 

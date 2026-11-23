@@ -193,12 +193,13 @@ def create_app(runtime: RunRegistry | None = None, *, service_token: str | None 
     async def ready(request: Request):
         if not request.app.state.runtime.is_ready():
             raise failure("service_not_ready", "capacity")
+        strategy = getattr(request.app.state.runtime, "retrieval_strategy_version", None)
         return _reply("ReadinessResponse", {
             "status": "ok", "contract_version": "agent-run-v2", "workflow_id": "museum_qa_v2",
             "profile_id": "local-ollama-v2", "dataset_version": "aic-seed-v0.1",
             "state_version": "conversation-state-v1", "supported_languages": ["en", "es", "zh-CN", "ko"],
             "history_turn_limit": 5,
-        })
+        }, headers={"X-Retrieval-Strategy": strategy} if strategy else None)
 
     @app.post("/internal/v2/agent/runs")
     async def create_run(request: Request):

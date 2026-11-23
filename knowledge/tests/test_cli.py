@@ -15,7 +15,8 @@ class CliTests(unittest.TestCase):
     def run_cli(self, *arguments, env=None):
         return subprocess.run(
             [sys.executable, "-m", "knowledge", *arguments],
-            cwd=ROOT, capture_output=True, text=True, timeout=10, env=env,
+            cwd=ROOT, capture_output=True, text=True, timeout=10,
+            env=dict(os.environ if env is None else env, MUSEBRIDGE_RETRIEVAL_MODE="lexical"),
         )
 
     def test_material_query_returns_json_and_original_source(self):

@@ -32,11 +32,11 @@ from agent.runtime.validation_v2 import (
     validate_plan, validate_refinement,
 )
 from agent.tools.evidence import EvidenceManifest
+from agent.tools.retrieval import RETRIEVAL_STRATEGY_VERSION
 from agent.workflows.ports import EvidenceSearch, ModelProfile, RunBudget, StructuredModel
 
 WORKFLOW_ID = "museum_qa_v2"
 SCHEMA_VERSION = "agent-schema-v2"
-RETRIEVAL_STRATEGY = "legacy-facet-v0.1"
 
 
 class State(TypedDict, total=False):
@@ -78,6 +78,7 @@ class WorkflowOutcomeV2:
     retrieval_calls: int
     refinement_rounds: int
     diagnostics: dict
+    retrieval_strategy_version: str
 
     def result_fields(self) -> dict:
         """Return the RunResult fields owned by C, excluding B's execution record."""
@@ -92,7 +93,7 @@ class WorkflowOutcomeV2:
         """B adds verified profile/model identity and measured total duration."""
         return {
             "workflow_id": WORKFLOW_ID, "prompt_version": PROMPT_VERSION,
-            "schema_version": SCHEMA_VERSION, "retrieval_strategy_version": RETRIEVAL_STRATEGY,
+            "schema_version": SCHEMA_VERSION, "retrieval_strategy_version": self.retrieval_strategy_version,
             "model_calls": self.model_calls, "retrieval_calls": self.retrieval_calls,
             "refinement_rounds": self.refinement_rounds,
         }
@@ -105,6 +106,7 @@ class MuseumQAWorkflowV2:
                  manifest: EvidenceManifest, profile: ModelProfile, prompt_sizer):
         self.model = model
         self.retrieval = retrieval
+        self.retrieval_strategy_version = getattr(retrieval, "retrieval_strategy_version", RETRIEVAL_STRATEGY_VERSION)
         self.manifest = manifest
         self.profile = profile
         self.prompt_sizer = prompt_sizer
@@ -376,6 +378,7 @@ class MuseumQAWorkflowV2:
                                  "memory": deepcopy(result["memory_update"])},
             model_calls=result["model_calls"], retrieval_calls=result["retrieval_calls"],
             refinement_rounds=result["refinement_rounds"],
+            retrieval_strategy_version=self.retrieval_strategy_version,
             diagnostics={
                 "implementation_stage": "C-v2", "complete_scope": result["complete_scope"],
                 "retained_history_turns": len(result["retained_run"]["context"]["recent_turns"]),
@@ -400,7 +403,7 @@ class MuseumQAWorkflowV2:
             self.validator.validate("ToolResult", reply)
             if (any(reply[key] != tool_input[key] for key in (
                     "tool_version", "query_id", "artwork_id", "dataset_version"))
-                    or reply["retrieval_strategy_version"] != RETRIEVAL_STRATEGY):
+                    or reply["retrieval_strategy_version"] != self.retrieval_strategy_version):
                 raise ContractViolation("Tool result identity mismatch.")
         except ContractViolation as exc:
             raise WorkflowError("retrieval_invalid_response", "The evidence tool returned an invalid result.",

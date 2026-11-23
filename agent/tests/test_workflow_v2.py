@@ -8,7 +8,7 @@ import threading
 import unittest
 from copy import deepcopy
 from time import monotonic
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from knowledge.http_service import create_server
 
@@ -108,6 +108,33 @@ class WorkflowV2Tests(unittest.IsolatedAsyncioTestCase):
         workflow, tool = self.workflow(model, tool=tool, sizer=sizer)
         outcome = await workflow.run(run, request_id="c-v2-integration", budget=budget or TestBudget())
         return outcome, model, tool
+
+    async def test_hybrid_http_candidate_reaches_assessment_and_execution_record(self):
+        chunk_id = "aic-28560-description-01"
+        index = Mock()
+        index.rank.return_value = [(chunk_id, 0.85)]
+        server = create_server("127.0.0.1", 0, mode="hybrid", vector_index=index)
+        thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": 0.01}, daemon=True)
+        thread.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(thread.join, 5)
+        self.addCleanup(server.shutdown)
+        tool = RetrievalTool(self.manifest, mode="hybrid", base_url=f"http://127.0.0.1:{server.server_port}")
+        run = make_run(question="How did the artist apply the paint?", manifest=self.manifest)
+        plan = medium_plan(run)
+        plan["requests"][0]["intent"] = "Describe the brushwork in The Bedroom."
+        plan["queries"][0]["query"] = "The Bedroom van Gogh brushwork description"
+        answer = {
+            "action": "finish",
+            "results": [{"request_id": "r1", "support": "supported",
+                         "text": "The museum describes the brushwork as thick and broken.", "citation_ids": [chunk_id]}],
+            "memory_update": memory_update(),
+        }
+        outcome, _, _ = await self.execute(run, plan, answer, tool=tool)
+        index.rank.assert_called_once()
+        self.assertEqual(outcome.execution_fields()["retrieval_strategy_version"], "openai-hybrid-v1")
+        self.assertEqual([row["chunk_id"] for row in outcome.evidence_snapshot], [chunk_id])
+        self.assertEqual(outcome.answer["citations"][0]["chunk_id"], chunk_id)
 
     async def test_fresh_passages_drop_context_in_four_languages_before_real_lookup(self):
         cases = {

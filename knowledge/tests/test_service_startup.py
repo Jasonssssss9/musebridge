@@ -26,6 +26,7 @@ class ServiceStartupTests(unittest.TestCase):
         environment = os.environ.copy()
         for key in CONFIG_KEYS:
             environment.pop(key, None)
+        environment["MUSEBRIDGE_RETRIEVAL_MODE"] = "lexical"
         environment.update(overrides)
         return environment
 

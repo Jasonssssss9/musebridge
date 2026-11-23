@@ -240,6 +240,7 @@ def main():
         raise KeyboardInterrupt
     signal.signal(signal.SIGTERM, interrupted)
     environment = dict(os.environ)
+    environment.setdefault("MUSEBRIDGE_RETRIEVAL_MODE", "lexical")
     environment.update(PYTHONDONTWRITEBYTECODE="1", AGENT_SERVICE_TOKEN=secrets.token_urlsafe(32),
         AGENT_INTEGRATION_MODE="controlled-ollama", AGENT_TOKENIZER_PATH=str(Path(options.tokenizer).resolve()),
         OLLAMA_BASE_URL=options.ollama_url, AGENT_RUNTIME_EVIDENCE=str(directory/"agent-events.jsonl"),
@@ -268,8 +269,10 @@ def main():
             GENERATION_MODE="agent", PUBLIC_BASE_URL=web_url, COOKIE_SECURE="false", HOST="127.0.0.1", PORT=str(api_port),
             PUBLIC_CONTRACT="agent", API_TARGET=api_url)
         report["configuration"] = {"retrieval_url": retrieval_url, "agent_url": agent_url, "api_url": api_url, "web_url": web_url,
+                                   "retrieval_mode": environment["MUSEBRIDGE_RETRIEVAL_MODE"],
                                    "profile": OllamaProfile().__dict__, "tokenizer_sha256": TOKENIZER_SHA256}
         retrieval = processes.start("retrieval", [sys.executable, "-B", "-m", "knowledge.http_service", "--host", "127.0.0.1", "--port", str(retrieval_port)], environment)
+        environment.pop("OPENAI_API_KEY", None)
         processes.wait_ready(retrieval_url+"/readyz", retrieval, 15)
         agent = processes.start("agent", [sys.executable, "-B", "-m", "uvicorn", "agent.testing.integration_app:create_app", "--factory", "--host", "127.0.0.1", "--port", str(agent_port), "--workers", "1", "--no-access-log", "--timeout-graceful-shutdown", "65"], environment)
         processes.wait_ready(agent_url+"/readyz", agent)

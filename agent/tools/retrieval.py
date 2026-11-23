@@ -4,6 +4,7 @@ import asyncio
 from copy import deepcopy
 import json
 import math
+import os
 from time import monotonic
 from urllib.parse import urlsplit
 
@@ -16,6 +17,15 @@ from .evidence import EvidenceManifest
 
 TOOL_VERSION = "evidence-tool-v1"
 RETRIEVAL_STRATEGY_VERSION = "legacy-facet-v0.1"
+STRATEGIES = {"lexical": RETRIEVAL_STRATEGY_VERSION, "hybrid": "openai-hybrid-v1"}
+
+
+def configured_mode(default="hybrid"):
+    mode = os.environ.get("MUSEBRIDGE_RETRIEVAL_MODE", default)
+    if mode not in STRATEGIES:
+        raise ValueError("MUSEBRIDGE_RETRIEVAL_MODE must be hybrid or lexical.")
+    return mode
+
 MAX_REQUEST_BYTES = 8 * 1024
 MAX_RESPONSE_BYTES = 64 * 1024
 MAX_CALL_SECONDS = 3.0
@@ -68,7 +78,6 @@ class RetrievalTool:
     """
 
     tool_version = TOOL_VERSION
-    retrieval_strategy_version = RETRIEVAL_STRATEGY_VERSION
 
     def __init__(
         self,
@@ -76,6 +85,7 @@ class RetrievalTool:
         *,
         base_url: str,
         client: httpx.AsyncClient | None = None,
+        mode: str = "lexical",
     ):
         parsed = urlsplit(base_url)
         # Accessing port validates malformed and out-of-range port strings.
@@ -90,6 +100,7 @@ class RetrievalTool:
             or parsed.path not in {"", "/"}
         ):
             raise ValueError("The retrieval base URL must be an HTTP(S) service origin.")
+        self.retrieval_strategy_version = STRATEGIES[mode]
         self.manifest = manifest
         self.url = base_url.rstrip("/") + "/retrieve"
         self.client = client
@@ -162,7 +173,7 @@ class RetrievalTool:
             "query_id": tool_input["query_id"],
             "artwork_id": tool_input["artwork_id"],
             "dataset_version": self.manifest.dataset_version,
-            "retrieval_strategy_version": RETRIEVAL_STRATEGY_VERSION,
+            "retrieval_strategy_version": self.retrieval_strategy_version,
             "candidates": candidates,
         }
         self.validator.validate("ToolResult", result)
@@ -200,6 +211,10 @@ class RetrievalTool:
                 or response.headers.get_list("x-request-id") != [request_id]
             ):
                 raise _error("retrieval_invalid_response", "The retrieval response headers are invalid.")
+            # Older lexical services omit the header. Hybrid must always identify itself.
+            versions = response.headers.get_list("x-retrieval-strategy") or [RETRIEVAL_STRATEGY_VERSION]
+            if versions != [self.retrieval_strategy_version]:
+                raise _error("retrieval_invalid_response", "The retrieval strategy does not match the configured mode.")
             lengths = response.headers.get_list("content-length")
             if lengths and (
                 len(lengths) != 1

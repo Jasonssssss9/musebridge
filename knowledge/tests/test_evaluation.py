@@ -119,7 +119,7 @@ class EvaluationTests(unittest.TestCase):
         )
         by_query = {case["query"]: result for case, result in zip(suite["cases"], controlled)}
 
-        def fake_retrieve(dataset, *, artwork_id, query, dataset_version, top_k):
+        def fake_retrieve(dataset, *, artwork_id, query, dataset_version, top_k, vector_index=None):
             self.assertIs(dataset, self.dataset)
             self.assertEqual((artwork_id, dataset_version, top_k), (BEDROOM, VERSION, 2))
             return by_query[query]

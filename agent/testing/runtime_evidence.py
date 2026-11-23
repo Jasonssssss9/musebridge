@@ -77,6 +77,10 @@ class EvidenceRetrieval:
     def __init__(self, delegate, evidence):
         self.delegate, self.evidence = delegate, evidence
 
+    @property
+    def retrieval_strategy_version(self):
+        return self.delegate.retrieval_strategy_version
+
     async def search(self, tool_input, *, request_id, remaining_seconds=3):
         started = monotonic()
         self.evidence.record("retrieval_attempt", request_id=request_id,

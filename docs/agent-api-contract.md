@@ -28,7 +28,7 @@ The [opt-in Ollama provider](ollama-provider.md) now implements real transport, 
 | Response openness | Extra metadata is allowed only in schema-open response objects; never reinterpret extra model fields as instructions |
 | Trace | `X-Request-ID`, 1–128 visible ASCII characters, correlated across dependencies |
 | Cache | HTTP responses use `Cache-Control: no-store` |
-| Source release | `aic-seed-v0.1`, existing canonical evidence and retrieval strategy |
+| Source release | `aic-seed-v0.1`, canonical evidence; production strategy `openai-hybrid-v1` |
 | JSON nesting | Reject structures deeper than 64 levels; bounded metadata cannot evade validation |
 
 Go owns visitor identity, conversation state, accepted message identity and atomic persistence. The Agent owns semantic interpretation and evidence-based execution. The browser never supplies authoritative artwork scope, history, source snapshots or conversation memory.
@@ -205,7 +205,7 @@ Go sets `deadline_at` to admission plus 55 seconds. On new-run admission, the Ag
 
 Early direct responses include their requests/results and can cite catalog facts. A whole-message assessment clarification retains the plan's requests but has no result parts or citations; it is used only when no safe independent answer can be completed. Do not use it to discard an answerable independent part. A local clarification is a finish/direct result part and can coexist with answered parts and citations. Early whole-message clarification/scope has no requests/results.
 
-`ExecutionRecord` has `workflow_id`, `profile_id`, `prompt_version`, `schema_version`, `retrieval_strategy_version`, `model_provider`, `model_name`, `model_digest`, `model_calls`, `retrieval_calls`, `refinement_rounds` and `duration_ms`. Use the versions at this document's start, `legacy-facet-v0.1` and the actual verified Ollama identity. Successful counts are 1–3 model calls, 0–4 retrieval calls and 0–1 refinement rounds; duration is 0–55,000 ms. Nonempty identity/version strings are at most 200 code points.
+`ExecutionRecord` has `workflow_id`, `profile_id`, `prompt_version`, `schema_version`, `retrieval_strategy_version`, `model_provider`, `model_name`, `model_digest`, `model_calls`, `retrieval_calls`, `refinement_rounds` and `duration_ms`. Record the configured retrieval strategy (`openai-hybrid-v1` in production, `legacy-facet-v0.1` for lexical runs) and the actual verified Ollama identity. Successful counts are 1–3 model calls, 0–4 retrieval calls and 0–1 refinement rounds; duration is 0–55,000 ms. Nonempty identity/version strings are at most 200 code points.
 
 Validate query count against executed queries, reused IDs against input retrieval cache and catalog_snapshot against the canonical catalog. Resolve citation_ids only from the evidence_snapshot or catalog_snapshot. C verifies actual tool provenance, batch limits, translation source binding and semantic execution. Go independently checks available structural relationships, canonical catalog identity, cache consistency, citation membership, language calculations, pending binding and counts. A returned snapshot is not an independent tool transcript; Go trusts the authenticated Agent for fresh-tool provenance and does not claim to prove semantic entailment.
 
@@ -499,7 +499,7 @@ The existing transport and source projection stay compatible:
 
 Tool-level `ToolInput` adds `tool_version: evidence-tool-v1`, `query_id` and `request_ids` to these four fields. The adapter forwards only the four legacy fields and the trace header. Runtime, not the model, inserts scope/top_k.
 
-`ToolResult` contains `tool_version`, `query_id`, `artwork_id`, `dataset_version`, `retrieval_strategy_version: legacy-facet-v0.1` and `candidates` (0–2 Evidence records).
+`ToolResult` contains `tool_version`, `query_id`, `artwork_id`, `dataset_version`, `retrieval_strategy_version` (the strategy actually used) and `candidates` (0–2 Evidence records).
 
 Canonical Evidence fields remain `chunk_id`, `artwork_id`, `source_id`, `source_title`, `source_url`, `source_language`, `source_locator`, `excerpt`, `license`, `license_url`, `attribution` and `normalization`. Compare every field against the immutable manifest. Original excerpts are not translated or rewritten. Compatible extra response metadata is discarded before acceptance.
 
