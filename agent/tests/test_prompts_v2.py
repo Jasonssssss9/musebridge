@@ -9,7 +9,6 @@ import unittest
 from agent.prompts import PROMPT_VERSION as V1_PROMPT_VERSION
 from agent.prompts.v2 import PROMPT_VERSION, build_messages
 from agent.runtime.errors import WorkflowError
-from agent.runtime.followup_plan import planning_schema
 from agent.tools.evidence import EvidenceManifest
 from agent.testing.v2 import (
     FixtureProfile, ScriptedModel, example, make_run, memory_update, simulate_commit,
@@ -43,76 +42,41 @@ class PromptV2Tests(unittest.TestCase):
         payload["translation"]["text"] = "Mutated after rendering"
         self.assertEqual(json.loads(messages[1]["content"]), original)
 
-    def test_task_policy_applies_to_initial_and_followup_planning(self):
-        history = [{"answer_text": "Private previous visitor answer"}]
-        for operation, turns, expected in (("plan", history, True), ("plan", [], True),
-                                            ("assess", history, False), ("final", history, False)):
-            with self.subTest(operation=operation, has_history=bool(turns)):
-                payload = {"original_question": "Which mark?", "recent_turns": turns}
-                wire = planning_schema(schema("Plan"), payload) if operation == "plan" else {}
-                system, data = build_messages(operation, payload, wire)
-                self.assertEqual("Plan from the visitor" in system["content"], expected)
-                self.assertNotIn("Private previous visitor answer", system["content"])
-                user_data = json.loads(data["content"])
-                if expected:
-                    self.assertEqual(user_data.pop("source_sentences"), [{"sentence": 1, "text": "Which mark?"}])
-                self.assertEqual(user_data, payload)
+    def test_all_stages_keep_the_visitor_message_and_context_in_the_data_message(self):
+        for turns in ([], [{"answer_text": "A private earlier exchange."}]):
+            payload = {"original_question": "¿Y la pared? 第二句保留。", "recent_turns": turns}
+            for operation, contract in (("plan", "Plan"), ("assess", "AssessmentDecision"),
+                                        ("final", "FinalDecision")):
+                with self.subTest(operation=operation, turns=turns):
+                    system, data = build_messages(operation, payload, schema(contract))
+                    self.assertEqual(json.loads(data["content"]), payload)
+                    self.assertNotIn("第二句保留", system["content"])
+                    self.assertNotIn("A private earlier exchange.", system["content"])
 
-    def test_numbered_sources_stay_verbatim_in_the_user_message(self):
-        question = "¿Qué material usó?   第二句保留  空格！"
-        payload = {"original_question": question, "recent_turns": [{"answer_text": "history"}]}
-        original = deepcopy(payload)
-        system, data = build_messages("plan", payload, planning_schema(schema("Plan"), payload))
-        wire = json.loads(data["content"])
-        self.assertEqual(wire.pop("source_sentences"), [
-            {"sentence": 1, "text": "¿Qué material usó?"},
-            {"sentence": 2, "text": "第二句保留  空格！"},
-        ])
-        self.assertEqual(wire, original)
-        self.assertEqual(payload, original)
-        self.assertNotIn("第二句保留", system["content"])
-
-    def test_source_wording_only_uses_accepted_excerpts_and_keeps_the_wire_payload(self):
+    def test_source_prose_is_provided_intact_as_data_in_all_four_languages(self):
         manifest = EvidenceManifest.load()
-        van_gogh = dict(manifest.records["aic-28560-description-01"])
-        morisot = dict(manifest.records["aic-11723-description-01"])
-        for operation in ("assess", "final"):
-            for lang, wording in (("en", "might suggest"), ("es", "podría sugerir"),
-                                  ("zh-CN", "整幅画可能"), ("ko", "암시할 수도")):
-                payload = {"answer_language": lang, "evidence": [van_gogh]}
-                system, data = build_messages(operation, payload, {})
-                guide = system["content"].split("Wording guide for the accepted excerpts.", 1)[1]
-                self.assertIn(wording, guide)
-                self.assertNotIn("bedspread", guide)
-                self.assertEqual(json.loads(data["content"]), payload)
+        records = [manifest.records["aic-28560-description-01"], manifest.records["aic-11723-description-01"]]
+        for record in records:
+            for language in ("en", "es", "zh-CN", "ko"):
+                with self.subTest(artwork=record["artwork_id"], language=language):
+                    payload = {"answer_language": language, "evidence": [dict(record)]}
+                    for operation in ("assess", "final"):
+                        system, data = build_messages(operation, payload, {"type": "object"})
+                        self.assertEqual(json.loads(data["content"]), payload)
+                        self.assertNotIn(record["excerpt"], system["content"])
+                        self.assertNotIn("available_statements", data["content"])
 
-        for sources in ([], [{**morisot, "excerpt": "A different release says something new."}]):
-            system, data = build_messages("assess", {"answer_language": "en", "evidence": sources}, {})
-            self.assertNotIn("Wording guide for the accepted excerpts.", system["content"])
-            self.assertNotIn("A different release", system["content"])
-            self.assertEqual(json.loads(data["content"])["evidence"], sources)
-
-    def test_operations_include_shared_memory_and_terminal_only_final_policy(self):
+    def test_operation_policies_and_memory_are_loaded_together(self):
         self.assertEqual(PROMPT_VERSION, "museum-prompts-v2")
         self.assertEqual(V1_PROMPT_VERSION, "museum-prompts-v1")
-        for operation in ("plan", "assess", "final"):
+        directory = Path(__file__).resolve().parents[1] / "prompts/v2"
+        for operation, file in (("plan", "interpret_and_plan.md"),
+                                ("assess", "assess_and_respond.md"), ("final", "final_response.md")):
             with self.subTest(operation=operation):
-                policy = build_messages(operation, {}, {})[0]["content"]
-                self.assertIn("memory_update", policy)
-                self.assertIn("At most one", policy)
-                self.assertIn("original question", policy)
-                self.assertIn("Spanish", policy)
-                self.assertIn("Korean", policy)
-                self.assertIn("Required JSON output schema:", policy)
-        planner = build_messages("plan", {}, {})[0]["content"]
-        self.assertIn("translation is separate", planner)
-        self.assertIn("literal current-message fragment", planner)
-        self.assertIn("Catalog facts do not count", planner)
-        self.assertIn("Do not change pigments to colors", planner)
-        self.assertNotIn("This is the final model operation", planner)
-        final = build_messages("final", {}, {})[0]["content"]
-        self.assertIn("This is the final model operation", final)
-        self.assertIn("No further", final)
+                system, _ = build_messages(operation, {}, {"type": "object"})
+                for source in ("core_policy.md", "memory_policy.md", file):
+                    self.assertIn((directory / source).read_text(encoding="utf-8").strip(),
+                                  system["content"])
 
     def test_schema_and_payload_are_detached_and_non_json_data_is_rejected(self):
         payload, output_schema = {"original_question": "Hello"}, {"type": "object"}

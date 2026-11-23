@@ -1,9 +1,8 @@
-"""Cross-check scoped source selection, localized rendering and committed memory."""
-import json
+"""Compatibility of archived source-selection decisions and their rendering."""
 import unittest
 from copy import deepcopy
 
-from agent.prompts.v2 import build_messages
+from agent.prompts.v2.readings import source_statements
 from agent.runtime.context_v2 import build_answer_input
 from agent.runtime.grounding import grounded_memory, render_catalog_facts, render_evidence_gaps
 from agent.runtime.errors import WorkflowError
@@ -95,8 +94,7 @@ class SourceCheckTests(unittest.TestCase):
             with self.subTest(language=language):
                 payload = {**self.payload, "answer_language": language}
                 wire = assessment_schema(self.base, payload)
-                messages = build_messages("assess", payload, wire)
-                statements = json.loads(messages[1]["content"])["available_statements"]
+                statements = source_statements(payload["evidence"], language, payload["catalog_facts"])
                 self.assertEqual({row["citation_id"] for row in statements.values()},
                                  {"aic-11723-description-01", "aic-11723-catalog-title",
                                   "aic-11723-catalog-artist", "aic-11723-catalog-date_display"})

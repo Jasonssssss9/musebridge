@@ -1,8 +1,10 @@
 # M2 verification record
 
-In controlled integration, a visitor can open either artwork, ask a question in English, Spanish, Chinese or Korean, read a Qwen answer with its sources, and continue the conversation. Go owns the conversation, the Python Agent decides when to retrieve, and Ollama serves the model. Independent visitor-quality acceptance remains open.
+In controlled integration, a visitor can open either artwork, ask a question in English, Spanish, Chinese or Korean, read a Qwen answer with its sources, and continue the conversation. Go owns the conversation, Qwen decides when to retrieve and the Python Agent executes the lookup, and Ollama serves the model. Independent visitor-quality acceptance remains open.
 
 The live measurements below apply to the implementation recorded at [69c5333](https://github.com/Jasonssssss9/musebridge/commit/69c53334cf12cfeed59261637f35201465647731). The [offline engineering checkpoint](#offline-engineering-checkpoint) describes the later candidate. The [M3 plan](agent-plan.md#m3-deploy-and-complete-acceptance) assigns its outstanding qualification and release work.
+
+The later [model-authorship evaluation](model-authorship-evaluation.md) covers the workflow that returns model-written replies and memory on every route. The results below describe the earlier implementation.
 
 ## Public development result
 

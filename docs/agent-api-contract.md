@@ -31,7 +31,7 @@ The [opt-in Ollama provider](ollama-provider.md) now implements real transport, 
 | Source release | `aic-seed-v0.1`, canonical evidence; production strategy `openai-hybrid-v1` |
 | JSON nesting | Reject structures deeper than 64 levels; bounded metadata cannot evade validation |
 
-Go owns visitor identity, conversation state, accepted message identity and atomic persistence. The Agent owns semantic interpretation and evidence-based execution. The browser never supplies authoritative artwork scope, history, source snapshots or conversation memory.
+Go owns visitor identity, conversation state, accepted message identity and atomic persistence. The model makes conversational decisions and writes replies and semantic memory. The Python Agent owns evidence validation and bounded execution of those decisions. The browser never supplies authoritative artwork scope, history, source snapshots or conversation memory.
 
 Supported response language values are `en`, `es`, `zh-CN` and `ko`. `LanguagePreference` also permits `auto`. `und` and `other` are planner detection values only, never response languages.
 
@@ -293,9 +293,9 @@ The response envelope still has a 2,000-code-point total and a verified model ou
 
 ### 4.3 MemoryUpdate and pending operations
 
-`MemoryUpdate` has exactly active_topic, continuity_summary and pending_update. The terminal model operation supplies a valid proposal. Refinement produces no update. For factual replies the Agent records the current visitor message once in its original language. Each checked part carries a support outcome and a source ID or a local evidence gap. Relevant English source wording is retained within the summary budget. An attributed visitor impression may also be quoted. A greeting or thanks can preserve the preceding state. Exact translations retain their pinned source and the validated proposal. These choices use the same wire schema and pending-state validation.
+`MemoryUpdate` has exactly active_topic, continuity_summary and pending_update. The terminal model operation authors this proposal on every conversational route. Python validates the fields and pending bindings. Go commits the accepted semantic fields together with the turn and independently verified source records. A refinement does not update memory, and a technical failure cannot advance the conversation revision.
 
-For an `insufficient` factual part, the Agent renders a local verification limit in the resolved answer language. It can identify the part by its literal visitor fragment or its position in the message. This wording applies to this turn only. It leaves the accepted support decision, empty citation list, other parts and pinned translations intact.
+For an `insufficient` part, the model writes what it could not establish from the information available for this turn. The body and the English handoff must preserve the difference between a missing detail here and a claim about the entire museum collection. The result has no citations for that part.
 
 | Pending operation | Effect |
 | --- | --- |
@@ -376,7 +376,7 @@ Queries are unique under NFKC, case folding and collapsed whitespace. Preserve c
 
 ### 5.3 Plan actions
 
-Every Plan includes `language_decision`.
+Every live planning call uses the same Plan contract and includes `language_decision`. The model selects the route and supplies the precise question, queries or terminal response for that route. The service validates and dispatches the selected action.
 
 | Action | Other required fields | Structural / runtime rule |
 | --- | --- | --- |
@@ -384,7 +384,7 @@ Every Plan includes `language_decision`.
 | `retrieve` | `requests`, `queries` | At least one clear artwork_fact request; 1–2 initial queries covering clear artwork_fact requests only; forbidden when retrieval cache is complete |
 | `answer_from_context` | `requests` | At least one clear artwork_fact request and nonempty validated retrieval cache; no initial queries |
 | `clarify` | `text`, `memory_update` | Whole-message ambiguity, source/length/language clarification or prioritization; pending set with request_id=null |
-| `out_of_scope` | `text`, `memory_update` | Scope guidance; pending update keep or clear |
+| `out_of_scope` | `text`, `memory_update` | The whole message is outside the artwork and guide conversation. An expected evidence gap on an artwork question takes the retrieval or cached-evidence route. Clarify an unresolved referent when it changes the evidence needed. Pending update is keep or clear. |
 
 All populated request/result arrays have 1–4 entries. Whole-message text is 1–2,000 code points in the primary response language. Clarification/scope text may guide the conversation but must not introduce unsupported artwork facts. An outside-only message should use the scope action. If an independent clear part can be answered, use a result-bearing route with local clarification rather than blocking the whole message. Source-unavailable translation, incompatible output languages and ungroupable request overflow are whole-message constraints and may require clarification before any content answer.
 
@@ -430,6 +430,8 @@ This is a synthetic protocol example. It does not require every conversational r
 
 AssessmentDecision is finish, clarify or refine. Finish has results and memory_update. Whole-message clarify has text and memory_update with pending set/request_id=null. Refine retains reason_code, request_ids and queries; it never creates a memory update. FinalDecision permits only finish or whole-message clarify. No later operation may change language, original requests, their declared resolution, scope, release or translation source.
 
+The terminal model writes the complete visible wording, including returned fact, gap and social text. The Agent passes each accepted text through verbatim. It joins separate request parts in order with two newlines. A whole-message clarification or scope response uses the model’s standalone text. The same rule applies on a fresh conversation, a follow-up and a cache hit.
+
 A RequestResult has request_id, support, text (1–2,000 code points) and citation_ids. The assembled answer, including blank-line separators, must also fit 2,000 code points and the verified model output budget; per-part limits are not separate additive budgets.
 
 | Planned request | Allowed result and sources |
@@ -442,7 +444,7 @@ A RequestResult has request_id, support, text (1–2,000 code points) and citati
 
 Catalog metadata cannot support a noncatalog claim. A supported artwork_fact result requires at least one retrieval Evidence citation that actually supports its noncatalog content; provenance alone does not establish entailment. A mixed title-and-technique overview may use artwork_fact with both source types, or separate auditable requests. Do not combine independent supported and unsupported factual asks into one result merely to hide a gap.
 
-Results cover every request exactly once in order. At most one clarification part is allowed, with an exactly linked pending set. Prefer answering clear parts first when their original order permits; do not add a second unnecessary question in other parts. Whole-message clarification is not a substitute for a safe partial answer.
+For assessment and final generation, the workflow binds the finish result count and ordered IDs to the frozen requests before calling the model. The model can write several connected sentences in one result. The application validates the returned count, IDs and order before committing the turn. At most one clarification part is allowed, with an exactly linked pending set. Prefer answering clear parts first when their original order permits; do not add a second unnecessary question in other parts. Whole-message clarification is not a substitute for a safe partial answer.
 
 An insufficient part identifies the unconfirmed fact and may continue with relevant general information. It must not claim the museum has no other information. Subjective discussion may refer to the visitor's stated observation with explicit attribution and conditional language; it must not add unseen details or imply historical intent. Creative fictional narratives are deferred; an observation prompt or general discussion is allowed without presenting imagined events as history.
 

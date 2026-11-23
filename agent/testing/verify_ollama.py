@@ -20,14 +20,14 @@ from knowledge.http_service import create_server
 from agent.providers.capabilities import CHECKS, implementation_fingerprint, make_record, validate_record
 from agent.providers.ollama import OllamaModel
 from agent.providers.sizing import QwenPromptSizer
-from agent.runtime.context_v2 import build_answer_input
+from agent.runtime.context_v2 import build_answer_input, fit_model_call
+from agent.runtime.errors import WorkflowError
 from agent.runtime.service_errors import failure
 from agent.runtime.validation import ContractViolation
 from agent.runtime.validation_v2 import ContractValidatorV2, assemble_answer
-from agent.prompts.v2 import build_messages
 from agent.service import ModelIdentity, create_workflow_runtime
 from agent.testing.probe_quality import (aggregate, expected, five_pair_capacity, grade_case, operation_summary,
-                                         project_plan, review_slots, visitor_cases)
+                                         review_slots, visitor_cases)
 from agent.testing.v2 import make_run, medium_plan
 from agent.tools.evidence import EvidenceManifest
 from agent.tools.retrieval import RetrievalTool, configured_mode
@@ -77,8 +77,6 @@ class ProbeModel(OllamaModel):
             item.pop("raw_content", None)
             item.update(outcome="completed", schema_result="valid", completion=asdict(completion),
                         estimated_prompt_tokens=completion.estimated_prompt_tokens)
-            if item["schema"] == "Plan" and "visitor_task" in completion.data:
-                item["canonical_plan"] = project_plan(completion.data, payload)
             return completion
         except Exception as exc:
             cause = exc.__cause__
@@ -160,6 +158,18 @@ async def probe_case(spec, registry, model, report):
     return entry
 
 
+def fit_probe_call(model, operation, payload, schema):
+    """Use the workflow prompt budget and keep the complete recorded probe input."""
+    output_tokens = model.profile.plan_output_tokens if operation == "plan" else model.profile.answer_output_tokens
+    fitted, schema, messages = fit_model_call(
+        operation, payload, schema, prompt_sizer=model.sizer,
+        context_limit=model.profile.context_tokens, output_tokens=output_tokens,
+    )
+    if fitted["recent_turns"] != payload["recent_turns"]:
+        raise WorkflowError("agent_context_limit", "The original probe history does not fit.", phase="context")
+    return schema, messages
+
+
 async def final_diagnostic(registry, model, tool, manifest):
     # This diagnostic exercises the final operation even when every planner lookup fails.
     run = make_run(manifest=manifest)
@@ -171,8 +181,9 @@ async def final_diagnostic(registry, model, tool, manifest):
     schema = ContractValidatorV2().schema("FinalDecision")
     payload = build_answer_input(run, plan["requests"], [query], evidence, answer_language="en",
                                  complete_scope=False, allow_refinement=False)
+    schema, messages = fit_probe_call(model, "final", payload, schema)
     completion = await registry.inference_gate.wrap(model).complete_structured(operation="final",
-        messages=build_messages("final", payload, schema), output_schema=schema, profile=model.profile,
+        messages=messages, output_schema=schema, profile=model.profile,
         deadline=monotonic()+15, trace_context={"request_id": "probe-final-operation"})
     answer, _, _ = assemble_answer(run, plan, completion.data, evidence, run["context"]["catalog_facts"], ContractValidatorV2())
     return answer

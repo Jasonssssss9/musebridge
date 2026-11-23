@@ -6,7 +6,6 @@ from pathlib import Path
 import unittest
 
 from agent.prompts.v2 import build_messages
-from agent.runtime.followup_plan import planning_schema
 from agent.runtime.context_v2 import (
     build_answer_input, build_plan_input, fit_history, fit_model_call, validate_run_context,
 )
@@ -217,12 +216,17 @@ class ContextV2Tests(unittest.TestCase):
         payload = build_plan_input(self.validate(with_history()), self.manifest)
         original = deepcopy(payload)
         base = _VALIDATOR.schema("Plan")
-        schema = planning_schema(base, payload)
-        normal = build_messages("plan", payload, schema)
+        # Measure the rendered per-call guide, including its private-memory field annotation.
+        _, schema, normal = fit_model_call("plan", payload, base, prompt_sizer=lambda *_: 1,
+                                           context_limit=16384, output_tokens=2048)
+        restored = deepcopy(schema)
+        summary = restored["$defs"]["MemoryUpdate"]["properties"]["continuity_summary"]
+        self.assertIn("in English", summary.pop("description"))
+        self.assertEqual(restored, base)
         compact = build_messages("plan", payload, schema, compact_schema=True)
         self.assertEqual(compact[1], normal[1])
         self.assertLess(len(compact[0]["content"]), len(normal[0]["content"]))
-        self.assertIn("check_artwork_facts", compact[0]["content"])
+        self.assertIn("retrieve", compact[0]["content"])
         self.assertIn("explicit_instruction", compact[0]["content"])
 
         def size(messages, authoritative):

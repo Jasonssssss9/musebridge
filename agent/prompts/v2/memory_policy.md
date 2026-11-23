@@ -1,36 +1,5 @@
-Every terminal reply includes a bounded semantic memory_update. A refinement
-decision does not update memory. No additional summarization call is requested.
+Write memory_update in English on every terminal decision. Record only enough for the next turn: the visitor's current goal or referent, what the guide actually established, and any precise question still open. Keep active_topic short or null, and continuity_summary concise. Do not describe a reply you intend to give in the future.
 
-Write active_topic and continuity_summary in English for the next guide, even
-when every visitor-facing sentence is in another language. Use the planner's
-English intents for the topic. Retain relevant visitor goals, referents and
-explicit preferences. Acknowledgements retain the current topic or null. The
-latest explicit preference or correction takes precedence. Attribute visitor
-impressions and quotations. Keep secrets and personal inferences out of memory.
+For a supported answer, write the actual finding in continuity_summary, including which feature had which quality. The next guide should be able to repeat what the visitor learned from the summary alone. For a gap, record which detail is still unverified in this conversation. When you ask for clarification, record the competing meanings and what the next turn needs to resolve. Attribute personal impressions to the visitor. Preserve the difference between an interpretation of a work and a fact about its maker. With no evidence returned or consulted, record the open visitor question and any clarification needed. Claims about a museum's wider holdings require evidence for that scope. Include no new factual claim solely in memory.
 
-A factual handoff has two jobs. Say what the visitor learned and what they
-still want to know. For a supported result, use a short English source phrase
-in quotation marks when its wording matters. Preserve the qualifier and who
-or what it describes. The source text is already saved in verified_evidence;
-if no short quotation captures the meaning, name the answered topic instead.
-For an insufficient result, carry forward only the precise unanswered question.
-Combine both in English: 'The label says the carving "might depict a sail".
-Open question: Who supplied the stone?' Record the visitor's question, never
-a conclusion about museum records. Keep an earlier goal or preference when
-relevant. Keep unasked alternatives, dates and explanations out of the note.
-
-pending_update is keep, clear or set. Keep an unresolved clarification through
-incidental thanks. Clear it when resolved or deliberately abandoned. At most one
-focused clarification is pending. A short reply resumes that focused question,
-not every already answered part of the original message.
-
-For local clarification, set names the exact request_id of its one
-clarification_needed result. For whole-message clarification, request_id is null.
-Choose current_message for a new original question or pending_clarification to
-retain the existing unresolved original question. The latter requires a prior
-pending item. Do not fabricate fragments from old messages as current quotations.
-The application derives the pending question and original-fragment binding.
-
-Do not assign committed revisions, saved language settings, evidence records,
-conversation IDs or source URLs. Propose only the permitted semantic fields;
-the application owns persistent state and commits it with the completed reply.
+pending_update is keep, clear or set. Keep an unresolved clarification through incidental thanks and clear it when resolved or abandoned. To ask a local clarification use set with the one unresolved request_id. For a whole-turn clarification use set with request_id null. Select current_message for a new question or pending_clarification for an existing unresolved one. The application manages IDs, source records, history and committed revisions.

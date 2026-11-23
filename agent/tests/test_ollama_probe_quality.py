@@ -132,12 +132,9 @@ class ProbeQualityTests(unittest.TestCase):
 
 
 class ProviderObservationTests(unittest.IsolatedAsyncioTestCase):
-    async def test_tagged_provider_output_retains_raw_and_records_actual_source_binding(self):
+    async def test_provider_plan_is_recorded_and_graded_without_rewriting(self):
         case = next(c for c in visitor_cases(EvidenceManifest.load()) if c.name == "five-pair-sizing")
-        public = medium_plan(case.run)
-        raw = {"visitor_task": "check_artwork_facts", "language_decision": public["language_decision"],
-               "evidence_action": "search", "facts": [{"source": {"sentence": 1},
-                   "english_search_question": public["queries"][0]["query"]}]}
+        raw = medium_plan(case.run)
         completion = OllamaCompletion(raw, "test", "test", "test", "stop", 1, 1, 2, 0, {})
         payload = {"original_question": case.run["question"], "recent_turns": case.run["context"]["recent_turns"]}
         report = {"model_attempts": []}
@@ -149,7 +146,7 @@ class ProviderObservationTests(unittest.IsolatedAsyncioTestCase):
                 trace_context={"request_id": "tagged-probe"})
         [attempt] = report["model_attempts"]
         self.assertEqual(attempt["completion"]["data"], raw)
-        self.assertEqual(attempt["canonical_plan"]["requests"][0]["original_fragment"], case.run["question"])
+        self.assertNotIn("canonical_plan", attempt)
         self.assertTrue(grade_case(expected(case), None, [attempt], [])[0]["route"])
         self.assertEqual(review_slots([attempt], None)["query_meaning"], "pending")
 

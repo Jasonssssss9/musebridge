@@ -7,15 +7,13 @@ import json
 from pathlib import Path
 from time import monotonic
 
-from agent.prompts.v2 import build_messages
 from agent.providers.capabilities import implementation_fingerprint
 from agent.providers.sizing import QwenPromptSizer
 from agent.runtime.errors import WorkflowError
-from agent.runtime.source_check import assessment_schema, expand_assessment
 from agent.runtime.validation import ContractViolation
 from agent.runtime.validation_v2 import ContractValidatorV2
 from agent.testing.planner_comparison import DialogueProbeModel
-from agent.testing.verify_ollama import ensure_probe_identity, save
+from agent.testing.verify_ollama import ensure_probe_identity, fit_probe_call, save
 
 
 def archived_operations(baseline, validator):
@@ -62,14 +60,14 @@ async def evaluate(opts):
             trace = turn["request_id"]
             row = {"request_id": trace, "operation": operation, "support_and_citations": None}
             report["operations"].append(row)
-            schema = assessment_schema(validator.schema(name), payload)
             try:
                 await ensure_probe_identity(model, report, trace)
+                schema, messages = fit_probe_call(model, operation, payload, validator.schema(name))
                 deadline = monotonic() + 15
                 reply = await model.complete_structured(
-                    operation=operation, messages=build_messages(operation, payload, schema),
+                    operation=operation, messages=messages,
                     output_schema=schema, profile=model.profile, deadline=deadline, trace_context={"request_id": trace})
-                decision = expand_assessment(reply.data, payload, schema)
+                decision = reply.data
                 validator.validate(name, decision)
                 if monotonic() > deadline:
                     raise WorkflowError("generation_timeout", "The assessment deadline was exceeded.",

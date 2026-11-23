@@ -1,0 +1,260 @@
+[
+  {
+    "name": "old-bedroom-mood",
+    "scenario": "old-bedroom-mood",
+    "artwork": "aic-28560",
+    "split": "old",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "How does the museum describe The Bedroom?",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ],
+        "review": "Describe visible features in connected prose and keep the possible energy as an impression of the picture."
+      },
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Does that mean Van Gogh himself was anxious?",
+        "status": "insufficient",
+        "sources": [],
+        "review": "Leave the artist’s mental state open. Retain the earlier visual interpretation as context."
+      }
+    ]
+  },
+  {
+    "name": "old-bedroom-artist-emotion",
+    "scenario": "old-bedroom-artist-emotion",
+    "artwork": "aic-28560",
+    "split": "old",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Did Van Gogh personally feel anxious while painting this room?",
+        "status": "insufficient",
+        "sources": [],
+        "review": "Even without a preceding successful turn, leave the painter’s own feeling unknown from these records."
+      }
+    ]
+  },
+  {
+    "name": "old-bedroom-attributed-mood",
+    "scenario": "old-bedroom-attributed-mood",
+    "artwork": "aic-28560",
+    "split": "old",
+    "turns": [
+      {
+        "language": "es",
+        "language_override": null,
+        "question": "Según la descripción del museo, ¿qué energía podría sugerir el cuadro?",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ],
+        "review": "Answer in Spanish with the museum’s possible impression of the picture. Keep the same qualifier and subject in English continuity notes."
+      }
+    ]
+  },
+  {
+    "name": "old-bedroom-caption",
+    "scenario": "old-bedroom-caption",
+    "artwork": "aic-28560",
+    "split": "old",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "I'm making a caption about the way the paint was laid down. How does the museum describe the marks?",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ],
+        "review": "Answer about the appearance of the marks in a complete caption-ready sentence."
+      }
+    ]
+  },
+  {
+    "name": "old-morisot-spanish",
+    "scenario": "old-morisot-spanish",
+    "artwork": "aic-11723",
+    "split": "old",
+    "turns": [
+      {
+        "language": "es",
+        "language_override": null,
+        "question": "¿Qué sugieren las pinceladas del fondo?",
+        "status": "answered",
+        "sources": [
+          "aic-11723-description-01"
+        ],
+        "review": "Answer in Spanish; retain suggestion and furnishings, without attributing intention."
+      }
+    ]
+  },
+  {
+    "name": "old-morisot-compound",
+    "scenario": "old-morisot-compound",
+    "artwork": "aic-11723",
+    "split": "old",
+    "turns": [
+      {
+        "language": "es",
+        "language_override": null,
+        "question": "¿Qué motivo parecen formar las pinceladas en la pared? ¿Se sabe si Morisot pintó cada pétalo por separado?",
+        "status": "partially_answered",
+        "sources": [
+          "aic-11723-description-01"
+        ],
+        "review": "Report the suggested floral pattern and distinguish it from an undocumented petal-by-petal technique."
+      }
+    ]
+  },
+  {
+    "name": "old-morisot-catalog",
+    "scenario": "old-morisot-catalog",
+    "artwork": "aic-11723",
+    "split": "old",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Who painted this work?",
+        "status": "answered",
+        "sources": [
+          "aic-11723-catalog-artist"
+        ],
+        "review": "Give the cataloged artist in a natural sentence."
+      }
+    ]
+  },
+  {
+    "name": "new-bedroom-lines",
+    "scenario": "new-bedroom-lines",
+    "artwork": "aic-28560",
+    "split": "new",
+    "turns": [
+      {
+        "language": "zh-CN",
+        "language_override": null,
+        "question": "馆方觉得，那些往远处延伸的线条和整幅画给人的感觉有什么关系？",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ],
+        "review": "Relate the lines to a possible impression of the whole picture, in Chinese; do not claim what Van Gogh felt."
+      }
+    ]
+  },
+  {
+    "name": "new-bedroom-material",
+    "scenario": "new-bedroom-material",
+    "artwork": "aic-28560",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "What did he paint on, and do we know the size of his brush?",
+        "status": "partially_answered",
+        "sources": [
+          "aic-28560-medium"
+        ],
+        "review": "Name the canvas support; preserve the unverified brush size in the answer and handoff."
+      }
+    ]
+  },
+  {
+    "name": "new-bedroom-feeling",
+    "scenario": "new-bedroom-feeling",
+    "artwork": "aic-28560",
+    "split": "new",
+    "turns": [
+      {
+        "language": "ko",
+        "language_override": null,
+        "question": "저는 이 방이 꽤 편안하게 느껴져요.",
+        "status": "conversational",
+        "sources": [],
+        "review": "Treat the feeling of calm as the visitor’s; respond naturally in Korean."
+      }
+    ]
+  },
+  {
+    "name": "new-morisot-pattern",
+    "scenario": "new-morisot-pattern",
+    "artwork": "aic-11723",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "On the wall behind her, what pattern do the marks bring to mind?",
+        "status": "answered",
+        "sources": [
+          "aic-11723-description-01"
+        ],
+        "review": "Use the source wording as a suggested floral wallpaper pattern, not literal flowers."
+      },
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "So can we say for sure that she meant to paint real flowers?",
+        "status": "insufficient",
+        "sources": [],
+        "review": "Leave artist intention and real flowers open; do not replace the previous supported impression."
+      }
+    ]
+  },
+  {
+    "name": "new-morisot-scope",
+    "scenario": "new-morisot-scope",
+    "artwork": "aic-11723",
+    "split": "new",
+    "turns": [
+      {
+        "language": "es",
+        "language_override": null,
+        "question": "Me da curiosidad: ¿quién fabricó el papel pintado que parece verse al fondo?",
+        "status": "insufficient",
+        "sources": [],
+        "review": "Keep the manufacturer unknown from this lookup. Do not assert the museum has no other information."
+      }
+    ]
+  },
+  {
+    "name": "new-morisot-reference",
+    "scenario": "new-morisot-reference",
+    "artwork": "aic-11723",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "What is that thing I’m pointing to?",
+        "status": "clarification_needed",
+        "sources": [],
+        "review": "Ask which visible feature or location the visitor means; do not guess a subject."
+      }
+    ]
+  },
+  {
+    "name": "new-bedroom-general",
+    "scenario": "new-bedroom-general",
+    "artwork": "aic-28560",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "In painting generally, what does a viewer mean by brushwork?",
+        "status": "conversational",
+        "sources": [],
+        "review": "Explain the term naturally without an artwork-specific citation or attributing the explanation to the museum."
+      }
+    ]
+  }
+]

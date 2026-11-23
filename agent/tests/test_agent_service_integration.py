@@ -75,11 +75,16 @@ class IntegrationTests(unittest.IsolatedAsyncioTestCase):
     async def test_real_http_chain_and_retained_replay_for_both_artworks(self):
         for artwork in ("aic-28560", "aic-11723"):
             run = make_run(artwork_id=artwork, manifest=self.manifest)
-            self.model.responses.extend((medium_plan(run), medium_answer(run)))
+            proposed = medium_answer(run, text="The collection lists the medium as oil paint on canvas.")
+            proposed["memory_update"]["continuity_summary"] = "The visitor learned that the listed medium is oil on canvas."
+            self.model.responses.extend((medium_plan(run), proposed))
             response = await self.client.post("/internal/v2/agent/runs", json=run)
             self.assertEqual(response.status_code, 200, response.text)
             completed = ContractCodec().decode_run_snapshot(response.content)
             result = completed["result"]
+            self.assertEqual(result["answer"]["text"], proposed["results"][0]["text"])
+            self.assertEqual(result["request_results"], proposed["results"])
+            self.assertEqual(result["conversation_update"]["memory"], proposed["memory_update"])
             self.assertEqual(result["answer"]["citations"][0]["chunk_id"], artwork + "-medium")
             self.assertEqual(result["execution"]["model_name"], "SYNTHETIC-TEST-ONLY")
             self.assertEqual((result["execution"]["model_calls"], result["execution"]["retrieval_calls"]), (2, 1))

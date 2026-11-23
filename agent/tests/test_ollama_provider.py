@@ -283,6 +283,33 @@ class SizingAndGrammarTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             StrictValidator(SCHEMA).validate({"text": " "})
 
+    def test_generation_grammar_preserves_types_for_direct_scope_and_clarification(self):
+        grammar = grammar_schema(ContractValidatorV2().schema("Plan"))
+        defs = grammar["$defs"]
+        item = defs["DirectResponsePlan"]["properties"]["requests"]["items"]
+        validator = StrictValidator({"$defs": defs, **item})
+        request = dict(id="r1", original_fragment="Who made it?", intent="Identify the artist.",
+                       kind="catalog_fact", resolution="clear")
+        self.assertTrue(validator.is_valid(request))
+        self.assertFalse(validator.is_valid(dict(request, kind="artwork_fact")))
+        self.assertTrue(validator.is_valid(dict(request, kind="artwork_fact", resolution="needs_clarification")))
+        self.assertFalse(validator.is_valid({}))
+
+        for route, actions in (("ClarificationPlan", {"set"}), ("ScopePlan", {"clear", "keep"})):
+            memory = defs[route]["properties"]["memory_update"]
+            validator = StrictValidator({"$defs": defs, **memory})
+            for action in ("keep", "clear", "set"):
+                pending = {"action": action}
+                if action == "set":
+                    pending.update(source="current_message", request_id=None)
+                record = {"active_topic": None, "continuity_summary": "Visitor asked about the maker.",
+                          "pending_update": pending}
+                self.assertEqual(validator.is_valid(record), action in actions)
+                if route == "ClarificationPlan" and action == "set":
+                    pending["request_id"] = "r1"
+                    self.assertFalse(validator.is_valid(record))
+            self.assertFalse(validator.is_valid({}))
+
     def test_bpe_sizer_verifies_assets_and_accounts_for_utf8_normalization_and_wrapper(self):
         alphabet = sorted(pre_tokenizers.ByteLevel.alphabet())
         tokenizer = Tokenizer(models.BPE(vocab={text:index for index,text in enumerate(alphabet)}, merges=[]))

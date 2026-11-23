@@ -7,14 +7,12 @@ import json
 from pathlib import Path
 from time import monotonic
 
-from agent.prompts.v2 import build_messages
 from agent.providers.capabilities import implementation_fingerprint
 from agent.providers.sizing import QwenPromptSizer
 from agent.runtime.errors import WorkflowError
-from agent.runtime.followup_plan import planning_schema
 from agent.runtime.validation_v2 import ContractValidatorV2
 from agent.testing.planner_comparison import DialogueProbeModel, plan_check
-from agent.testing.verify_ollama import ensure_probe_identity, save
+from agent.testing.verify_ollama import ensure_probe_identity, fit_probe_call, save
 
 
 def frozen_turns(baseline):
@@ -30,7 +28,9 @@ def frozen_turns(baseline):
             raise ValueError(f"Multiple PLAN attempts for {trace}.")
         seen.add(trace)
         case, turn = turns[trace]
-        yield case, turn, attempt["model_input"]
+        payload = dict(attempt["model_input"])
+        payload.pop("source_sentences", None)  # Prompt-only field in older reports.
+        yield case, turn, payload
 
 
 def summary(rows):
@@ -54,15 +54,15 @@ async def replay_turn(model, validator, report, case, turn, payload):
     row = {"request_id": trace, "case_id": case["id"], "number": turn["number"],
            "language": case["language"], "baseline": turn["plan_check"]}
     validator.validate("PlanInput", payload)
-    schema = planning_schema(validator.schema("Plan"), payload)
     attempts = report["model_attempts"]
     offset = len(attempts)
     started = monotonic()
     deadline = None
     try:
         await ensure_probe_identity(model, report, trace)
+        schema, messages = fit_probe_call(model, "plan", payload, validator.schema("Plan"))
         deadline = monotonic() + 10.0
-        await model.complete_structured(operation="plan", messages=build_messages("plan", payload, schema),
+        await model.complete_structured(operation="plan", messages=messages,
                                         output_schema=schema, profile=model.profile, deadline=deadline,
                                         trace_context={"request_id": trace})
     except WorkflowError as error:

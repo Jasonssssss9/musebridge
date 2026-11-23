@@ -71,16 +71,11 @@ def _observed_plan(attempts):
     if data and "visitor_task" in data:
         # Archived dialogue probes saved the fitted input before the capability
         # probe began recording the canonical projection alongside raw output.
-        return project_plan(data, attempt.get("model_input", {}))
+        try:
+            return expand_plan(data, attempt.get("model_input", {}))
+        except ContractViolation:
+            return None
     return data
-
-
-def project_plan(data, payload):
-    """Use the same literal source binding as the workflow for probe grading."""
-    try:
-        return expand_plan(data, payload)
-    except ContractViolation:
-        return None
 
 
 def grade_case(expect, result, attempts, lookups):

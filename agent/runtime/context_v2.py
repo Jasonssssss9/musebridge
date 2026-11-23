@@ -12,8 +12,6 @@ from typing import Any
 from agent.prompts.v2 import build_messages
 from agent.runtime.context import PromptSizer
 from agent.runtime.errors import WorkflowError
-from agent.runtime.source_check import assessment_schema
-from agent.runtime.followup_plan import planning_schema
 from agent.runtime.validation import ContractValidator, ContractViolation
 from agent.tools.catalog import validate_catalog
 from agent.tools.evidence import EvidenceManifest
@@ -172,6 +170,32 @@ def fit_history(
     return fitted
 
 
+def _finish_schema_for_requests(output_schema: dict, requests: list[dict]) -> dict:
+    """Bind each output position to the plan while leaving the model's content untouched."""
+    schema = deepcopy(output_schema)
+    definitions = schema["$defs"]
+    results = definitions["FinishDecision"]["properties"]["results"]
+    results["minItems"] = results["maxItems"] = len(requests)
+    item_template = definitions.pop("RequestResult")
+    slots = []
+    for request in requests:
+        # Place the ID on each concrete object branch: Ollama drops allOf constraints.
+        slot = deepcopy(item_template)
+        for branch in slot["oneOf"]:
+            branch["properties"]["request_id"] = {"type": "string", "const": request["id"]}
+            branch["properties"]["text"]["description"] = (
+                "Answer the detail asked in this slot. Include an effect or explanation only when "
+                "the visitor asks for it and the passage supports it with this same subject and certainty."
+            )
+        slots.append(slot)
+    if len(slots) == 1:
+        results["items"] = slots[0]
+    else:
+        del results["items"]
+        results["prefixItems"] = slots
+    return schema
+
+
 def fit_model_call(
     operation: str, payload: dict[str, Any], output_schema: dict[str, Any], *,
     prompt_sizer: PromptSizer, context_limit: int, output_tokens: int, safety_tokens: int = 512,
@@ -182,17 +206,27 @@ def fit_model_call(
             or type(output_tokens) is not int or output_tokens <= 0
             or type(safety_tokens) is not int or safety_tokens < 0):
         raise ValueError("Context sizing configuration must use positive integer limits.")
+    if operation in {"assess", "final"} and "FinishDecision" in output_schema.get("$defs", {}):
+        output_schema = _finish_schema_for_requests(output_schema, payload["requests"])
+    if "MemoryUpdate" in output_schema.get("$defs", {}):
+        # Keep the private handoff language next to the field in the model's output guide.
+        # The public prose and the handoff may have different languages.
+        if operation == "plan":
+            output_schema = deepcopy(output_schema)
+        summary = output_schema["$defs"]["MemoryUpdate"]["properties"]["continuity_summary"]
+        summary["description"] = (
+            "Private note in English, including when the visitor speaks another language. "
+            "Record the actual finding or the precise open question in English."
+        )
     fitted = deepcopy(payload)
     while True:
-        schema = (planning_schema(output_schema, fitted) if operation == "plan"
-                  else assessment_schema(output_schema, fitted))
         for compact in ((False, True) if allow_compact else (False,)):
-            messages = build_messages(operation, fitted, schema, compact_schema=compact)
-            count = prompt_sizer(messages, deepcopy(schema))
+            messages = build_messages(operation, fitted, output_schema, compact_schema=compact)
+            count = prompt_sizer(messages, deepcopy(output_schema))
             if type(count) is not int or count < 0:
                 raise ValueError("The prompt sizer must return a nonnegative integer token count.")
             if count + output_tokens + safety_tokens <= context_limit:
-                return fitted, schema, messages
+                return fitted, output_schema, messages
         if not fitted["recent_turns"]:
             raise WorkflowError(
                 "agent_context_limit", "The required inputs exceed the model context limit.",

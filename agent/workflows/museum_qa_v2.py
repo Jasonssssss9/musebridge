@@ -23,9 +23,6 @@ from agent.runtime.context_v2 import (
     build_answer_input, build_plan_input, fit_model_call, validate_run_context,
 )
 from agent.runtime.errors import WorkflowError
-from agent.runtime.followup_plan import expand_plan
-from agent.runtime.source_check import expand_assessment
-from agent.runtime.grounding import grounded_memory, render_catalog_facts, render_evidence_gaps
 from agent.runtime.validation import ContractViolation, TRACE_ID
 from agent.runtime.validation_v2 import (
     ContractValidatorV2, assemble_answer, resolve_language, resolve_translation,
@@ -174,10 +171,6 @@ class MuseumQAWorkflowV2:
                                     phase=phase, retryable=True)
             try:
                 decision = deepcopy(completion.data)
-                if operation == "plan":
-                    decision = expand_plan(decision, fitted)
-                else:
-                    decision = expand_assessment(decision, fitted, schema)
                 self.validator.validate(schema_name, decision)
             except (ContractViolation, AttributeError, RecursionError) as exc:
                 raise WorkflowError("generation_invalid_response", "The provider returned an invalid decision.",
@@ -321,17 +314,13 @@ class MuseumQAWorkflowV2:
             }
 
         async def finalize(state: State) -> dict:
+            # Bind the model's own paragraphs to canonical citations and keep its memory proposal.
             budget.check_active()
             answer, results, memory = assemble_answer(
                 run, state["plan"], state.get("decision", state["plan"]), state["evidence"],
                 state["catalog"], self.validator,
             )
             budget.check_active()
-            render_catalog_facts(state["plan"], answer, results, state["catalog"])
-            render_evidence_gaps(state["plan"], answer, results)
-            self.validator.validate("AgentAnswer", answer)
-            memory = grounded_memory(run, state["plan"], results, memory, state["evidence"])
-            self.validator.validate("MemoryUpdate", memory)
             return {"answer": answer, "request_results": results, "memory_update": memory}
 
         graph = StateGraph(State)

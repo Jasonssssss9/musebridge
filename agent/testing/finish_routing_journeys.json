@@ -1,0 +1,226 @@
+[
+  {
+    "name": "gap-flower-model",
+    "scenario": "gap-flower-model",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Did she use a specific type of flower as the model for this pattern?",
+        "status": "insufficient",
+        "sources": [],
+        "review": "Keep the botanical model unverified from these excerpts; distinguish a suggested floral pattern from identified real flowers. No invented species or claim about the whole museum."
+      }
+    ],
+    "split": "previous"
+  },
+  {
+    "name": "gap-brush-maker",
+    "scenario": "gap-brush-maker",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Who manufactured the brush used for the wall covering?",
+        "status": "insufficient",
+        "sources": [],
+        "review": "Keep the brush maker unknown from the excerpts. Avoid inventing a maker or turning the painted appearance into an assertion about making wallpaper."
+      }
+    ],
+    "split": "previous"
+  },
+  {
+    "name": "supported-bedroom-caption",
+    "scenario": "supported-bedroom-caption",
+    "artwork": "aic-28560",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "I'm making a caption about the way the paint was laid down. How does the museum describe the marks?",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ],
+        "review": "Use a natural complete caption-ready sentence with thick and broken brushwork. Preserve any qualified visual impression and avoid an artist psychological claim."
+      }
+    ],
+    "split": "previous"
+  },
+  {
+    "name": "supported-morisot-back",
+    "scenario": "supported-morisot-back",
+    "artwork": "aic-11723",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "How do the painted marks make the furnishings in the back look?",
+        "status": "answered",
+        "sources": [
+          "aic-11723-description-01"
+        ],
+        "review": "The soft, feathery strokes suggest a floral-patterned bedspread and wallpaper; preserve the suggestion in the answer and English memory."
+      }
+    ],
+    "split": "previous"
+  },
+  {
+    "name": "two-facts-bedroom",
+    "scenario": "two-facts-bedroom",
+    "artwork": "aic-28560",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "What is the painting made of, and how does the museum describe the brush marks?",
+        "status": "answered",
+        "sources": [
+          "aic-28560-medium",
+          "aic-28560-description-01"
+        ],
+        "review": "Deliver both independently checkable facts in natural language. The medium is oil on canvas and the marks are thick and broken. Ground each result in the matching source; reflect both facts in memory."
+      }
+    ]
+  },
+  {
+    "name": "known-and-open-morisot",
+    "scenario": "known-and-open-morisot",
+    "artwork": "aic-11723",
+    "split": "new",
+    "turns": [
+      {
+        "language": "es",
+        "language_override": null,
+        "question": "¿De qué material es la obra y quién fabricó el pincel con el que Morisot pintó el fondo?",
+        "status": "partially_answered",
+        "sources": [
+          "aic-11723-medium"
+        ],
+        "review": "Respond in Spanish and report oil on canvas. Leave the maker of the artist’s brush open from the available evidence. Retain both outcomes in English memory without speculating."
+      }
+    ]
+  },
+  {
+    "name": "unresolved-referent",
+    "scenario": "unresolved-referent",
+    "artwork": "aic-11723",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Who made that?",
+        "status": "clarification_needed",
+        "sources": [],
+        "review": "In a fresh session the target is ambiguous. Ask which object or work is meant, without guessing or claiming the museum lacks a record. Keep a corresponding pending clarification in memory."
+      }
+    ]
+  },
+  {
+    "name": "scope-of-evidence",
+    "scenario": "scope-of-evidence",
+    "artwork": "aic-28560",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Has the museum identified the company that made the canvas used for this painting?",
+        "status": "insufficient",
+        "sources": [],
+        "review": "Distinguish the available excerpts from all holdings or research. No manufacturer is supported; avoid a museum-wide assertion or a claim that no records exist. Keep this specific detail open in memory."
+      }
+    ]
+  },
+  {
+    "name": "unrelated-request",
+    "scenario": "unrelated-request",
+    "artwork": "aic-28560",
+    "split": "new",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "What time is the next flight from Los Angeles to Seattle?",
+        "status": "out_of_scope",
+        "sources": [],
+        "review": "Briefly explain the museum-guide boundary without supplying flight information or implying a museum search. No sources. Leave room for a later artwork question."
+      }
+    ]
+  },
+  {
+    "name": "explicit-two-sentences-bedroom",
+    "scenario": "explicit-two-sentences-bedroom",
+    "artwork": "aic-28560",
+    "split": "supplemental",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "What medium is listed for this painting? How are its brush marks described?",
+        "status": "answered",
+        "sources": [
+          "aic-28560-medium",
+          "aic-28560-description-01"
+        ],
+        "review": "Check both planned IDs and results, correct medium and brushwork; preserve facts in memory."
+      }
+    ]
+  },
+  {
+    "name": "explicit-two-sentences-morisot",
+    "scenario": "explicit-two-sentences-morisot",
+    "artwork": "aic-11723",
+    "split": "supplemental",
+    "turns": [
+      {
+        "language": "zh-CN",
+        "language_override": null,
+        "question": "作品用了什么材料？画家用的笔是哪家制造的？",
+        "status": "partially_answered",
+        "sources": [
+          "aic-11723-medium"
+        ],
+        "review": "Separate supported medium from open maker. Answer in Chinese, English memory. Two exact contiguous original spans."
+      }
+    ]
+  },
+  {
+    "name": "unseen-bedroom-combined-effect",
+    "scenario": "unseen-bedroom-combined-effect",
+    "artwork": "aic-28560",
+    "split": "unused",
+    "turns": [
+      {
+        "language": "en",
+        "language_override": null,
+        "question": "Taken together, what impression might the colors, marks, and receding lines give?",
+        "status": "answered",
+        "sources": [
+          "aic-28560-description-01"
+        ],
+        "review": "Explain the possible nervous energy of the picture as a joint impression. Avoid attributing it to the painter’s personal feelings or a single feature. Keep the same source relation in English memory."
+      }
+    ]
+  },
+  {
+    "name": "unseen-morisot-paint-supplier",
+    "scenario": "unseen-morisot-paint-supplier",
+    "artwork": "aic-11723",
+    "split": "unused",
+    "turns": [
+      {
+        "language": "zh-CN",
+        "language_override": null,
+        "question": "莫里索是从哪家商号买到这幅画用的颜料的？",
+        "status": "insufficient",
+        "sources": [],
+        "review": "In Chinese, leave the supplier unverified in the available material; no claim about all museum holdings or a guessed merchant. Preserve the open supplier question in English memory."
+      }
+    ]
+  }
+]

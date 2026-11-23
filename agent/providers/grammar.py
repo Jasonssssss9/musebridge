@@ -13,6 +13,12 @@ def grammar_schema(schema):
     def node(value):
         if type(value) is not dict:
             return deepcopy(value)
+        # Some v2 objects wrap their entire base type in allOf, alongside a
+        # semantic assertion. Dropping that base would allow arbitrary JSON.
+        if set(value) == {"allOf"}:
+            for clause in value["allOf"]:
+                if set(clause) == {"$ref"}:
+                    return {"$ref": clause["$ref"]}
         result = {}
         for key, item in value.items():
             if key in {"allOf", "if", "then", "else", "pattern", "format"}:
@@ -27,4 +33,28 @@ def grammar_schema(schema):
                 result[key] = deepcopy(item)
         return result
 
-    return node(schema)
+    projected = node(schema)
+    defs = projected.get("$defs", {})
+    if "DirectResponsePlan" in defs and "InterpretedRequest" in defs:
+        # The canonical direct-route contract excludes a clear artwork_fact.
+        # Encode the same restriction in concrete branches for the decoder.
+        request = defs["InterpretedRequest"]
+        ordinary = deepcopy(request)
+        ordinary["properties"]["kind"]["enum"].remove("artwork_fact")
+        unresolved = deepcopy(request)
+        unresolved["properties"]["kind"] = {"const": "artwork_fact"}
+        unresolved["properties"]["resolution"] = {"const": "needs_clarification"}
+        defs["DirectResponsePlan"]["properties"]["requests"]["items"] = {"oneOf": [ordinary, unresolved]}
+    for name in ("ClarificationPlan", "ClarificationDecision", "ScopePlan"):
+        if name in defs and "PendingUpdate" in defs:
+            memory = deepcopy(defs["MemoryUpdate"])
+            variants = defs["PendingUpdate"]["oneOf"]
+            if name == "ScopePlan":
+                allowed = [v for v in variants if v["properties"]["action"]["const"] in {"keep", "clear"}]
+                memory["properties"]["pending_update"] = {"oneOf": allowed}
+            else:
+                pending = deepcopy(next(v for v in variants if v["properties"]["action"]["const"] == "set"))
+                pending["properties"]["request_id"] = {"type": "null"}
+                memory["properties"]["pending_update"] = pending
+            defs[name]["properties"]["memory_update"] = memory
+    return projected

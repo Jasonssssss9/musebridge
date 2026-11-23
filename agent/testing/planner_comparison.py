@@ -12,7 +12,6 @@ from knowledge.http_service import create_server
 from agent.providers.capabilities import implementation_fingerprint
 from agent.providers.sizing import QwenPromptSizer
 from agent.runtime.errors import WorkflowError
-from agent.runtime.followup_plan import expand_plan
 from agent.runtime.validation import ContractViolation
 from agent.runtime.validation_v2 import ContractValidatorV2, assemble_answer, validate_plan
 from agent.service import ModelIdentity, create_workflow_runtime
@@ -41,9 +40,6 @@ class DialogueProbeModel(ProbeModel):
             return await super().complete_structured(messages=messages, **kwargs)
         finally:
             payload = json.loads(messages[-1]["content"])
-            for display_field in ("source_sentences", "available_statements"):
-                if display_field in payload:
-                    self.attempts[start][display_field] = payload.pop(display_field)
             self.attempts[start]["model_input"] = payload
 
 
@@ -62,7 +58,6 @@ def plan_check(run, attempts, validator, *, deadline=None):
     if deadline is not None and monotonic() > deadline:
         return timed_out
     try:
-        plan = expand_plan(plan, payload)
         validate_plan(run, plan, validator, plan_input=payload)
         if deadline is not None and monotonic() > deadline:
             return timed_out

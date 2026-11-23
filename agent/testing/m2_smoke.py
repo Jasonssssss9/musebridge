@@ -132,11 +132,11 @@ def journeys():
 
 
 
-def exercise(base_url, records=None, prefixes=None):
+def exercise(base_url, records=None, prefixes=None, *, scenarios=None):
     codec = ContractCodec()
     if records is None:
         records = []
-    for journey in journeys():
+    for journey in journeys() if scenarios is None else scenarios:
         if prefixes and not any(journey["name"].startswith(prefix) for prefix in prefixes):
             continue
         opener = build_opener(ProxyHandler({}), HTTPCookieProcessor(CookieJar()))
@@ -225,6 +225,7 @@ def main():
     parser.add_argument("--report-dir", required=True)
     parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
     parser.add_argument("--hold-seconds", type=int, default=0, help="Keep owned services available for a subsequent browser check.")
+    parser.add_argument("--journey-file", type=Path, help="Run this labeled development journey set through the same public workflow.")
     parser.add_argument("--case-prefix", action="append", help="Run only matching published development journeys.")
     parser.add_argument("--private-decisions", action="store_true", help="Explicitly retain development input/decisions in the private report directory.")
     options = parser.parse_args()
@@ -286,7 +287,12 @@ def main():
         processes.wait_ready(web_url, web, 20)
         save(directory/"connection.json", report["configuration"])
         report["cases"] = []
-        exercise(web_url, report["cases"], options.case_prefix)
+        scenarios = None
+        if options.journey_file:
+            labels = options.journey_file.read_bytes()
+            scenarios = json.loads(labels)
+            report["journey_set_sha256"] = hashlib.sha256(labels).hexdigest()
+        exercise(web_url, report["cases"], options.case_prefix, scenarios=scenarios)
         client = build_opener(ProxyHandler({}))
         report["readiness"] = {name: call(client, "GET", url+"/readyz") for name, url in (("go", api_url), ("agent", agent_url), ("retrieval", retrieval_url))}
         report["ollama_state"] = call(client, "GET", options.ollama_url+"/api/ps")["body"]

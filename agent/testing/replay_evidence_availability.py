@@ -34,7 +34,9 @@ def compare(report):
             trace = turn["request_id"]
             attempt = plans[trace]
             payload = attempt["model_input"]
-            plan = expand_plan(attempt["completion"]["data"], payload)
+            plan = attempt["completion"]["data"]
+            if "visitor_task" in plan:  # Archived compact-plan schema.
+                plan = expand_plan(plan, payload)
             run = turn["input"]
             validate_plan(run, plan, validator, plan_input=payload, complete_scope=payload["complete_scope"])
             previous = set()
@@ -61,7 +63,7 @@ def compare(report):
                 counts["turns_requiring_chunks"] += 1
                 counts["archive_all_required_available"] += required <= previous
                 counts["replay_all_required_available"] += required <= current
-            old_route = attempt["canonical_plan"]["action"]
+            old_route = attempt.get("canonical_plan", plan)["action"]
             if old_route != plan["action"] or current != previous:
                 changes.append(dict(request_id=trace, archive_route=old_route, replay_route=plan["action"],
                                     required=sorted(required), archived=sorted(previous), replayed=sorted(current)))
