@@ -139,12 +139,50 @@ def visitor_run(manifest, question, state, history, *, conversation_id=None):
     return run
 
 
+def case_suite(path):
+    raw = path.read_bytes()
+    suite = json.loads(raw)
+    identity = {"name": suite["name"], "file": path.name, "sha256": sha256(raw).hexdigest()}
+    return suite["conversations"], identity
+
+
+def schema_receipt(schema):
+    reference = schema.get("$ref", "").rsplit("/", 1)[-1]
+    encoded = json.dumps(schema, ensure_ascii=False, separators=(",", ":"), sort_keys=True).encode()
+    return {"schema_name": reference or schema.get("title"), "schema_properties": list(schema.get("properties", {})),
+            "schema_sha256": sha256(encoded).hexdigest()}
+
+
+def decision_action(data):
+    """Extract the decision label for comparison, retaining the complete original model output."""
+    decision = data.get("next")
+    return decision.get("action") if isinstance(decision, dict) else data.get("action")
+
+
+def traced_model(report, **options):
+    """Extend the shared provider trace with the exact schema and compact routing action."""
+    from agent.testing.verify_ollama import ProbeModel
+
+    class VincentTrace(ProbeModel):
+        async def complete_structured(self, *, output_schema, **params):
+            index = len(self.attempts)
+            try:
+                return await super().complete_structured(output_schema=output_schema, **params)
+            finally:
+                row = self.attempts[index]
+                row.update(schema_receipt(output_schema))
+                if "completion" in row:
+                    row["action"] = decision_action(row["completion"]["data"])
+
+    return VincentTrace(report, **options)
+
+
 async def workflow_stage(args, cases, report, checkpoint):
     from agent.contracts.codec import v3_validator
     from agent.service import ModelIdentity, create_workflow_runtime_v3
     from agent.runtime.errors import WorkflowError
     from agent.providers.sizing import QwenPromptSizer
-    from agent.testing.verify_ollama import ProbeModel, ProbeRetrieval, ensure_probe_identity
+    from agent.testing.verify_ollama import ProbeRetrieval, ensure_probe_identity
     from agent.testing.v2 import simulate_commit
     from agent.tools.evidence import EvidenceManifest
     from agent.workflows.museum_qa_v3 import vincent_manifest
@@ -156,7 +194,7 @@ async def workflow_stage(args, cases, report, checkpoint):
                                     expected_sha256=GALLERY.with_suffix(".sha256").read_text().strip())
     manifest = vincent_manifest(gallery)
     report.update(scope=dict(VINCENT_SCOPE), turns=[], model_attempts=[], lookups=[])
-    model = ProbeModel(report, base_url=args.base_url, sizer=QwenPromptSizer(args.tokenizer))
+    model = traced_model(report, base_url=args.base_url, sizer=QwenPromptSizer(args.tokenizer))
     server = None
     runtime = None
     try:
@@ -211,6 +249,9 @@ async def workflow_stage(args, cases, report, checkpoint):
                         available.update(c["chunk_id"] for c in lookup.get("candidates", []))
                 if spec["expected"] == "supported":
                     row["all_required_available"] = set(spec["required_ids"]).issubset(available)
+                row["model_operations"] = [dict(operation=a["operation"], action=a.get("action"),
+                                                schema_sha256=a["schema_sha256"], outcome=a["outcome"])
+                                           for a in report["model_attempts"] if a["request_id"] == trace]
                 checkpoint()
         delivered = [row for row in report["turns"] if row["outcome"] == "delivered"]
         report["summary"] = {"planned": report["planned_turns"], "submitted": sum(r["submitted"] for r in report["turns"]),
@@ -249,6 +290,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stage", choices=("retrieval", "workflow"), required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--cases", type=Path, default=CASES, help="Visitor suite and its independently assigned review criteria.")
     parser.add_argument("--base-url", default="http://127.0.0.1:11434", help="Ollama origin for workflow runs.")
     parser.add_argument("--tokenizer", type=Path, help="Pinned local Qwen tokenizer.")
     parser.add_argument("--retrieval-url", help="Existing Vincent-enabled knowledge origin. Default: ephemeral localhost service.")
@@ -257,9 +299,9 @@ def main():
         parser.error("A workflow run needs --tokenizer.")
     if args.output.exists():
         parser.error("Use a new output path so an earlier observation stays intact.")
-    cases = json.loads(CASES.read_bytes())["conversations"]
-    inputs = [CASES, GALLERY, PACK]
-    report = {"stage": args.stage, "planned_turns": sum(len(c["turns"]) for c in cases),
+    cases, suite = case_suite(args.cases)
+    inputs = [args.cases, GALLERY, PACK]
+    report = {"stage": args.stage, "suite": suite, "planned_turns": sum(len(c["turns"]) for c in cases),
               "implementation": implementation(), "inputs_sha256": {p.name: sha256(p.read_bytes()).hexdigest() for p in inputs}}
 
     def checkpoint():

@@ -20,7 +20,7 @@ from langsmith import tracing_context
 
 from agent.prompts.v2 import PROMPT_VERSION
 from agent.runtime.context_v2 import (
-    build_answer_input, build_plan_input, fit_model_call, validate_run_context,
+    build_answer_input, build_plan_input, fit_model_call, validate_run_context, vincent_protocol,
 )
 from agent.runtime.errors import WorkflowError
 from agent.runtime.validation import ContractViolation, TRACE_ID
@@ -131,16 +131,44 @@ class MuseumQAWorkflowV2:
             raise WorkflowError("service_not_ready", "Raw workflow logging must be disabled.",
                                 phase="admission", retryable=True)
 
+        async def invoke(operation, messages, schema, retained_ids):
+            phase = {"plan": "planning", "assess": "assessment", "final": "final_generation"}[operation]
+            budget.check_active()
+            remaining = budget.remaining_seconds()
+            if remaining <= 0:
+                raise WorkflowError("request_timeout", "The run deadline was exceeded.",
+                                    phase=phase, retryable=True)
+            started = monotonic()
+            deadline = started + min(10.0 if operation == "plan" else 15.0, remaining)
+            trace = {"request_id": request_id}
+            if retained_ids is not None:
+                trace["retained_turn_ids"] = retained_ids
+            try:
+                completion = await self.model.complete_structured(
+                    operation=operation, messages=messages,
+                    output_schema=deepcopy(schema), profile=self.profile, deadline=deadline,
+                    trace_context=trace,
+                )
+            except WorkflowError:
+                budget.check_active()
+                raise
+            budget.check_active()
+            if monotonic() > deadline:
+                raise WorkflowError("generation_timeout", "The model stage exceeded its deadline.",
+                                    phase=phase, retryable=True)
+            return completion, phase, started, deadline
+
         async def call_model(state: State, operation: str, payload: dict,
-                             schema_name: str) -> tuple[dict, dict, int]:
+                             schema_name: str) -> tuple[dict, dict, dict]:
             budget.check_active()
             output_tokens = (self.profile.plan_output_tokens if operation == "plan"
                              else self.profile.answer_output_tokens)
             schema = self.validator.schema(schema_name)
+            fresh_ids = frozenset(r["chunk_id"] for r in state.get("fresh_evidence", ()))
             fitted, schema, messages = fit_model_call(
                 operation, payload, schema, prompt_sizer=self.prompt_sizer,
                 context_limit=self.profile.context_tokens, output_tokens=output_tokens,
-                safety_tokens=512,
+                safety_tokens=512, fresh_ids=fresh_ids,
             )
             # Sizing can consume time. Do not advertise refinement if its full
             # assessment + retrieval + final allowance no longer remains.
@@ -151,7 +179,7 @@ class MuseumQAWorkflowV2:
                 fitted, schema, messages = fit_model_call(
                     operation, fitted, schema, prompt_sizer=self.prompt_sizer,
                     context_limit=self.profile.context_tokens, output_tokens=output_tokens,
-                    safety_tokens=512,
+                    safety_tokens=512, fresh_ids=fresh_ids,
                 )
             input_name = ("PlanInput" if operation == "plan" else
                           "AnswerInput" if fitted["allow_refinement"] else "FinalInput")
@@ -160,29 +188,25 @@ class MuseumQAWorkflowV2:
             except ContractViolation as exc:
                 raise WorkflowError("agent_internal_error", "The prepared model context is invalid.",
                                     phase="context") from exc
-            phase = {"plan": "planning", "assess": "assessment", "final": "final_generation"}[operation]
-            budget.check_active()
-            remaining = budget.remaining_seconds()
-            if remaining <= 0:
-                raise WorkflowError("request_timeout", "The run deadline was exceeded.",
-                                    phase=phase, retryable=True)
-            started = monotonic()
-            deadline = started + min(10.0 if operation == "plan" else 15.0, remaining)
-            try:
-                completion = await self.model.complete_structured(
-                    operation=operation, messages=messages,
-                    output_schema=deepcopy(schema), profile=self.profile, deadline=deadline,
-                    trace_context={"request_id": request_id},
-                )
-            except WorkflowError:
-                budget.check_active()
-                raise
-            budget.check_active()
-            if monotonic() > deadline:
-                raise WorkflowError("generation_timeout", "The model stage exceeded its deadline.",
-                                    phase=phase, retryable=True)
+            protocol = vincent_protocol(operation, run["scope"])
+            retained_ids = [t["turn_id"] for t in fitted["recent_turns"]] if protocol else None
+            completion, phase, started, deadline = await invoke(operation, messages, schema, retained_ids)
+            timings = {}
             try:
                 decision = deepcopy(completion.data)
+                if protocol is not None:
+                    if operation == "plan" and protocol.needs_direct_writer(decision):
+                        # The model selected a terminal route. A second model call writes only
+                        # from the visitor observation or the catalog values selected by that route.
+                        timings[phase] = int((monotonic() - started) * 1000)
+                        writer_schema, writer_messages = protocol.direct_writer_call(decision, fitted)
+                        tokens = self.prompt_sizer(writer_messages, writer_schema)
+                        if tokens + self.profile.answer_output_tokens + 512 > self.profile.context_tokens:
+                            raise WorkflowError("agent_context_limit", "The direct reply exceeds the model context.",
+                                                phase="context")
+                        written, phase, started, deadline = await invoke("final", writer_messages, writer_schema, [])
+                        decision = protocol.with_direct_writing(decision, written.data)
+                    decision = protocol.canonical_decision(decision, fitted)
                 self.validator.validate(schema_name, decision)
             except (ContractViolation, AttributeError, RecursionError) as exc:
                 raise WorkflowError("generation_invalid_response", "The provider returned an invalid decision.",
@@ -203,7 +227,8 @@ class MuseumQAWorkflowV2:
             if monotonic() > deadline:
                 raise WorkflowError("generation_timeout", "The model stage exceeded its deadline.",
                                     phase=phase, retryable=True)
-            return decision, fitted, int((monotonic() - started) * 1000)
+            timings[phase] = int((monotonic() - started) * 1000)
+            return decision, fitted, timings
 
         async def prepare(state: State) -> dict:
             budget.check_active()
@@ -218,7 +243,7 @@ class MuseumQAWorkflowV2:
             }
 
         async def plan_node(state: State) -> dict:
-            decision, payload, elapsed = await call_model(
+            decision, payload, timings = await call_model(
                 state, "plan", build_plan_input(run, self.manifest), "Plan",
             )
             language = resolve_language(run, decision["language_decision"])
@@ -232,7 +257,7 @@ class MuseumQAWorkflowV2:
             return {
                 "plan": decision, "translation": translation,
                 "answer_language": language["answer_language"], "retained_run": retained,
-                "model_calls": 1, "phase_timings_ms": {"planning": elapsed},
+                "model_calls": len(timings), "phase_timings_ms": timings,
             }
 
         async def lookups(state: State, queries: list[dict], *, refinement: bool) -> dict:
@@ -305,14 +330,14 @@ class MuseumQAWorkflowV2:
                 complete_scope=state["complete_scope"], allow_refinement=allow,
                 translation=state["translation"],
             )
-            decision, fitted, elapsed = await call_model(
+            decision, fitted, timings = await call_model(
                 state, "assess", payload, "AssessmentDecision" if allow else "FinalDecision",
             )
             retained = deepcopy(state["retained_run"])
             retained["context"]["recent_turns"] = fitted["recent_turns"]
             return {
                 "decision": decision, "retained_run": retained, "model_calls": 2,
-                "phase_timings_ms": {**state["phase_timings_ms"], "assessment": elapsed},
+                "phase_timings_ms": {**state["phase_timings_ms"], **timings},
             }
 
         async def refine_node(state: State) -> dict:
@@ -325,12 +350,12 @@ class MuseumQAWorkflowV2:
                 complete_scope=state["complete_scope"], allow_refinement=False,
                 translation=state["translation"],
             )
-            decision, fitted, elapsed = await call_model(state, "final", payload, "FinalDecision")
+            decision, fitted, timings = await call_model(state, "final", payload, "FinalDecision")
             retained = deepcopy(state["retained_run"])
             retained["context"]["recent_turns"] = fitted["recent_turns"]
             return {
                 "decision": decision, "retained_run": retained, "model_calls": 3,
-                "phase_timings_ms": {**state["phase_timings_ms"], "final_generation": elapsed},
+                "phase_timings_ms": {**state["phase_timings_ms"], **timings},
             }
 
         async def finalize(state: State) -> dict:

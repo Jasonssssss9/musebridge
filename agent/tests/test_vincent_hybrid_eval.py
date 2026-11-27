@@ -6,7 +6,8 @@ import unittest
 
 from agent.contracts.codec import v3_validator
 from agent.testing.v2 import language_decision, memory_update, simulate_commit
-from agent.testing.vincent_hybrid_eval import CASES, GALLERY, VERSION, counts, evidence_checks, visitor_run, workflow_checks
+from agent.testing.vincent_hybrid_eval import (CASES, GALLERY, VERSION, case_suite, counts, decision_action,
+                                               evidence_checks, schema_receipt, visitor_run, workflow_checks)
 from agent.tools.evidence import EvidenceManifest
 from agent.workflows.museum_qa_v3 import vincent_manifest
 from knowledge.vincent import VINCENT_SCOPE
@@ -31,6 +32,28 @@ class VincentHybridEvaluationTests(unittest.TestCase):
                 self.assertEqual(bool(turn["required_ids"]), turn["expected"] == "supported")
         self.assertEqual(len(questions), 13)
         self.assertEqual(len(set(questions)), len(questions))
+
+    def test_new_confirmation_keeps_independent_identity(self):
+        suite, identity = case_suite(CASES.with_name("vincent_visitor_confirmation_cases.json"))
+        self.assertEqual(identity["sha256"], "0d16b099a017a32229d3de92153db7ec2a7a92acb8822a0e814d941e9ea7d478")
+        self.assertEqual(sum(len(c["turns"]) for c in suite), 13)
+        original, original_id = case_suite(CASES)
+        self.assertNotEqual(original_id, identity)
+        original_questions = {t["question"] for c in original for t in c["turns"]}
+        for case in suite:
+            for turn in case["turns"]:
+                self.assertNotIn(turn["question"], original_questions)
+                self.assertTrue(set(turn["required_ids"]) <= self.manifest.records.keys())
+
+    def test_trace_handles_compact_and_full_decisions(self):
+        a = schema_receipt({"$ref": "#/$defs/Plan"})
+        b = schema_receipt({"title": "VincentPlan", "properties": {"next": {}}})
+        self.assertEqual(a["schema_name"], "Plan")
+        self.assertEqual(b["schema_properties"], ["next"])
+        self.assertNotEqual(a["schema_sha256"], b["schema_sha256"])
+        self.assertEqual(decision_action({"action": "retrieve"}), "retrieve")
+        self.assertEqual(decision_action({"next": {"action": "retrieve"}}), "retrieve")
+        self.assertIsNone(decision_action({"answer": "Spoken text."}))
 
     def test_gaps_do_not_require_empty_retrieval_and_errors_are_unscored(self):
         unrelated = evidence_checks("unrelated", ["some-related-art"], [])

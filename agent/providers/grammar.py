@@ -2,63 +2,6 @@
 from copy import deepcopy
 
 
-def _vincent_plan_branches(defs):
-    """Encode the common one-request relationships using grammar-supported branches.
-
-    Longer plans retain the published mixed-request shapes and cross-field checks.
-    The strict original schema and workflow validators still run after decoding.
-    """
-    defs["RequestID"] = {"type": "string", "enum": [f"r{i}" for i in range(1, 5)]}
-    defs["QueryID"] = {"type": "string", "enum": [f"q{i}" for i in range(1, 5)]}
-
-    def single(array, item):
-        array.update(items=item, minItems=1, maxItems=1)
-
-    def single_request(plan, kinds):
-        item = deepcopy(defs["InterpretedRequest"])
-        item["properties"].update(id={"const": "r1"}, kind={"type": "string", "enum": kinds},
-                                  resolution={"const": "clear"})
-        single(plan["properties"]["requests"], item)
-
-    for name in ("RetrievePlan", "ContextAnswerPlan"):
-        if name not in defs:
-            continue
-        multiple = defs[name]
-        one = deepcopy(multiple)
-        single_request(one, ["artwork_fact"])
-        if name == "RetrievePlan":
-            query = deepcopy(defs["SearchQuery"])
-            single(query["properties"]["request_ids"], {"const": "r1"})
-            one["properties"]["queries"]["items"] = query
-        multiple["properties"]["requests"]["minItems"] = 2
-        defs[name] = {"oneOf": [one, multiple]}
-
-    multiple = defs["DirectResponsePlan"]
-    simple = []
-    for kinds, supports in ((["conversation", "general_art_knowledge"], {"not_applicable"}),
-                            (["catalog_fact"], {"supported", "insufficient"})):
-        one = deepcopy(multiple)
-        single_request(one, kinds)
-        result_shapes = []
-        for variant in defs["RequestResult"]["oneOf"]:
-            props = variant["properties"]
-            allowed = [s for s in props["support"]["enum"] if s in supports]
-            if allowed:
-                item = deepcopy(variant)
-                item["properties"].update(request_id={"const": "r1"}, support={"type": "string", "enum": allowed})
-                result_shapes.append(item)
-        single(one["properties"]["results"], {"oneOf": result_shapes})
-        memory = deepcopy(defs["MemoryUpdate"])
-        pending = defs["PendingUpdate"]["oneOf"]
-        memory["properties"]["pending_update"] = {"oneOf": [
-            p for p in pending if p["properties"]["action"].get("const") in ("keep", "clear")]}
-        one["properties"]["memory_update"] = memory
-        simple.append(one)
-    multiple["properties"]["requests"]["minItems"] = 2
-    multiple["properties"]["results"]["minItems"] = 2
-    defs["DirectResponsePlan"] = {"oneOf": [*simple, multiple]}
-
-
 def grammar_schema(schema):
     """Remove unsupported assertion keywords before generation, never repair data.
 
@@ -114,7 +57,4 @@ def grammar_schema(schema):
                 pending["properties"]["request_id"] = {"type": "null"}
                 memory["properties"]["pending_update"] = pending
             defs[name]["properties"]["memory_update"] = memory
-    if schema.get("x-vincent-planning"):
-        _vincent_plan_branches(defs)
-        projected.pop("x-vincent-planning", None)
     return projected

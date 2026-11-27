@@ -39,6 +39,7 @@ async def attach_vincent(runtime, model, manifest, guide_tool):
 async def _attach(runtime, model, manifest, guide_tool):
     root = Path(__file__).resolve().parents[2]
     role_files = (root / "agent/prompts/vincent/dialogue.md", root / "agent/prompts/vincent/plan.md",
+                  root / "agent/prompts/vincent/answer.md", root / "agent/prompts/vincent/direct.md",
                   root / "docs/contracts/agent-v3.patch.json",
                   root / "knowledge/data/reference-packs/vincent-irises-v1.json")
     snapshots = tuple(path.read_bytes() for path in role_files)

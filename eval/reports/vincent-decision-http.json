@@ -1,0 +1,89 @@
+{
+  "mode": "controlled-ollama",
+  "question": "What other plant did you mention in the same letter as the irises?",
+  "http": {
+    "guide-ready": {
+      "status": 200,
+      "trace_echo": true,
+      "cache_control": "no-store"
+    },
+    "vincent-ready": {
+      "status": 200,
+      "trace_echo": true,
+      "cache_control": "no-store"
+    },
+    "no-credential": {
+      "status": 401,
+      "trace_echo": true,
+      "cache_control": "no-store",
+      "error_code": "agent_unauthorized"
+    },
+    "first": {
+      "status": 200,
+      "trace_echo": true,
+      "cache_control": "no-store"
+    },
+    "get": {
+      "status": 200,
+      "trace_echo": true,
+      "cache_control": "no-store"
+    },
+    "replay": {
+      "status": 200,
+      "trace_echo": true,
+      "cache_control": "no-store"
+    },
+    "v2-lookup": {
+      "status": 404,
+      "trace_echo": true,
+      "cache_control": "no-store",
+      "error_code": "agent_run_not_found"
+    }
+  },
+  "checks": {
+    "v2_ready": true,
+    "v3_ready": true,
+    "requires_bearer": true,
+    "completed": true,
+    "get_same": true,
+    "replay_same": true,
+    "v2_cannot_read": true,
+    "one_real_turn": true,
+    "no_model_calls_for_recovery": true,
+    "trace_and_cache": true,
+    "scope_and_source": true
+  },
+  "run_id": "03dfa629-3edb-4e1a-a326-603114ade28b",
+  "model_http_attempts": {
+    "first_turn": 2,
+    "get_and_replay": 0
+  },
+  "scope": {
+    "artwork_id": "getty-103jnh",
+    "dataset_version": "getty-gallery-v2",
+    "conversation_mode": "vincent",
+    "reference_pack_version": "vincent-irises-v1"
+  },
+  "answer": "I mentioned a lilac bush in the same letter where I wrote about the irises.",
+  "citations": [
+    {
+      "id": "vincent-772-garden-colors",
+      "url": "https://vangoghletters.org/vg/letters/let772/letter.html"
+    }
+  ],
+  "execution": {
+    "workflow_id": "museum_qa_v3",
+    "prompt_version": "museum-prompts-v3",
+    "schema_version": "agent-schema-v3",
+    "retrieval_strategy_version": "openai-hybrid-v1",
+    "model_calls": 2,
+    "retrieval_calls": 1,
+    "refinement_rounds": 0,
+    "profile_id": "local-ollama-v2",
+    "model_provider": "ollama",
+    "model_name": "qwen3.5:9b-q4_K_M",
+    "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+    "duration_ms": 4236
+  },
+  "snapshot_sha256": "dfabfa3db34bcf6cc11c9ee30bb662cfac8aea94dbe2d8da390d98432411a631"
+}

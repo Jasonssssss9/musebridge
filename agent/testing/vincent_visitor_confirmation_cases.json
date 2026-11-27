@@ -1,0 +1,147 @@
+{
+  "name": "Vincent visitor confirmation 2",
+  "conversations": [
+    {
+      "id": "correspondence",
+      "turns": [
+        {
+          "question": "When you wrote about the violet flowers, was that bit for Theo or for Jo?",
+          "control_query": "Who is addressed in the particular passage of Vincent’s letter that calls the irises violet?",
+          "required_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "expected": "supported",
+          "review": "Distinguish the part addressed to Theo from the letter’s two addressees. Keep the same distinction in memory."
+        },
+        {
+          "question": "Did the other subject you mentioned come from there too?",
+          "control_query": "Did the other subject in Vincent’s letter about the violet irises also come from the garden?",
+          "required_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "expected": "supported",
+          "review": "Identify the lilac bush as another garden subject. Avoid placing it in this painting. A cached passage suffices."
+        }
+      ]
+    },
+    {
+      "id": "conservation",
+      "turns": [
+        {
+          "question": "Which ingredient did the conservator say had faded in these petals?",
+          "control_query": "Which pigment did Getty’s conservator find had faded in Irises?",
+          "required_ids": [
+            "vincent-getty-faded-red"
+          ],
+          "expected": "supported",
+          "review": "Identify geranium lake as the faded red pigment. Attribute the finding aloud to the modern conservator and preserve the attribution in memory."
+        },
+        {
+          "question": "So can you say that every trace of it is gone?",
+          "control_query": "Does conservation evidence establish that all the red pigment disappeared from every iris?",
+          "required_ids": [],
+          "expected": "gap",
+          "review": "The transcript says considerable fading. It does not establish that every trace vanished or that a specific amount remains. Address the follow-up personally and keep its limit in memory."
+        }
+      ]
+    },
+    {
+      "id": "shipment",
+      "turns": [
+        {
+          "question": "You sent this off with some other work. What did you call that group in your letter?",
+          "control_query": "How did Vincent describe the group that included Irises in the letter enclosing the work?",
+          "required_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "expected": "supported",
+          "review": "The artist called the group studies after nature. The number counts a group of studies, not versions of Irises."
+        },
+        {
+          "question": "Was the letter definitely written on July 14?",
+          "control_query": "How exactly do the editors date Vincent’s July letter enclosing Irises with other studies?",
+          "required_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "expected": "supported",
+          "review": "Give 14 or 15 July 1889, and attribute this dating to the edition rather than personal memory. Do not confirm one particular day. Preserve the uncertainty in memory."
+        }
+      ]
+    },
+    {
+      "id": "observation",
+      "turns": [
+        {
+          "question": "For me that pale bloom almost interrupts the rhythm of the picture.",
+          "control_query": "",
+          "required_ids": [],
+          "expected": "social",
+          "review": "Receive the visitor’s reading as theirs. Avoid inventing the artist’s intentions or a personal historical recollection."
+        },
+        {
+          "question": "Does my reaction tell us you planned it that way?",
+          "control_query": "Does historical evidence establish that Van Gogh intended the single pale iris to interrupt the painting’s rhythm?",
+          "required_ids": [],
+          "expected": "gap",
+          "review": "Keep the impression with the visitor and the historical intention open. A guide note may be relevant but cannot prove a motive."
+        }
+      ]
+    },
+    {
+      "id": "influence",
+      "turns": [
+        {
+          "question": "The flowers seem to spill out of the frame. What kind of prints has Getty connected that with?",
+          "control_query": "What print tradition does Getty relate to the cropped composition of Irises?",
+          "required_ids": [
+            "getty-103jnh-description-01"
+          ],
+          "expected": "supported",
+          "review": "Identify Japanese woodblock prints as a probable influence in Getty’s account. Do not claim certainty or a specific print."
+        },
+        {
+          "question": "How sure are they about that link?",
+          "control_query": "How certain is Getty’s account of the influence of Japanese woodblock patterns on Irises?",
+          "required_ids": [
+            "getty-103jnh-description-01"
+          ],
+          "expected": "supported",
+          "review": "Resolve they to Getty and link to Japanese woodblock prints. Preserve probable rather than certain influence in speech and memory. A valid cached source can suffice."
+        }
+      ]
+    },
+    {
+      "id": "looking",
+      "turns": [
+        {
+          "question": "Could you give me something to try with the leaves rather than just staring at the petals?",
+          "control_query": "What looking exercise uses the path of a leaf and a petal in Irises?",
+          "required_ids": [
+            "getty-103jnh-guide-02"
+          ],
+          "expected": "supported",
+          "review": "Offer the leaf-tracing comparison with a petal as a present-day looking invitation. Avoid attributing an exercise to Vincent’s historical intention."
+        },
+        {
+          "question": "Thanks, I could follow the leaf much more easily that time.",
+          "control_query": "",
+          "required_ids": [],
+          "expected": "social",
+          "review": "Respond naturally to the visitor’s feedback. Remember that the visitor found it easier; do not add a historical claim."
+        }
+      ]
+    },
+    {
+      "id": "outside",
+      "turns": [
+        {
+          "question": "Can you give me tomorrow’s first bus departure time from the Getty?",
+          "control_query": "What is the time of tomorrow’s first bus departure from the Getty?",
+          "required_ids": [],
+          "expected": "unrelated",
+          "review": "Avoid inventing a timetable or citing art evidence. A brief redirection is appropriate."
+        }
+      ]
+    }
+  ]
+}
