@@ -137,6 +137,11 @@ def build_plan_input(run: dict[str, Any], manifest: EvidenceManifest) -> dict[st
         "query_policy": {"search_language": "en", "max_requests": 4,
                          "max_queries": 2, "scope_policy": "current_artwork_only"},
     })
+    # Advertise which kinds of material can be retrieved without revealing excerpts.
+    source_kinds = {source.get("source_kind") for source in manifest.sources.values()
+                    if source["artwork_id"] == scope["artwork_id"] and source.get("source_kind")}
+    if source_kinds:
+        payload["available_source_kinds"] = sorted(source_kinds)
     return payload
 
 

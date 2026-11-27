@@ -41,7 +41,8 @@ def canonical_catalog(
     try:
         artwork = manifest.artwork(artwork_id, dataset_version)
         sources = [source for source in manifest.sources.values()
-                   if source["artwork_id"] == artwork_id
+                   if source.get("source_kind", "museum_record") == "museum_record"
+                   and source["artwork_id"] == artwork_id
                    and source["source_url"] == artwork["source_url"]]
         if len(sources) != 1:
             raise _invalid_catalog()

@@ -28,7 +28,7 @@ async def start_ollama_runtime():
         record = read_record(record_path, model)
         if record is not None:
             await model.warm(deadline=monotonic()+120)
-            manifest = EvidenceManifest.load()
+            manifest = EvidenceManifest.from_environment()
             def ready():
                 if not model.verified:
                     return False

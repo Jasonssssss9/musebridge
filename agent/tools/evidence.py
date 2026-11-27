@@ -2,12 +2,14 @@
 
 from dataclasses import dataclass, field
 import hashlib
+import os
 from pathlib import Path
 import re
 from tempfile import TemporaryDirectory
 from types import MappingProxyType
 from typing import Mapping
 
+from knowledge.release import release_path, release_version
 from knowledge import DatasetValidationError, load_dataset
 
 from agent.runtime.errors import WorkflowError
@@ -45,6 +47,15 @@ class EvidenceManifest:
     )
 
     @classmethod
+    def from_environment(cls) -> "EvidenceManifest":
+        version = release_version()
+        path = release_path(version)
+        digest = os.environ.get("DATASET_SHA256")
+        if digest is None:
+            digest = SEED_SHA256 if version == DATASET_VERSION else path.with_suffix(".sha256").read_text().strip()
+        return cls.load(path, expected_version=version, expected_sha256=digest)
+
+    @classmethod
     def load(
         cls,
         path: str | Path = DEFAULT_SEED_PATH,
@@ -80,6 +91,8 @@ class EvidenceManifest:
                 field: source[field] if field in {"source_title", "source_url", "source_language"} else chunk[field]
                 for field in EVIDENCE_FIELDS
             }
+            if "source_kind" in source:
+                record["source_kind"] = source["source_kind"]
             records[chunk["chunk_id"]] = MappingProxyType(record)
             scope_ids[chunk["artwork_id"]].add(chunk["chunk_id"])
         return cls(
@@ -125,7 +138,7 @@ class EvidenceManifest:
                 raise _invalid("An evidence candidate belongs to an unknown or different artwork.")
             if chunk_id in seen:
                 raise _invalid("One retrieval response contains a duplicate evidence ID.")
-            canonical = {field: candidate[field] for field in EVIDENCE_FIELDS}
+            canonical = {field: candidate.get(field) for field in self.records[chunk_id]}
             if canonical != self.records[chunk_id]:
                 raise _invalid("An evidence candidate differs from the reviewed release.")
             accepted.append(dict(self.records[chunk_id]))

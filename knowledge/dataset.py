@@ -132,7 +132,7 @@ def _freeze(record: dict) -> Record:
 def load_dataset(
     path: str | Path, *, expected_version: str = DATASET_VERSION
 ) -> Dataset:
-    """Read and validate the two-artwork seed; never fetch data or fall back.
+    """Read and validate the configured release; never fetch data or fall back.
 
     The expected version is an explicit configuration pin. Validation checks
     structure and provenance relationships, not the authenticity of changed
@@ -158,6 +158,9 @@ def load_dataset(
     _object(root, frozenset({"dataset_version", "artworks", "sources", "chunks"}), "$")
     version = _string(root["dataset_version"], "$.dataset_version")
     _equal(version, expected_version, "$.dataset_version")
+    if version.startswith("getty-"):
+        from .getty import load_getty
+        return load_getty(root, version)
     artworks = _records(root["artworks"], 2, ARTWORK_FIELDS, "$.artworks")
     sources = _records(root["sources"], 2, SOURCE_FIELDS, "$.sources")
     chunks = _records(root["chunks"], 4, CHUNK_FIELDS, "$.chunks")
@@ -244,6 +247,10 @@ def load_dataset(
             _fail(f"{prefix}.topics", "duplicate topic")
         _equal(set(topics), CHUNK_TOPICS[chunk_id], f"{prefix}.topics")
 
+    return _snapshot(version, by_artwork, by_source, chunks)
+
+
+def _snapshot(version, by_artwork, by_source, chunks):
     return Dataset(
         dataset_version=version,
         artworks=MappingProxyType({key: _freeze(value) for key, value in by_artwork.items()}),

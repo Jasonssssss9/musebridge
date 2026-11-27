@@ -12,6 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from time import monotonic
 from uuid import uuid4
 
+from .release import release_path, release_version
 from . import DATASET_VERSION, DatasetValidationError, RetrievalError, load_dataset, retrieve
 
 from .strategy import MODES, VERSIONS, configured_index
@@ -291,8 +292,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", default=os.environ.get("HOST", "0.0.0.0"))
     parser.add_argument("--port", type=int, default=os.environ.get("PORT", "8001"))
-    parser.add_argument("--seed", type=Path, default=os.environ.get("SEED_PATH", str(DEFAULT_SEED)))
-    parser.add_argument("--dataset-version", default=os.environ.get("DATASET_VERSION", DATASET_VERSION))
+    parser.add_argument("--seed", type=Path, default=None)
+    parser.add_argument("--dataset-version", default=release_version())
     parser.add_argument("--mode", choices=MODES, default=os.environ.get("MUSEBRIDGE_RETRIEVAL_MODE", "hybrid"))
     args = parser.parse_args(argv)
     if not 1 <= args.port <= 65535:
@@ -300,7 +301,7 @@ def main(argv=None):
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     try:
         server = create_server(
-            args.host, args.port, seed_path=args.seed, dataset_version=args.dataset_version, mode=args.mode,
+            args.host, args.port, seed_path=args.seed or release_path(args.dataset_version), dataset_version=args.dataset_version, mode=args.mode,
         )
     except (DatasetValidationError, RetrievalError, OSError, ValueError) as exc:
         LOGGER.error(json.dumps({

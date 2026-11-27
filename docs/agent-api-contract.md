@@ -28,7 +28,7 @@ The [opt-in Ollama provider](ollama-provider.md) now implements real transport, 
 | Response openness | Extra metadata is allowed only in schema-open response objects; never reinterpret extra model fields as instructions |
 | Trace | `X-Request-ID`, 1–128 visible ASCII characters, correlated across dependencies |
 | Cache | HTTP responses use `Cache-Control: no-store` |
-| Source release | `aic-seed-v0.1`, canonical evidence; production strategy `openai-hybrid-v1` |
+| Source release | Go, Agent and retrieval share one pinned release. The Getty pilot uses `getty-pilot-v1`. The Chicago release is `aic-seed-v0.1`. Hybrid ranking uses `openai-hybrid-v1`. |
 | JSON nesting | Reject structures deeper than 64 levels; bounded metadata cannot evade validation |
 
 Go owns visitor identity, conversation state, accepted message identity and atomic persistence. The model makes conversational decisions and writes replies and semantic memory. The Python Agent owns evidence validation and bounded execution of those decisions. The browser never supplies authoritative artwork scope, history, source snapshots or conversation memory.
@@ -41,10 +41,13 @@ Supported response language values are `en`, `es`, `zh-CN` and `ko`. `LanguagePr
 
 | Route | v2 request / response |
 | --- | --- |
+| `GET /api/artworks` | `{"artworks": Artwork[]}` in release order, with the same fields as each detail card |
 | `GET /api/artworks/{slug}` | Existing catalog request and `{artwork: Artwork}` response |
 | `POST /api/conversations` | `PublicCreateConversationRequest` -> `{conversation, created}` |
 | `GET /api/conversations/{conversation_id}/messages` | `{conversation, turns, pending_request}` |
 | `POST /api/conversations/{conversation_id}/messages` | `PublicMessageRequest` -> `{conversation, turn}` |
+
+Both catalog GET routes support anonymous access. The gallery and QR page use the list to discover works. Getty artwork cards include a same-origin `image_url`, `image_alt`, `image_credit`, `image_license`, the original Getty `image_source_url` and `suggested_questions` in English. The Chicago release returns `image_url: null`.
 
 Public POSTs retain exact Origin validation and the existing `musebridge_visitor` cookie policy. Creation alone establishes/refreshes the opaque HttpOnly session cookie. The browser never receives a service token or calls Agent/model endpoints directly. HTTPS uses Secure cookies; the explicitly configured local HTTP profile follows the baseline exception.
 
@@ -241,7 +244,7 @@ Retain terminal runs up to ten minutes, capped at 1,000; never evict active runs
 | `active_topic` | Null or nonblank guide note, at most 300 code points. English labels may introduce the visitor’s literal wording. |
 | `continuity_summary` | English guide notes and attributed original-language quotations, 0–1,000 code points |
 | `pending_clarification` | Null or `{original_question, original_fragment, unresolved_intent, question, created_sequence}` |
-| `verified_evidence` | 0–8 canonical Evidence records; current artwork has at most two |
+| `verified_evidence` | 0–8 canonical Evidence records for the current artwork |
 
 A pending record's original_question is 1–500 code points; original_fragment is null or a nonempty literal substring of that original question, at most 500; unresolved_intent is null or a standalone English description of the unresolved portion, at most 1,000; question is the actual clarification text, 1–2,000. Its creation sequence is positive and no greater than revision. Null fragment/intent identify whole-message clarification without a narrower binding. A focused intent can coexist with a null fragment when a whole-message pending item becomes more specific. It can remain older than the five-turn window. All state text is context, never a factual evidence source. There is at most one pending clarification, not a queue of unanswered requests.
 
@@ -470,7 +473,7 @@ C validates request semantics, canonical sources, exact translation binding and 
 
 ### 6.1 Canonical catalog facts
 
-The current pinned seed already contains title, artist and date_display for each artwork. Expose exactly those three values as CatalogFact records. This is a deterministic projection of the existing release, not new museum prose, a live API lookup or a retrieval chunk. Do not modify the seed or its SHA-256 for this documentation change.
+Each pinned release supplies title, artist and date_display for every artwork. Go and the Agent project those three fields into CatalogFact records. Getty catalog facts use the source marked `museum_record`, including when a guide note links to the same object page.
 
 CatalogFact has exactly kind, fact_id, artwork_id, dataset_version, field, value, source_id, source_title, source_url, source_locator, attribution and normalization:
 
@@ -484,7 +487,7 @@ The canonical sequence is title, artist, date_display. Go and Agent independentl
 
 Preserve displayed date ranges and uncertainty: `1875–80` does not establish a single exact year. Artist labels establish the listed creator, not nationality, biography, motives or attribution history. Titles do not establish the identity of every depicted person/object. A general “When was it made?” can be supported by the displayed range. An exact-day or exact-year request beyond that range is insufficient; do not mark it answered merely by giving a less precise range. An insufficient part must not introduce an uncited actual date value. If the visitor also asks for the available catalog date, answer that separate request with its own supported catalog part and citation. Never invent precision or silently weaken the original question.
 
-Citation is a disjoint union of the unchanged retrieval Evidence projection and CatalogFact. A retrieval citation must not carry the reserved catalog kind discriminator; objects mixing the two shapes are rejected. Catalog records are always available to planning/answer generation, never sent to /retrieve, never stored in verified_evidence and never counted in retrieval_calls, reused_chunk_ids or complete_scope. complete_scope still means all retrievable chunks for the current artwork, currently two. A catalog-only answer uses direct_response, one model call and zero retrieval calls.
+A citation contains either canonical retrieval Evidence or a CatalogFact. A retrieval citation must not carry the reserved catalog kind discriminator; objects mixing the two shapes are rejected. Catalog records are always available to planning/answer generation, never sent to /retrieve, never stored in verified_evidence and never counted in retrieval_calls, reused_chunk_ids or complete_scope. `complete_scope` means the union of retrieved and verified cached passages covers every chunk for the selected artwork in the release. A catalog-only answer uses direct_response, one model call and zero retrieval calls.
 
 ### 6.2 Existing evidence lookup
 
@@ -503,7 +506,7 @@ Tool-level `ToolInput` adds `tool_version: evidence-tool-v1`, `query_id` and `re
 
 `ToolResult` contains `tool_version`, `query_id`, `artwork_id`, `dataset_version`, `retrieval_strategy_version` (the strategy actually used) and `candidates` (0–2 Evidence records).
 
-Canonical Evidence fields remain `chunk_id`, `artwork_id`, `source_id`, `source_title`, `source_url`, `source_language`, `source_locator`, `excerpt`, `license`, `license_url`, `attribution` and `normalization`. Compare every field against the immutable manifest. Original excerpts are not translated or rewritten. Compatible extra response metadata is discarded before acceptance.
+Canonical Evidence fields remain `chunk_id`, `artwork_id`, `source_id`, `source_title`, `source_url`, `source_language`, `source_locator`, `excerpt`, `license`, `license_url`, `attribution` and `normalization`. Getty Evidence also carries `source_kind` through retrieval, answer citations and verified memory. The two values are `museum_record` for Getty excerpts and `guide_note` for team-authored viewing suggestions. Guide notes credit MuseBridge and link to the underlying Getty record. Their rights statement is `In Copyright`. Chicago Evidence omits `source_kind`. Compare every field against the immutable manifest. Original excerpts are not translated or rewritten. Compatible extra response metadata is discarded before acceptance.
 
 Retain the legacy service's 8 KiB request and 64 KiB response limits, strict UTF-8 JSON, uncompressed bodies, no redirects, exact trace echo and at most three seconds for preparation, full HTTP read and validation. Calls are sequential. Stop the remaining batch when canonical retrieval coverage becomes complete, recording only the actually executed prefix. Do not retry automatically.
 

@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -55,6 +56,40 @@ func TestArtworkResponses(t *testing.T) {
 		}
 		if id := recorder.Header().Get("X-Request-ID"); id == "" || id == "untrusted-client-value" {
 			t.Fatal("B did not generate its own request ID")
+		}
+	}
+}
+
+func TestPublicGalleryListsTheReleasedCardsInOrder(t *testing.T) {
+	d, err := catalog.Load("../../../knowledge/data/getty-pilot-v1.json", "getty-pilot-v1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	h := New(d, nil, Settings{}, nil)
+	list := call(h, http.MethodGet, "/api/artworks")
+	var result struct {
+		Artworks []catalog.Artwork `json:"artworks"`
+	}
+	if list.Code != http.StatusOK || json.Unmarshal(list.Body.Bytes(), &result) != nil {
+		t.Fatal(list.Body.String())
+	}
+	if !reflect.DeepEqual(result.Artworks, d.Artworks()) || len(result.Artworks) < 3 {
+		t.Fatal("lost or reordered cards")
+	}
+	for _, card := range result.Artworks {
+		single := call(h, http.MethodGet, "/api/artworks/"+card.Slug)
+		var detail struct {
+			Artwork catalog.Artwork `json:"artwork"`
+		}
+		if single.Code != 200 || json.Unmarshal(single.Body.Bytes(), &detail) != nil || !reflect.DeepEqual(detail.Artwork, card) {
+			t.Fatalf("inconsistent gallery card: %s", card.Slug)
+		}
+		if card.ImageURL == nil || len(card.SuggestedQuestions) == 0 {
+			t.Fatalf("missing image or questions: %s", card.Slug)
+		}
+		origin, ok := d.ArtworkOrigin(card.Slug)
+		if !ok || origin.Institution != card.Museum {
+			t.Fatalf("incorrect museum record: %s", card.Slug)
 		}
 	}
 }

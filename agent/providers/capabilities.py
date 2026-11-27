@@ -5,6 +5,7 @@ from pathlib import Path
 
 from agent.providers.profile import OllamaProfile, TOKENIZER_SHA256
 from agent.runtime.validation import ContractViolation, strict_json
+from knowledge.release import release_path, release_version
 from agent.tools.retrieval import STRATEGIES, configured_mode
 
 RECORD_VERSION = "ollama-capability-v1"
@@ -15,7 +16,6 @@ CHECKS = ("four_language_workflows", "full_schema", "five_pair_context", "sizing
 def implementation_fingerprint():
     root = Path(__file__).resolve().parents[2]
     paths = [root / "docs/contracts/agent-v2.schema.json",
-             root / "knowledge/data/aic-seed-v0.1.json",
              root / "agent/testing/verify_ollama.py",
              root / "agent/testing/probe_quality.py",
              root / "agent/testing/v2.py", root / "agent/service.py"]
@@ -23,6 +23,8 @@ def implementation_fingerprint():
         paths.extend(sorted(path for path in (root / directory).iterdir() if path.suffix in {".py", ".md"}))
     paths.extend(sorted((root / "agent/runtime").glob("*.py")))
     digest = hashlib.sha256()
+    version = release_version()
+    digest.update(version.encode() + b"\0" + release_path(version).read_bytes() + b"\0")
     for path in paths:
         digest.update(str(path.relative_to(root)).encode())
         digest.update(b"\0" + path.read_bytes() + b"\0")

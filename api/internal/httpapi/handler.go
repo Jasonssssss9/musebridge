@@ -89,12 +89,13 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	isHealth := path == "/healthz" || path == "/readyz"
 	slug, isArtwork := strings.CutPrefix(path, "/api/artworks/")
 	isArtwork = isArtwork && slug != "" && !strings.Contains(slug, "/")
+	isList := path == "/api/artworks"
 	isCreate := path == "/api/conversations"
 	conversationID, isHistory := strings.CutPrefix(path, "/api/conversations/")
 	isHistory = isHistory && strings.HasSuffix(conversationID, "/messages")
 	conversationID = strings.TrimSuffix(conversationID, "/messages")
 	isHistory = isHistory && conversationID != "" && !strings.Contains(conversationID, "/")
-	if !isHealth && !isArtwork && !isCreate && !isHistory {
+	if !isList && !isHealth && !isArtwork && !isCreate && !isHistory {
 		fail(http.StatusNotFound, "route_not_found", "The requested route does not exist.", false)
 		return
 	}
@@ -125,6 +126,13 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if h.dataset == nil {
 		fail(http.StatusServiceUnavailable, "service_not_ready", "The API has not loaded its local dataset.", true)
+		return
+	}
+	if isList {
+		status, code = http.StatusOK, "ok"
+		h.writeJSON(w, r, status, struct {
+			Artworks []catalog.Artwork `json:"artworks"`
+		}{h.dataset.Artworks()})
 		return
 	}
 	if isCreate || isHistory {

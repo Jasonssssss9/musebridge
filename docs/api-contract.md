@@ -89,6 +89,7 @@ A conversation is permanently bound to one artwork and one dataset version. The 
 
 | Method and path | Purpose | Success |
 | --- | --- | --- |
+| `GET /api/artworks` | List all cards in publication order | `200`, `{"artworks": Artwork[]}` |
 | `GET /api/artworks/{slug}` | Load an artwork card from the Go API's local catalog | `200`, `{"artwork": Artwork}` |
 | `POST /api/conversations` | Atomically create or restore the visitor's conversation for this artwork | `200`, `{"conversation": Conversation, "created": boolean}` |
 | `GET /api/conversations/{conversation_id}/messages` | Restore completed turns and the latest unfinished request | `200`, `{"conversation": Conversation, "turns": Turn[], "pending_request": PendingRequest or null}` |
@@ -96,7 +97,9 @@ A conversation is permanently bound to one artwork and one dataset version. The 
 
 A valid completed answer always uses HTTP 200, including `insufficient` and `unsupported_question`. A technical failure always uses a non-2xx error envelope and creates no completed turn.
 
-### 2.1 Artwork lookup
+### 2.1 Artwork listing and lookup
+
+The gallery and QR page both read `GET /api/artworks`. Each listed card matches the detail response for its slug. The selected dataset determines the collection and display order. The [Getty gallery guide](getty-gallery.md) covers image-backed releases.
 
 No cookie is required. The Go API serves the catalog from the local seed, independently of the retrieval service's availability. Unknown slugs return `404 artwork_not_found`.
 

@@ -35,11 +35,22 @@ def _projection(definition: str, value: dict) -> dict:
 def _source_url(value: str) -> bool:
     try:
         url = urlsplit(value)
-        return (url.scheme == "https" and url.hostname in {"api.artic.edu", "www.artic.edu"}
+        return (url.scheme == "https" and url.hostname in {"api.artic.edu", "www.artic.edu", "www.getty.edu"}
                 and url.port in (None, 443) and url.username is None
                 and url.password is None and not url.fragment)
     except ValueError:
         return False
+
+
+def _valid_attribution(record: dict) -> bool:
+    host = urlsplit(record["source_url"]).hostname
+    if record.get("source_kind") == "guide_note":
+        return (host == "www.getty.edu" and record["attribution"] == "MuseBridge"
+                and record["license"] == "In Copyright")
+    if host == "www.getty.edu" and record.get("source_kind") != "museum_record":
+        return False
+    museum = "J. Paul Getty Museum" if host == "www.getty.edu" else "Art Institute of Chicago"
+    return record["attribution"] == museum and record["license"] != "In Copyright"
 
 
 def check_run_result(run: dict, result: dict) -> dict:
@@ -75,13 +86,14 @@ def check_run_result(run: dict, result: dict) -> dict:
     evidence = result["evidence_snapshot"]
     by_id = {}
     licenses = {"CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
-                "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/"}
+                "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
+                "In Copyright": "https://rightsstatements.org/vocab/InC/1.0/"}
     for record in evidence:
         _check(record["chunk_id"] not in by_id and record["artwork_id"] == run["scope"]["artwork_id"]
                and "kind" not in record and "fact_id" not in record
                and _source_url(record["source_url"])
                and licenses[record["license"]] == record["license_url"]
-               and record["attribution"] == "Art Institute of Chicago")
+               and _valid_attribution(record))
         by_id[record["chunk_id"]] = _projection("Evidence", record)
     cached = state["verified_evidence"]
     _check(result["reused_chunk_ids"] == [record["chunk_id"] for record in cached])

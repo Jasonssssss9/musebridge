@@ -3,6 +3,7 @@
 import os
 from pathlib import Path
 
+from .dataset import DATASET_VERSION
 from .errors import RetrievalError
 
 
@@ -21,5 +22,6 @@ def configured_index(dataset, mode):
         from .vector_index import open_index
     except ImportError as exc:
         raise RetrievalError("retrieval_unavailable", "Install knowledge/requirements.txt for hybrid retrieval.") from exc
-    path = Path(os.environ.get("MUSEBRIDGE_VECTOR_INDEX") or "~/.cache/musebridge/embeddings-v1.json")
+    name = "embeddings-v1" if dataset.dataset_version == DATASET_VERSION else f"embeddings-{dataset.dataset_version}"
+    path = Path(os.environ.get("MUSEBRIDGE_VECTOR_INDEX") or f"~/.cache/musebridge/{name}.json")
     return open_index(dataset, path.expanduser())

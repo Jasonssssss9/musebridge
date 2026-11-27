@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError, getArtwork } from '../api/client';
 import type { Artwork } from '../api/types';
 import { UI_TEXT as t } from '../i18n';
@@ -7,6 +7,26 @@ import { Chat } from './Chat';
 import { safeHttps } from './Citation';
 
 type Load = { state: 'loading' } | { state: 'ok'; artwork: Artwork } | { state: 'not_found' } | { state: 'error' };
+
+function ArtworkImage({ art }: { art: Artwork }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  if (!art.image_url) return <div className="plate plate-empty">{t.noImage}</div>;
+  return (
+    <figure className="artwork-image">
+      <button className="image-preview" aria-label={`Enlarge image of ${art.title}`} onClick={() => dialog.current?.showModal()}>
+        <img src={art.image_url} alt={art.image_alt ?? art.title} />
+        <span aria-hidden="true">Enlarge ↗</span>
+      </button>
+      {art.image_credit && <figcaption>{art.image_credit} {art.image_source_url &&
+        <a href={art.image_source_url} target="_blank" rel="noopener noreferrer">Image source{art.image_license && ` · ${art.image_license}`}</a>}
+      </figcaption>}
+      <dialog className="image-dialog" ref={dialog} aria-label={art.title}>
+        <div className="image-dialog-header"><p>{art.title}</p><button className="btn btn-quiet" onClick={() => dialog.current?.close()}>Close</button></div>
+        <img src={art.image_url} alt={art.image_alt ?? art.title} />
+      </dialog>
+    </figure>
+  );
+}
 
 export function ArtworkPage({ slug }: { slug: string | null }) {
   const [load, setLoad] = useState<Load>({ state: slug === null ? 'not_found' : 'loading' });
@@ -52,12 +72,10 @@ export function ArtworkPage({ slug }: { slug: string | null }) {
 
   const a = load.artwork;
   const record = safeHttps(a.source_url);
-  const image = a.image_url ? safeHttps(a.image_url) : null;
   return (
     <main className="page artwork">
       <section className="label" aria-label={a.title}>
-        {/* This release ships no images (contract 2.1): show a neutral plate, never a guessed URL. */}
-        {image ? <img className="plate" src={image} alt={a.title} /> : <div className="plate plate-empty">{t.noImage}</div>}
+        <ArtworkImage art={a} />
         <h1>{a.title}</h1>
         <p className="artist">{a.artist}, {a.date_display}</p>
         <p className="muted small">

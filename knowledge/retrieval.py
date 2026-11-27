@@ -110,11 +110,55 @@ def retrieve_with_trace(
     """Return evidence and its request bindings over the normalized query."""
     validate_request(dataset, artwork_id=artwork_id, query=query, dataset_version=dataset_version, top_k=top_k)
 
-    normalized_query, requests = parse_requests(query, artwork_id, active_artist=dataset.artworks[artwork_id]["artist"])
     scoped_chunks = {
         chunk["chunk_id"]: chunk
         for chunk in dataset.chunks if chunk["artwork_id"] == artwork_id
     }
+    if dataset.dataset_version.startswith("getty-"):
+        from .passage_ranking import rank
+        selected, lexical, dense_hits = rank(dataset, artwork_id, query, vector_index)
+        normalized_query, trace_requests = query, []
+    else:
+        selected, lexical, dense_hits, normalized_query, trace_requests = _rank_legacy(
+            dataset, artwork_id, query, vector_index, scoped_chunks,
+        )
+    selected = selected[:top_k]
+    for request in trace_requests:
+        candidates = request["chunk_ids"]
+        request["chunk_ids"] = [key for key in selected if key in candidates]
+
+    evidence = []
+    for chunk_id in selected:
+        chunk = scoped_chunks[chunk_id]
+        source = dataset.sources[chunk["source_id"]]
+        evidence.append(
+            {
+                "chunk_id": chunk["chunk_id"],
+                "artwork_id": chunk["artwork_id"],
+                "source_id": chunk["source_id"],
+                **({"source_kind": source["source_kind"]} if "source_kind" in source else {}),
+                "source_title": source["source_title"],
+                "source_url": source["source_url"],
+                "source_language": source["source_language"],
+                "source_locator": chunk["source_locator"],
+                "excerpt": chunk["excerpt"],
+                "license": chunk["license"],
+                "license_url": chunk["license_url"],
+                "attribution": chunk["attribution"],
+                "normalization": chunk["normalization"],
+            }
+        )
+    result = {"dataset_version": dataset.dataset_version, "evidence": evidence}
+    trace = {"normalized_query": normalized_query, "requests": trace_requests}
+    if vector_index is not None:
+        trace["lexical_ranking"] = lexical
+        trace["dense_ranking"] = [{"chunk_id": key, "cosine": score} for key, score in dense_hits]
+    return result, trace
+
+
+
+def _rank_legacy(dataset, artwork_id, query, vector_index, scoped_chunks):
+    normalized_query, requests = parse_requests(query, artwork_id, active_artist=dataset.artworks[artwork_id]["artist"])
     available_topics = {key: source_topics(chunk["topics"], chunk["source_locator"])
                         for key, chunk in scoped_chunks.items()}
     ranking_topics = {chunk_id: set() for chunk_id in scoped_chunks}
@@ -163,34 +207,4 @@ def retrieve_with_trace(
             dense_hits = vector_index.rank(artwork_id, search_text)
             eligible = [key for key, score in dense_hits if key in scoped_chunks and score >= DENSE_MIN_COSINE]
             selected = fuse_rankings(lexical, eligible)
-    selected = selected[:top_k]
-    for request in trace_requests:
-        candidates = request["chunk_ids"]
-        request["chunk_ids"] = [key for key in selected if key in candidates]
-
-    evidence = []
-    for chunk_id in selected:
-        chunk = scoped_chunks[chunk_id]
-        source = dataset.sources[chunk["source_id"]]
-        evidence.append(
-            {
-                "chunk_id": chunk["chunk_id"],
-                "artwork_id": chunk["artwork_id"],
-                "source_id": chunk["source_id"],
-                "source_title": source["source_title"],
-                "source_url": source["source_url"],
-                "source_language": source["source_language"],
-                "source_locator": chunk["source_locator"],
-                "excerpt": chunk["excerpt"],
-                "license": chunk["license"],
-                "license_url": chunk["license_url"],
-                "attribution": chunk["attribution"],
-                "normalization": chunk["normalization"],
-            }
-        )
-    result = {"dataset_version": dataset.dataset_version, "evidence": evidence}
-    trace = {"normalized_query": normalized_query, "requests": trace_requests}
-    if vector_index is not None:
-        trace["lexical_ranking"] = lexical
-        trace["dense_ranking"] = [{"chunk_id": key, "cosine": score} for key, score in dense_hits]
-    return result, trace
+    return selected, lexical, dense_hits, normalized_query, trace_requests

@@ -19,7 +19,7 @@ func (d *Dataset) ArtworkOrigin(artworkID string) (Origin, bool) {
 	var result Origin
 	count := 0
 	for _, source := range d.sources {
-		if source.ArtworkID == artworkID && source.SourceURL == artwork.SourceURL {
+		if source.ArtworkID == artworkID && source.SourceURL == artwork.SourceURL && source.SourceKind != "guide_note" {
 			result = Origin{source.SourceID, source.SourceTitle, source.SourceURL, source.Institution}
 			count++
 		}

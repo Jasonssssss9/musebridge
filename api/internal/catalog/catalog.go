@@ -22,28 +22,35 @@ var utcTimestamp = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9
 
 // Artwork is the public artwork card defined by local-demo-v0.1.
 type Artwork struct {
-	ArtworkID       string  `json:"artwork_id"`
-	Slug            string  `json:"slug"`
-	Title           string  `json:"title"`
-	Artist          string  `json:"artist"`
-	DateDisplay     string  `json:"date_display"`
-	Museum          string  `json:"museum"`
-	MuseumRecordID  int     `json:"museum_record_id"`
-	AccessionNumber string  `json:"accession_number"`
-	SourceURL       string  `json:"source_url"`
-	ImageURL        *string `json:"image_url"`
-	DatasetVersion  string  `json:"dataset_version"`
+	ArtworkID          string   `json:"artwork_id"`
+	Slug               string   `json:"slug"`
+	Title              string   `json:"title"`
+	Artist             string   `json:"artist"`
+	DateDisplay        string   `json:"date_display"`
+	Museum             string   `json:"museum"`
+	MuseumRecordID     int      `json:"museum_record_id"`
+	AccessionNumber    string   `json:"accession_number"`
+	SourceURL          string   `json:"source_url"`
+	ImageURL           *string  `json:"image_url"`
+	DatasetVersion     string   `json:"dataset_version"`
+	ImageAlt           string   `json:"image_alt,omitempty"`
+	ImageCredit        string   `json:"image_credit,omitempty"`
+	ImageLicense       string   `json:"image_license,omitempty"`
+	ImageSourceURL     string   `json:"image_source_url,omitempty"`
+	SuggestedQuestions []string `json:"suggested_questions,omitempty"`
 }
 
 type source struct {
-	SourceID       string `json:"source_id"`
-	ArtworkID      string `json:"artwork_id"`
-	SourceTitle    string `json:"source_title"`
-	SourceURL      string `json:"source_url"`
-	SourceLanguage string `json:"source_language"`
-	Institution    string `json:"institution"`
-	RetrievedAt    string `json:"retrieved_at"`
-	TermsURL       string `json:"terms_url"`
+	SourceKind      string `json:"source_kind"`
+	BasedOnSourceID string `json:"based_on_source_id"`
+	SourceID        string `json:"source_id"`
+	ArtworkID       string `json:"artwork_id"`
+	SourceTitle     string `json:"source_title"`
+	SourceURL       string `json:"source_url"`
+	SourceLanguage  string `json:"source_language"`
+	Institution     string `json:"institution"`
+	RetrievedAt     string `json:"retrieved_at"`
+	TermsURL        string `json:"terms_url"`
 }
 
 type chunk struct {
@@ -71,6 +78,7 @@ type seedFile struct {
 type Dataset struct {
 	version  string
 	checksum string
+	order    []string
 	artworks map[string]Artwork
 	sources  map[string]source
 	chunks   map[string]chunk
@@ -79,9 +87,24 @@ type Dataset struct {
 func (d *Dataset) Version() string  { return d.version }
 func (d *Dataset) Checksum() string { return d.checksum }
 
-// ArtworkBySlug returns a value copy. This release permits no image pointers.
+// Artworks returns cards in the order chosen by the release editor.
+func (d *Dataset) Artworks() []Artwork {
+	cards := make([]Artwork, 0, len(d.order))
+	for _, slug := range d.order {
+		card, _ := d.ArtworkBySlug(slug)
+		cards = append(cards, card)
+	}
+	return cards
+}
+
+// ArtworkBySlug exposes no mutable catalog storage.
 func (d *Dataset) ArtworkBySlug(slug string) (Artwork, bool) {
 	artwork, ok := d.artworks[slug]
+	if artwork.ImageURL != nil {
+		image := *artwork.ImageURL
+		artwork.ImageURL = &image
+	}
+	artwork.SuggestedQuestions = append([]string(nil), artwork.SuggestedQuestions...)
 	return artwork, ok
 }
 
@@ -107,6 +130,10 @@ func Load(path, expectedVersion string) (*Dataset, error) {
 		"sources":  "source_id artwork_id source_title source_url source_language institution retrieved_at terms_url",
 		"chunks":   "chunk_id artwork_id source_id source_locator excerpt license license_url attribution normalization topics",
 	}
+	if expectedVersion != "aic-seed-v0.1" {
+		shapes["artworks"] += " image_alt image_credit image_license image_source_url suggested_questions"
+		shapes["sources"] += " source_kind ?based_on_source_id"
+	}
 	for name, fields := range shapes {
 		var records []json.RawMessage
 		if err := json.Unmarshal(root[name], &records); err != nil {
@@ -125,12 +152,21 @@ func Load(path, expectedVersion string) (*Dataset, error) {
 	if seed.DatasetVersion != expectedVersion {
 		return nil, fmt.Errorf("seed version does not match DATASET_VERSION")
 	}
-	if len(seed.Artworks) != 2 || len(seed.Sources) != 2 || len(seed.Chunks) != 4 {
-		return nil, fmt.Errorf("this release requires two artworks, two sources and four chunks")
-	}
 	dataset := &Dataset{
 		version: seed.DatasetVersion, checksum: fmt.Sprintf("%x", sha256.Sum256(data)),
 		artworks: make(map[string]Artwork), sources: make(map[string]source), chunks: make(map[string]chunk),
+	}
+	for _, artwork := range seed.Artworks {
+		dataset.order = append(dataset.order, artwork.Slug)
+	}
+	if expectedVersion != "aic-seed-v0.1" {
+		if err := dataset.loadGallery(seed); err != nil {
+			return nil, err
+		}
+		return dataset, nil
+	}
+	if len(seed.Artworks) != 2 || len(seed.Sources) != 2 || len(seed.Chunks) != 4 {
+		return nil, fmt.Errorf("this release requires two artworks, two sources and four chunks")
 	}
 	for _, artwork := range seed.Artworks {
 		if (artwork.ArtworkID != "aic-28560" && artwork.ArtworkID != "aic-11723") ||
@@ -225,20 +261,27 @@ func objectFields(data []byte, fields string) (map[string]json.RawMessage, error
 		return nil, fmt.Errorf("expected an object")
 	}
 	names := strings.Fields(fields)
-	if len(object) != len(names) {
-		return nil, fmt.Errorf("missing or unknown object fields")
-	}
+	matched := 0
 	for _, name := range names {
+		optional := strings.HasPrefix(name, "?")
+		name = strings.TrimPrefix(name, "?")
 		value, exists := object[name]
+		if optional && !exists {
+			continue
+		}
 		if !exists || (bytes.Equal(value, []byte("null")) && name != "image_url") {
 			return nil, fmt.Errorf("missing or null field %s", name)
 		}
+		matched++
 		if len(value) > 0 && value[0] == '"' {
 			var text string
 			if err := json.Unmarshal(value, &text); err != nil || !validText(text) {
 				return nil, fmt.Errorf("field %s must contain valid nonempty text", name)
 			}
 		}
+	}
+	if matched != len(object) {
+		return nil, fmt.Errorf("unknown object field")
 	}
 	return object, nil
 }

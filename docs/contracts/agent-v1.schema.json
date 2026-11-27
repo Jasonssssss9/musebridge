@@ -283,6 +283,10 @@
             }
           ]
         },
+        "source_kind": {
+          "type": "string",
+          "enum": ["museum_record", "guide_note"]
+        },
         "source_title": {
           "type": "string",
           "minLength": 1,
@@ -330,14 +334,16 @@
           "type": "string",
           "enum": [
             "CC0-1.0",
-            "CC-BY-4.0"
+            "CC-BY-4.0",
+            "In Copyright"
           ]
         },
         "license_url": {
           "type": "string",
           "enum": [
             "https://creativecommons.org/publicdomain/zero/1.0/",
-            "https://creativecommons.org/licenses/by/4.0/"
+            "https://creativecommons.org/licenses/by/4.0/",
+            "https://rightsstatements.org/vocab/InC/1.0/"
           ]
         },
         "attribution": {

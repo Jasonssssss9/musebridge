@@ -183,9 +183,13 @@ func (c *Client) decodeResult(data []byte, artworkID string) (Result, error) {
 	}
 	result := Result{DatasetVersion: envelope.DatasetVersion, Evidence: make([]catalog.Evidence, 0, len(envelope.Evidence))}
 	seen := make(map[string]bool)
+	fields := "chunk_id artwork_id source_id source_title source_url source_language source_locator excerpt license license_url attribution normalization"
+	if c.dataset.Version() != "aic-seed-v0.1" {
+		fields += " source_kind"
+	}
 	for _, raw := range envelope.Evidence {
 		var evidence catalog.Evidence
-		if err := jsonwire.DecodeFields(raw, "chunk_id artwork_id source_id source_title source_url source_language source_locator excerpt license license_url attribution normalization", &evidence); err != nil {
+		if err := jsonwire.DecodeFields(raw, fields, &evidence); err != nil {
 			return Result{}, err
 		}
 		trusted, exists := c.dataset.EvidenceByChunkID(evidence.ChunkID)

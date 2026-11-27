@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, afterEach, test } from 'node:test';
 import { setImmediate } from 'node:timers/promises';
 import { webcrypto } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 import { createServer } from 'vite';
 
@@ -234,12 +235,52 @@ test('source text stays literal and only HTTPS source and license URLs become li
 test('empty conversation explains sourced answers without promising citations for every reply', async (t) => {
   server(t);
   await render(createElement(Chat, { artwork }));
-  assert.match(container.textContent, /Answers grounded in museum records include sources/);
+  assert.match(container.textContent, /Sourced answers include links/);
   assert.doesNotMatch(container.textContent, /each one shows its source/);
 });
 
 
-test('QR cards require a valid HTTP(S) origin and never print broken or executable addresses', async () => {
+test('Getty gallery, image enlargement, suggested questions and QR cards use the released artwork data', async (t) => {
+  const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-pilot-v1.json', import.meta.url)));
+  const active = artworks[1];
+  dom.window.HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
+  dom.window.HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
+  const scoped = conversation({ artwork_id: active.artwork_id, dataset_version: active.dataset_version });
+  t.mock.method(globalThis, 'fetch', async (url, init) => {
+    if (url === '/api/artworks') return Response.json({ artworks });
+    if (url === `/api/artworks/${active.slug}`) return Response.json({ artwork: active });
+    if (init.method === 'POST') return Response.json({ conversation: scoped, created: true });
+    return Response.json({ conversation: scoped, turns: [], pending_request: null });
+  });
+  window.history.replaceState(null, '', '/');
+  await render(createElement(App));
+  assert.deepEqual([...container.querySelectorAll('.workcard img')].map((i) => i.getAttribute('src')), artworks.map((a) => a.image_url));
+  await act(async () => container.querySelectorAll('.workcard')[1].click());
+  await flush();
+  assert.equal(container.querySelector('.image-preview img').alt, active.image_alt);
+  assert.equal(container.querySelector('figcaption a').href, active.image_source_url);
+  await act(async () => container.querySelector('.image-preview').click());
+  assert.ok(container.querySelector('dialog').open);
+  await act(async () => container.querySelector('dialog button').click());
+  assert.equal(container.querySelector('dialog').open, false);
+  assert.deepEqual([...container.querySelectorAll('.chips button')].map((el) => el.textContent), active.suggested_questions);
+  await act(async () => navigate('/qr'));
+  await flush();
+  assert.deepEqual([...container.querySelectorAll('svg.qr')].map((el) => new URL(el.getAttribute('aria-label')).pathname), artworks.map((a) => `/a/${a.slug}`));
+});
+
+test('Getty museum passages and MuseBridge guide notes display distinct author and destination labels', async () => {
+  const { sources, chunks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-pilot-v1.json', import.meta.url)));
+  const citations = sources.slice(0, 2).map((src) => ({ kind: 'evidence', ...chunks.find((c) => c.source_id === src.source_id), ...src }));
+  await render(createElement('ul', null, ...citations.map((c) => createElement(Citation, { key: c.source_id, c }))));
+  const cards = [...container.querySelectorAll('.cite')];
+  assert.deepEqual(cards.map((li) => li.querySelector('.cite-kind').textContent), ['Getty Museum', 'MuseBridge Guide']);
+  assert.match(cards[1].querySelector('.cite-link').textContent, /Underlying Getty record/);
+  assert.equal(cards[1].querySelector('blockquote').textContent, citations[1].excerpt);
+});
+
+test('QR cards require a valid HTTP(S) origin and never print broken or executable addresses', async (t) => {
+  t.mock.method(globalThis, 'fetch', async () => Response.json({ artworks: ARTWORKS }));
   await render(createElement(QrPage));
   assert.equal(container.querySelectorAll('svg.qr').length, 2);
   assert.match(container.textContent, /A phone cannot open/);
@@ -270,6 +311,7 @@ test('navigation updates home, artwork and QR titles and opens each artwork in i
   const scopes = [];
   const byId = new Map(ARTWORKS.map((a, i) => [uuid(i + 1), conversation({ conversation_id: uuid(i + 1), artwork_id: a.artwork_id })]));
   t.mock.method(globalThis, 'fetch', async (url, init = {}) => {
+    if (url === '/api/artworks') return Response.json({ artworks: ARTWORKS });
     if (url.startsWith('/api/artworks/')) {
       return Response.json({ artwork: ARTWORKS.find((a) => a.slug === url.split('/').at(-1)) });
     }
@@ -296,6 +338,6 @@ test('navigation updates home, artwork and QR titles and opens each artwork in i
   assert.deepEqual(scopes, ARTWORKS.map((a) => a.artwork_id));
   await act(async () => navigate('/qr'));
   await flush();
-  assert.equal(document.title, 'QR cards for the demo · MuseBridge');
+  assert.equal(document.title, 'Artwork QR cards · MuseBridge');
   assert.equal(container.querySelectorAll('svg.qr').length, 2);
 });

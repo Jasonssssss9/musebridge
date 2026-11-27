@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Literal, NotRequired, TypeAlias, TypedDict, Union
 
-SCHEMA_SHA256 = "05ff57e1097bc8178c82b8b799176f576a30490b540be6df31774de2cba3c5b0"
+SCHEMA_SHA256 = "8abc3f29b4c366c5a19cfb2c3ffe78cd68236852e7eb43d68fadc77ae6b8ab20"
 
 UUID: TypeAlias = str
 
@@ -26,13 +26,14 @@ class Evidence(TypedDict):
     chunk_id: str
     artwork_id: str
     source_id: str
+    source_kind: NotRequired[Literal['museum_record', 'guide_note']]
     source_title: str
     source_url: str
     source_language: Literal['en']
     source_locator: str
     excerpt: str
-    license: Literal['CC0-1.0', 'CC-BY-4.0']
-    license_url: Literal['https://creativecommons.org/publicdomain/zero/1.0/', 'https://creativecommons.org/licenses/by/4.0/']
+    license: Literal['CC0-1.0', 'CC-BY-4.0', 'In Copyright']
+    license_url: Literal['https://creativecommons.org/publicdomain/zero/1.0/', 'https://creativecommons.org/licenses/by/4.0/', 'https://rightsstatements.org/vocab/InC/1.0/']
     attribution: str
     normalization: str
 
@@ -334,6 +335,7 @@ class PlanInput(TypedDict):
     conversation_context: ConversationContext
     cached_evidence: list[Evidence]
     complete_scope: bool
+    available_source_kinds: NotRequired[list[Literal['museum_record', 'guide_note']]]
     query_policy: QueryPolicy
     catalog_facts: list[CatalogFact]
 
@@ -584,13 +586,14 @@ class CitationVariant1(TypedDict):
     chunk_id: str
     artwork_id: str
     source_id: str
+    source_kind: NotRequired[Literal['museum_record', 'guide_note']]
     source_title: str
     source_url: str
     source_language: Literal['en']
     source_locator: str
     excerpt: str
-    license: Literal['CC0-1.0', 'CC-BY-4.0']
-    license_url: Literal['https://creativecommons.org/publicdomain/zero/1.0/', 'https://creativecommons.org/licenses/by/4.0/']
+    license: Literal['CC0-1.0', 'CC-BY-4.0', 'In Copyright']
+    license_url: Literal['https://creativecommons.org/publicdomain/zero/1.0/', 'https://creativecommons.org/licenses/by/4.0/', 'https://rightsstatements.org/vocab/InC/1.0/']
     attribution: str
     normalization: str
 

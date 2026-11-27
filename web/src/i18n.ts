@@ -3,20 +3,20 @@ import type { AnswerLanguage, AnswerStatus, Language, LanguagePreference } from 
 // Interface labels are English. The answer language is stored separately.
 export const UI_TEXT = {
   appTagline: 'Ask about the artwork in front of you',
-  homeIntro: 'Scan the QR code next to an artwork, or pick one of the two demo works.',
+  homeIntro: 'Scan the QR code next to an artwork, or choose a work below.',
   loadingArtwork: 'Loading artwork…',
   artworkNotFoundTitle: 'This artwork link is not available',
-  artworkNotFoundBody: 'The code may be out of date. Try scanning it again, or choose a work from the demo list.',
+  artworkNotFoundBody: 'The code may be out of date. Try scanning it again, or choose a work from the collection.',
   artworkErrorTitle: 'The artwork could not be loaded',
   artworkErrorBody: 'Check your connection and try again.',
-  backToList: 'Demo artworks',
+  backToList: 'Browse the collection',
   tryAgain: 'Try again',
   accession: 'Accession no.',
   museumRecord: 'Museum record',
   noImage: 'Image not included in this demo',
   answerLanguage: 'Answer language',
   chatHeading: 'Ask about this work',
-  chatEmpty: 'Ask about the artwork or share what you notice. Answers grounded in museum records include sources.',
+  chatEmpty: 'Ask about the artwork or share what you notice. Sourced answers include links to the museum record or a MuseBridge guide note.',
   suggestions: 'Try asking',
   placeholder: 'Ask a question…',
   send: 'Send',
@@ -62,7 +62,7 @@ export const UI_TEXT = {
   chatUnavailable: 'The guide is not available right now. The artwork details above are still correct.',
   sessionEnded: 'Your earlier conversation is no longer available.',
   editingNote: 'Editing sends this as a new question.',
-  qrTitle: 'QR cards for the demo',
+  qrTitle: 'Artwork QR cards',
   qrIntro: 'Each code opens one artwork page. Print this page or show it on a second screen, then scan with the phone.',
   qrBase: 'Address the phone will use',
   qrLocalWarning: 'A phone cannot open this computer-local address. Enter the computer’s network origin above, for example http://192.168.1.20:8080, or open this page at http://192.168.1.20:8080/qr.',
@@ -143,8 +143,9 @@ const EXAMPLES: Record<Language, { material: string; brushwork: string; artist: 
  * Example questions shown as tap-to-ask chips, in the given language. The fixture contract only
  * recognizes its listed wordings (api-contract 6.1), so `catalog` questions are agent-only.
  */
-export function suggestions(artworkId: string, lang: Language, catalog: boolean): string[] {
+export function suggestions(artworkId: string, lang: Language, catalog: boolean, curated?: string[]): string[] {
   const e = EXAMPLES[lang];
+  if (curated?.length) return lang === 'en' ? curated : [e.material, e.artist];
   const list = [e.material, e.brushwork];
   if (catalog) list.push(e.artist);
   if (artworkId === 'aic-28560') list.push(e.energy);

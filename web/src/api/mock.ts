@@ -315,6 +315,8 @@ export async function mockFetch(path: string, init: RequestInit = {}): Promise<R
   const s = load();
   settle(s);
 
+  if (path === '/api/artworks' && method === 'GET') return reply(200, { artworks: ARTWORKS });
+
   let m = /^\/api\/artworks\/([^/?]+)$/.exec(path);
   if (m && method === 'GET') {
     const art = ARTWORKS.find((a) => a.slug === decodeURIComponent(m![1]));

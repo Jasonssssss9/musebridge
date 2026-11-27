@@ -24,7 +24,7 @@ func (v *Validator) check(name string, value any) error {
 func sourceURL(raw string) bool {
 	u, err := url.Parse(raw)
 	return err == nil && u.Scheme == "https" && u.User == nil && u.Fragment == "" &&
-		(u.Port() == "" || u.Port() == "443") && (u.Hostname() == "api.artic.edu" || u.Hostname() == "www.artic.edu")
+		(u.Port() == "" || u.Port() == "443") && (u.Hostname() == "api.artic.edu" || u.Hostname() == "www.artic.edu" || u.Hostname() == "www.getty.edu")
 }
 
 // CheckState checks a detached snapshot, not ownership or a live store revision.
@@ -48,8 +48,26 @@ func (v *Validator) CheckState(state ConversationState) error {
 }
 
 func validEvidence(e Evidence) bool {
-	licenses := map[string]string{"CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/", "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/"}
-	return sourceURL(e.SourceURL) && licenses[e.License] == e.LicenseURL && e.Attribution == "Art Institute of Chicago"
+	licenses := map[string]string{
+		"CC0-1.0":      "https://creativecommons.org/publicdomain/zero/1.0/",
+		"CC-BY-4.0":    "https://creativecommons.org/licenses/by/4.0/",
+		"In Copyright": "https://rightsstatements.org/vocab/InC/1.0/",
+	}
+	if !sourceURL(e.SourceURL) || licenses[e.License] != e.LicenseURL {
+		return false
+	}
+	source, _ := url.Parse(e.SourceURL)
+	if e.SourceKind.Present && e.SourceKind.Value == "guide_note" {
+		return source.Hostname() == "www.getty.edu" && e.Attribution == "MuseBridge" && e.License == "In Copyright"
+	}
+	institution := "Art Institute of Chicago"
+	if source.Hostname() == "www.getty.edu" {
+		if !e.SourceKind.Present || e.SourceKind.Value != "museum_record" {
+			return false
+		}
+		institution = "J. Paul Getty Museum"
+	}
+	return e.Attribution == institution && e.License != "In Copyright"
 }
 
 // CheckRunRequest checks identities/history and declared source relationships.

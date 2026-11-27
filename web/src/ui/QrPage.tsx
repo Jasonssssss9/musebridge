@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import type { Artwork } from '../api/types';
 import { UI_TEXT as t } from '../i18n';
 import { qrMatrix, qrPath } from '../qr';
-import { DEMO } from './Home';
+import { CatalogList } from './CatalogList';
 
 function Qr({ text }: { text: string }) {
   let matrix: boolean[][];
@@ -25,6 +26,12 @@ function Qr({ text }: { text: string }) {
  * the same LAN address the phone will use.
  */
 export function QrPage() {
+  return <main className="page qrpage">
+    <CatalogList>{(works) => <QrCards works={works} />}</CatalogList>
+  </main>;
+}
+
+function QrCards({ works }: { works: Artwork[] }) {
   const [base, setBase] = useState(window.location.origin);
   let address: URL | null = null;
   try {
@@ -36,7 +43,7 @@ export function QrPage() {
   const local = address && (address.hostname === 'localhost' || address.hostname.endsWith('.localhost') || address.hostname === '[::1]'
     || address.hostname === '0.0.0.0' || /^127\./.test(address.hostname));
   return (
-    <main className="page qrpage">
+    <>
       <div className="no-print">
         <h1>{t.qrTitle}</h1>
         <p className="muted small">{t.qrIntro}</p>
@@ -49,19 +56,19 @@ export function QrPage() {
         <div className="actions"><button className="btn" disabled={!origin} onClick={() => window.print()}>{t.qrPrint}</button></div>
       </div>
       {origin && <ul className="qrcards">
-        {DEMO.map((w) => {
+        {works.map((w) => {
           const url = `${origin}/a/${w.slug}`;
           return (
             <li key={w.slug} className="qrcard">
               <Qr text={url} />
               <p className="workcard-title">{w.title}</p>
-              <p className="muted">{w.by}</p>
+              <p className="muted">{w.artist}, {w.date_display}</p>
               <p className="small">{t.qrScan}</p>
               <p className="small muted"><code>{url}</code></p>
             </li>
           );
         })}
       </ul>}
-    </main>
+    </>
   );
 }

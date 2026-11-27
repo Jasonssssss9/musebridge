@@ -1,0 +1,425 @@
+{
+  "dataset_version": "getty-pilot-v1",
+  "artworks": [
+    {
+      "artwork_id": "getty-108hgy",
+      "slug": "getty-108hgy",
+      "title": "The Portal of Rouen Cathedral in Morning Light",
+      "artist": "Claude Monet",
+      "date_display": "1894",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 142049,
+      "accession_number": "2001.33",
+      "source_url": "https://www.getty.edu/art/collection/object/108HGY",
+      "image_url": "/artworks/getty-108hgy.jpg",
+      "dataset_version": "getty-pilot-v1",
+      "image_alt": "A close view of Rouen Cathedral’s facade in pale morning light, with a dark recessed doorway below layers of carved stone.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/6d1d6b93-71bb-41f1-9ffd-48e49f3adbe8/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Where did Monet set up to paint this view of the cathedral?",
+        "Where should I start looking at the cathedral facade?",
+        "How did Monet work on the series after leaving Rouen?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103rgh",
+      "slug": "getty-103rgh",
+      "title": "Starry Night",
+      "artist": "Edvard Munch",
+      "date_display": "1893",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 869,
+      "accession_number": "84.PA.681",
+      "source_url": "https://www.getty.edu/art/collection/object/103RGH",
+      "image_url": "/artworks/getty-103rgh.jpg",
+      "dataset_version": "getty-pilot-v1",
+      "image_alt": "A blue night landscape with a pale fence crossing in front of dark trees and a curving shore beside the water.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/5c21ce64-6ee9-4c39-a276-4a18ab412e5b/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "What might the shape on the fence represent?",
+        "Where should I look first in this night scene?",
+        "How did Munch paint the night sky?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103rfp",
+      "slug": "getty-103rfp",
+      "title": "Bacchante with an Ape",
+      "artist": "Hendrick ter Brugghen",
+      "date_display": "1627",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 845,
+      "accession_number": "84.PA.5",
+      "source_url": "https://www.getty.edu/art/collection/object/103RFP",
+      "image_url": "/artworks/getty-103rfp.jpg",
+      "dataset_version": "getty-pilot-v1",
+      "image_alt": "A smiling woman leans forward with a bunch of grapes and a golden drinking vessel. An ape holding grapes appears at the lower left.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/f11b525b-8d14-4f96-9c71-d97e93fe26b1/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "How does the ape imitate the woman?",
+        "Where should I look to compare the two gestures?",
+        "What meaning does the Getty suggest for the ape?"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "getty-108hgy-record",
+      "artwork_id": "getty-108hgy",
+      "source_title": "The Portal of Rouen Cathedral in Morning Light — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/108HGY",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-108hgy-guide",
+      "artwork_id": "getty-108hgy",
+      "source_title": "MuseBridge Guide — The Portal of Rouen Cathedral in Morning Light",
+      "source_url": "https://www.getty.edu/art/collection/object/108HGY",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-108hgy-record"
+    },
+    {
+      "source_id": "getty-103rgh-record",
+      "artwork_id": "getty-103rgh",
+      "source_title": "Starry Night — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103RGH",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103rgh-guide",
+      "artwork_id": "getty-103rgh",
+      "source_title": "MuseBridge Guide — Starry Night",
+      "source_url": "https://www.getty.edu/art/collection/object/103RGH",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103rgh-record"
+    },
+    {
+      "source_id": "getty-103rfp-record",
+      "artwork_id": "getty-103rfp",
+      "source_title": "Bacchante with an Ape — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103RFP",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103rfp-guide",
+      "artwork_id": "getty-103rfp",
+      "source_title": "MuseBridge Guide — Bacchante with an Ape",
+      "source_url": "https://www.getty.edu/art/collection/object/103RFP",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103rfp-record"
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "getty-108hgy-medium",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-dimensions",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 100.3 × 65.1 cm (39 1/2 × 25 5/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-description-01",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Object description, paragraph 1 (Light and surface)",
+      "excerpt": "\"Everything changes, even stone.\" Claude Monet wrote these words in a letter and vividly demonstrated them in paint, conveying a wondrous combination of permanence and mutability as the sun daily transformed the facade of Rouen Cathedral. Extending the building's encrusted stone surface to the richly varied impasto surface of his painting, he portrayed the cathedral perpetually re-emerging in the suffused light of early morning.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "light",
+        "brushwork",
+        "surface"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-description-02",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Object description, paragraph 2 (Painting the series)",
+      "excerpt": "Monet created several groups of paintings exploring the color, light, and form of a single subject at various times of day, but his Rouen Cathedral series was his most intense effort on a single site. He painted there in late winter in both 1892 and 1893, then reworked his thirty canvases from memory in the studio through 1894. He began this example in 1893, working in an improvised studio in the front room of a dressmaker's shop across from the cathedral.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "series",
+        "working_method",
+        "setting"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-description-03",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Object description, paragraph 3 (The Paris exhibition)",
+      "excerpt": "After creating a coherent ensemble, Monet selected twenty paintings that he considered \"complete\" and \"perfect,\" including this one, for an exhibition at his Paris dealer's gallery in May 1895. Pissarro and Cézanne visited and praised the series, and patrons quickly purchased eight paintings from the group.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "series",
+        "exhibition"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-guide-01",
+      "artwork_id": "getty-108hgy",
+      "source_id": "musebridge-108hgy-guide",
+      "source_locator": "MuseBridge guide note 1",
+      "excerpt": "Start at the dark doorway and slowly move your gaze up the facade. Choose one carved shape and follow its edge. Where can you keep tracing the stone, and where does the edge disappear into the surrounding color?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "composition",
+        "edges",
+        "facade"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-medium",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-dimensions",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 135.9 × 140.3 cm (53 1/2 × 55 1/4 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-01",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 1 (Setting and color)",
+      "excerpt": "This night landscape represents the coastline at Åsgårdstrand, a small beach resort south of Oslo in Norway, where Edvard Munch spent his summers from the 1880s onward. Here Munch tried to capture the emotions called forth by the night rather than to record its picturesque qualities. The color blue conveys the mysticism and melancholy of the landscape, which seems full of premonitions.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "setting",
+        "color",
+        "mood"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-02",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 1 (The fence and shadow)",
+      "excerpt": "An abstract mound at the right represents a clump of trees; a white fence runs diagonally in front. The vaguely defined shape on the fence may be a shadow of two lovers, a recurring theme in Munch's work.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "fence",
+        "shadow",
+        "interpretation"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-03",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 1 (The shoreline and reflections)",
+      "excerpt": "He used an undulating line to depict the shoreline that continues into the trees at the right. Stars reflect in the water, and a flash of light in the trees shines brightly.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "composition",
+        "shoreline",
+        "light"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-04",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 2 (Painting the sky)",
+      "excerpt": "Varying thicknesses of blue and green paint are blended together to form the impression of a night sky. Some areas are thickly painted, while others are left bare to convey the lighter segments of the sky or a celestial phenomenon.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "brushwork",
+        "color",
+        "surface",
+        "sky"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-guide-01",
+      "artwork_id": "getty-103rgh",
+      "source_id": "musebridge-103rgh-guide",
+      "source_locator": "MuseBridge guide note 1",
+      "excerpt": "Start with the pale fence and follow its diagonal toward the trees. Then find the shoreline and trace its curve. Which line carries your eye farther into the scene?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "composition",
+        "shoreline",
+        "fence"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-medium",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-dimensions",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 102.9 × 89.2 cm (40 1/2 × 35 1/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-description-02",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Object description, paragraph 1 (The bacchante and the ape)",
+      "excerpt": "A bacchante, follower of Bacchus, the god of wine, leans forward and grins at the viewer while squeezing a bunch of grapes into a golden drinking vessel. Her posture, exposed breasts, flushed cheeks, and inviting smile allude to her drunken state. There is something disturbing, however, in the way she provocatively confronts the viewer, leaning into the spectator's space and smiling broadly. In the lower left corner an ape mimics the woman's gesture, holding a smaller bunch of grapes in his right paw. The ape may serve a moralizing purpose, condemning excessive drinking.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "subject",
+        "ape",
+        "gesture",
+        "composition",
+        "interpretation"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-description-03",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Object description, paragraph 2 (Caravaggio and Rome)",
+      "excerpt": "While visiting Rome from about 1604 to 1614, Hendrick ter Brugghen saw the famous Bacchus by Caravaggio from which this classical painting of Bacchus's female follower derives.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "influence",
+        "artist",
+        "setting"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-guide-01",
+      "artwork_id": "getty-103rfp",
+      "source_id": "musebridge-103rfp-guide",
+      "source_locator": "MuseBridge guide note 1",
+      "excerpt": "Find the grapes in the woman’s hand, then look down to the left for the smaller bunch in the ape’s paw. Move your gaze between the two bunches. How does the repeated gesture change which figure you notice first?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "composition",
+        "gesture",
+        "ape"
+      ]
+    }
+  ]
+}

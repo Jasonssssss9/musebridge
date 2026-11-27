@@ -46,7 +46,7 @@ def create_app():
                 model = EvidenceModel(evidence=evidence, **options) if evidence else OllamaModel(**options)
                 await model.verify(deadline=monotonic()+60)
                 await model.warm(deadline=monotonic()+120)
-                manifest = EvidenceManifest.load()
+                manifest = EvidenceManifest.from_environment()
                 retrieval = RetrievalTool(manifest,
                     mode=configured_mode(default="lexical"), base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001"))
                 if evidence:

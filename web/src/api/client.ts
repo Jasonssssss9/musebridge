@@ -105,6 +105,15 @@ function field(envelope: unknown, name: string): unknown {
   return (envelope as Record<string, unknown>)[name];
 }
 
+export async function getArtworks(): Promise<Artwork[]> {
+  const response = await request('GET', '/api/artworks');
+  return parsed(() => {
+    const entries = field(response, 'artworks');
+    if (!Array.isArray(entries)) throw new InvalidResponse('artworks must be a list');
+    return entries.map(parseArtwork);
+  });
+}
+
 export async function getArtwork(slug: string): Promise<Artwork> {
   const j = await request('GET', `/api/artworks/${encodeURIComponent(slug)}`);
   const artwork = parsed(() => parseArtwork(field(j, 'artwork')));

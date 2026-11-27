@@ -181,7 +181,7 @@ export function Chat({ artwork }: { artwork: Artwork }) {
         <div className="composer">
           {chat.canSend && !editing && (
             <div className="chips" aria-label={t.suggestions}>
-              {suggestions(artwork.artwork_id, exampleLanguage, CONTRACT === 'agent').map((q) => (
+              {suggestions(artwork.artwork_id, exampleLanguage, CONTRACT === 'agent', artwork.suggested_questions).map((q) => (
                 <button key={q} type="button" className="chip" lang={exampleLanguage} onClick={() => send(q)}>{q}</button>
               ))}
             </div>

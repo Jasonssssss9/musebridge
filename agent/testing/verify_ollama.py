@@ -29,7 +29,7 @@ from agent.service import ModelIdentity, create_workflow_runtime
 from agent.testing.probe_quality import (aggregate, expected, five_pair_capacity, grade_case, operation_summary,
                                          review_slots, visitor_cases)
 from agent.testing.v2 import make_run, medium_plan
-from agent.tools.evidence import EvidenceManifest
+from agent.tools.evidence import EvidenceManifest, SEED_SHA256
 from agent.tools.retrieval import RetrievalTool, configured_mode
 
 
@@ -238,13 +238,15 @@ async def verify(options):
     save(options.capability_record, marker)
     model = registry = server = thread = None
     try:
+        manifest = EvidenceManifest.from_environment()
+        if manifest.sha256 != SEED_SHA256:
+            raise ValueError("These capability probes require the reviewed AIC release.")
         report["implementation_at_start"] = implementation_fingerprint()
         model = ProbeModel(report, base_url=options.base_url, sizer=QwenPromptSizer(options.tokenizer))
         await model.verify(deadline=monotonic()+60)
         report.update(profile=asdict(model.profile), metadata_fingerprint=model.metadata_fingerprint)
         report["loaded"] = await model.warm(deadline=monotonic()+120)
         report["checks"]["loaded_context"] = True
-        manifest = EvidenceManifest.load()
         mode = configured_mode()
         report["retrieval_mode"] = mode
         server = create_server("127.0.0.1", 0, mode=mode)

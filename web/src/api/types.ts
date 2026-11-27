@@ -29,6 +29,11 @@ export interface Artwork {
   accession_number: string;
   source_url: string;
   image_url: string | null;
+  image_alt?: string;
+  image_credit?: string;
+  image_license?: string;
+  image_source_url?: string;
+  suggested_questions?: string[];
   dataset_version: string;
 }
 
@@ -53,6 +58,7 @@ export interface Conversation {
 /** A museum passage returned by retrieval. */
 export interface Evidence {
   kind: 'evidence';
+  source_kind?: 'museum_record' | 'guide_note';
   chunk_id: string;
   artwork_id: string;
   source_id: string;
@@ -190,10 +196,12 @@ function arr(o: Obj, k: string): unknown[] {
 export function parseArtwork(v: unknown): Artwork {
   const o = obj(v, 'artwork');
   const img = o.image_url;
-  if (img !== null) httpsUrl(o, 'image_url');
+  const slug = str(o, 'slug');
+  if (!/^[a-z0-9-]+$/.test(slug)) throw new InvalidResponse('invalid artwork slug');
+  if (img !== null && img !== `/artworks/${slug}.jpg`) httpsUrl(o, 'image_url');
   return {
     artwork_id: str(o, 'artwork_id', 128),
-    slug: str(o, 'slug'),
+    slug,
     title: str(o, 'title'),
     artist: str(o, 'artist'),
     date_display: str(o, 'date_display'),
@@ -202,6 +210,13 @@ export function parseArtwork(v: unknown): Artwork {
     accession_number: str(o, 'accession_number'),
     source_url: httpsUrl(o, 'source_url'),
     image_url: img as string | null,
+    ...(o.image_alt === undefined ? {} : { image_alt: str(o, 'image_alt') }),
+    ...(o.image_credit === undefined ? {} : { image_credit: str(o, 'image_credit') }),
+    ...(o.image_license === undefined ? {} : { image_license: str(o, 'image_license') }),
+    ...(o.image_source_url === undefined ? {} : { image_source_url: httpsUrl(o, 'image_source_url') }),
+    ...(o.suggested_questions === undefined ? {} : {
+      suggested_questions: arr(o, 'suggested_questions').map((q) => str({ q }, 'q', 500)),
+    }),
     dataset_version: str(o, 'dataset_version', 128),
   };
 }
@@ -256,6 +271,7 @@ function parseCitation(v: unknown): Citation {
   }
   return {
     kind: 'evidence',
+    ...(o.source_kind === undefined ? {} : { source_kind: oneOf(o, 'source_kind', ['museum_record', 'guide_note'] as const) }),
     chunk_id: str(o, 'chunk_id', 128),
     artwork_id: str(o, 'artwork_id', 128),
     source_id: str(o, 'source_id', 128),
@@ -264,7 +280,7 @@ function parseCitation(v: unknown): Citation {
     source_language: oneOf(o, 'source_language', ['en'] as const),
     source_locator: str(o, 'source_locator', 500),
     excerpt: str(o, 'excerpt', 4000),
-    license: oneOf(o, 'license', ['CC0-1.0', 'CC-BY-4.0'] as const),
+    license: oneOf(o, 'license', ['CC0-1.0', 'CC-BY-4.0', 'In Copyright'] as const),
     license_url: httpsUrl(o, 'license_url'),
     attribution: str(o, 'attribution', 500),
     normalization: str(o, 'normalization', 1000),

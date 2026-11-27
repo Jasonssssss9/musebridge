@@ -54,5 +54,6 @@ def create_workflow_runtime(*, model, profile, prompt_sizer, manifest, retrieval
                           validate_input=lambda run: validate_run_context(run, manifest),
                           ready=readiness)
     runtime.retrieval_strategy_version = workflow.retrieval_strategy_version
+    runtime.dataset_version = manifest.dataset_version
     runtime.inference_gate = gate
     return runtime

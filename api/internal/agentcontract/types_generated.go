@@ -3,7 +3,7 @@ package agentcontract
 
 import "reflect"
 
-const SchemaSHA256 = "05ff57e1097bc8178c82b8b799176f576a30490b540be6df31774de2cba3c5b0"
+const SchemaSHA256 = "8abc3f29b4c366c5a19cfb2c3ffe78cd68236852e7eb43d68fadc77ae6b8ab20"
 
 type UUID string
 
@@ -17,18 +17,19 @@ type Scope struct {
 }
 
 type Evidence struct {
-	ChunkID        string `json:"chunk_id"`
-	ArtworkID      string `json:"artwork_id"`
-	SourceID       string `json:"source_id"`
-	SourceTitle    string `json:"source_title"`
-	SourceURL      string `json:"source_url"`
-	SourceLanguage string `json:"source_language"`
-	SourceLocator  string `json:"source_locator"`
-	Excerpt        string `json:"excerpt"`
-	License        string `json:"license"`
-	LicenseURL     string `json:"license_url"`
-	Attribution    string `json:"attribution"`
-	Normalization  string `json:"normalization"`
+	ChunkID        string           `json:"chunk_id"`
+	ArtworkID      string           `json:"artwork_id"`
+	SourceID       string           `json:"source_id"`
+	SourceKind     Optional[string] `json:"source_kind,omitzero"`
+	SourceTitle    string           `json:"source_title"`
+	SourceURL      string           `json:"source_url"`
+	SourceLanguage string           `json:"source_language"`
+	SourceLocator  string           `json:"source_locator"`
+	Excerpt        string           `json:"excerpt"`
+	License        string           `json:"license"`
+	LicenseURL     string           `json:"license_url"`
+	Attribution    string           `json:"attribution"`
+	Normalization  string           `json:"normalization"`
 }
 
 type SearchQuery struct {
@@ -307,15 +308,16 @@ type FinalDecisionMemoryUpdate struct {
 }
 
 type PlanInput struct {
-	OriginalQuestion    string              `json:"original_question"`
-	LanguageOverride    *LanguagePreference `json:"language_override"`
-	ArtworkContext      ArtworkContext      `json:"artwork_context"`
-	RecentTurns         []HistoryTurn       `json:"recent_turns"`
-	ConversationContext ConversationContext `json:"conversation_context"`
-	CachedEvidence      []Evidence          `json:"cached_evidence"`
-	CompleteScope       bool                `json:"complete_scope"`
-	QueryPolicy         QueryPolicy         `json:"query_policy"`
-	CatalogFacts        []CatalogFact       `json:"catalog_facts"`
+	OriginalQuestion     string              `json:"original_question"`
+	LanguageOverride     *LanguagePreference `json:"language_override"`
+	ArtworkContext       ArtworkContext      `json:"artwork_context"`
+	RecentTurns          []HistoryTurn       `json:"recent_turns"`
+	ConversationContext  ConversationContext `json:"conversation_context"`
+	CachedEvidence       []Evidence          `json:"cached_evidence"`
+	CompleteScope        bool                `json:"complete_scope"`
+	AvailableSourceKinds Optional[[]string]  `json:"available_source_kinds,omitzero"`
+	QueryPolicy          QueryPolicy         `json:"query_policy"`
+	CatalogFacts         []CatalogFact       `json:"catalog_facts"`
 }
 
 type AnswerInput struct {
@@ -513,6 +515,7 @@ type Citation struct {
 	ChunkID        Optional[string] `json:"chunk_id,omitzero"`
 	ArtworkID      string           `json:"artwork_id"`
 	SourceID       string           `json:"source_id"`
+	SourceKind     Optional[string] `json:"source_kind,omitzero"`
 	SourceTitle    string           `json:"source_title"`
 	SourceURL      string           `json:"source_url"`
 	SourceLanguage Optional[string] `json:"source_language,omitzero"`

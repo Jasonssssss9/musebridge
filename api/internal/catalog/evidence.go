@@ -3,6 +3,7 @@ package catalog
 // Evidence is the trusted chunk/source projection shared by retrieval and
 // citations. Every field is a string, so returned values contain no shared maps.
 type Evidence struct {
+	SourceKind     string `json:"source_kind,omitempty"`
 	ChunkID        string `json:"chunk_id"`
 	ArtworkID      string `json:"artwork_id"`
 	SourceID       string `json:"source_id"`
@@ -27,7 +28,7 @@ func (d *Dataset) EvidenceByChunkID(id string) (Evidence, bool) {
 	origin := d.sources[item.SourceID]
 	return Evidence{
 		ChunkID: item.ChunkID, ArtworkID: item.ArtworkID, SourceID: item.SourceID,
-		SourceTitle: origin.SourceTitle, SourceURL: origin.SourceURL, SourceLanguage: origin.SourceLanguage,
+		SourceKind: origin.SourceKind, SourceTitle: origin.SourceTitle, SourceURL: origin.SourceURL, SourceLanguage: origin.SourceLanguage,
 		SourceLocator: item.SourceLocator, Excerpt: item.Excerpt,
 		License: item.License, LicenseURL: item.LicenseURL,
 		Attribution: item.Attribution, Normalization: item.Normalization,

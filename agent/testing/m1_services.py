@@ -27,7 +27,7 @@ from agent.service import ModelIdentity, create_workflow_runtime
 from agent.testing.v2 import (
     FixtureProfile, ScriptedModel, fixture_prompt_sizer, medium_answer, medium_plan,
 )
-from agent.tools.evidence import EvidenceManifest
+from agent.tools.evidence import DEFAULT_SEED_PATH, EvidenceManifest
 from agent.tools.retrieval import RetrievalTool
 from knowledge.http_service import create_server
 
@@ -172,27 +172,29 @@ class Services:
     def connection_info(self):
         return {"event": "services_ready", "mode": MODE, "fault": self.fault,
                 "agent_url": self.agent_url, "retrieval_url": self.retrieval_url,
-                "dataset_version": "aic-seed-v0.1", "contract_version": "agent-run-v2",
+                "dataset_version": self.runtime.dataset_version, "contract_version": "agent-run-v2",
                 "model_name": MODEL_NAME}
 
 
 @asynccontextmanager
-async def running_services(*, service_token, fault="none", audit_path=None):
+async def running_services(*, service_token, fault="none", audit_path=None,
+                           seed_path=DEFAULT_SEED_PATH, manifest=None, model=None):
     """Start real loopback servers and close them on success, failure or cancel."""
     if fault not in FAULTS:
         raise ValueError("Unsupported M1 test fault.")
     audit = AuditLog(audit_path)
     retrieval = thread = sock = server = serving = runtime = None
     try:
-        manifest = EvidenceManifest.load()
-        retrieval = create_server("127.0.0.1", 0, mode="lexical")
+        manifest = manifest or EvidenceManifest.load()
+        retrieval = create_server("127.0.0.1", 0, mode="lexical",
+                                  seed_path=seed_path, dataset_version=manifest.dataset_version)
         _observe_http(retrieval, manifest, audit, fault)
         thread = threading.Thread(target=retrieval.serve_forever,
                                   kwargs={"poll_interval": 0.01}, daemon=True)
         thread.start()
         retrieval_url = f"http://127.0.0.1:{retrieval.server_address[1]}"
         runtime = create_workflow_runtime(
-            model=MaterialScript(audit), profile=FixtureProfile(),
+            model=model or MaterialScript(audit), profile=FixtureProfile(),
             prompt_sizer=fixture_prompt_sizer, manifest=manifest,
             retrieval=_ObservedRetrieval(RetrievalTool(manifest, mode="lexical", base_url=retrieval_url), audit),
             identity=ModelIdentity(MODEL_NAME, "SYNTHETIC-NOT-A-REAL-MODEL-DIGEST"),
