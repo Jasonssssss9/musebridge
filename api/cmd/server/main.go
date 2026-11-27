@@ -37,7 +37,7 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
-	settings := httpapi.Settings{PublicBaseURL: cfg.PublicBaseURL, CookieSecure: cfg.CookieSecure}
+	settings := httpapi.Settings{PublicBaseURL: cfg.PublicBaseURL, CookieSecure: cfg.CookieSecure, Voice: cfg.Voice}
 	var public http.Handler
 	if cfg.GenerationMode == "agent" {
 		client, err := agentclient.New(cfg.AgentBaseURL, cfg.AgentServiceToken)
@@ -64,7 +64,7 @@ func run(logger *slog.Logger) error {
 	server := &http.Server{
 		Handler:           public,
 		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second, WriteTimeout: cfg.WriteTimeout(),
+		ReadTimeout:       cfg.ReadTimeout(), WriteTimeout: cfg.WriteTimeout(),
 		IdleTimeout: 60 * time.Second, MaxHeaderBytes: 16 << 10,
 		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
 	}
@@ -73,7 +73,7 @@ func run(logger *slog.Logger) error {
 	serveErr := make(chan error, 1)
 	go func() { serveErr <- server.Serve(listener) }()
 	logger.Info("service_started", "service", "api", "address", listener.Addr().String(),
-		"dataset_version", dataset.Version(), "seed_sha256", dataset.Checksum(), "generation_mode", cfg.GenerationMode)
+		"dataset_version", dataset.Version(), "seed_sha256", dataset.Checksum(), "generation_mode", cfg.GenerationMode, "vincent_voice", cfg.Voice.Enabled)
 	select {
 	case err := <-serveErr:
 		if !errors.Is(err, http.ErrServerClosed) {

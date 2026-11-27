@@ -25,6 +25,18 @@ if [[ "$MUSEBRIDGE_RETRIEVAL_MODE" == hybrid && -z "${OPENAI_API_KEY:-}" ]]; the
     export OPENAI_API_KEY
     OPENAI_API_KEY="$(<"$OPENAI_API_KEY_FILE")"
 fi
+# Talk with Vincent voice (docs/vincent-voice-setup.md): Go alone receives the
+# speech key; the local Whisper worker needs none.
+speech_key=""
+if [[ "${VINCENT_ENABLED:-false}" == true ]]; then
+    if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+        : "${OPENAI_API_KEY_FILE:?Set OPENAI_API_KEY or OPENAI_API_KEY_FILE for Vincent speech}"
+        OPENAI_API_KEY="$(<"$OPENAI_API_KEY_FILE")"
+    fi
+    speech_key="$OPENAI_API_KEY"
+    whisper_port="${WHISPER_PORT:-8003}"
+    export VINCENT_ENABLED WHISPER_BASE_URL="http://127.0.0.1:$whisper_port"
+fi
 run_dir="$(mktemp -d -t musebridge-gallery.XXXXXXXX)"
 children=()
 cleanup() {
@@ -43,8 +55,14 @@ children+=("$!")
 unset OPENAI_API_KEY OPENAI_API_KEY_FILE
 "$python_bin" -m uvicorn agent.testing.integration_app:create_app --factory --host 127.0.0.1 --port "$agent_port" --no-access-log &
 children+=("$!")
-"$run_dir/api" &
+if [[ -n "$speech_key" ]]; then
+    WHISPER_HOST=127.0.0.1 WHISPER_PORT="$whisper_port" "${WHISPER_PYTHON:-$python_bin}" -m whisper_worker &
+    children+=("$!")
+    echo "Speech recognition readiness: $WHISPER_BASE_URL/ready"
+fi
+OPENAI_API_KEY="$speech_key" "$run_dir/api" &
 children+=("$!")
+unset speech_key
 echo "Gallery: $PUBLIC_BASE_URL/    QR cards: $PUBLIC_BASE_URL/qr"
 echo "Real answer readiness: $AGENT_BASE_URL/readyz"
 (

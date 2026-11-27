@@ -13,11 +13,14 @@ const AgentRunBudget = 55 * time.Second
 
 type agentRecord struct {
 	stateContract string
-	catalog       agentCatalog
-	state         ac.ConversationState
-	turns         []ac.PublicTurn
-	requests      map[ac.UUID]*agentRequest
-	pending       ac.UUID
+	// mode is the server-owned conversation mode. Empty means "guide"; the
+	// mode-aware v0.4 create path sets "vincent" for the enabled Irises release.
+	mode     string
+	catalog  agentCatalog
+	state    ac.ConversationState
+	turns    []ac.PublicTurn
+	requests map[ac.UUID]*agentRequest
+	pending  ac.UUID
 }
 
 type agentRequest struct {
@@ -110,6 +113,42 @@ func (s *Store) AgentHistory(token, id string) (ac.PublicHistoryResponse, bool) 
 		}
 	}
 	return history, true
+}
+
+// VoiceConversation reports the mode and fixed expiry of a live Agent
+// conversation owned by token, for the Vincent media routes. Fixture
+// conversations are never voice targets.
+func (s *Store) VoiceConversation(token, id string) (string, time.Time, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.expire(s.now().UTC())
+	item := s.ownedAgent(token, id)
+	if item == nil {
+		return "", time.Time{}, false
+	}
+	mode := item.agent.mode
+	if mode == "" {
+		mode = "guide"
+	}
+	return mode, item.conversation.ExpiresAt, true
+}
+
+// CommittedAnswer returns the saved answer.text of a completed turn in an owned
+// Agent conversation. Pending or failed submissions have no turn and are absent.
+func (s *Store) CommittedAnswer(token, id, turnID string) (string, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.expire(s.now().UTC())
+	item := s.ownedAgent(token, id)
+	if item == nil {
+		return "", false
+	}
+	for _, turn := range item.agent.turns {
+		if string(turn.TurnID) == turnID {
+			return turn.Answer.Text, true
+		}
+	}
+	return "", false
 }
 
 func (s *Store) ownedAgent(token, id string) *record {

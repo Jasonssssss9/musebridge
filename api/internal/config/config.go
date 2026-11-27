@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/Jasonssssss9/musebridge/api/internal/voice"
 )
 
 // Config describes the native development profile. Container deployments can
@@ -24,6 +26,7 @@ type Config struct {
 	GenerationMode    string
 	AgentBaseURL      string
 	AgentServiceToken string
+	Voice             voice.Config
 }
 
 // Formatting configuration must never reveal a private service credential.
@@ -35,6 +38,15 @@ func (c Config) WriteTimeout() time.Duration {
 		return 65 * time.Second
 	}
 	return 15 * time.Second
+}
+
+// ReadTimeout allows a phone to upload a 3 MiB recording over a tunnel within the
+// voice stage budget; other deployments keep the short default.
+func (c Config) ReadTimeout() time.Duration {
+	if c.Voice.Enabled {
+		return 35 * time.Second
+	}
+	return 10 * time.Second
 }
 
 func (c Config) DrainTimeout() time.Duration {
@@ -113,6 +125,19 @@ func Load(lookup func(string) (string, bool)) (Config, error) {
 		cfg.AgentServiceToken, _ = lookup("AGENT_SERVICE_TOKEN")
 		if len(cfg.AgentServiceToken) < 43 || strings.ContainsFunc(cfg.AgentServiceToken, func(r rune) bool { return r < 33 || r > 126 }) {
 			return Config{}, fmt.Errorf("AGENT_SERVICE_TOKEN must encode at least 32 random bytes as visible ASCII")
+		}
+	}
+	cfg.Voice, err = voice.LoadConfig(lookup)
+	if err != nil {
+		return Config{}, err
+	}
+	if cfg.Voice.Enabled {
+		if cfg.GenerationMode != "agent" {
+			return Config{}, fmt.Errorf("VINCENT_ENABLED=true requires GENERATION_MODE=agent")
+		}
+		// Safari only grants the microphone on a trusted HTTPS page (or localhost).
+		if publicURL.Scheme != "https" && publicURL.Hostname() != "localhost" && publicURL.Hostname() != "127.0.0.1" {
+			return Config{}, fmt.Errorf("VINCENT_ENABLED=true requires an https PUBLIC_BASE_URL, such as the HTTPS tunnel origin")
 		}
 	}
 	return cfg, nil

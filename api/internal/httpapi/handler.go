@@ -16,6 +16,7 @@ import (
 	"github.com/Jasonssssss9/musebridge/api/internal/chat"
 	"github.com/Jasonssssss9/musebridge/api/internal/conversation"
 	"github.com/Jasonssssss9/musebridge/api/internal/fixture"
+	"github.com/Jasonssssss9/musebridge/api/internal/voice"
 )
 
 type handler struct {
@@ -25,12 +26,16 @@ type handler struct {
 	sessions  *conversation.Store
 	questions *chat.Service
 	agent     *agentchat.Service
+	voice     *voice.Service
 }
 
 // Settings carries the browser profile validated by the application config.
 type Settings struct {
 	PublicBaseURL string
 	CookieSecure  bool
+	// Voice enables the Talk with Vincent media routes. It is honored only by
+	// NewAgent; fixture deployments never mount the routes.
+	Voice voice.Config
 }
 
 type apiError = conversation.Error
@@ -52,6 +57,12 @@ func NewAgent(dataset *catalog.Dataset, logger *slog.Logger, settings Settings, 
 		return nil, err
 	}
 	h.agent = service
+	if settings.Voice.Enabled {
+		h.voice, err = voice.New(settings.Voice, settings.PublicBaseURL, h.sessions)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return h, nil
 }
 
@@ -95,7 +106,24 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	isHistory = isHistory && strings.HasSuffix(conversationID, "/messages")
 	conversationID = strings.TrimSuffix(conversationID, "/messages")
 	isHistory = isHistory && conversationID != "" && !strings.Contains(conversationID, "/")
-	if !isList && !isHealth && !isArtwork && !isCreate && !isHistory {
+	// Voice routes exist only when Vincent voice is enabled in an Agent deployment.
+	var isTranscription, isSpeech bool
+	var voiceConversation, voiceTurn string
+	if h.voice != nil {
+		if rest, ok := strings.CutPrefix(path, "/api/conversations/"); ok {
+			parts := strings.Split(rest, "/")
+			isTranscription = len(parts) == 2 && parts[0] != "" && parts[1] == "transcriptions"
+			isSpeech = len(parts) == 4 && parts[0] != "" && parts[1] == "turns" && parts[2] != "" && parts[3] == "speech"
+			if isTranscription || isSpeech {
+				voiceConversation = parts[0]
+			}
+			if isSpeech {
+				voiceTurn = parts[2]
+			}
+		}
+	}
+	isVoice := isTranscription || isSpeech
+	if !isList && !isHealth && !isArtwork && !isCreate && !isHistory && !isVoice {
 		fail(http.StatusNotFound, "route_not_found", "The requested route does not exist.", false)
 		return
 	}
@@ -104,13 +132,13 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	allowed := http.MethodGet
-	if isCreate {
+	if isCreate || isVoice {
 		allowed = http.MethodPost
 	}
 	if isHistory {
 		allowed = "GET, POST"
 	}
-	methodAllowed := r.Method == http.MethodGet && !isCreate || r.Method == http.MethodPost && (isCreate || isHistory)
+	methodAllowed := r.Method == http.MethodGet && !isCreate && !isVoice || r.Method == http.MethodPost && (isCreate || isHistory || isVoice)
 	if !methodAllowed {
 		w.Header().Set("Allow", allowed)
 		fail(http.StatusMethodNotAllowed, "method_not_allowed", "The HTTP method is not supported for this route.", false)
@@ -133,6 +161,30 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.writeJSON(w, r, status, struct {
 			Artworks []catalog.Artwork `json:"artworks"`
 		}{h.dataset.Artworks()})
+		return
+	}
+	if isVoice {
+		token := visitorCookie(r)
+		if isTranscription {
+			transcript, failure := h.voice.Transcribe(w, r, token, voiceConversation, requestID)
+			if failure != nil {
+				fail(failure.Status, failure.Code, failure.Message, failure.Retryable)
+				return
+			}
+			status, code = http.StatusOK, "ok"
+			h.writeJSON(w, r, status, transcript)
+			return
+		}
+		audio, failure := h.voice.Speak(r, token, voiceConversation, voiceTurn)
+		if failure != nil {
+			fail(failure.Status, failure.Code, failure.Message, failure.Retryable)
+			return
+		}
+		status, code = http.StatusOK, "ok"
+		w.Header().Set("Content-Type", "audio/mpeg")
+		w.Header().Set("Content-Length", strconv.Itoa(len(audio)))
+		w.WriteHeader(status)
+		_, _ = w.Write(audio)
 		return
 	}
 	if isCreate || isHistory {

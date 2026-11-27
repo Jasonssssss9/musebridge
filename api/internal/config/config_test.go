@@ -116,3 +116,43 @@ func TestInvalidConfiguration(t *testing.T) {
 		t.Fatal("HTTPS accepted insecure cookie configuration")
 	}
 }
+
+func TestVincentVoiceConfiguration(t *testing.T) {
+	base := map[string]string{
+		"GENERATION_MODE": "agent", "AGENT_SERVICE_TOKEN": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQ",
+		"PUBLIC_BASE_URL": "https://museum.example",
+	}
+	voice := map[string]string{"VINCENT_ENABLED": "true", "WHISPER_BASE_URL": "http://127.0.0.1:8003", "OPENAI_API_KEY": "sk-0123456789abcdefghij"}
+	merge := func(maps ...map[string]string) map[string]string {
+		out := map[string]string{}
+		for _, m := range maps {
+			for k, v := range m {
+				out[k] = v
+			}
+		}
+		return out
+	}
+	cfg, err := Load(environment(base))
+	if err != nil || cfg.Voice.Enabled || cfg.ReadTimeout() != 10*time.Second {
+		t.Fatalf("voice must be off by default: %v", err)
+	}
+	cfg, err = Load(environment(merge(base, voice)))
+	if err != nil || !cfg.Voice.Enabled || cfg.ReadTimeout() != 35*time.Second {
+		t.Fatalf("voice config: %v", err)
+	}
+	if strings.Contains(fmt.Sprintf("%v %#v %+v", cfg, cfg, cfg.Voice), "sk-") {
+		t.Fatal("configuration formatting leaked the speech key")
+	}
+	for name, values := range map[string]map[string]string{
+		"fixture mode":   merge(base, voice, map[string]string{"GENERATION_MODE": "fixture"}),
+		"plain http LAN": merge(base, voice, map[string]string{"PUBLIC_BASE_URL": "http://192.168.1.20:8080"}),
+		"missing key":    merge(base, map[string]string{"VINCENT_ENABLED": "true", "WHISPER_BASE_URL": "http://127.0.0.1:8003"}),
+	} {
+		if _, err := Load(environment(values)); err == nil {
+			t.Errorf("%s should be rejected", name)
+		}
+	}
+	if _, err := Load(environment(merge(base, voice, map[string]string{"PUBLIC_BASE_URL": "http://localhost:8080"}))); err != nil {
+		t.Errorf("localhost is a secure browser context and should be allowed: %v", err)
+	}
+}

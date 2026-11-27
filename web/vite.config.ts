@@ -11,6 +11,14 @@ export default defineConfig(({ mode }) => {
   if (publicContract !== 'fixture' && publicContract !== 'agent') {
     throw new Error('PUBLIC_CONTRACT must be fixture or agent.');
   }
+  // A phone reaches the dev server through an HTTPS tunnel (docs/vincent-voice-setup.md).
+  // Vite rejects unknown Host headers, so allow the PUBLIC_BASE_URL host explicitly.
+  let publicHost: string | undefined;
+  try {
+    publicHost = process.env.PUBLIC_BASE_URL ? new URL(process.env.PUBLIC_BASE_URL).hostname : undefined;
+  } catch {
+    throw new Error('PUBLIC_BASE_URL must be an absolute URL such as https://example.trycloudflare.com.');
+  }
   return {
     plugins: [react()],
     define: {
@@ -23,6 +31,7 @@ export default defineConfig(({ mode }) => {
       host: true, // listen on the LAN so a phone can reach it
       port: 8080,
       strictPort: true,
+      allowedHosts: publicHost ? [publicHost] : undefined,
       proxy: {
         '/api': {
           target: process.env.API_TARGET ?? 'http://127.0.0.1:8000',
