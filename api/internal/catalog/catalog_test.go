@@ -137,3 +137,20 @@ func TestJSONIntegrity(t *testing.T) {
 		t.Fatal("missing seed silently fell back")
 	}
 }
+
+func TestGalleryImageSourceRights(t *testing.T) {
+	const getty = "https://media.getty.edu/iiif/image/painting/full/!1200,1200/0/default.jpg"
+	const commons = "https://commons.wikimedia.org/wiki/File:Joshua_Reynolds_-_Portrait_of_Omai.jpg"
+	for _, tc := range []struct {
+		url, rights string
+		allowed     bool
+	}{
+		{getty, "CC0-1.0", true}, {commons, "Public Domain Mark 1.0", true},
+		{getty, "Public Domain Mark 1.0", false}, {commons, "CC0-1.0", false},
+		{"https://commons.wikimedia.org/wiki/Main_Page", "Public Domain Mark 1.0", false},
+	} {
+		if found := galleryImageSource(tc.url, tc.rights); found != tc.allowed {
+			t.Errorf("%s, %s: accepted %v", tc.url, tc.rights, found)
+		}
+	}
+}

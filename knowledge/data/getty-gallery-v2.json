@@ -1,0 +1,3166 @@
+{
+  "dataset_version": "getty-gallery-v2",
+  "artworks": [
+    {
+      "artwork_id": "getty-103jnh",
+      "slug": "getty-103jnh",
+      "title": "Irises",
+      "artist": "Vincent van Gogh",
+      "date_display": "1889",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 947,
+      "accession_number": "90.PA.20",
+      "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+      "image_url": "/artworks/getty-103jnh.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "Blue irises rise between long green leaves. One white bloom stands against the bank of flowers.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/8c255d80-7382-46db-9fa8-892c0d37247e/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Where did Van Gogh begin painting these irises?",
+        "Where should I start looking among all these flowers?",
+        "How are the shapes of the individual irises different?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qt5",
+      "slug": "getty-103qt5",
+      "title": "Still Life with Apples",
+      "artist": "Paul Cézanne",
+      "date_display": "1893–1894",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 109325,
+      "accession_number": "96.PA.8",
+      "source_url": "https://www.getty.edu/art/collection/object/103QT5",
+      "image_url": "/artworks/getty-103qt5.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "Apples rest on folded cloth beside a green vase, a tall bottle and a blue patterned pot.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/f0d223e4-3254-4482-8c65-e5468e186efb/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Which objects did Cézanne repeatedly use in his still lifes?",
+        "How could I follow the lines between the apples and the cloth?",
+        "How does the museum describe the way the objects fit together?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qtz",
+      "slug": "getty-103qtz",
+      "title": "Jeanne (Spring)",
+      "artist": "Édouard Manet",
+      "date_display": "1881",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 353132,
+      "accession_number": "2014.62",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTZ",
+      "image_url": "/artworks/getty-103qtz.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A woman in profile holds a parasol. Her pale floral dress and gloved arm stand out against green foliage.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/8094f61e-e458-42bd-90cf-a0ed0dcc90b9/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Who was Jeanne Demarsy, the model in Manet’s portrait?",
+        "What should I compare in the dress and the background?",
+        "How does Getty describe the brushwork on Jeanne’s face and in the leaves behind her?"
+      ]
+    },
+    {
+      "artwork_id": "getty-10a2y1",
+      "slug": "getty-10a2y1",
+      "title": "Young Man at His Window",
+      "artist": "Gustave Caillebotte",
+      "date_display": "1876",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 387386,
+      "accession_number": "2021.67",
+      "source_url": "https://www.getty.edu/art/collection/object/10A2Y1",
+      "image_url": "/artworks/getty-10a2y1.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A man in a dark suit stands with his back to the viewer at an open window overlooking a bright Paris street.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/3c77a2e9-fc44-4811-9387-ffabc6bddee7/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Who modeled for the young man at the window?",
+        "How can I look at the street from the young man’s viewpoint?",
+        "What can we see in the street below the window?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103rc9",
+      "slug": "getty-103rc9",
+      "title": "Spring",
+      "artist": "Lawrence Alma-Tadema",
+      "date_display": "1894",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 680,
+      "accession_number": "72.PA.3",
+      "source_url": "https://www.getty.edu/art/collection/object/103RC9",
+      "image_url": "/artworks/getty-103rc9.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A flower-decked procession fills a narrow marble street, with spectators watching from balconies and under an arch.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/27308cef-57fe-40dd-9585-ceeb9801c759/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Who leads the procession in this painting?",
+        "How could I pick out one route through the crowd?",
+        "Which ancient celebration does Getty suggest this scene most resembles?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103rk8",
+      "slug": "getty-103rk8",
+      "title": "Wheatstacks, Snow Effect, Morning (Meules, Effet de Neige, Le Matin)",
+      "artist": "Claude Monet",
+      "date_display": "1891",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 1088,
+      "accession_number": "95.PA.63",
+      "source_url": "https://www.getty.edu/art/collection/object/103RK8",
+      "image_url": "/artworks/getty-103rk8.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "Two wheatstacks stand in a snowy field, casting cool shadows beneath a pale pink morning sky.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/c7a070ce-bae3-4424-8ad3-55e3dea5e1ff/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Why did Monet have the wheatstacks left out over winter?",
+        "What should I compare in the snow and the sky?",
+        "How does Getty describe Monet’s work outdoors and in the studio?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qtm",
+      "slug": "getty-103qtm",
+      "title": "Rembrandt Laughing",
+      "artist": "Rembrandt Harmensz. van Rijn",
+      "date_display": "about 1628",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 344716,
+      "accession_number": "2013.60",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTM",
+      "image_url": "/artworks/getty-103qtm.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A young man turns toward us laughing, his face brightly lit above dark clothing and a reflective piece of armor.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/18b0056f-5f7c-427c-9170-c9e3dbf29ba7/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "What role does Rembrandt give himself in this self-portrait?",
+        "Where should I look to see what makes the laugh convincing?",
+        "What surface did Rembrandt paint this work on?"
+      ]
+    },
+    {
+      "artwork_id": "getty-109q8g",
+      "slug": "getty-109q8g",
+      "title": "Lucretia",
+      "artist": "Artemisia Gentileschi",
+      "date_display": "about 1627",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 385047,
+      "accession_number": "2021.14",
+      "source_url": "https://www.getty.edu/art/collection/object/109Q8G",
+      "image_url": "/artworks/getty-109q8g.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A woman holding a dagger turns her face upward. Light catches her skin, pearls and pale drapery against a dark background.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/2f0dd4c7-676e-4d80-a993-638acad11033/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Which ancient author does Getty name as a source for Lucretia’s story?",
+        "How can I trace the different directions of her hand and gaze?",
+        "What contrast does Getty describe between the fabrics and the story?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qtf",
+      "slug": "getty-103qtf",
+      "title": "The Calydonian Boar Hunt",
+      "artist": "Peter Paul Rubens",
+      "date_display": "about 1611–1612",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 267599,
+      "accession_number": "2006.4",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTF",
+      "image_url": "/artworks/getty-103qtf.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A hunter in red faces a boar amid a dense group of hunters, dogs and horses.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/fd803195-132f-492a-857c-24fad0c98817/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Who strikes the boar, according to the museum?",
+        "How could I find the main action in this crowded hunt?",
+        "Why did Diana send the boar in the ancient story?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qse",
+      "slug": "getty-103qse",
+      "title": "Portrait of a Halberdier (Francesco Guardi?)",
+      "artist": "Pontormo (Jacopo Carucci)",
+      "date_display": "1529–1530",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 945,
+      "accession_number": "89.PA.49",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSE",
+      "image_url": "/artworks/getty-103qse.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A young soldier in a red cap stands beside a pole weapon. His pale jacket stands out against a dark wall.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/9e96cce9-7a79-4260-b657-bf92ab9a661f/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "What is the long weapon that the sitter is holding?",
+        "How can I compare the soldier’s pose with his expression?",
+        "Why is the sitter’s identity still debated?"
+      ]
+    },
+    {
+      "artwork_id": "getty-11409c",
+      "slug": "getty-11409c",
+      "title": "Portrait of Mai (“Omai”)",
+      "artist": "Sir Joshua Reynolds",
+      "date_display": "about 1776",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 396070,
+      "accession_number": "2023.18",
+      "source_url": "https://www.getty.edu/art/collection/object/11409C",
+      "image_url": "/artworks/getty-11409c.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "Mai stands barefoot in pale draped clothing and a headdress, one hand extended against a landscape.",
+      "suggested_questions": [
+        "Why did Mai travel to England?",
+        "How can I follow the gesture of Mai’s outstretched hand?",
+        "Where was the portrait shown in 1776?"
+      ],
+      "image_credit": "Sir Joshua Reynolds. Public-domain reproduction via Wikimedia Commons.",
+      "image_license": "Public Domain Mark 1.0",
+      "image_source_url": "https://commons.wikimedia.org/wiki/File:Joshua_Reynolds_-_Portrait_of_Omai.jpg"
+    },
+    {
+      "artwork_id": "getty-108hgy",
+      "slug": "getty-108hgy",
+      "title": "The Portal of Rouen Cathedral in Morning Light",
+      "artist": "Claude Monet",
+      "date_display": "1894",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 142049,
+      "accession_number": "2001.33",
+      "source_url": "https://www.getty.edu/art/collection/object/108HGY",
+      "image_url": "/artworks/getty-108hgy.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A close view of Rouen Cathedral’s facade in pale morning light, with a dark recessed doorway below layers of carved stone.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/6d1d6b93-71bb-41f1-9ffd-48e49f3adbe8/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Where did Monet set up to paint this view of the cathedral?",
+        "Where should I start looking at the cathedral facade?",
+        "How did Monet work on the series after leaving Rouen?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103rgh",
+      "slug": "getty-103rgh",
+      "title": "Starry Night",
+      "artist": "Edvard Munch",
+      "date_display": "1893",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 869,
+      "accession_number": "84.PA.681",
+      "source_url": "https://www.getty.edu/art/collection/object/103RGH",
+      "image_url": "/artworks/getty-103rgh.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A blue night landscape with a pale fence crossing in front of dark trees and a curving shore beside the water.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/5c21ce64-6ee9-4c39-a276-4a18ab412e5b/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "What might the shape on the fence represent?",
+        "Where should I look first in this night scene?",
+        "How did Munch paint the night sky?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103rfp",
+      "slug": "getty-103rfp",
+      "title": "Bacchante with an Ape",
+      "artist": "Hendrick ter Brugghen",
+      "date_display": "1627",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 845,
+      "accession_number": "84.PA.5",
+      "source_url": "https://www.getty.edu/art/collection/object/103RFP",
+      "image_url": "/artworks/getty-103rfp.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A smiling woman leans forward with a bunch of grapes and a golden drinking vessel. An ape holding grapes appears at the lower left.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/f11b525b-8d14-4f96-9c71-d97e93fe26b1/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "How does the ape imitate the woman?",
+        "Where should I look to compare the two gestures?",
+        "What meaning does the Getty suggest for the ape?"
+      ]
+    },
+    {
+      "artwork_id": "getty-104g0s",
+      "slug": "getty-104g0s",
+      "title": "J.F.W. Herschel",
+      "artist": "Julia Margaret Cameron",
+      "date_display": "April 1867",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 65211,
+      "accession_number": "84.XM.349.3",
+      "source_url": "https://www.getty.edu/art/collection/object/104G0S",
+      "image_url": "/artworks/getty-104g0s.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A close photographic portrait of Herschel, with light catching his white hair and parts of his face against a dark background.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/d59672e3-eeb1-4013-8f30-21094f7aa643/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Where and when did Cameron first meet Herschel?",
+        "Where should I look to compare light and shadow in this photograph?",
+        "Where did Cameron photograph Herschel in April 1867?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qtr",
+      "slug": "getty-103qtr",
+      "title": "Bust of Pope Paul V",
+      "artist": "Gian Lorenzo Bernini",
+      "date_display": "1621",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 355332,
+      "accession_number": "2015.22",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTR",
+      "image_url": "/artworks/getty-103qtr.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A pale marble bust of Pope Paul V shows a slightly turned head above a broad, elaborately carved cope.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/adc6a054-bea0-45ef-bf07-dff1abc960e3/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Which saints are depicted on the pope’s cope?",
+        "How should I compare the carved skin with the embroidered garment?",
+        "What details make this marble portrait look individual?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qtj",
+      "slug": "getty-103qtj",
+      "title": "The Vexed Man",
+      "artist": "Franz Xaver Messerschmidt",
+      "date_display": "1771–1783",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 305049,
+      "accession_number": "2008.4",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTJ",
+      "image_url": "/artworks/getty-103qtj.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A carved alabaster head has a furrowed brow, narrowed eyes and a tightly compressed mouth.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/673d3dc2-a4e4-427b-bc46-e2371784404a/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Did Messerschmidt give this bust its title?",
+        "Where should I look before putting a name to this expression?",
+        "Which marks does Getty identify as natural features of the stone?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qsb",
+      "slug": "getty-103qsb",
+      "title": "Saint Ginés de la Jara",
+      "artist": "Luisa Roldán (called \"La Roldana\"), Tomás de Los Arcos",
+      "date_display": "1690s",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 1304,
+      "accession_number": "85.SD.161",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSB",
+      "image_url": "/artworks/getty-103qsb.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A bearded saint in a richly patterned gold-toned robe extends his arms and looks outward.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/bb72d5f1-e230-4797-a7dc-262bf948b256/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "How was the gold pattern on the saint’s robe made?",
+        "How can I compare the patterns on the robe with the folds?",
+        "Who carved the figure, and who painted it?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103qsk",
+      "slug": "getty-103qsk",
+      "title": "Cabinet on Stand",
+      "artist": "André-Charles Boulle, Jean Varin",
+      "date_display": "about 1675–1680",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 6328,
+      "accession_number": "77.DA.1",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSK",
+      "image_url": "/artworks/getty-103qsk.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "An ornate cabinet stands above two large supporting figures, with a central door surrounded by smaller drawers.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/44441820-c44f-434f-bd37-48934eec454e/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Which animals appear on the central door, and what do they represent?",
+        "Where should I start exploring the decoration on this cabinet?",
+        "What evidence suggests it might have been a royal gift?"
+      ]
+    },
+    {
+      "artwork_id": "getty-103rr6",
+      "slug": "getty-103rr6",
+      "title": "Pilgrim Flask",
+      "artist": "Medici Porcelain Factory",
+      "date_display": "1580s",
+      "museum": "J. Paul Getty Museum",
+      "museum_record_id": 1346,
+      "accession_number": "86.DE.630",
+      "source_url": "https://www.getty.edu/art/collection/object/103RR6",
+      "image_url": "/artworks/getty-103rr6.jpg",
+      "dataset_version": "getty-gallery-v2",
+      "image_alt": "A white flask with deep-blue floral decoration, a narrow neck and two small side loops.",
+      "image_credit": "Digital image courtesy of Getty’s Open Content Program.",
+      "image_license": "CC0-1.0",
+      "image_source_url": "https://media.getty.edu/iiif/image/083250c8-50a6-48ff-bdc1-985a79748997/full/!1200,1200/0/default.jpg",
+      "suggested_questions": [
+        "Was this flask designed to hang from a pilgrim’s shoulder?",
+        "What should I look for in the blue pattern and the side loops?",
+        "Which ceramic traditions does Getty connect to its decoration?"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "getty-103jnh-record",
+      "artwork_id": "getty-103jnh",
+      "source_title": "Irises — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103jnh-guide",
+      "artwork_id": "getty-103jnh",
+      "source_title": "MuseBridge Guide — Irises",
+      "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103jnh-record"
+    },
+    {
+      "source_id": "getty-103qt5-record",
+      "artwork_id": "getty-103qt5",
+      "source_title": "Still Life with Apples — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QT5",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qt5-guide",
+      "artwork_id": "getty-103qt5",
+      "source_title": "MuseBridge Guide — Still Life with Apples",
+      "source_url": "https://www.getty.edu/art/collection/object/103QT5",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qt5-record"
+    },
+    {
+      "source_id": "getty-103qtz-record",
+      "artwork_id": "getty-103qtz",
+      "source_title": "Jeanne (Spring) — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTZ",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qtz-guide",
+      "artwork_id": "getty-103qtz",
+      "source_title": "MuseBridge Guide — Jeanne (Spring)",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTZ",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qtz-record"
+    },
+    {
+      "source_id": "getty-10a2y1-record",
+      "artwork_id": "getty-10a2y1",
+      "source_title": "Young Man at His Window — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/10A2Y1",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-10a2y1-guide",
+      "artwork_id": "getty-10a2y1",
+      "source_title": "MuseBridge Guide — Young Man at His Window",
+      "source_url": "https://www.getty.edu/art/collection/object/10A2Y1",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:20Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-10a2y1-record"
+    },
+    {
+      "source_id": "getty-103rc9-record",
+      "artwork_id": "getty-103rc9",
+      "source_title": "Spring — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103RC9",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103rc9-guide",
+      "artwork_id": "getty-103rc9",
+      "source_title": "MuseBridge Guide — Spring",
+      "source_url": "https://www.getty.edu/art/collection/object/103RC9",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103rc9-record"
+    },
+    {
+      "source_id": "getty-103rk8-record",
+      "artwork_id": "getty-103rk8",
+      "source_title": "Wheatstacks, Snow Effect, Morning (Meules, Effet de Neige, Le Matin) — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103RK8",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103rk8-guide",
+      "artwork_id": "getty-103rk8",
+      "source_title": "MuseBridge Guide — Wheatstacks, Snow Effect, Morning (Meules, Effet de Neige, Le Matin)",
+      "source_url": "https://www.getty.edu/art/collection/object/103RK8",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103rk8-record"
+    },
+    {
+      "source_id": "getty-103qtm-record",
+      "artwork_id": "getty-103qtm",
+      "source_title": "Rembrandt Laughing — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTM",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qtm-guide",
+      "artwork_id": "getty-103qtm",
+      "source_title": "MuseBridge Guide — Rembrandt Laughing",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTM",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qtm-record"
+    },
+    {
+      "source_id": "getty-109q8g-record",
+      "artwork_id": "getty-109q8g",
+      "source_title": "Lucretia — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/109Q8G",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-109q8g-guide",
+      "artwork_id": "getty-109q8g",
+      "source_title": "MuseBridge Guide — Lucretia",
+      "source_url": "https://www.getty.edu/art/collection/object/109Q8G",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:22Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-109q8g-record"
+    },
+    {
+      "source_id": "getty-103qtf-record",
+      "artwork_id": "getty-103qtf",
+      "source_title": "The Calydonian Boar Hunt — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTF",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qtf-guide",
+      "artwork_id": "getty-103qtf",
+      "source_title": "MuseBridge Guide — The Calydonian Boar Hunt",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTF",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qtf-record"
+    },
+    {
+      "source_id": "getty-103qse-record",
+      "artwork_id": "getty-103qse",
+      "source_title": "Portrait of a Halberdier (Francesco Guardi?) — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSE",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:08:05Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qse-guide",
+      "artwork_id": "getty-103qse",
+      "source_title": "MuseBridge Guide — Portrait of a Halberdier (Francesco Guardi?)",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSE",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:08:05Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qse-record"
+    },
+    {
+      "source_id": "getty-11409c-record",
+      "artwork_id": "getty-11409c",
+      "source_title": "Portrait of Mai (“Omai”) — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/11409C",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:10:51Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-11409c-guide",
+      "artwork_id": "getty-11409c",
+      "source_title": "MuseBridge Guide — Portrait of Mai (“Omai”)",
+      "source_url": "https://www.getty.edu/art/collection/object/11409C",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:10:51Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-11409c-record"
+    },
+    {
+      "source_id": "getty-108hgy-record",
+      "artwork_id": "getty-108hgy",
+      "source_title": "The Portal of Rouen Cathedral in Morning Light — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/108HGY",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-108hgy-guide",
+      "artwork_id": "getty-108hgy",
+      "source_title": "MuseBridge Guide — The Portal of Rouen Cathedral in Morning Light",
+      "source_url": "https://www.getty.edu/art/collection/object/108HGY",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-108hgy-record"
+    },
+    {
+      "source_id": "getty-103rgh-record",
+      "artwork_id": "getty-103rgh",
+      "source_title": "Starry Night — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103RGH",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103rgh-guide",
+      "artwork_id": "getty-103rgh",
+      "source_title": "MuseBridge Guide — Starry Night",
+      "source_url": "https://www.getty.edu/art/collection/object/103RGH",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103rgh-record"
+    },
+    {
+      "source_id": "getty-103rfp-record",
+      "artwork_id": "getty-103rfp",
+      "source_title": "Bacchante with an Ape — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103RFP",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103rfp-guide",
+      "artwork_id": "getty-103rfp",
+      "source_title": "MuseBridge Guide — Bacchante with an Ape",
+      "source_url": "https://www.getty.edu/art/collection/object/103RFP",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T06:28:18Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103rfp-record"
+    },
+    {
+      "source_id": "getty-104g0s-record",
+      "artwork_id": "getty-104g0s",
+      "source_title": "J.F.W. Herschel — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/104G0S",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-104g0s-guide",
+      "artwork_id": "getty-104g0s",
+      "source_title": "MuseBridge Guide — J.F.W. Herschel",
+      "source_url": "https://www.getty.edu/art/collection/object/104G0S",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-104g0s-record"
+    },
+    {
+      "source_id": "getty-103qtr-record",
+      "artwork_id": "getty-103qtr",
+      "source_title": "Bust of Pope Paul V — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTR",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qtr-guide",
+      "artwork_id": "getty-103qtr",
+      "source_title": "MuseBridge Guide — Bust of Pope Paul V",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTR",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qtr-record"
+    },
+    {
+      "source_id": "getty-103qtj-record",
+      "artwork_id": "getty-103qtj",
+      "source_title": "The Vexed Man — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTJ",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qtj-guide",
+      "artwork_id": "getty-103qtj",
+      "source_title": "MuseBridge Guide — The Vexed Man",
+      "source_url": "https://www.getty.edu/art/collection/object/103QTJ",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:24Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qtj-record"
+    },
+    {
+      "source_id": "getty-103qsb-record",
+      "artwork_id": "getty-103qsb",
+      "source_title": "Saint Ginés de la Jara — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSB",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:26Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qsb-guide",
+      "artwork_id": "getty-103qsb",
+      "source_title": "MuseBridge Guide — Saint Ginés de la Jara",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSB",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:26Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qsb-record"
+    },
+    {
+      "source_id": "getty-103qsk-record",
+      "artwork_id": "getty-103qsk",
+      "source_title": "Cabinet on Stand — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSK",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:26Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103qsk-guide",
+      "artwork_id": "getty-103qsk",
+      "source_title": "MuseBridge Guide — Cabinet on Stand",
+      "source_url": "https://www.getty.edu/art/collection/object/103QSK",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:26Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103qsk-record"
+    },
+    {
+      "source_id": "getty-103rr6-record",
+      "artwork_id": "getty-103rr6",
+      "source_title": "Pilgrim Flask — Getty Museum record",
+      "source_url": "https://www.getty.edu/art/collection/object/103RR6",
+      "source_language": "en",
+      "institution": "J. Paul Getty Museum",
+      "retrieved_at": "2026-11-27T07:07:26Z",
+      "terms_url": "https://www.getty.edu/legal/terms-of-use/",
+      "source_kind": "museum_record"
+    },
+    {
+      "source_id": "musebridge-103rr6-guide",
+      "artwork_id": "getty-103rr6",
+      "source_title": "MuseBridge Guide — Pilgrim Flask",
+      "source_url": "https://www.getty.edu/art/collection/object/103RR6",
+      "source_language": "en",
+      "institution": "MuseBridge",
+      "retrieved_at": "2026-11-27T07:07:26Z",
+      "terms_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "source_kind": "guide_note",
+      "based_on_source_id": "getty-103rr6-record"
+    }
+  ],
+  "chunks": [
+    {
+      "chunk_id": "getty-103jnh-medium",
+      "artwork_id": "getty-103jnh",
+      "source_id": "getty-103jnh-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103jnh-dimensions",
+      "artwork_id": "getty-103jnh",
+      "source_id": "getty-103jnh-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 74.3 × 94.3 cm (29 1/4 × 37 1/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103jnh-description-01",
+      "artwork_id": "getty-103jnh",
+      "source_id": "getty-103jnh-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "In May 1889, after episodes of self-mutilation and hospitalization, Vincent van Gogh chose to enter an asylum in Saint-Rémy, France. There, in the last year before his death, he created almost 130 paintings. Within the first week, he began Irises, working from nature in the asylum's garden. The cropped composition, divided into broad areas of vivid color with monumental irises overflowing its borders, was probably influenced by the decorative patterning of Japanese woodblock prints.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "setting",
+        "working_method",
+        "garden"
+      ]
+    },
+    {
+      "chunk_id": "getty-103jnh-description-02",
+      "artwork_id": "getty-103jnh",
+      "source_id": "getty-103jnh-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "There are no known drawings for this painting; Van Gogh himself considered it a study. His brother Theo quickly recognized its quality and submitted it to the Salon des Indépendants in September 1889, writing Vincent of the exhibition: \"[It] strikes the eye from afar. It is a beautiful study full of air and life.\"",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "exhibition",
+        "reception",
+        "study"
+      ]
+    },
+    {
+      "chunk_id": "getty-103jnh-description-03",
+      "artwork_id": "getty-103jnh",
+      "source_id": "getty-103jnh-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "Each one of Van Gogh's irises is unique. He carefully studied their movements and shapes to create a variety of curved silhouettes bounded by wavy, twisting, and curling lines. The painting's first owner, French art critic Octave Mirbeau, one of Van Gogh's earliest supporters, wrote: \"How well he has understood the exquisite nature of flowers!\"",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "flowers",
+        "brushwork",
+        "composition",
+        "influence"
+      ]
+    },
+    {
+      "chunk_id": "getty-103jnh-guide-01",
+      "artwork_id": "getty-103jnh",
+      "source_id": "musebridge-103jnh-guide",
+      "source_locator": "MuseBridge guide 1 — Finding one flower",
+      "excerpt": "Find the single white iris. Cover it briefly with your thumb, then uncover it. Does your eye go there first, or to the cluster of blue petals nearby? Try following the outline of just one blue bloom before looking at the whole bed again.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "starting_point",
+        "white",
+        "bloom",
+        "petals",
+        "contrast"
+      ]
+    },
+    {
+      "chunk_id": "getty-103jnh-guide-02",
+      "artwork_id": "getty-103jnh",
+      "source_id": "musebridge-103jnh-guide",
+      "source_locator": "MuseBridge guide 2 — Following a leaf",
+      "excerpt": "Trace one long leaf upward from the brown earth. Now trace the outside of a petal. The leaf gives your eye a long, fairly continuous path; the petal makes it change direction several times. Look at the edges of the picture to see where those paths are cut short.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "line",
+        "pattern",
+        "leaf",
+        "edge",
+        "rhythm",
+        "cropping"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qt5-medium",
+      "artwork_id": "getty-103qt5",
+      "source_id": "getty-103qt5-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qt5-dimensions",
+      "artwork_id": "getty-103qt5",
+      "source_id": "getty-103qt5-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 65.4 × 81.6 cm (25 3/4 × 32 1/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qt5-description-01",
+      "artwork_id": "getty-103qt5",
+      "source_id": "getty-103qt5-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "During the last thirty years of his life, Paul Cézanne painted the same objects--the green vase, the rum bottle, the ginger pot, and the apples--over and over again. His interest was not in the objects themselves but in using them to experiment with shape, color, and lighting. He arranged his still lifes so that everything locked together. Edges of objects run into each other; for example, a black arabesque seemingly escapes from the blue cloth to capture an apple in the center; the sinuous curves of the blue ginger pot's rattan straps merge with other straps on the body of the bottle behind. Giving form and mass to objects through the juxtaposition of brushstrokes and carefully balanced colors and textures, he gave the painting a sense of comforting stability.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "composition",
+        "perspective",
+        "still_life",
+        "color",
+        "objects"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qt5-guide-01",
+      "artwork_id": "getty-103qt5",
+      "source_id": "musebridge-103qt5-guide",
+      "source_locator": "MuseBridge guide 1 — From cloth to apple",
+      "excerpt": "Start at an apple that touches the patterned blue cloth. Follow the nearest dark line in the fabric until it meets the fruit. Now look for a place where the rim of a vessel meets another outline. Where is it easiest to tell which object sits in front?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "line",
+        "edge",
+        "blue",
+        "cloth",
+        "apple",
+        "pattern"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qt5-guide-02",
+      "artwork_id": "getty-103qt5",
+      "source_id": "musebridge-103qt5-guide",
+      "source_locator": "MuseBridge guide 2 — Roundness in paint",
+      "excerpt": "Choose two apples, one against light fabric and one against a darker patch. Compare the color at each center with the color around its edge. Try imagining their outlines erased. Which apple would still look round?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "volume",
+        "color",
+        "weight",
+        "apple",
+        "shading"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtz-medium",
+      "artwork_id": "getty-103qtz",
+      "source_id": "getty-103qtz-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtz-dimensions",
+      "artwork_id": "getty-103qtz",
+      "source_id": "getty-103qtz-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 74 × 51.5 cm (29 1/8 × 20 1/4 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtz-description-01",
+      "artwork_id": "getty-103qtz",
+      "source_id": "getty-103qtz-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "A chic young woman in a day dress with floral accents holds a parasol against a background of exuberant foliage. She looks straight ahead, a picture of poise and detachment even as she seems fully aware of the viewer's admiring gaze. Representing aspiring Parisian actress Jeanne Demarsy as the embodiment of Spring, this portrait debuted at the last major public exhibition of Manet's life, the Paris Salon of 1882. For more than two decades, Manet's paintings were rejected by the Salon or met with controversy; Spring was the most unalloyed success of the artist's Salon career, a career that ended tragically a year later when Manet died of causes related to syphilis.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "subject",
+        "setting",
+        "exhibition",
+        "seasons"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtz-description-02",
+      "artwork_id": "getty-103qtz",
+      "source_id": "getty-103qtz-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "Appealing to critics primarily on account of Jeanne's charm, Spring also showcased Manet's mastery of his medium. The painting exhibits a marvelous range of brushwork, from the thin, delicate floral touches on the dress to the smooth handling of Jeanne's face and the broad, sketch-like strokes of the backdrop. The painting's sensual handling and bright, vibrant palette evoke the pleasures of the season it celebrates.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "brushwork",
+        "technique",
+        "surface"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtz-description-03",
+      "artwork_id": "getty-103qtz",
+      "source_id": "getty-103qtz-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "When composing Spring, Manet had in view both the latest fashion trends and old artistic traditions. An avid connoisseur of feminine couture, he pieced together Jeanne's ensemble himself by scouring dressmakers' and milliners' shops. Posing his model in the studio, however, he referred to portrait conventions of the early Italian Renaissance, presenting her half-length, in profile, and against a mass of greenery. More than just an ephemeral \"fashion-plate,\" Manet's archetypal Spring was conceived as a picture for the ages, summarizing his modern epoch through the figure of a beautiful Parisienne.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "fashion",
+        "influences",
+        "composition"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtz-guide-01",
+      "artwork_id": "getty-103qtz",
+      "source_id": "musebridge-103qtz-guide",
+      "source_locator": "MuseBridge guide 1 — Three kinds of brush mark",
+      "excerpt": "Look first at the small flowers on the dress, then at the leaves behind Jeanne. Are the marks equally separate and easy to count? Finish at her cheek. Moving between these three areas lets you compare the pace of the marks without needing to name a painting technique.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "brushwork",
+        "dress",
+        "flowers",
+        "background",
+        "face",
+        "texture"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtz-guide-02",
+      "artwork_id": "getty-103qtz",
+      "source_id": "musebridge-103qtz-guide",
+      "source_locator": "MuseBridge guide 2 — A profile amid patterns",
+      "excerpt": "Follow the parasol handle from Jeanne’s gloved hand toward her shoulder, then look up at her profile. Follow the contour of her forehead, nose and chin against the foliage. Which part of that outline stays most distinct when you look at the whole painting from farther away?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "silhouette",
+        "parasol",
+        "diagonal",
+        "face",
+        "profile",
+        "pattern"
+      ]
+    },
+    {
+      "chunk_id": "getty-10a2y1-medium",
+      "artwork_id": "getty-10a2y1",
+      "source_id": "getty-10a2y1-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-10a2y1-dimensions",
+      "artwork_id": "getty-10a2y1",
+      "source_id": "getty-10a2y1-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 116 × 81 cm (45 11/16 × 31 7/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-10a2y1-description-01",
+      "artwork_id": "getty-10a2y1",
+      "source_id": "getty-10a2y1-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "This painting presents a young man in a dark suit standing at a large open window in a well-appointed upper-story apartment. With his back to the viewer, his feet planted firmly apart and hands in his pockets, he looks out at a sun-drenched street scene tightly framed by tall, uniform apartment blocks. Beneath him, a lone woman in fashionable attire is about to cross the street, and several horse-drawn carriages complete the urban tableau.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "figure",
+        "setting",
+        "street",
+        "viewpoint"
+      ]
+    },
+    {
+      "chunk_id": "getty-10a2y1-description-02",
+      "artwork_id": "getty-10a2y1",
+      "source_id": "getty-10a2y1-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "When Caillebotte first exhibited the painting, he presented it not as a portrait but as a genre scene, with the title Jeune homme à sa fenêtre (Young Man at His Window). For his model, Caillebotte used his brother René and the family’s newly-built apartment building at the corner of the rue de Lisbonne and rue de Miromesnil in the 8th arrondissement of Paris. This expensive and fashionable quarter had been completely transformed by the urban renewal project initiated by Baron Haussmann, prefect of the Seine, and by real-estate speculation, in which Caillebotte’s recently deceased father Martial had been a major participant. It is this distinctly modern and bourgeois Paris that Caillebotte's painting evokes.Caillebotte exhibited the picture to acclaim at the 2nd Impressionist exhibition in 1876, when he was just twenty-seven years old. It was his public debut as a painter, and among his submissions this painting received the most critical attention, after his famous Floor Scrapers (Musée d’Orsay, Paris). The 1876 exhibition prompted critic and novelist Edmond Duranty to write his landmark essay, “The New Painting,” which strongly advocated for the realist depiction of modern urban life. Though he doesn't name any artists, it is clear that Caillebotte's work was among his primary models.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "subject",
+        "family",
+        "modern_life",
+        "exhibition"
+      ]
+    },
+    {
+      "chunk_id": "getty-10a2y1-guide-01",
+      "artwork_id": "getty-10a2y1",
+      "source_id": "musebridge-10a2y1-guide",
+      "source_locator": "MuseBridge guide 1 — Looking over a shoulder",
+      "excerpt": "Look past the man toward the small figure in the street. Then look back at the width of his shoulders. Use the difference in size to gauge the distance. Try imagining the street without the man in front of it: where would that leave you standing?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "viewpoint",
+        "back",
+        "window",
+        "street",
+        "interior",
+        "distance"
+      ]
+    },
+    {
+      "chunk_id": "getty-10a2y1-guide-02",
+      "artwork_id": "getty-10a2y1",
+      "source_id": "musebridge-10a2y1-guide",
+      "source_locator": "MuseBridge guide 2 — Frames inside the frame",
+      "excerpt": "Trace a vertical side of the window, then find a vertical edge on the building opposite. Move your gaze between the dark interior and the bright street. Which lines make it easiest to hold the two spaces apart?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "architecture",
+        "balcony",
+        "window",
+        "frame",
+        "street",
+        "lines"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rc9-medium",
+      "artwork_id": "getty-103rc9",
+      "source_id": "getty-103rc9-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rc9-dimensions",
+      "artwork_id": "getty-103rc9",
+      "source_id": "getty-103rc9-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 178.4 × 80.3 cm (70 1/4 × 31 5/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rc9-description-01",
+      "artwork_id": "getty-103rc9",
+      "source_id": "getty-103rc9-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "Barefoot young women and children adorned with flower crowns and playing musical instruments lead a procession through a city built of marble. Splashes of color, like the scarlet poppies and yellow daffodils, draw the eye across the canvas to explore the vibrant details of an ancient Roman festival, as meticulously reimagined by Dutch artist Lawrence Alma-Tadema. Spectators leaning over from the rooftops cheer and wave, while more reserved figures acknowledge the procession from the royal box under the central arch. The gold standard in front of them, raised on blue poles and decorated with purple garlands, bears a Latin inscription dedicated to Priapus, the god of nature, gardens, and fertility.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "procession",
+        "subject",
+        "color",
+        "architecture"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rc9-description-02",
+      "artwork_id": "getty-103rc9",
+      "source_id": "getty-103rc9-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "It is unclear exactly which festival Alma-Tadema meant to depict, but the many references from ancient Rome all indicate a springtime celebration of fertility and abundance, perhaps most resembling Floralia, honoring Flora, goddess of flowers. British May Day traditions were also rooted in the Floralia festival and were revived during the 1800s to celebrate spring and nature in the face of rapid industrialization. On May 1, children decked themselves and their village with flowers, danced, and crowned a May Queen. Such celebrations and this painting’s imagery connected contemporary British society to ancient Rome, an empire and aesthetic that the British empire saw as its predecessor and aspired to.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "festival",
+        "interpretation",
+        "fertility"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rc9-description-03",
+      "artwork_id": "getty-103rc9",
+      "source_id": "getty-103rc9-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "Alma-Tadema was an avid scholar of antiquity and kept an extensive library of photographs of ancient Italian architecture and sculpture. However archaeologically precise his paintings may seem, he took great liberties by fancifully combining motifs and decoration from different time periods and places. For example, the partly covered arch on the left bears the inscription from the Arch of Trajan in Benevento, Italy completed around A.D. 114–118, and directly underneath it, the circular spandrel relief borrows the river god figure from the Arch of Constantine in Rome, completed two hundred years later.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "influence",
+        "working_method",
+        "may_day"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rc9-guide-01",
+      "artwork_id": "getty-103rc9",
+      "source_id": "musebridge-103rc9-guide",
+      "source_locator": "MuseBridge guide 1 — Tracing the procession",
+      "excerpt": "Begin with one of the flower crowns near the front. Follow the procession toward the arch, then look up for someone watching from above. Try switching roles: which parts of the scene would the spectator see that a marcher near the front might miss?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "crowd",
+        "route",
+        "procession",
+        "flowers",
+        "balcony"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rc9-guide-02",
+      "artwork_id": "getty-103rc9",
+      "source_id": "musebridge-103rc9-guide",
+      "source_locator": "MuseBridge guide 2 — Small spots of color",
+      "excerpt": "Pick one red flower and then search for the next patch of red. Repeat the game with yellow against the pale stone. Do the two colors send your eye through the crowd along the same route?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "color",
+        "poppies",
+        "daffodils",
+        "marble",
+        "red",
+        "yellow"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rk8-medium",
+      "artwork_id": "getty-103rk8",
+      "source_id": "getty-103rk8-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rk8-dimensions",
+      "artwork_id": "getty-103rk8",
+      "source_id": "getty-103rk8-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 64.8 × 100.3 cm (25 1/2 × 39 1/2 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rk8-description-01",
+      "artwork_id": "getty-103rk8",
+      "source_id": "getty-103rk8-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "In the fall of 1890, Impressionist Claude Monet arranged to have the wheatstacks near his home left out over the winter. By the following summer he had painted them at least thirty times, at different times throughout the seasons. Wheatstacks was Monet's first series and the first in which he concentrated on a single subject, differentiating pictures only by color, touch, composition, and lighting and weather conditions. He said, \"For me a landscape hardly exists at all as a landscape, because its appearance is constantly changing; but it lives by virtue of its surroundings, the air and the light which vary continually.\"",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "series",
+        "seasons",
+        "setting",
+        "light"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rk8-description-02",
+      "artwork_id": "getty-103rk8",
+      "source_id": "getty-103rk8-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "After beginning outdoors, Monet reworked each painting in his studio to create the color harmonies that unify each canvas. The pinks in the sky echo the snow's reflections, and the blues of the wheatstacks' shadows are found in the wintry light shining on the stacks, in the houses' roofs, and in the snowy earth. With raised, broken brushstrokes, Monet captured nuances of light and created a solid, geometric structure that prevents the surface from simply melting into blobs. The wheatstacks are solid forms, and, while the outlying houses are indecipherable close-up, they are clear from a distance.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "color",
+        "light",
+        "process",
+        "shadows",
+        "snow"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rk8-guide-01",
+      "artwork_id": "getty-103rk8",
+      "source_id": "musebridge-103rk8-guide",
+      "source_locator": "MuseBridge guide 1 — Two places to find a color",
+      "excerpt": "Look for a pink passage in the sky, then see where a related color reappears in the snow. Next, trace a blue shadow from a stack into the field. Ask yourself which color seems to join the sky to the ground and which makes a stack feel planted.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "color",
+        "pink",
+        "blue",
+        "snow",
+        "sky",
+        "shadows",
+        "morning"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rk8-guide-02",
+      "artwork_id": "getty-103rk8",
+      "source_id": "musebridge-103rk8-guide",
+      "source_locator": "MuseBridge guide 2 — Near and far",
+      "excerpt": "At full view, find the distant strip of houses. Enlarge just that strip, then return to the full image. Notice the point at which a few colored marks begin to read as roofs. Try the same change of scale with the nearer stack.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "distance",
+        "zoom",
+        "roofs",
+        "strokes",
+        "houses",
+        "horizon"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtm-medium",
+      "artwork_id": "getty-103qtm",
+      "source_id": "getty-103qtm-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on copper",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtm-dimensions",
+      "artwork_id": "getty-103qtm",
+      "source_id": "getty-103qtm-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 22.2 × 17.1 cm (8 3/4 × 6 3/4 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtm-description-01",
+      "artwork_id": "getty-103qtm",
+      "source_id": "getty-103qtm-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "Intently interested in the expression of human emotion, Rembrandt often used himself as his own model in his early years as an independent master in Leiden. Here, in a small and freely painted work, he appears in the guise of a soldier, relaxed and engaging the viewer with a laugh.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "self_portrait",
+        "subject",
+        "expression"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtm-description-02",
+      "artwork_id": "getty-103qtm",
+      "source_id": "getty-103qtm-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "For this sophisticated self-portrait, painted at age twenty-one or twenty-two, Rembrandt combines a study of character and emotion (known in Dutch as a tronie) with a rare jovial self-presentation. The lively, short brushwork in the face and brisk handling of the neutral background convey a sense of spontaneity and immediacy.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "technique",
+        "brushwork",
+        "emotion",
+        "tronie"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtm-description-03",
+      "artwork_id": "getty-103qtm",
+      "source_id": "getty-103qtm-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "This is one of a small number of paintings by Rembrandt from the late 1620s executed on copper. He signed it in the upper-left corner with his monogram of interlocking letters, \"RHL\" (Rembrandt Harmenszoon Leidensis), which he used only briefly, from late 1627 to early 1629.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "support",
+        "signature",
+        "copper"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtm-guide-01",
+      "artwork_id": "getty-103qtm",
+      "source_id": "musebridge-103qtm-guide",
+      "source_locator": "MuseBridge guide 1 — Reading a laugh",
+      "excerpt": "Try looking at the mouth alone, then cover it and look at the cheeks and eyes. Which part still suggests a laugh? Zoom out again to include the slight tilt of the head. Does that change how directly the sitter seems to meet you?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "expression",
+        "laugh",
+        "cheeks",
+        "mouth",
+        "eyes",
+        "brushwork"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtm-guide-02",
+      "artwork_id": "getty-103qtm",
+      "source_id": "musebridge-103qtm-guide",
+      "source_locator": "MuseBridge guide 2 — Searching the surface",
+      "excerpt": "Compare a bright stroke on the face with a bright reflection on the armor. Then look at the quieter background beside the head. The three spots offer a way to see how much an individual mark can change when the surrounding colors change.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "armor",
+        "background",
+        "face",
+        "touch",
+        "reflective",
+        "brushwork"
+      ]
+    },
+    {
+      "chunk_id": "getty-109q8g-medium",
+      "artwork_id": "getty-109q8g",
+      "source_id": "getty-109q8g-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-109q8g-dimensions",
+      "artwork_id": "getty-109q8g",
+      "source_id": "getty-109q8g-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 92.9 × 72.7 cm (36 9/16 × 28 5/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-109q8g-description-01",
+      "artwork_id": "getty-109q8g",
+      "source_id": "getty-109q8g-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "Lucretia emerges from the shadows and grasps a dagger, aiming it at her chest. The beauty of her translucent skin, the pearls in her hair, the luxurious fabrics—all contrast with the horror of what is about to happen. The main source for the story of Lucretia is the History of Rome (Book I, 57 – 59) by ancient Roman historian Titus Livius. The legendary Lucretia was the virtuous wife of the nobleman Lucius Tarquinius Collatinus. After her rape by Sextus Tarquinius, the son of the King of Rome, she called on her father and her husband for vengeance and then, while proclaiming her innocence, stabbed herself to death. Anger and grief over Lucretia’s death led to a rebellion that brought down the corrupted monarchy and made her a martyr for freedom. Lucretia became an enduring symbol of female strength, and her story likely had personal resonance for the artist: like Lucretia, Artemisia Gentileschi had experienced sexual violence as a young woman.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "subject",
+        "narrative",
+        "interpretation"
+      ]
+    },
+    {
+      "chunk_id": "getty-109q8g-description-02",
+      "artwork_id": "getty-109q8g",
+      "source_id": "getty-109q8g-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "Artemisia often depicted donne forti (strong women) in her work, in this way shaping her artistic persona as an independent and successful painter in a world dominated by men. She approached her subjects with great empathy and translated their experiences into emotionally complex paintings. Artemisia painted Lucretia at least four times during her career, and in all but one of the surviving examples she portrayed the isolated figure of Lucretia in the moment just before she plunges the dagger on her breast. Three poems written in Venice in 1627 celebrated a painting of Lucretia by the hand of Artemisia. The author has not been identified with certainty, but he was likely Giovan Francesco Loredan, who was part of a close-knit group of writers, artists, musicians, and patrons who were associated with Artemisia during her Venetian sojourn (1626/27 – 1630). Artemisia’s portrayal of the elegant and sophisticated heroine hint at a profound engagement with the artistic legacy of sixteenth-century Venetian art, therefore leading to an identification of our painting with the work praised in the aforementioned poems.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "artist",
+        "context",
+        "influence",
+        "interpretation"
+      ]
+    },
+    {
+      "chunk_id": "getty-109q8g-guide-01",
+      "artwork_id": "getty-109q8g",
+      "source_id": "musebridge-109q8g-guide",
+      "source_locator": "MuseBridge guide 1 — Hand and gaze",
+      "excerpt": "Start at Lucretia’s raised face and look in the direction of her gaze. Then return to the hand that holds the dagger. Do the two directions meet or pull apart? You can follow the tension between them without deciding exactly what she feels.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "gesture",
+        "gaze",
+        "upward",
+        "hand",
+        "direction",
+        "contrast"
+      ]
+    },
+    {
+      "chunk_id": "getty-109q8g-guide-02",
+      "artwork_id": "getty-109q8g",
+      "source_id": "musebridge-109q8g-guide",
+      "source_locator": "MuseBridge guide 2 — Finding the light",
+      "excerpt": "Look for a small highlight on the pearls and a broader patch of light on the drapery. Compare their edges with the darkness behind the figure. Which detail did you notice only after moving closer?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "lighting",
+        "pearls",
+        "drapery",
+        "shadow",
+        "fabric"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtf-medium",
+      "artwork_id": "getty-103qtf",
+      "source_id": "getty-103qtf-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on panel",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtf-dimensions",
+      "artwork_id": "getty-103qtf",
+      "source_id": "getty-103qtf-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 59.2 × 89.7 cm (23 5/16 × 35 5/16 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtf-description-02",
+      "artwork_id": "getty-103qtf",
+      "source_id": "getty-103qtf-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "Wrapped in a flowing red cape, the warrior Meleager thrusts his spear into the shoulder of a massive boar. The ferocious creature--seemingly undaunted by a pair of hounds latched onto its bristled hide--has turned to confront head-on its human adversary. Meleager's blow will prove to be fatal to the boar, but the beast has proven itself as a fearsome foe. Beneath its imposing hooves lie the disemboweled carcass of a hound and the prostrate corpse of the hunter Ancaeus.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "subject",
+        "gesture",
+        "hunt",
+        "animals"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtf-description-03",
+      "artwork_id": "getty-103qtf",
+      "source_id": "getty-103qtf-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "The story of the Calydonian boar hunt was told and retold during antiquity--most famously in Ovid's Metamorphoses. When King Oeneus of Calydon failed to honor the goddess Diana with offerings, she released a terrifying boar on his land. The king's son, Meleager, assembled a group of renowned warriors to slay the beast. Several of the huntsmen were killed or maimed before Meleager finally defeated the boar. He presented its head as a trophy to his beloved, the huntress Atalanta, who is seen behind Meleager, with bow in hand.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "myth",
+        "subject",
+        "narrative"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtf-description-04",
+      "artwork_id": "getty-103qtf",
+      "source_id": "getty-103qtf-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "Peter Paul Rubens created this painting a few years after an extended stay in Italy. He drew from ancient sarcophagi and statues he had seen there for the poses of many of the figures. For example, the boar seen in profile was taken directly from a well-known marble in Florence's Uffizi Gallery. Rubens's appropriation of iconic images from antiquity was intended to resonate with learned viewers. For the figures on horseback, Rubens borrowed from his Renaissance predecessors, Leonardo da Vinci and Raphael. But Rubens's dynamic and inventive interpretation of the hunt was wholly his own. With this painting, he established the theme of the epic combat between man and animal, a subject to which he would return throughout his career.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "influences",
+        "process",
+        "composition"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtf-guide-01",
+      "artwork_id": "getty-103qtf",
+      "source_id": "musebridge-103qtf-guide",
+      "source_locator": "MuseBridge guide 1 — Reading the action",
+      "excerpt": "Find the hunter in red, then follow the diagonal from him toward the boar. Look at the dogs approaching the animal from a different direction. Pause where those paths converge before taking in the rest of the crowd.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "red",
+        "cape",
+        "movement",
+        "action",
+        "spear",
+        "crowd",
+        "boar"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtf-guide-02",
+      "artwork_id": "getty-103qtf",
+      "source_id": "musebridge-103qtf-guide",
+      "source_locator": "MuseBridge guide 2 — Looking against the flow",
+      "excerpt": "Choose one figure near the edge and follow the direction its body points. Then find a figure pointing back the other way. Does your eye travel across the painting, or does it keep returning to the same crowded patch?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "composition",
+        "direction",
+        "horses",
+        "dogs",
+        "stillness"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qse-medium",
+      "artwork_id": "getty-103qse",
+      "source_id": "getty-103qse-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil (or oil and tempera) on panel transferred to canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qse-dimensions",
+      "artwork_id": "getty-103qse",
+      "source_id": "getty-103qse-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 95.3 × 73 cm (37 1/2 × 28 3/4 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qse-description-01",
+      "artwork_id": "getty-103qse",
+      "source_id": "getty-103qse-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "Standing before a fortress wall, this well-dressed foot soldier holds a combination spear and battle-axe called a halberd. His direct stare and swaggering pose are strikingly poignant, given the smooth unlined face and slim body that betray him as no more than a teenager. As a portraitist, Jacopo Pontormo was renowned for his subtle, complex psychological studies; here he conveyed the naive arrogance and vulnerability of youth. Court painter to Duke Cosimo de' Medici (1519 – 1574) in Florence, Pontormo pioneered a new, sophisticated type of portraiture which championed elegance and aristocratic reserve.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "weapon",
+        "pose",
+        "sitter",
+        "costume"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qse-description-02",
+      "artwork_id": "getty-103qse",
+      "source_id": "getty-103qse-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "The sitter's identity has been much discussed. The painter and author of the famous Lives, Giorgio Vasari (1511 – 1574), noted that during the siege of Florence in about 1529, Pontormo painted a \"most beautiful work, \"a portrait of young nobleman Francesco Guardi as a soldier.” Sure enough, a birth record survives for a male child, Francesco, who was born into the Guardi clan in 1514. This young man would have been around fourteen or fifteen years old at the time of the siege, about the age of Pontormo's teenage sitter. Based on the evidence of a Florentine inventory of the Riccardi family in 1612, it has also been suggested by some that the portrait represents Cosimo de' Medici himself.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "identity",
+        "interpretation",
+        "context"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qse-guide-01",
+      "artwork_id": "getty-103qse",
+      "source_id": "musebridge-103qse-guide",
+      "source_locator": "MuseBridge guide 1 — Pose and expression",
+      "excerpt": "Start with the arm braced at the hip and the elbow jutting outward. Then look at the smooth face and steady gaze. Describe the posture in one word and the face in another. They do not have to give you the same impression.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "pose",
+        "expression",
+        "face",
+        "hand",
+        "elbow"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qse-guide-02",
+      "artwork_id": "getty-103qse",
+      "source_id": "musebridge-103qse-guide",
+      "source_locator": "MuseBridge guide 2 — A vertical beside a figure",
+      "excerpt": "Follow the long vertical beside the figure. Compare that line with the angled elbow and the thin belt above the red clothing. Trace the outer edge of the light sleeve back to the hand. Which part of the pose seems most emphatic?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "clothing",
+        "geometry",
+        "stance",
+        "halberd",
+        "line"
+      ]
+    },
+    {
+      "chunk_id": "getty-11409c-medium",
+      "artwork_id": "getty-11409c",
+      "source_id": "getty-11409c-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-11409c-dimensions",
+      "artwork_id": "getty-11409c",
+      "source_id": "getty-11409c-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 239.6 × 147.3 cm (94 5/16 × 58 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-11409c-description-01",
+      "artwork_id": "getty-11409c",
+      "source_id": "getty-11409c-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "In July 1774, a young Pacific Islander called Mai set foot in Spithead, England, becoming the first Polynesian visitor to Great Britain. Upon his arrival, Mai (or “Omai,” as he was known there) aroused widespread interest and admiration across the ranks of British society. Sir Joshua Reynolds, one of the most sought-after painters of the day, captured Mai’s likeness in this imposing full-length portrait. Reynolds depicted Mai—who in England adopted British dress—standing barefoot yet elegant before an idealized tropical landscape. The dynamic pose recalls one of the most celebrated sculptures from classical antiquity, the Apollo Belvedere, while Mai’s turban and tattooed hands remind us of his non-European origin. The cream-colored fabric of his sash, turban, and robe is likely intended to represent tapa, or bark cloth, which in Mai’s Polynesian culture was traditionally worn by those of high social standing. In April 1776, Reynolds submitted the Portrait of Mai to the Royal Academy’s annual exhibition, where it was met with widespread acclaim.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "identity",
+        "portrait",
+        "clothing"
+      ]
+    },
+    {
+      "chunk_id": "getty-11409c-description-02",
+      "artwork_id": "getty-11409c",
+      "source_id": "getty-11409c-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "The reason for Mai’s travel to England was diplomatic. When he was a child, his home island of Raiatea had been attacked by neighboring Bora Bora, and his father killed. His family fled to Tahiti, which in 1767 was invaded by the British Navy and claimed for King George III. Mai, wounded by cannon shot in the siege, was impressed by the foreigners’ weaponry. Thus, a few years later, when Captain Cook’s entourage set forth from the Pacific Islands on their return journey to England, Mai saw a strategic opportunity. He requested passage to Britain on the HMS Adventure in the hope of securing firearms with which he might reclaim his family's land from the Bora Borans.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "travel",
+        "purpose",
+        "diplomacy"
+      ]
+    },
+    {
+      "chunk_id": "getty-11409c-description-03",
+      "artwork_id": "getty-11409c",
+      "source_id": "getty-11409c-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "In June 1776, shortly after the close of the Royal Academy exhibition, Mai embarked on his homeward journey. He would reach the Pacific Islands but died there in 1780 without retaking Raiatea. Meanwhile, the Portrait of Mai, recognized by Reynolds as his masterwork, was kept as a showpiece in the artist’s studio until his death in 1792. Today, this magnificent painting stands as an ominous monument to the era’s complicated history and its troubling legacy: behind its heroic presentation lies the dramatic story of a remarkable individual whose life was profoundly impacted by British colonial expansion.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "return",
+        "ownership",
+        "reception"
+      ]
+    },
+    {
+      "chunk_id": "getty-11409c-guide-01",
+      "artwork_id": "getty-11409c",
+      "source_id": "musebridge-11409c-guide",
+      "source_locator": "MuseBridge guide 1 — Following Mai’s gesture",
+      "excerpt": "Start at Mai’s extended hand and follow the line back across his arm to his shoulder. Then look at his face. Does the direction of his gaze continue the gesture or take you somewhere else? Try it once more with the whole figure in view.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "hand",
+        "gesture",
+        "gaze",
+        "pose",
+        "direction",
+        "portrait"
+      ]
+    },
+    {
+      "chunk_id": "getty-11409c-guide-02",
+      "artwork_id": "getty-11409c",
+      "source_id": "musebridge-11409c-guide",
+      "source_locator": "MuseBridge guide 2 — Changing the crop",
+      "excerpt": "Temporarily frame just the head and shoulders with your fingers. Then uncover the robe, bare feet and ground. What do you learn about the way Mai stands that you could not see in the closer crop? This is one way to explore the choice of a full-length portrait.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "scale",
+        "full",
+        "length",
+        "portrait",
+        "feet",
+        "framing",
+        "drapery"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-medium",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-dimensions",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 100.3 × 65.1 cm (39 1/2 × 25 5/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-description-01",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Object description, paragraph 1 (Light and surface)",
+      "excerpt": "\"Everything changes, even stone.\" Claude Monet wrote these words in a letter and vividly demonstrated them in paint, conveying a wondrous combination of permanence and mutability as the sun daily transformed the facade of Rouen Cathedral. Extending the building's encrusted stone surface to the richly varied impasto surface of his painting, he portrayed the cathedral perpetually re-emerging in the suffused light of early morning.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "light",
+        "brushwork",
+        "surface"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-description-02",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Object description, paragraph 2 (Painting the series)",
+      "excerpt": "Monet created several groups of paintings exploring the color, light, and form of a single subject at various times of day, but his Rouen Cathedral series was his most intense effort on a single site. He painted there in late winter in both 1892 and 1893, then reworked his thirty canvases from memory in the studio through 1894. He began this example in 1893, working in an improvised studio in the front room of a dressmaker's shop across from the cathedral.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "series",
+        "working_method",
+        "setting"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-description-03",
+      "artwork_id": "getty-108hgy",
+      "source_id": "getty-108hgy-record",
+      "source_locator": "Object description, paragraph 3 (The Paris exhibition)",
+      "excerpt": "After creating a coherent ensemble, Monet selected twenty paintings that he considered \"complete\" and \"perfect,\" including this one, for an exhibition at his Paris dealer's gallery in May 1895. Pissarro and Cézanne visited and praised the series, and patrons quickly purchased eight paintings from the group.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "series",
+        "exhibition"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-guide-01",
+      "artwork_id": "getty-108hgy",
+      "source_id": "musebridge-108hgy-guide",
+      "source_locator": "MuseBridge guide note 1",
+      "excerpt": "Start at the dark doorway and slowly move your gaze up the facade. Choose one carved shape and follow its edge. Where can you keep tracing the stone, and where does the edge disappear into the surrounding color?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "composition",
+        "edges",
+        "facade"
+      ]
+    },
+    {
+      "chunk_id": "getty-108hgy-guide-02",
+      "artwork_id": "getty-108hgy",
+      "source_id": "musebridge-108hgy-guide",
+      "source_locator": "MuseBridge guide 2 — Stepping back from the stone",
+      "excerpt": "Zoom in until you can no longer see the whole doorway. Pick a small patch that could almost be just color and texture. Gradually pull back until it becomes architecture again. What is the smallest neighboring shape you need to recognize it as stone?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "zoom",
+        "surface",
+        "distance",
+        "color",
+        "stone",
+        "texture"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-medium",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-dimensions",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 135.9 × 140.3 cm (53 1/2 × 55 1/4 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-01",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 1 (Setting and color)",
+      "excerpt": "This night landscape represents the coastline at Åsgårdstrand, a small beach resort south of Oslo in Norway, where Edvard Munch spent his summers from the 1880s onward. Here Munch tried to capture the emotions called forth by the night rather than to record its picturesque qualities. The color blue conveys the mysticism and melancholy of the landscape, which seems full of premonitions.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "setting",
+        "color",
+        "mood"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-02",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 1 (The fence and shadow)",
+      "excerpt": "An abstract mound at the right represents a clump of trees; a white fence runs diagonally in front. The vaguely defined shape on the fence may be a shadow of two lovers, a recurring theme in Munch's work.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "fence",
+        "shadow",
+        "interpretation"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-03",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 1 (The shoreline and reflections)",
+      "excerpt": "He used an undulating line to depict the shoreline that continues into the trees at the right. Stars reflect in the water, and a flash of light in the trees shines brightly.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "composition",
+        "shoreline",
+        "light"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-description-04",
+      "artwork_id": "getty-103rgh",
+      "source_id": "getty-103rgh-record",
+      "source_locator": "Object description, paragraph 2 (Painting the sky)",
+      "excerpt": "Varying thicknesses of blue and green paint are blended together to form the impression of a night sky. Some areas are thickly painted, while others are left bare to convey the lighter segments of the sky or a celestial phenomenon.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "brushwork",
+        "color",
+        "surface",
+        "sky"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-guide-01",
+      "artwork_id": "getty-103rgh",
+      "source_id": "musebridge-103rgh-guide",
+      "source_locator": "MuseBridge guide note 1",
+      "excerpt": "Start with the pale fence and follow its diagonal toward the trees. Then find the shoreline and trace its curve. Which line carries your eye farther into the scene?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "composition",
+        "shoreline",
+        "fence"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rgh-guide-02",
+      "artwork_id": "getty-103rgh",
+      "source_id": "musebridge-103rgh-guide",
+      "source_locator": "MuseBridge guide 2 — Comparing lights",
+      "excerpt": "Pick out a point of light in the water and then the flash in the trees. Compare each light with the dark area next to it. Which one attracts your eye first at full view, and does your answer change when you enlarge the scene?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "stars",
+        "reflections",
+        "water",
+        "trees",
+        "night",
+        "light"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-medium",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Medium",
+      "excerpt": "Oil on canvas",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-dimensions",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Dimensions (unframed)",
+      "excerpt": "Unframed: 102.9 × 89.2 cm (40 1/2 × 35 1/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-description-02",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Object description, paragraph 1 (The bacchante and the ape)",
+      "excerpt": "A bacchante, follower of Bacchus, the god of wine, leans forward and grins at the viewer while squeezing a bunch of grapes into a golden drinking vessel. Her posture, exposed breasts, flushed cheeks, and inviting smile allude to her drunken state. There is something disturbing, however, in the way she provocatively confronts the viewer, leaning into the spectator's space and smiling broadly. In the lower left corner an ape mimics the woman's gesture, holding a smaller bunch of grapes in his right paw. The ape may serve a moralizing purpose, condemning excessive drinking.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "subject",
+        "ape",
+        "gesture",
+        "composition",
+        "interpretation"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-description-03",
+      "artwork_id": "getty-103rfp",
+      "source_id": "getty-103rfp-record",
+      "source_locator": "Object description, paragraph 2 (Caravaggio and Rome)",
+      "excerpt": "While visiting Rome from about 1604 to 1614, Hendrick ter Brugghen saw the famous Bacchus by Caravaggio from which this classical painting of Bacchus's female follower derives.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "influence",
+        "artist",
+        "setting"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-guide-01",
+      "artwork_id": "getty-103rfp",
+      "source_id": "musebridge-103rfp-guide",
+      "source_locator": "MuseBridge guide note 1",
+      "excerpt": "Find the grapes in the woman’s hand, then look down to the left for the smaller bunch in the ape’s paw. Move your gaze between the two bunches. How does the repeated gesture change which figure you notice first?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "composition",
+        "gesture",
+        "ape"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rfp-guide-02",
+      "artwork_id": "getty-103rfp",
+      "source_id": "musebridge-103rfp-guide",
+      "source_locator": "MuseBridge guide 2 — Meeting the viewer",
+      "excerpt": "Look at the woman’s face before you look at the grapes. Then follow her forward-leaning pose toward the edge of the picture. Compare how directly the smile addresses you with how absorbed the ape seems in its own gesture. What draws you back to the face?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "gaze",
+        "smile",
+        "gesture",
+        "edge",
+        "viewer",
+        "figure"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-medium",
+      "artwork_id": "getty-104g0s",
+      "source_id": "getty-104g0s-record",
+      "source_locator": "Medium",
+      "excerpt": "Albumen silver print",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-dimensions",
+      "artwork_id": "getty-104g0s",
+      "source_id": "getty-104g0s-record",
+      "source_locator": "Dimensions (image)",
+      "excerpt": "Image: 35.4 × 27.3 cm (13 15/16 × 10 3/4 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-description-01",
+      "artwork_id": "getty-104g0s",
+      "source_id": "getty-104g0s-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "Sir John Frederick William Herschel (1792-1871) was a longtime friend of Julia Margaret Cameron and one of the most accomplished scientists of his generation. He contributed enormously to the early processes of photography by discovering the power of sodium hyposulfate as a fixing agent. Cameron first met him in 1835 in South Africa, where she was recovering from an illness and he was conducting astronomical investigations. They began a close friendship that lasted until his death in 1871.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "identity",
+        "science",
+        "photography"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-description-02",
+      "artwork_id": "getty-104g0s",
+      "source_id": "getty-104g0s-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "During the 1840s Herschel corresponded regularly with Cameron, often remarking on the latest discoveries in photography. In November 1864, less than a year after she began making pictures, Cameron presented him with an album of prints “in grateful memory of 27 years of friendship.” In her Annals Cameron described the depth of her feelings for Herschel: “He was to me as a Teacher and High Priest. From my earliest girlhood I had loved and honoured him, and it was after a friendship of 31 years’ duration that the high task of giving his portrait to the nation was allotted to me.”",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "photography",
+        "artist",
+        "working_method"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-description-03",
+      "artwork_id": "getty-104g0s",
+      "source_id": "getty-104g0s-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "In April 1867 Cameron visited Herschel at Collingwood, his home at Hawkhurst, Kent, and photographed him in a sitting from which at least three negatives were made. Her stated intention was to capture “faithfully the greatness of the inner as well as the features of the outer man.” She swathed his shoulders in a drape of dark cloth, concentrating on the monumental form of his head. The gleaming eyes and shock of white hair reflect his creative vision and remarkable intellectual energy.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "sitting",
+        "process",
+        "portrait"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-description-04",
+      "artwork_id": "getty-104g0s",
+      "source_id": "getty-104g0s-record",
+      "source_locator": "Object description, paragraph 4",
+      "excerpt": "Cameron was acutely aware of the commercial viability of the Herschel portraits. She promptly registered them for copyright, and in June 1867 they went on display at Colnaghi’s, a commercial art gallery and print publisher in London. The reviewer for the Athenaeum described them as “severely and grandly effective pictures of a noble head.” This work, one of several Cameron sent to the Universal Exhibition in Paris later that year, created a sensation; she was awarded an honorable mention for “artistic photographs.” Adapted from Julian Cox. Julia Margaret Cameron, In Focus: From the J. Paul Getty Museum (Los Angeles: J. Paul Getty Museum, 1996), 56. ©1996 The J. Paul Getty Museum.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "exhibition",
+        "copyright",
+        "reception"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-guide-01",
+      "artwork_id": "getty-104g0s",
+      "source_id": "musebridge-104g0s-guide",
+      "source_locator": "MuseBridge guide 1 — Looking into the light",
+      "excerpt": "Start with the brightest strands of hair and trace the edge of the head down into shadow. Now compare the two sides of the face. Which features can you still pick out on the darker side, and which would you have to guess?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "light",
+        "shadow",
+        "face",
+        "hair",
+        "photograph"
+      ]
+    },
+    {
+      "chunk_id": "getty-104g0s-guide-02",
+      "artwork_id": "getty-104g0s",
+      "source_id": "musebridge-104g0s-guide",
+      "source_locator": "MuseBridge guide 2 — A portrait with few clues",
+      "excerpt": "For a moment, ignore the name beneath the photograph. Search the crop for an object that tells you what this person did for a living. Then return to the eyes and hair. What can a portrait communicate with a face alone, and what do you need a label to learn?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "crop",
+        "identity",
+        "scientist",
+        "background",
+        "portrait",
+        "sitter"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-medium",
+      "artwork_id": "getty-103qtr",
+      "source_id": "getty-103qtr-record",
+      "source_locator": "Medium",
+      "excerpt": "Marble",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-dimensions",
+      "artwork_id": "getty-103qtr",
+      "source_id": "getty-103qtr-record",
+      "source_locator": "Dimensions (object (with base))",
+      "excerpt": "Object (With Base): 78 × 65 × 29 cm, 92.9874 kg (30 11/16 × 25 9/16 × 11 7/16 in., 205 lb.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-description-01",
+      "artwork_id": "getty-103qtr",
+      "source_id": "getty-103qtr-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "Gian Lorenzo Bernini was just twenty-three years old when he received one of his first commissions to make a full-sized bust of Pope Paul V, the recently deceased uncle of his most important patron, Cardinal Scipione Borghese.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "commission",
+        "patron",
+        "portrait"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-description-02",
+      "artwork_id": "getty-103qtr",
+      "source_id": "getty-103qtr-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "In this two-and-a-half foot marble portrait, Bernini depicts the pope almost bareheaded, his hair styled in the \"tonsure of St. Peter,\" a practice that signified the renunciation of worldly fashion, and dressed in traditional pontifical vestments. The thick cope covering his shoulders is richly decorated with embroidery of the patron saints of Rome, the Apostles Peter (holding his keys and a book) and Paul (holding the sword of his martyrdom and a book).",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "costume",
+        "symbolism",
+        "religion"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-description-03",
+      "artwork_id": "getty-103qtr",
+      "source_id": "getty-103qtr-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "While he is robed in the garments of the papacy, Pope Paul V gazes at the viewer with a natural expression, his face individualized by the slight turn of his head, the delicate contours of his forehead and the tiny wrinkles carved around his eyes.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "portrait",
+        "expression",
+        "technique"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-description-04",
+      "artwork_id": "getty-103qtr",
+      "source_id": "getty-103qtr-record",
+      "source_locator": "Object description, paragraph 4",
+      "excerpt": "At this time, Bernini is already making the dynamic sculptures for which he will become famous, yet here his subject requires restraint. The artist's subdued dynamism can best be seen in the folds of drapery at the sitter's left shoulder, suggesting his body moves underneath.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "movement",
+        "function",
+        "interpretation"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-description-05",
+      "artwork_id": "getty-103qtr",
+      "source_id": "getty-103qtr-record",
+      "source_locator": "Object description, paragraph 5",
+      "excerpt": "This bust was kept in the Villa Borghese in Rome until 1893 and then sold. Its whereabouts have been unknown until its rediscovery in late 2014.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "provenance",
+        "rediscovery"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-guide-01",
+      "artwork_id": "getty-103qtr",
+      "source_id": "musebridge-103qtr-guide",
+      "source_locator": "MuseBridge guide 1 — One material, two surfaces",
+      "excerpt": "Compare a wrinkle beside an eye with one small line of carved embroidery on the marble cope. Zoom in enough to see the shadow within each cut. Zoom back out and notice how quickly one set of marks becomes skin and the other becomes cloth.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "texture",
+        "skin",
+        "embroidery",
+        "drapery",
+        "carving"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtr-guide-02",
+      "artwork_id": "getty-103qtr",
+      "source_id": "musebridge-103qtr-guide",
+      "source_locator": "MuseBridge guide 2 — Turning a still head",
+      "excerpt": "Trace the broad outline of the shoulders first. Then follow the turn of the head. Look for a fold in the garment that might continue that movement. Does the figure seem more still when you look at its outline or at its surface?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "movement",
+        "tilt",
+        "face",
+        "shoulders",
+        "folds"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtj-medium",
+      "artwork_id": "getty-103qtj",
+      "source_id": "getty-103qtj-record",
+      "source_locator": "Medium",
+      "excerpt": "Alabaster",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtj-dimensions",
+      "artwork_id": "getty-103qtj",
+      "source_id": "getty-103qtj-record",
+      "source_locator": "Dimensions (object)",
+      "excerpt": "Object: 39.4 × 27.3 × 26 cm, 17.2367 kg (15 1/2 × 10 3/4 × 10 1/4 in., 38 lb.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtj-description-01",
+      "artwork_id": "getty-103qtj",
+      "source_id": "getty-103qtj-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "The Vexed Man is one of a series of forty-nine portrait busts or \"character heads\" made by Franz Xaver Messerschmidt, an eighteenth-century German sculptor active in Austria. Messerschmidt sculpted them during the last thirteen years of his life, while apparently suffering from mental illness.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "series",
+        "history",
+        "character_heads"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtj-description-02",
+      "artwork_id": "getty-103qtj",
+      "source_id": "getty-103qtj-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "This bust portrays a middle-aged man with a sour expression, which seems to fall somewhere between a grimace and a scowl. The most telling aspect may be the furrowed brow above squinting eyes and a scrunched nose. But natural cracks in the bust's alabaster surface seem to echo the topography of his skin, both softened by age yet hardened by the extreme expression. The man's receding hairline, wrinkles, and sagging jawline contrast with tensed cheek and neck muscles. Although the character seems to express irritation and annoyance, it is not certain whether Messerschmidt intended that interpretation, because he did not give the bust a title.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "expression",
+        "features",
+        "technique"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtj-description-03",
+      "artwork_id": "getty-103qtj",
+      "source_id": "getty-103qtj-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "This bust and the series to which it belongs reflect the intellectual concerns of artists and scholars during the Enlightenment era, when a surge of interest in the sciences occurred. Studies in physiognomy were highly popular at the time. Perhaps as influential was Messerschmidt's undiagnosed mental condition, which could have been schizophrenia. A contemporary wrote that Messerschmidt told him that by making the character heads, he hoped to ward away spirits that invaded his mind.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "interpretation",
+        "enlightenment"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtj-guide-01",
+      "artwork_id": "getty-103qtj",
+      "source_id": "musebridge-103qtj-guide",
+      "source_locator": "MuseBridge guide 1 — Looking before naming",
+      "excerpt": "Cover the mouth and describe only the brow and nose. Then cover the upper face and look at the lips. If you give the face two different emotional labels, say which visible detail led you to each one. You can leave the artist’s intended emotion open.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "expression",
+        "brow",
+        "eyes",
+        "mouth",
+        "scowl",
+        "emotion"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qtj-guide-02",
+      "artwork_id": "getty-103qtj",
+      "source_id": "musebridge-103qtj-guide",
+      "source_locator": "MuseBridge guide 2 — Creases and cracks",
+      "excerpt": "Find a crease that follows the shape of the face. Compare it with a fine line in the surface that seems to go its own way. Rather than assigning every mark to the sculptor, ask which ones you can identify confidently from this photograph.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "material",
+        "alabaster",
+        "cracks",
+        "wrinkles",
+        "surface",
+        "texture"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsb-medium",
+      "artwork_id": "getty-103qsb",
+      "source_id": "getty-103qsb-record",
+      "source_locator": "Medium",
+      "excerpt": "Polychromed wood (pine and cedar) with glass eyes",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsb-dimensions",
+      "artwork_id": "getty-103qsb",
+      "source_id": "getty-103qsb-record",
+      "source_locator": "Dimensions (object)",
+      "excerpt": "Object: 175.9 × 103 × 74 cm (69 1/4 × 40 9/16 × 29 1/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsb-description-01",
+      "artwork_id": "getty-103qsb",
+      "source_id": "getty-103qsb-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "In a richly brocaded robe, with rosy cheeks, shining eyes, and outstretched arms, Saint Ginés de la Jara appeals to the faithful standing before him. His gestures and open mouth suggest that he is preaching. According to legend, after Saint Ginés was decapitated in southern France, he picked up his head and tossed it into the Rhône River. Carried by the sea to the coast of southeastern Spain, it was retrieved and conserved as a relic. Life-sized, devotional cult objects often included glass eyes and were often made out of wood that could be painted in order to achieve lifelike results. Reinforcing the emotional experience of the faithful, such heightened realism typified Spanish Baroque art at a time when the Catholic Church sought to make Christianity more accessible to believers.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "figure",
+        "gestures",
+        "legend",
+        "adornment"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsb-description-02",
+      "artwork_id": "getty-103qsb",
+      "source_id": "getty-103qsb-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "Luisa Roldán, also called La Roldana, carved the work. The figure was polychromed by her brother-in-law, Tomás de los Arcos, who used the Spanish technique of estofado to replicate the brocaded ecclesiastical garments. In this process, the area of the figure's garment was first covered in gold leaf and painted over with brown paint, and then incised with a stylus to reveal the gold underneath.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "artists",
+        "technique",
+        "polychromy",
+        "estofado"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsb-guide-01",
+      "artwork_id": "getty-103qsb",
+      "source_id": "musebridge-103qsb-guide",
+      "source_locator": "MuseBridge guide 1 — A pattern over a fold",
+      "excerpt": "Pick one small motif on the robe and trace it until the garment turns into a fold. Then step back to see the whole outline. Where do you read the pattern as a flat design and where does it help you see the shape beneath it?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "robe",
+        "folds",
+        "gold",
+        "pattern",
+        "surface",
+        "decoration"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsb-guide-02",
+      "artwork_id": "getty-103qsb",
+      "source_id": "musebridge-103qsb-guide",
+      "source_locator": "MuseBridge guide 2 — A silent figure addressing you",
+      "excerpt": "Look from an open hand to the mouth, then to the eyes. Imagine standing close enough to listen. Which of those details first gives you the impression that someone is speaking? The sculpture supplies the gestures; you supply an imagined voice.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "preaching",
+        "gesture",
+        "hands",
+        "eyes",
+        "mouth",
+        "viewer"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsk-medium",
+      "artwork_id": "getty-103qsk",
+      "source_id": "getty-103qsk-record",
+      "source_locator": "Medium",
+      "excerpt": "Oak veneered with pewter, brass, tortoise shell, horn, ebony, ivory, and wood marquetry; bronze mounts; figures of painted and gilded oak; drawers of snakewood",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsk-dimensions",
+      "artwork_id": "getty-103qsk",
+      "source_id": "getty-103qsk-record",
+      "source_locator": "Dimensions (object)",
+      "excerpt": "Object: 231 × 151.9 × 66 cm (90 15/16 × 59 13/16 × 26 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsk-description-01",
+      "artwork_id": "getty-103qsk",
+      "source_id": "getty-103qsk-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "The decoration on this monumental cabinet refers to the French king Louis XIV's military victories. A panel of marquetry showing the cockerel of France standing triumphant over both the eagle of the Holy Roman Empire and the lion of Spain and the Spanish Netherlands decorates the central door. On the drawer above the door, gilt-bronze military trophies flank a medallion portrait of Louis XIV. In the Dutch Wars of 1672 to 1678, France fought simultaneously against the Dutch, Spanish, and Imperial armies, defeating them all. This cabinet celebrates the Treaty of Nijmegen, which concluded the war. Two large figures from Greek mythology, Hercules and Hippolyta, Queen of the Amazons, representatives of strength and bravery in war, appear to support the cabinet.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "decoration",
+        "imagery",
+        "victory",
+        "marquetry"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsk-description-02",
+      "artwork_id": "getty-103qsk",
+      "source_id": "getty-103qsk-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "The fleurs-de-lis on the top two drawers indicate that the cabinet was made for Louis XIV. As it does not appear in inventories of his possessions, it may have served as a royal gift. The Sun King's portrait appears twice on this work. The bronze medallion above the central door was cast from a medal struck in 1661 that shows the king at the age of twenty-one. Another medallion inside shows him a few years later.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "royal",
+        "patronage",
+        "uncertainty"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsk-description-03",
+      "artwork_id": "getty-103qsk",
+      "source_id": "getty-103qsk-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "The pair to this cabinet still exists in Scotland. Both cabinets probably entered England in the early nineteenth century after the French Revolution caused the dispersal of so many French collections.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "pair",
+        "provenance"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsk-guide-01",
+      "artwork_id": "getty-103qsk",
+      "source_id": "musebridge-103qsk-guide",
+      "source_locator": "MuseBridge guide 1 — Reading from the middle out",
+      "excerpt": "Start with the central door and search for the cockerel, eagle and lion. Then move up to the portrait medallion. Try dividing what you see into pictures and working parts: which pictures sit on a drawer and which on a door?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "central",
+        "door",
+        "animals",
+        "decoration",
+        "marquetry"
+      ]
+    },
+    {
+      "chunk_id": "getty-103qsk-guide-02",
+      "artwork_id": "getty-103qsk",
+      "source_id": "musebridge-103qsk-guide",
+      "source_locator": "MuseBridge guide 2 — What holds it up?",
+      "excerpt": "Look at one supporting figure at a time, following the direction of its arms toward the cabinet. Then look across the space between them. Consider how different the upper cabinet would feel if it sat on four plain legs.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "figures",
+        "support",
+        "weight",
+        "Hercules",
+        "symmetry",
+        "furniture"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rr6-medium",
+      "artwork_id": "getty-103rr6",
+      "source_id": "getty-103rr6-record",
+      "source_locator": "Medium",
+      "excerpt": "Soft-paste porcelain, underglaze blue decoration",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rr6-dimensions",
+      "artwork_id": "getty-103rr6",
+      "source_id": "getty-103rr6-record",
+      "source_locator": "Dimensions (object)",
+      "excerpt": "Object: 26.4 × 18.7 × 4.8 cm (10 3/8 × 7 3/8 × 1 7/8 in.)",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "none",
+      "topics": [
+        "dimensions"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rr6-description-01",
+      "artwork_id": "getty-103rr6",
+      "source_id": "getty-103rr6-record",
+      "source_locator": "Object description, paragraph 1",
+      "excerpt": "This pilgrim flask, one of the rare porcelains produced in the Medici factory, is an example of the earliest porcelain made in Europe. By the late 1500s, maiolica wares had begun to decline in popularity among the affluent. In its place, soft-paste porcelain was invented, to satisfy consumers' demand for novelty and increasing passion for true porcelain from China.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "material",
+        "manufacture",
+        "history"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rr6-description-02",
+      "artwork_id": "getty-103rr6",
+      "source_id": "getty-103rr6-record",
+      "source_locator": "Object description, paragraph 2",
+      "excerpt": "An exceptionally beautiful piece, the Getty Museum's flask is one of only about sixty remaining Medici porcelain pieces. It displays the finest qualities of the factory's production, including a translucent white body decorated with clear designs in underglaze blue.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "rarity",
+        "decoration",
+        "material"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rr6-description-03",
+      "artwork_id": "getty-103rr6",
+      "source_id": "getty-103rr6-record",
+      "source_locator": "Object description, paragraph 3",
+      "excerpt": "Flasks of this kind were fashioned after vessels used by pilgrims and travelers to carry drinking water. This piece would have served simply for display as the applied side loops, in the form of grotesque masks, would never have suspended the vessel from a pilgrim's shoulder. The arabesque patterns and stylized floral decoration--including rose, carnation, tulip, and palmette motifs--imitate Chinese porcelain as well as Turkish ceramic wares from around 1500.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum",
+      "normalization": "HTML removed; whitespace normalized.",
+      "topics": [
+        "purpose",
+        "form",
+        "travelers",
+        "display"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rr6-guide-01",
+      "artwork_id": "getty-103rr6",
+      "source_id": "musebridge-103rr6-guide",
+      "source_locator": "MuseBridge guide 1 — Looking at the loops",
+      "excerpt": "Begin at the narrow neck and work down to the small loops at the sides. Zoom in on where each loop joins the body. Before opening the museum record, ask which details look useful for carrying and which seem intended to be looked at.",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "close_looking",
+        "side",
+        "loops",
+        "masks",
+        "neck",
+        "shoulder",
+        "function"
+      ]
+    },
+    {
+      "chunk_id": "getty-103rr6-guide-02",
+      "artwork_id": "getty-103rr6",
+      "source_id": "musebridge-103rr6-guide",
+      "source_locator": "MuseBridge guide 2 — Following a blue motif",
+      "excerpt": "Choose a blue flower or curling stem and follow it around the curve until you lose it. Compare it with a motif on the opposite side. Now pay attention to the white gaps between the blue marks. Do those spaces form shapes of their own?",
+      "license": "In Copyright",
+      "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+      "attribution": "MuseBridge",
+      "normalization": "none",
+      "topics": [
+        "detail",
+        "floral",
+        "pattern",
+        "blue",
+        "white",
+        "symmetry",
+        "surface",
+        "design"
+      ]
+    }
+  ]
+}

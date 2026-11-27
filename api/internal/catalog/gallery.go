@@ -20,12 +20,9 @@ func (d *Dataset) loadGallery(seed seedFile) error {
 	for _, art := range seed.Artworks {
 		code := strings.TrimPrefix(art.Slug, "getty-")
 		canonical := "https://www.getty.edu/art/collection/object/" + strings.ToUpper(code)
-		imageSource, err := url.Parse(art.ImageSourceURL)
 		if !gettySlug.MatchString(art.Slug) || art.ArtworkID != art.Slug || art.DatasetVersion != d.version ||
 			art.Museum != getty || art.MuseumRecordID < 1 || strings.TrimSuffix(art.SourceURL, "/") != canonical ||
-			art.ImageURL == nil || *art.ImageURL != "/artworks/"+art.Slug+".jpg" || art.ImageLicense != "CC0-1.0" ||
-			err != nil || imageSource.Scheme != "https" || imageSource.Host != "media.getty.edu" ||
-			imageSource.User != nil || !strings.HasPrefix(imageSource.Path, "/iiif/image/") ||
+			art.ImageURL == nil || *art.ImageURL != "/artworks/"+art.Slug+".jpg" || !galleryImageSource(art.ImageSourceURL, art.ImageLicense) ||
 			len(art.SuggestedQuestions) == 0 || !uniqueText(art.SuggestedQuestions) {
 			return fmt.Errorf("invalid gallery artwork %q", art.ArtworkID)
 		}
@@ -88,6 +85,23 @@ func (d *Dataset) loadGallery(seed seedFile) error {
 		}
 	}
 	return nil
+}
+
+// Each reviewable image source has its own rights statement and canonical link.
+func galleryImageSource(raw, rights string) bool {
+	u, err := url.Parse(raw)
+	if err != nil || u.Scheme != "https" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || u.ForceQuery {
+		return false
+	}
+	switch rights {
+	case "CC0-1.0":
+		return u.Host == "media.getty.edu" && strings.HasPrefix(u.Path, "/iiif/image/") && len(u.Path) > len("/iiif/image/")
+	case "Public Domain Mark 1.0":
+		title, found := strings.CutPrefix(u.Path, "/wiki/File:")
+		return u.Host == "commons.wikimedia.org" && found && title != "" && !strings.Contains(title, "/")
+	default:
+		return false
+	}
 }
 
 func uniqueText(values []string) bool {

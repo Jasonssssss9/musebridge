@@ -22,7 +22,8 @@ _GUIDE = re.compile(
     r"|\b(?:recommend|suggest)(?:ed)? (?:looking|focusing|starting|paying attention)\b"
     r"|\b(?:where|how|what) to (?:look|start|begin|notice|focus)\b"
     r"|\b(?:should|can|could|would|might) (?:i|we|you|a visitor|the visitor|visitors|someone) "
-    r"(?:start|begin|look|notice|focus|pay attention)\b"
+    r"(?:start|begin|look|notice|focus|pay attention|compare|follow|trace|study|scan|pick out)\b"
+    r"|\bhow (?:can|could|might|should) (?:i|we|a visitor) (?:spot|find|identify)\b"
     r"|\b(?:starting point|first (?:place|detail)) (?:for looking|to look|to notice)\b"
 )
 _OFFICIAL = re.compile(r"\b(getty|museum|curat(?:or|orial)|catalog(?:ue)?)\b")
@@ -51,14 +52,41 @@ def _tokens(text):
 
 
 def _explicit_work(query, work):
-    name = _plain(work["title"])
-    return bool(re.search(r"(?<!\w)" + re.escape(name) + r"(?!\w)", query))
+    name = re.escape(_plain(work["title"]))
+    bounded = r"(?<!\w)" + name + r"(?!\w)"
+    if not re.search(bounded, query):
+        return False
+    if " " in work["title"].strip():
+        return True
+    # Single-word titles such as Spring are also subjects, seasons or objects.
+    # Treat them as external works when the visitor actually names the work.
+    surname = re.escape(_plain(work["artist"]).split()[-1])
+    marker = (r"(?:\b(?:work|painting|portrait|sculpture|piece)(?: (?:named|called|titled|entitled))? "
+              r"|\b(?:medium|artist|painter|title|material) of |" + surname + r"(?:['’]s)? |['\"“‘])")
+    return bool(re.search(marker + bounded, query))
+
+
+def _within_artwork(query, work):
+    """Once the tool fixes the artwork, search for the visitor's detail within its passages."""
+    title, artist = _plain(work["title"]), _plain(work["artist"])
+    if " " in title or _explicit_work(query, work):
+        # The frame around a title names the page, not another matching term.
+        frame = r"(?:(?:the |this )?(?:portrait|painting|artwork|work|photograph|sculpture) (?:titled |called )?)?"
+        title_ref = frame + r"[\"'“‘]?" + re.escape(title) + r"[\"'”’]?"
+        query = re.sub(title_ref, "this artwork", query)
+    surname = re.escape(artist.split()[-1])
+    name = rf"(?<!\w)(?:{re.escape(artist)}|{surname})(?!\w)"
+    # An attribution repeats the page identity. A person as the grammatical
+    # subject still matters ("How did the artist know the sitter?").
+    query = re.sub(name + r"['’]s? +this artwork", "this artwork", query)
+    query = re.sub(r"(?<!\w)" + re.escape(artist) + r"(?!\w)", "the artist", query)
+    return " ".join(query.split())
 
 
 def rank(dataset, artwork_id, query, vector_index):
     text = _plain(query)
     active = dataset.artworks[artwork_id]
-    intent = text.replace(_plain(active["title"]), " ").replace(_plain(active["artist"]), " ")
+    intent = _within_artwork(text, active)
     other_work = any(_explicit_work(intent, work) for key, work in dataset.artworks.items()
                      if key != artwork_id and work["title"] != active["title"])
     # A comparison is outside a single-artwork search.
@@ -96,6 +124,7 @@ def rank(dataset, artwork_id, query, vector_index):
     if not vector_index or not chunks:
         return lexical, lexical, []
     allowed = {chunk["chunk_id"] for chunk in chunks}
-    hits = [(key, score) for key, score in vector_index.rank(artwork_id, query) if key in allowed]
+    dense_query = query if text == intent else intent or query
+    hits = [(key, score) for key, score in vector_index.rank(artwork_id, dense_query) if key in allowed]
     dense = [key for key, score in hits if score >= DENSE_MIN_COSINE]
     return fuse_rankings(lexical, dense), lexical, hits

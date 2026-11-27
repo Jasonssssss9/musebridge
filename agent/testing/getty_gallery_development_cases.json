@@ -1,0 +1,111 @@
+[
+  {
+    "artwork_id": "getty-103jnh",
+    "question": "¿Dónde encontró Van Gogh las flores que pintó durante su primera semana en Saint-Rémy?",
+    "source_kind": "museum_record",
+    "answer_language": "es",
+    "expected_chunk_ids": [
+      "getty-103jnh-description-01"
+    ]
+  },
+  {
+    "artwork_id": "getty-103qt5",
+    "question": "塞尚反复画这些静物时，想探索哪些绘画问题？",
+    "source_kind": "museum_record",
+    "answer_language": "zh-CN",
+    "expected_chunk_ids": [
+      "getty-103qt5-description-01"
+    ]
+  },
+  {
+    "artwork_id": "getty-103rk8",
+    "question": "이 연작을 그리려고 모네는 집 근처의 밀짚 더미를 겨울 동안 어떻게 해 달라고 했나요?",
+    "source_kind": "museum_record",
+    "answer_language": "ko",
+    "expected_chunk_ids": [
+      "getty-103rk8-description-01"
+    ]
+  },
+  {
+    "artwork_id": "getty-104g0s",
+    "question": "What contribution to photography does the Getty credit to Herschel?",
+    "source_kind": "museum_record",
+    "answer_language": "en",
+    "expected_chunk_ids": [
+      "getty-104g0s-description-01"
+    ]
+  },
+  {
+    "artwork_id": "getty-103qsb",
+    "question": "Dame una sugerencia de MuseBridge para mirar esta escultura más de cerca.",
+    "source_kind": "guide_note",
+    "answer_language": "es"
+  },
+  {
+    "artwork_id": "getty-103rr6",
+    "question": "MuseBridge 的导览建议我从哪里开始观察这件器物？",
+    "source_kind": "guide_note",
+    "answer_language": "zh-CN"
+  },
+  {
+    "artwork_id": "getty-103rgh",
+    "question": "뮤즈브리지의 감상 팁에 따르면 먼저 어디를 살펴보면 좋을까요?",
+    "source_kind": "guide_note",
+    "answer_language": "ko"
+  },
+  {
+    "artwork_id": "getty-103qtz",
+    "question": "What accessory does the woman carry in this portrait, where she embodies spring?",
+    "source_kind": "museum_record",
+    "answer_language": "en",
+    "expected_chunk_ids": [
+      "getty-103qtz-description-01"
+    ]
+  },
+  {
+    "artwork_id": "getty-103jnh",
+    "question": "In the MuseBridge looking exercise about tracing a leaf, what edge should I follow next?",
+    "source_kind": "guide_note",
+    "answer_language": "en",
+    "expected_chunk_ids": [
+      "getty-103jnh-guide-02"
+    ]
+  },
+  {
+    "artwork_id": "getty-109q8g",
+    "question": "Según la guía de MuseBridge, ¿qué dos detalles iluminados conviene comparar?",
+    "source_kind": "guide_note",
+    "answer_language": "es",
+    "expected_chunk_ids": [
+      "getty-109q8g-guide-02"
+    ]
+  },
+  {
+    "suite": "revised_guide",
+    "artwork_id": "getty-103qse",
+    "question": "Which lines in the clothing does the MuseBridge guide suggest comparing with the long vertical next to the soldier?",
+    "source_kind": "guide_note",
+    "answer_language": "en",
+    "expected_chunk_ids": [
+      "getty-103qse-guide-02"
+    ]
+  },
+  {
+    "suite": "revised_guide",
+    "artwork_id": "getty-103qtz",
+    "question": "In the MuseBridge guide, where should I move my eye after tracing the parasol handle?",
+    "source_kind": "guide_note",
+    "answer_language": "en",
+    "expected_chunk_ids": [
+      "getty-103qtz-guide-02"
+    ]
+  },
+  {
+    "suite": "evidence_gap",
+    "artwork_id": "getty-103jnh",
+    "question": "How many minutes did Van Gogh take to paint the white iris?",
+    "source_kind": null,
+    "status": "insufficient",
+    "answer_language": "en"
+  }
+]

@@ -40,6 +40,20 @@ def _https(value, label):
     return parsed
 
 
+def _image_source(work):
+    key = work["artwork_id"]
+    source = _https(work["image_source_url"], f"{key}.image_source_url")
+    if work["image_license"] == "CC0-1.0":
+        valid = source.netloc == "media.getty.edu" and source.path.startswith("/iiif/image/") and len(source.path) > len("/iiif/image/")
+    elif work["image_license"] == "Public Domain Mark 1.0":
+        title = source.path.removeprefix("/wiki/File:")
+        valid = source.netloc == "commons.wikimedia.org" and title != source.path and bool(title) and "/" not in title
+    else:
+        valid = False
+    if not valid or source.query or source.fragment or "?" in work["image_source_url"]:
+        _fail(key, "image source does not match its rights statement")
+
+
 def load_getty(root, version):
     artworks = _rows(root, "artworks", ARTWORK_FIELDS | IMAGE_FIELDS)
     sources = _rows(root, "sources", SOURCE_FIELDS | {"source_kind"}, {"based_on_source_id"})
@@ -62,7 +76,7 @@ def load_getty(root, version):
         if (record_url.hostname not in {"www.getty.edu", "getty.edu"}
                 or record_url.path.rstrip("/").split("/")[-1].lower() != key.removeprefix("getty-")):
             _fail(key, "catalog URL must identify this Getty object")
-        _https(work["image_source_url"], f"{key}.image_source_url")
+        _image_source(work)
         _strings(work["suggested_questions"], f"{key}.suggested_questions")
 
     official = {}

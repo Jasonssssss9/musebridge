@@ -199,6 +199,12 @@ export function parseArtwork(v: unknown): Artwork {
   const slug = str(o, 'slug');
   if (!/^[a-z0-9-]+$/.test(slug)) throw new InvalidResponse('invalid artwork slug');
   if (img !== null && img !== `/artworks/${slug}.jpg`) httpsUrl(o, 'image_url');
+  if (slug.startsWith('getty-')) {
+    const source = new URL(httpsUrl(o, 'image_source_url'));
+    const reviewed = (o.image_license === 'CC0-1.0' && source.host === 'media.getty.edu' && /^\/iiif\/image\/.+/.test(source.pathname))
+      || (o.image_license === 'Public Domain Mark 1.0' && source.host === 'commons.wikimedia.org' && /^\/wiki\/File:[^/]+$/.test(source.pathname));
+    if (!reviewed || source.href.includes('?') || source.hash) throw new InvalidResponse('image source does not match its rights statement');
+  }
   return {
     artwork_id: str(o, 'artwork_id', 128),
     slug,

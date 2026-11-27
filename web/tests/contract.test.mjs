@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { after, test } from 'node:test';
+import { readFileSync } from 'node:fs';
 import { createServer } from 'vite';
 
 const servers = [];
@@ -68,6 +69,18 @@ function fixtureTurn() {
   t.answer.mode = 'fixture';
   return t;
 }
+
+test('Getty and Commons image sources carry their own rights labels', () => {
+  const [art] = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-pilot-v1.json', import.meta.url))).artworks;
+  const commons = 'https://commons.wikimedia.org/wiki/File:Joshua_Reynolds_-_Portrait_of_Omai.jpg';
+  const copy = { ...art, image_license: 'Public Domain Mark 1.0', image_source_url: commons };
+  assert.equal(types.parseArtwork(art).image_license, 'CC0-1.0');
+  assert.equal(types.parseArtwork(copy).image_source_url, commons);
+  for (const bad of [{ ...art, image_source_url: commons }, { ...copy, image_source_url: art.image_source_url },
+    { ...copy, image_source_url: 'https://commons.wikimedia.org/wiki/Main_Page' }]) {
+    assert.throws(() => types.parseArtwork(bad), types.InvalidResponse);
+  }
+});
 
 test('valid agent history accepts open metadata and both citation types', () => {
   const h = history();

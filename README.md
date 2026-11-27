@@ -2,7 +2,7 @@
 
 MuseBridge is a museum guide designed to let visitors scan an artwork's QR code, ask questions on a mobile web page, and explore answers grounded in museum sources with traceable citations.
 
-The [Getty pilot](docs/getty-gallery.md) adds three illustrated works, per-work QR codes, original museum passages and separately credited MuseBridge viewing prompts. The Chicago demo includes two Art Institute of Chicago works. The public Go API manages each artwork conversation. In controlled Agent mode it calls a Python LangGraph workflow that can search museum evidence and use a pinned Qwen model to answer in English, Spanish, Simplified Chinese or Korean. The default Compose setup serves the fixture demo. See the [public Agent setup](docs/public-agent-integration.md) and [M2 verification record](docs/m2-verification.md) for the tested environments and current acceptance status.
+The [Getty gallery](docs/getty-gallery.md) features 20 illustrated works. Each has a QR code, excerpts from the Getty record and two original MuseBridge viewing notes. Visitors can read the cited passage alongside an answer. The Chicago demo includes two Art Institute of Chicago works. The public Go API manages each artwork conversation. In controlled Agent mode it calls a Python LangGraph workflow that can search museum evidence and use a pinned Qwen model to answer in English, Spanish, Simplified Chinese or Korean. The default Compose setup serves the fixture demo. See the [public Agent setup](docs/public-agent-integration.md) and [M2 verification record](docs/m2-verification.md) for the tested environments and current acceptance status.
 
 | Contributor | Responsibility |
 | --- | --- |

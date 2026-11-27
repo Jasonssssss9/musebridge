@@ -4,6 +4,7 @@ The root README introduces the project. This directory provides entry points to 
 
 | Guide | Purpose |
 | --- | --- |
+| [Getty gallery](getty-gallery.md) | Run the 20-work illustrated collection and verify QR codes, answers and citations |
 | [Getting started](getting-started.md) | Compose startup, native development and verification |
 | [System design](design.md) | Stage-one target behavior, module boundaries and later decisions |
 | [API and data contract](api-contract.md) | Request/response formats, identity, evidence, errors and retries |

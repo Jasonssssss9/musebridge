@@ -1,0 +1,1447 @@
+{
+  "dataset_version": "getty-gallery-v2",
+  "dataset_sha256": "75b238885db065f7de6e3d3f6c6d7cdb735c47618c9a7ef939e45ee3718d80d9",
+  "model": "qwen3.5:9b-q4_K_M",
+  "retrieval": "hybrid",
+  "scope": "Development checks. Each question opened a fresh public Go conversation.",
+  "suites": {
+    "published": {
+      "passed_checks": 40,
+      "total": 40,
+      "cases": [
+        {
+          "id": "published-01",
+          "artwork_id": "getty-103jnh",
+          "question": "Where did Van Gogh begin painting these irises?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Vincent van Gogh began painting these irises in the garden of the asylum in Saint-Rémy, France, where he was staying in May 1889.",
+          "cited_ids": [
+            "getty-103jnh-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-02",
+          "artwork_id": "getty-103jnh",
+          "question": "Where should I start looking among all these flowers?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests you start by finding the single white iris. Cover it briefly with your thumb, then uncover it to see if your eye goes there first or to the cluster of blue petals nearby. You can also try following the outline of just one blue bloom before looking at the whole bed again. Alternatively, trace one long leaf upward from the brown earth to give your eye a long, fairly continuous path, or trace the outside of a petal to see how it changes direction several times.",
+          "cited_ids": [
+            "getty-103jnh-guide-01",
+            "getty-103jnh-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-03",
+          "artwork_id": "getty-103qt5",
+          "question": "Which objects did Cézanne repeatedly use in his still lifes?",
+          "language": "en",
+          "status": "answered",
+          "answer": "According to the museum record, Paul Cézanne repeatedly used the green vase, the rum bottle, the ginger pot, and apples in his still lifes during the last thirty years of his life.",
+          "cited_ids": [
+            "getty-103qt5-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-04",
+          "artwork_id": "getty-103qt5",
+          "question": "How could I follow the lines between the apples and the cloth?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To follow the lines between the apples and the cloth, start at an apple that touches the patterned blue fabric and trace the nearest dark line in the cloth until it meets the fruit. MuseBridge suggests looking for places where the rim of a vessel meets another outline to help you tell which object sits in front.",
+          "cited_ids": [
+            "getty-103qt5-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-05",
+          "artwork_id": "getty-103qtz",
+          "question": "Who was Jeanne Demarsy, the model in Manet’s portrait?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Jeanne Demarsy was an aspiring Parisian actress who served as the model for Édouard Manet's portrait titled Jeanne (Spring). The painting, created in 1881, depicts her as the embodiment of Spring and was a significant success at the Paris Salon of 1882.",
+          "cited_ids": [
+            "getty-103qtz-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-06",
+          "artwork_id": "getty-103qtz",
+          "question": "What should I compare in the dress and the background?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests that you first look at the small flowers on Jeanne's dress and then at the leaves behind her to compare how separate and easy to count the brush marks are in each area. You can also finish by looking at her cheek to compare the pace of the marks across these three areas without needing to name a specific painting technique.",
+          "cited_ids": [
+            "getty-103qtz-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-07",
+          "artwork_id": "getty-10a2y1",
+          "question": "Who modeled for the young man at the window?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Caillebotte used his brother René as the model for the young man at the window.",
+          "cited_ids": [
+            "getty-10a2y1-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-08",
+          "artwork_id": "getty-10a2y1",
+          "question": "How can I look at the street from the young man’s viewpoint?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To experience the young man's viewpoint of the street, MuseBridge suggests looking past him toward the small figure in the street, then glancing back at the width of his shoulders to gauge the distance. You can also trace a vertical side of the window and find a vertical edge on the building opposite, moving your gaze between the dark interior and the bright street to hold the two spaces apart.",
+          "cited_ids": [
+            "getty-10a2y1-guide-01",
+            "getty-10a2y1-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-09",
+          "artwork_id": "getty-103rc9",
+          "question": "Who leads the procession in this painting?",
+          "language": "en",
+          "status": "answered",
+          "answer": "In this painting, a group of barefoot young women and children adorned with flower crowns and playing musical instruments lead the procession through the city.",
+          "cited_ids": [
+            "getty-103rc9-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-10",
+          "artwork_id": "getty-103rc9",
+          "question": "How could I pick out one route through the crowd?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To pick out one route through the crowd, MuseBridge suggests starting with a flower crown near the front and following the procession toward the arch. You can also play a game by picking one red flower and then searching for the next patch of red, or repeating the game with yellow against the pale stone to see if these colors guide your eye along the same path.",
+          "cited_ids": [
+            "getty-103rc9-guide-01",
+            "getty-103rc9-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-11",
+          "artwork_id": "getty-103rk8",
+          "question": "Why did Monet have the wheatstacks left out over winter?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Monet arranged to have the wheatstacks left out over the winter so that he could paint them at least thirty times throughout the seasons, starting in the fall of 1890 and continuing into the following summer.",
+          "cited_ids": [
+            "getty-103rk8-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-12",
+          "artwork_id": "getty-103rk8",
+          "question": "What should I compare in the snow and the sky?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests that you look for a pink passage in the sky and then see where a related color reappears in the snow. You can also trace a blue shadow from a stack into the field to see which color seems to join the sky to the ground.",
+          "cited_ids": [
+            "getty-103rk8-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-13",
+          "artwork_id": "getty-103qtm",
+          "question": "What role does Rembrandt give himself in this self-portrait?",
+          "language": "en",
+          "status": "answered",
+          "answer": "In this self-portrait, Rembrandt gives himself the role of a soldier. The museum record describes him as appearing 'in the guise of a soldier,' relaxed and engaging the viewer with a laugh.",
+          "cited_ids": [
+            "getty-103qtm-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-14",
+          "artwork_id": "getty-103qtm",
+          "question": "Where should I look to see what makes the laugh convincing?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To see what makes the laugh convincing, try looking at the mouth alone first, then cover it and look at the cheeks and eyes to see which part still suggests a laugh. Zoom out again to include the slight tilt of the head, as this may change how directly the sitter seems to meet you.",
+          "cited_ids": [
+            "getty-103qtm-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-15",
+          "artwork_id": "getty-109q8g",
+          "question": "Which ancient author does Getty name as a source for Lucretia’s story?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The Getty Museum record identifies the ancient Roman historian Titus Livius as the main source for the story of Lucretia, citing his History of Rome (Book I, 57 – 59).",
+          "cited_ids": [
+            "getty-109q8g-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-16",
+          "artwork_id": "getty-109q8g",
+          "question": "How can I trace the different directions of her hand and gaze?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To trace the different directions, start by looking at Lucretia's raised face and following the line of her gaze. Then, shift your attention to the hand that holds the dagger. You can observe the tension between these two directions without needing to decide exactly what she feels.",
+          "cited_ids": [
+            "getty-109q8g-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-17",
+          "artwork_id": "getty-103qtf",
+          "question": "Who strikes the boar, according to the museum?",
+          "language": "en",
+          "status": "answered",
+          "answer": "According to the museum, the warrior Meleager strikes the boar with his spear.",
+          "cited_ids": [
+            "getty-103qtf-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-18",
+          "artwork_id": "getty-103qtf",
+          "question": "How could I find the main action in this crowded hunt?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To find the main action in this crowded hunt, MuseBridge suggests you first locate the hunter wearing red. From there, follow the diagonal line of movement leading toward the boar. You should also look for the dogs approaching the animal from a different direction. Pause where these visual paths converge before taking in the rest of the crowd.",
+          "cited_ids": [
+            "getty-103qtf-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-19",
+          "artwork_id": "getty-103qse",
+          "question": "What is the long weapon that the sitter is holding?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The long weapon the sitter is holding is a halberd, which is described as a combination of a spear and a battle-axe.",
+          "cited_ids": [
+            "getty-103qse-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-20",
+          "artwork_id": "getty-103qse",
+          "question": "How can I compare the soldier’s pose with his expression?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests starting with the arm braced at the hip and the elbow jutting outward, then looking at the smooth face and steady gaze. You can describe the posture in one word and the face in another, noting that they do not have to give you the same impression.",
+          "cited_ids": [
+            "getty-103qse-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-21",
+          "artwork_id": "getty-11409c",
+          "question": "Why did Mai travel to England?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Mai traveled to England for a diplomatic purpose: he hoped to secure firearms to reclaim his family's land in Raiatea from the neighboring Bora Borans.",
+          "cited_ids": [
+            "getty-11409c-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-22",
+          "artwork_id": "getty-11409c",
+          "question": "How can I follow the gesture of Mai’s outstretched hand?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To follow the gesture of Mai's outstretched hand, start by looking at his extended hand and then trace the line of his arm back to his shoulder. From there, shift your gaze to his face to see if his direction of gaze continues the gesture or leads your eye elsewhere. MuseBridge suggests trying this once more with the whole figure in view to fully appreciate the composition.",
+          "cited_ids": [
+            "getty-11409c-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-23",
+          "artwork_id": "getty-108hgy",
+          "question": "Where did Monet set up to paint this view of the cathedral?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Monet set up in an improvised studio located in the front room of a dressmaker's shop directly across from the cathedral.",
+          "cited_ids": [
+            "getty-108hgy-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-24",
+          "artwork_id": "getty-108hgy",
+          "question": "Where should I start looking at the cathedral facade?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests starting at the dark doorway and slowly moving your gaze up the facade. You can choose one carved shape and follow its edge to see where the stone continues and where it disappears into the surrounding color.",
+          "cited_ids": [
+            "getty-108hgy-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-25",
+          "artwork_id": "getty-103rgh",
+          "question": "What might the shape on the fence represent?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The vaguely defined shape on the fence may represent the shadow of two lovers, which is a recurring theme in Edvard Munch's work.",
+          "cited_ids": [
+            "getty-103rgh-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-26",
+          "artwork_id": "getty-103rgh",
+          "question": "Where should I look first in this night scene?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests starting with the pale fence and following its diagonal line toward the trees. This path leads your eye into the scene, after which you can trace the shoreline's curve.",
+          "cited_ids": [
+            "getty-103rgh-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-27",
+          "artwork_id": "getty-103rfp",
+          "question": "How does the ape imitate the woman?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The ape imitates the woman by holding a smaller bunch of grapes in his right paw, mirroring her gesture as she squeezes a bunch of grapes into a golden drinking vessel.",
+          "cited_ids": [
+            "getty-103rfp-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-28",
+          "artwork_id": "getty-103rfp",
+          "question": "Where should I look to compare the two gestures?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To compare the two gestures, MuseBridge suggests finding the grapes in the woman's hand and then looking down to the left for the smaller bunch held by the ape. Move your gaze between these two bunches to see how the repeated gesture changes which figure you notice first.",
+          "cited_ids": [
+            "getty-103rfp-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-29",
+          "artwork_id": "getty-104g0s",
+          "question": "Where and when did Cameron first meet Herschel?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Julia Margaret Cameron first met John Frederick William Herschel in 1835 in South Africa, where she was recovering from an illness and he was conducting astronomical investigations.",
+          "cited_ids": [
+            "getty-104g0s-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-30",
+          "artwork_id": "getty-104g0s",
+          "question": "Where should I look to compare light and shadow in this photograph?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To compare light and shadow, start by looking at the brightest strands of hair and tracing the edge of the head down into the darker areas. Then, compare the two sides of the face to see which features you can still pick out on the shadowed side and which ones you would have to guess.",
+          "cited_ids": [
+            "getty-104g0s-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-31",
+          "artwork_id": "getty-103qtr",
+          "question": "Which saints are depicted on the pope’s cope?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The cope covering the pope's shoulders is richly decorated with embroidery of the patron saints of Rome: the Apostle Peter, who is shown holding his keys and a book, and the Apostle Paul, who holds the sword of his martyrdom and a book.",
+          "cited_ids": [
+            "getty-103qtr-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-32",
+          "artwork_id": "getty-103qtr",
+          "question": "How should I compare the carved skin with the embroidered garment?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests comparing a wrinkle beside an eye with a small line of carved embroidery on the marble cope. Notice how the shadow within each cut defines the texture, and observe how one set of marks becomes skin while the other becomes cloth.",
+          "cited_ids": [
+            "getty-103qtr-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-33",
+          "artwork_id": "getty-103qtj",
+          "question": "Did Messerschmidt give this bust its title?",
+          "language": "en",
+          "status": "answered",
+          "answer": "No, Franz Xaver Messerschmidt did not give this bust its title. According to the museum record, although the character seems to express irritation and annoyance, it is not certain whether Messerschmidt intended that interpretation, because he did not give the bust a title.",
+          "cited_ids": [
+            "getty-103qtj-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-34",
+          "artwork_id": "getty-103qtj",
+          "question": "Where should I look before putting a name to this expression?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests that you first cover the mouth and describe only the brow and nose, then cover the upper face and look at the lips. You can also find a crease that follows the shape of the face and compare it with a fine line in the surface that seems to go its own way. By noticing these details, you can leave the artist's intended emotion open while exploring the expression yourself.",
+          "cited_ids": [
+            "getty-103qtj-guide-01",
+            "getty-103qtj-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-35",
+          "artwork_id": "getty-103qsb",
+          "question": "How was the gold pattern on the saint’s robe made?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The gold pattern on the saint's robe was created using the Spanish technique of estofado. First, the area of the garment was covered in gold leaf and then painted over with brown paint. Finally, the surface was incised with a stylus to reveal the gold underneath, replicating the look of brocaded ecclesiastical garments.",
+          "cited_ids": [
+            "getty-103qsb-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-36",
+          "artwork_id": "getty-103qsb",
+          "question": "How can I compare the patterns on the robe with the folds?",
+          "language": "en",
+          "status": "answered",
+          "answer": "To compare the patterns on the robe with the folds, MuseBridge suggests picking one small motif on the robe and tracing it until the garment turns into a fold. Then step back to see the whole outline. This helps you read where the pattern acts as a flat design and where it helps you see the shape beneath it.",
+          "cited_ids": [
+            "getty-103qsb-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-37",
+          "artwork_id": "getty-103qsk",
+          "question": "Which animals appear on the central door, and what do they represent?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The central door features a marquetry panel depicting a cockerel standing triumphantly over an eagle and a lion. The cockerel represents France, while the eagle symbolizes the Holy Roman Empire and the lion represents Spain and the Spanish Netherlands. This imagery celebrates the French military victories under Louis XIV that led to the Treaty of Nijmegen.",
+          "cited_ids": [
+            "getty-103qsk-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-38",
+          "artwork_id": "getty-103qsk",
+          "question": "Where should I start exploring the decoration on this cabinet?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests starting with the central door to look for the cockerel, eagle, and lion. Then move up to the portrait medallion. You can also try dividing what you see into pictures and working parts to understand which pictures sit on a drawer and which on a door.",
+          "cited_ids": [
+            "getty-103qsk-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-39",
+          "artwork_id": "getty-103rr6",
+          "question": "Was this flask designed to hang from a pilgrim’s shoulder?",
+          "language": "en",
+          "status": "answered",
+          "answer": "No, this flask was not designed to hang from a pilgrim's shoulder. Although it was fashioned after vessels used by pilgrims to carry drinking water, the applied side loops in the form of grotesque masks would never have suspended the vessel from a shoulder. Instead, this piece would have served simply for display.",
+          "cited_ids": [
+            "getty-103rr6-description-03"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "published-40",
+          "artwork_id": "getty-103rr6",
+          "question": "What should I look for in the blue pattern and the side loops?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests starting at the narrow neck and working down to the small loops at the sides, zooming in on where each loop joins the body to see which details look useful for carrying. For the blue pattern, choose a blue flower or curling stem and follow it around the curve until you lose it, then compare it with a motif on the opposite side. Finally, pay attention to the white gaps between the blue marks to see if those spaces form shapes of their own.",
+          "cited_ids": [
+            "getty-103rr6-guide-01",
+            "getty-103rr6-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        }
+      ]
+    },
+    "independent": {
+      "passed_checks": 10,
+      "total": 10,
+      "cases": [
+        {
+          "id": "independent-01",
+          "artwork_id": "getty-103jnh",
+          "question": "¿Dónde encontró Van Gogh las flores que pintó durante su primera semana en Saint-Rémy?",
+          "language": "es",
+          "status": "answered",
+          "answer": "Van Gogh encontró las flores en el jardín del asilo donde se alojó en Saint-Rémy, Francia. Según el registro del museo, comenzó a pintar Irises durante la primera semana de mayo de 1889 trabajando directamente desde la naturaleza en ese jardín.",
+          "cited_ids": [
+            "getty-103jnh-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [
+            "getty-103jnh-description-01"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-02",
+          "artwork_id": "getty-103qt5",
+          "question": "塞尚反复画这些静物时，想探索哪些绘画问题？",
+          "language": "zh-CN",
+          "status": "answered",
+          "answer": "塞尚反复描绘这些静物时，并非仅仅关注物体本身，而是试图通过它们来探索形状、色彩和光影的运用。他通过笔触的并置、色彩的平衡以及质感的处理，赋予物体形式与体积，使画面中的元素相互咬合、紧密相连，从而营造出一种令人感到安稳的稳固感。",
+          "cited_ids": [
+            "getty-103qt5-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [
+            "getty-103qt5-description-01"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-03",
+          "artwork_id": "getty-103rk8",
+          "question": "이 연작을 그리려고 모네는 집 근처의 밀짚 더미를 겨울 동안 어떻게 해 달라고 했나요?",
+          "language": "ko",
+          "status": "answered",
+          "answer": "밀짚 더미를 겨울 동안 그대로 두라고 했습니다.",
+          "cited_ids": [
+            "getty-103rk8-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [
+            "getty-103rk8-description-01"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-04",
+          "artwork_id": "getty-104g0s",
+          "question": "What contribution to photography does the Getty credit to Herschel?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The Getty credits J.F.W. Herschel with discovering the power of sodium hyposulfate as a fixing agent, a major contribution to the early processes of photography.",
+          "cited_ids": [
+            "getty-104g0s-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [
+            "getty-104g0s-description-01"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-05",
+          "artwork_id": "getty-103qsb",
+          "question": "Dame una sugerencia de MuseBridge para mirar esta escultura más de cerca.",
+          "language": "es",
+          "status": "answered",
+          "answer": "MuseBridge sugiere que elijas un pequeño motivo en la túnica y lo sigas hasta que la prenda se convierta en un pliegue; luego retrocede para ver el contorno completo y reflexiona sobre dónde lees el patrón como un diseño plano y dónde te ayuda a ver la forma subyacente. También invita a mirar desde una mano abierta hacia la boca y luego a los ojos, imaginando estar lo suficientemente cerca para escuchar, y preguntando qué detalle te da primero la impresión de que alguien está hablando.",
+          "cited_ids": [
+            "getty-103qsb-guide-01",
+            "getty-103qsb-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-06",
+          "artwork_id": "getty-103rr6",
+          "question": "MuseBridge 的导览建议我从哪里开始观察这件器物？",
+          "language": "zh-CN",
+          "status": "answered",
+          "answer": "MuseBridge 建议您从细颈处开始观察，然后向下看两侧的小环，并放大看每个环与器身连接的地方。接着，您可以选择一朵蓝色的花或卷曲的茎，沿着器物的弧度追踪它，直到看不见为止，再与对面的纹样进行比较。最后，请留意蓝色纹饰之间的白色空隙，看看这些空间是否形成了独立的形状。",
+          "cited_ids": [
+            "getty-103rr6-guide-01",
+            "getty-103rr6-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-07",
+          "artwork_id": "getty-103rgh",
+          "question": "뮤즈브리지의 감상 팁에 따르면 먼저 어디를 살펴보면 좋을까요?",
+          "language": "ko",
+          "status": "answered",
+          "answer": "뮤즈브리지의 감상 팁에 따르면 먼저 연한 울타리를 살펴보고 그 대각선을 따라 나무 쪽으로 눈을 이동시키는 것이 좋습니다. 이어 해변의 곡선을 따라가며 어떤 선이 시선을 더 멀리 이끌고 있는지 확인해 보세요.",
+          "cited_ids": [
+            "getty-103rgh-guide-01"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-08",
+          "artwork_id": "getty-103qtz",
+          "question": "What accessory does the woman carry in this portrait, where she embodies spring?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The woman carries a parasol.",
+          "cited_ids": [
+            "getty-103qtz-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [
+            "getty-103qtz-description-01"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-09",
+          "artwork_id": "getty-103jnh",
+          "question": "In the MuseBridge looking exercise about tracing a leaf, what edge should I follow next?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests that after tracing a long leaf upward from the brown earth, you should next trace the outside of a petal. The guide notes that while the leaf offers a long, continuous path, the petal will make your eye change direction several times.",
+          "cited_ids": [
+            "getty-103jnh-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [
+            "getty-103jnh-guide-02"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "independent-10",
+          "artwork_id": "getty-109q8g",
+          "question": "Según la guía de MuseBridge, ¿qué dos detalles iluminados conviene comparar?",
+          "language": "es",
+          "status": "answered",
+          "answer": "La guía de MuseBridge sugiere comparar un pequeño resplandor en las perlas con una mancha más amplia de luz en el pliegue de la ropa, observando cómo sus bordes se contrastan con la oscuridad que hay detrás de la figura.",
+          "cited_ids": [
+            "getty-109q8g-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [
+            "getty-109q8g-guide-02"
+          ],
+          "checks_passed": true
+        }
+      ]
+    },
+    "supplemental": {
+      "passed_checks": 3,
+      "total": 3,
+      "cases": [
+        {
+          "id": "supplemental-01",
+          "artwork_id": "getty-103qse",
+          "question": "Which lines in the clothing does the MuseBridge guide suggest comparing with the long vertical next to the soldier?",
+          "language": "en",
+          "status": "answered",
+          "answer": "MuseBridge suggests comparing the long vertical line beside the figure with the angled elbow and the thin belt located above the red clothing.",
+          "cited_ids": [
+            "getty-103qse-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [
+            "getty-103qse-guide-02"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "supplemental-02",
+          "artwork_id": "getty-103qtz",
+          "question": "In the MuseBridge guide, where should I move my eye after tracing the parasol handle?",
+          "language": "en",
+          "status": "answered",
+          "answer": "After tracing the parasol handle, the MuseBridge guide suggests moving your eye up to Jeanne's profile. You should follow the handle from her gloved hand toward her shoulder and then look up at her face, specifically tracing the contour of her forehead, nose, and chin against the foliage.",
+          "cited_ids": [
+            "getty-103qtz-guide-02"
+          ],
+          "expected_kind": "guide_note",
+          "expected_ids": [
+            "getty-103qtz-guide-02"
+          ],
+          "checks_passed": true
+        },
+        {
+          "id": "supplemental-03",
+          "artwork_id": "getty-103jnh",
+          "question": "How many minutes did Van Gogh take to paint the white iris?",
+          "language": "en",
+          "status": "insufficient",
+          "answer": "I couldn't verify how many minutes Van Gogh took to paint the white iris from the material available to me here.",
+          "cited_ids": [],
+          "expected_kind": null,
+          "expected_ids": [],
+          "checks_passed": true
+        }
+      ]
+    },
+    "third": {
+      "passed_checks": 20,
+      "total": 20,
+      "cases": [
+        {
+          "id": "third-01",
+          "artwork_id": "getty-103jnh",
+          "question": "How are the shapes of the individual irises different?",
+          "language": "en",
+          "status": "answered",
+          "answer": "In Vincent van Gogh's painting Irises, each individual iris is unique, featuring a variety of curved silhouettes bounded by wavy, twisting, and curling lines.",
+          "cited_ids": [
+            "getty-103jnh-description-03"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-02",
+          "artwork_id": "getty-103qt5",
+          "question": "How does the museum describe the way the objects fit together?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The museum describes the objects as being locked together, with edges running into one another to create a sense of stability. For instance, a black arabesque seems to escape from a blue cloth to capture an apple in the center, while the sinuous curves of the blue ginger pot's rattan straps merge with other straps on the bottle behind.",
+          "cited_ids": [
+            "getty-103qt5-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-03",
+          "artwork_id": "getty-103qtz",
+          "question": "How does Getty describe the brushwork on Jeanne’s face and in the leaves behind her?",
+          "language": "en",
+          "status": "answered",
+          "answer": "According to the Getty Museum record, the painting exhibits a marvelous range of brushwork, featuring smooth handling on Jeanne's face and broad, sketch-like strokes in the backdrop leaves.",
+          "cited_ids": [
+            "getty-103qtz-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-04",
+          "artwork_id": "getty-10a2y1",
+          "question": "What can we see in the street below the window?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Below the window, you can see a sun-drenched street scene framed by tall, uniform apartment blocks. A lone woman in fashionable attire is about to cross the street, and several horse-drawn carriages complete the urban tableau.",
+          "cited_ids": [
+            "getty-10a2y1-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-05",
+          "artwork_id": "getty-103rc9",
+          "question": "Which ancient celebration does Getty suggest this scene most resembles?",
+          "language": "en",
+          "status": "answered",
+          "answer": "According to the Getty Museum, while it is unclear exactly which festival Alma-Tadema intended to depict, the scene most resembles the Floralia, an ancient Roman springtime celebration honoring Flora, the goddess of flowers.",
+          "cited_ids": [
+            "getty-103rc9-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-06",
+          "artwork_id": "getty-103rk8",
+          "question": "How does Getty describe Monet’s work outdoors and in the studio?",
+          "language": "en",
+          "status": "answered",
+          "answer": "According to the Getty Museum record, Monet began painting the wheatstacks outdoors but then reworked each painting in his studio to create the color harmonies that unify the canvas. He painted the subject at least thirty times over the summer, differentiating the pictures by color, touch, composition, and lighting conditions. Monet also noted that a landscape hardly exists as a static landscape because its appearance is constantly changing, living instead by virtue of its surroundings, the air, and the light which vary continually.",
+          "cited_ids": [
+            "getty-103rk8-description-01",
+            "getty-103rk8-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-07",
+          "artwork_id": "getty-103qtm",
+          "question": "What surface did Rembrandt paint this work on?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Rembrandt painted this work on copper.",
+          "cited_ids": [
+            "getty-103qtm-description-03"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-08",
+          "artwork_id": "getty-109q8g",
+          "question": "What contrast does Getty describe between the fabrics and the story?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Getty describes a sharp contrast between the luxurious fabrics and the horror of the story. The description notes that the beauty of the translucent skin, the pearls in her hair, and the luxurious fabrics all stand in opposition to the horror of what is about to happen.",
+          "cited_ids": [
+            "getty-109q8g-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-09",
+          "artwork_id": "getty-103qtf",
+          "question": "Why did Diana send the boar in the ancient story?",
+          "language": "en",
+          "status": "answered",
+          "answer": "According to the museum record, Diana sent the boar because King Oeneus of Calydon failed to honor her with offerings. The goddess released the terrifying beast on his land as a result of this neglect.",
+          "cited_ids": [
+            "getty-103qtf-description-03"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-10",
+          "artwork_id": "getty-103qse",
+          "question": "Why is the sitter’s identity still debated?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The sitter's identity is debated because Giorgio Vasari, the famous author of the Lives, recorded that Pontormo painted a portrait of a young nobleman named Francesco Guardi during the siege of Florence around 1529, and a birth record confirms a Francesco Guardi was born in 1514, making him the right age. However, some scholars have also suggested, based on a Florentine inventory from 1612, that the portrait might actually represent Cosimo de' Medici himself.",
+          "cited_ids": [
+            "getty-103qse-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-11",
+          "artwork_id": "getty-11409c",
+          "question": "Where was the portrait shown in 1776?",
+          "language": "en",
+          "status": "answered",
+          "answer": "In April 1776, the Portrait of Mai was shown at the Royal Academy’s annual exhibition in London.",
+          "cited_ids": [
+            "getty-11409c-description-01"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-12",
+          "artwork_id": "getty-108hgy",
+          "question": "How did Monet work on the series after leaving Rouen?",
+          "language": "en",
+          "status": "answered",
+          "answer": "After leaving Rouen, Monet reworked his thirty canvases from memory in his studio through 1894. He began this specific painting in 1893 while working in an improvised studio located in the front room of a dressmaker's shop across from the cathedral.",
+          "cited_ids": [
+            "getty-108hgy-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-13",
+          "artwork_id": "getty-103rgh",
+          "question": "How did Munch paint the night sky?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Edvard Munch painted the night sky in \"Starry Night\" (1893) by blending varying thicknesses of blue and green paint to create the impression of the night. He used some areas of thick paint alongside others that were left bare to convey the lighter segments of the sky or a celestial phenomenon.",
+          "cited_ids": [
+            "getty-103rgh-description-04"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-14",
+          "artwork_id": "getty-103rfp",
+          "question": "What meaning does the Getty suggest for the ape?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The Getty Museum suggests that the ape may serve a moralizing purpose by condemning excessive drinking, as it mimics the bacchante's gesture of holding grapes.",
+          "cited_ids": [
+            "getty-103rfp-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-15",
+          "artwork_id": "getty-104g0s",
+          "question": "Where did Cameron photograph Herschel in April 1867?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Julia Margaret Cameron photographed J.F.W. Herschel at Collingwood, his home at Hawkhurst in Kent, during her visit in April 1867.",
+          "cited_ids": [
+            "getty-104g0s-description-03"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-16",
+          "artwork_id": "getty-103qtr",
+          "question": "What details make this marble portrait look individual?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The portrait feels individual because Pope Paul V gazes at the viewer with a natural expression, and his face is defined by the slight turn of his head, the delicate contours of his forehead, and the tiny wrinkles carved around his eyes. Additionally, the artist's subdued dynamism is visible in the folds of the drapery at the sitter's left shoulder, which suggests his body moves underneath the robes.",
+          "cited_ids": [
+            "getty-103qtr-description-03",
+            "getty-103qtr-description-04"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-17",
+          "artwork_id": "getty-103qtj",
+          "question": "Which marks does Getty identify as natural features of the stone?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The Getty Museum identifies natural cracks in the bust's alabaster surface as natural features of the stone.",
+          "cited_ids": [
+            "getty-103qtj-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-18",
+          "artwork_id": "getty-103qsb",
+          "question": "Who carved the figure, and who painted it?",
+          "language": "en",
+          "status": "answered",
+          "answer": "Luisa Roldán, also known as La Roldana, carved the figure of Saint Ginés de la Jara. The figure was then polychromed by her brother-in-law, Tomás de los Arcos, who applied the Spanish technique of estofado to replicate the brocaded ecclesiastical garments.",
+          "cited_ids": [
+            "getty-103qsb-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-19",
+          "artwork_id": "getty-103qsk",
+          "question": "What evidence suggests it might have been a royal gift?",
+          "language": "en",
+          "status": "answered",
+          "answer": "The evidence suggesting this cabinet might have been a royal gift includes specific royal symbols and its connection to the French king Louis XIV. The fleurs-de-lis on the top two drawers indicate that the cabinet was made for Louis XIV. Additionally, the Sun King's portrait appears twice on the work, and the bronze medallion above the central door was cast from a medal struck in 1661 that shows the king at the age of twenty-one. Because the cabinet does not appear in inventories of his possessions, the museum suggests it may have served as a royal gift.",
+          "cited_ids": [
+            "getty-103qsk-description-02"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        },
+        {
+          "id": "third-20",
+          "artwork_id": "getty-103rr6",
+          "question": "Which ceramic traditions does Getty connect to its decoration?",
+          "language": "en",
+          "status": "answered",
+          "answer": "According to the Getty Museum record, the decoration on this Pilgrim Flask imitates Chinese porcelain as well as Turkish ceramic wares from around 1500.",
+          "cited_ids": [
+            "getty-103rr6-description-03"
+          ],
+          "expected_kind": "museum_record",
+          "expected_ids": [],
+          "checks_passed": true
+        }
+      ]
+    }
+  },
+  "previous_development_runs": {
+    "dataset_sha256": "15fe30f07ee08b9d90fa58d099504b51c5d6d88033420727aeb23d5bd8d8e131",
+    "scope": "Earlier wording and retrieval configurations. These cases are retained separately from the delivery totals.",
+    "initial_checks": {
+      "published_first_two": "38/40",
+      "additional_four_language_questions": "10/10"
+    },
+    "broad_checks": "70/73",
+    "targeted_checks": "8/12",
+    "observations": [
+      {
+        "id": "published-29",
+        "artwork_id": "getty-104g0s",
+        "question": "How did Cameron know the scientist she photographed?",
+        "language": "en",
+        "status": "answered",
+        "answer": "Julia Margaret Cameron knew the scientist, Sir John Frederick William Herschel, as a longtime friend. They first met in 1867 when Cameron visited him at his home in Collingwood, Kent, though their friendship actually began much earlier in 1835 in South Africa.",
+        "cited_ids": [
+          "getty-104g0s-description-01",
+          "getty-104g0s-description-03"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [],
+        "checks_passed": true,
+        "review": "The first meeting was in South Africa in 1835. The 1867 visit was for a portrait sitting. The answer conflates them."
+      },
+      {
+        "id": "published-37",
+        "artwork_id": "getty-103qsk",
+        "question": "Which animals appear on the central door, and what do they represent?",
+        "language": "en",
+        "status": "answered",
+        "answer": "The central door features a marquetry panel depicting a cockerel standing triumphantly over an eagle and a lion.\n\nThese animals represent the nations defeated by France: the cockerel is the symbol of France, while the eagle represents the Holy Roman Empire and the lion represents Spain and the Spanish Netherlands.",
+        "cited_ids": [
+          "getty-103qsk-description-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [],
+        "checks_passed": true,
+        "review": "The cockerel represents the victorious French side. It is incorrectly grouped with the defeated powers."
+      },
+      {
+        "id": "published-05",
+        "artwork_id": "getty-103qtz",
+        "question": "Who is the woman Manet painted as Spring?",
+        "language": "en",
+        "status": "answered",
+        "answer": "The woman Édouard Manet painted as Spring is Jeanne Demarsy, an aspiring Parisian actress. The museum record identifies her as the subject of this portrait, which was created in 1881 and debuted at the Paris Salon of 1882.",
+        "cited_ids": [
+          "getty-103qtz-description-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [],
+        "checks_passed": true,
+        "review": "The sitter is correctly identified. The catalog gives 1881, but the sole displayed passage dates only the 1882 exhibition."
+      },
+      {
+        "id": "independent-01",
+        "artwork_id": "getty-103jnh",
+        "question": "¿Dónde encontró Van Gogh las flores que pintó durante su primera semana en Saint-Rémy?",
+        "language": "es",
+        "status": "answered",
+        "answer": "Según el registro del Museo Getty, Van Gogh encontró las flores en el jardín del asilo donde se alojó en Saint-Rémy, Francia. Comenzó a pintar Irises durante la primera semana de mayo de 1889, trabajando directamente desde la naturaleza en ese jardín.",
+        "cited_ids": [
+          "getty-103jnh-description-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103jnh-description-01"
+        ],
+        "checks_passed": true,
+        "review": "The source places the beginning within the first week after admission to the asylum. It does not say it was the first week of the calendar month."
+      },
+      {
+        "id": "independent-10",
+        "artwork_id": "getty-109q8g",
+        "question": "Según la guía de MuseBridge, ¿qué dos detalles iluminados conviene comparar?",
+        "language": "es",
+        "status": "answered",
+        "answer": "La guía de MuseBridge sugiere comparar un pequeño resplandor en las perlas con una mancha más amplia de luz en el pliegue de la ropa, observando cómo sus bordes se contrastan con la oscuridad que hay detrás de la figura.",
+        "cited_ids": [
+          "getty-109q8g-guide-02"
+        ],
+        "expected_kind": "guide_note",
+        "expected_ids": [
+          "getty-109q8g-guide-02"
+        ],
+        "checks_passed": true,
+        "review": "The source identifies drapery. The reply adds a particular fold."
+      },
+      {
+        "id": "third-03",
+        "artwork_id": "getty-103qtz",
+        "question": "How does the brushwork on Jeanne’s face differ from the foliage?",
+        "language": "en",
+        "status": "answered",
+        "answer": "The brushwork on Jeanne’s face is rendered with smoother, more blended strokes that define her profile clearly against the foliage, whereas the leaves behind her are painted with separate, distinct marks that are easy to count. This contrast in the pace and separation of the brush marks helps distinguish her features from the surrounding patterns.",
+        "cited_ids": [
+          "getty-103qtz-guide-01",
+          "getty-103qtz-guide-02"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [],
+        "checks_passed": false,
+        "review": "The source kind should be the Getty description of brushwork. The reply turned a MuseBridge comparison exercise into an assertion about easily counted strokes."
+      },
+      {
+        "id": "third-05",
+        "artwork_id": "getty-103rc9",
+        "question": "Does Getty identify the exact Roman festival?",
+        "language": "en",
+        "status": "insufficient",
+        "answer": "The Getty Museum record does not identify the exact Roman festival depicted in the painting. While the description notes that the imagery resembles the Floralia and mentions British May Day traditions, it explicitly states that it is unclear exactly which festival Alma-Tadema meant to depict.",
+        "cited_ids": [],
+        "expected_kind": "museum_record",
+        "expected_ids": [],
+        "checks_passed": false,
+        "review": "The reply correctly reports that Getty leaves the festival uncertain, but omits the passage that says so explicitly."
+      },
+      {
+        "id": "third-18",
+        "artwork_id": "getty-103qsb",
+        "question": "Who carved the figure, and who painted it?",
+        "language": null,
+        "status": null,
+        "answer": null,
+        "cited_ids": [],
+        "expected_kind": "museum_record",
+        "expected_ids": [],
+        "checks_passed": false,
+        "review": "No visitor-facing answer was produced."
+      },
+      {
+        "id": "targeted-04",
+        "artwork_id": "getty-103qsk",
+        "question": "Which animals appear on the central door, and what do they represent?",
+        "language": "en",
+        "status": "answered",
+        "answer": "The central door features a marquetry panel depicting a cockerel standing triumphantly over an eagle and a lion. The cockerel represents France, while the eagle symbolizes the Holy Roman Empire and the lion represents Spain and the Spanish Netherlands. This imagery celebrates the French military victories under Louis XIV that led to the Treaty of Nijmegen.",
+        "cited_ids": [
+          "getty-103qsk-description-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103qsk-description-01"
+        ],
+        "checks_passed": true,
+        "review": "The retest correctly distinguished the victorious cockerel from the two defeated powers."
+      },
+      {
+        "id": "targeted-10",
+        "artwork_id": "getty-103qsb",
+        "question": "Who carved the figure, and who painted it?",
+        "language": "en",
+        "status": "answered",
+        "answer": "Luisa Roldán, also known as La Roldana, carved the figure, while her brother-in-law, Tomás de los Arcos, painted it using the Spanish technique of estofado.",
+        "cited_ids": [
+          "getty-103qsb-description-02"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103qsb-description-02"
+        ],
+        "checks_passed": true,
+        "review": "The retest correctly linked Luisa Roldán with carving and Tomás de los Arcos with painting."
+      },
+      {
+        "id": "targeted-11",
+        "artwork_id": "getty-103jnh",
+        "question": "¿Cuánto tiempo había pasado desde que llegó al asilo cuando empezó a pintar los lirios?",
+        "language": "es",
+        "status": "answered",
+        "answer": "Según el registro del Museo Getty, Vincent van Gogh ingresó al asilo de Saint-Rémy en mayo de 1889 y comenzó a pintar \"Irises\" dentro de la primera semana de su llegada.",
+        "cited_ids": [
+          "getty-103jnh-description-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103jnh-description-01"
+        ],
+        "checks_passed": true,
+        "review": "The retest explicitly about the relative interval correctly tied it to arrival."
+      },
+      {
+        "id": "targeted-12",
+        "artwork_id": "getty-103jnh",
+        "question": "How many minutes did Van Gogh take to paint the white iris?",
+        "language": "en",
+        "status": "insufficient",
+        "answer": "I couldn't verify how many minutes Van Gogh took to paint the white iris from the material available to me here.",
+        "cited_ids": [],
+        "expected_kind": null,
+        "expected_ids": [],
+        "checks_passed": true,
+        "review": "An exact duration for painting one iris was unavailable. Qwen reported the specific gap without inventing a duration."
+      },
+      {
+        "id": "published-11",
+        "artwork_id": "getty-103rk8",
+        "question": "Why did Monet have the wheatstacks left out over winter?",
+        "language": "en",
+        "status": "answered",
+        "answer": "Monet arranged to have the wheatstacks left out over the winter so he could paint them at different times throughout the seasons, starting in the fall of 1890 and continuing until the following summer. He wanted to capture how the landscape's appearance constantly changes due to varying air, light, and weather conditions.",
+        "cited_ids": [
+          "getty-103rk8-description-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [],
+        "checks_passed": true,
+        "review": "The source states how many paintings existed by the following summer. The answer treats that as an end date for work on the series."
+      },
+      {
+        "id": "published-14",
+        "artwork_id": "getty-103qtm",
+        "question": "Where should I look to see what makes the laugh convincing?",
+        "language": "en",
+        "status": "answered",
+        "answer": "To see what makes the laugh convincing, try looking at the mouth alone first, then cover it and look at the cheeks and eyes to see which part still suggests a laugh. Zoom out again to include the slight tilt of the head, as this changes how directly the sitter seems to meet you.",
+        "cited_ids": [
+          "getty-103qtm-guide-01"
+        ],
+        "expected_kind": "guide_note",
+        "expected_ids": [],
+        "checks_passed": true,
+        "review": "The guide asks whether the head tilt affects the viewer. The answer treats the subjective effect as a certainty."
+      },
+      {
+        "id": "targeted-01",
+        "artwork_id": "getty-104g0s",
+        "question": "How did Cameron know the scientist she photographed?",
+        "language": "en",
+        "status": "answered",
+        "answer": "Julia Margaret Cameron knew the scientist, John Frederick William Herschel, personally because she visited him at his home in Collingwood, Hawkhurst, Kent, in April 1867 to photograph him.",
+        "cited_ids": [
+          "getty-104g0s-description-03"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-104g0s-description-01"
+        ],
+        "checks_passed": false,
+        "review": "This answer substitutes a later visit to photograph Herschel for the first meeting."
+      },
+      {
+        "id": "targeted-03",
+        "artwork_id": "getty-103jnh",
+        "question": "¿Dónde encontró Van Gogh las flores que pintó durante su primera semana en Saint-Rémy?",
+        "language": "es",
+        "status": "answered",
+        "answer": "Van Gogh encontró las flores en el jardín del asilo donde se alojó en Saint-Rémy, Francia. Según el registro del museo, comenzó a pintar Irises durante la primera semana de mayo de 1889 trabajando directamente desde la naturaleza en ese jardín.",
+        "cited_ids": [
+          "getty-103jnh-description-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103jnh-description-01"
+        ],
+        "checks_passed": true,
+        "review": "The location is correct. The relative week after admission is again turned into the first calendar week of May."
+      },
+      {
+        "id": "targeted-05",
+        "artwork_id": "getty-103qtz",
+        "question": "Who is the woman Manet painted as Spring?",
+        "language": null,
+        "status": null,
+        "answer": null,
+        "cited_ids": [],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103qtz-description-01"
+        ],
+        "checks_passed": false,
+        "review": "The original identity question returned no public text."
+      },
+      {
+        "id": "targeted-08",
+        "artwork_id": "getty-103qtz",
+        "question": "How does the brushwork on Jeanne’s face differ from the foliage?",
+        "language": "en",
+        "status": "answered",
+        "answer": "The brushwork on Jeanne’s face is rendered with smoother, more blended strokes that define her features clearly, while the foliage behind her consists of separate, distinct marks that are easy to count. Moving between her cheek and the leaves allows you to compare the pace of these marks directly.",
+        "cited_ids": [
+          "getty-103qtz-guide-01"
+        ],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103qtz-description-02"
+        ],
+        "checks_passed": false,
+        "review": "The factual comparison cited a team guide instead of the museum description."
+      },
+      {
+        "id": "targeted-09",
+        "artwork_id": "getty-103rc9",
+        "question": "Does Getty identify the exact Roman festival?",
+        "language": "en",
+        "status": "insufficient",
+        "answer": "The Getty Museum record does not identify the exact Roman festival depicted in the painting. The description states that it is unclear exactly which festival Alma-Tadema meant to depict, though it suggests the imagery resembles the Floralia or connects to British May Day traditions rooted in ancient Roman spring celebrations.",
+        "cited_ids": [],
+        "expected_kind": "museum_record",
+        "expected_ids": [
+          "getty-103rc9-description-02"
+        ],
+        "checks_passed": false,
+        "review": "English text preserves the uncertainty but the museum statement has no displayed citation."
+      }
+    ]
+  },
+  "delivery_review": {
+    "method": "Assistant review of each public answer against its displayed sources. Core requires an answer to the question without a material factual error. Strict review also requires that every added detail and qualification be supported by the displayed citations. For the intended missing-evidence case, a scoped gap with no invented answer or citation passes both. These are development cases, not an independent human evaluation.",
+    "totals": {
+      "tested": 73,
+      "automated_pass": 73,
+      "core_semantic_pass": 70,
+      "fully_supported_by_displayed_citations": 65
+    },
+    "per_suite": {
+      "published": {
+        "case_count": 40,
+        "automated_pass": 40,
+        "core_semantic_pass": 39,
+        "fully_supported_by_displayed_citations": 38
+      },
+      "independent": {
+        "case_count": 10,
+        "automated_pass": 10,
+        "core_semantic_pass": 9,
+        "fully_supported_by_displayed_citations": 8
+      },
+      "supplemental": {
+        "case_count": 3,
+        "automated_pass": 3,
+        "core_semantic_pass": 3,
+        "fully_supported_by_displayed_citations": 3
+      },
+      "third": {
+        "case_count": 20,
+        "automated_pass": 20,
+        "core_semantic_pass": 19,
+        "fully_supported_by_displayed_citations": 16
+      }
+    },
+    "material_issues": {
+      "published-11": "The source counts at least thirty paintings by the following summer. The answer makes thirty a goal set before Monet painted and says he continued into summer.",
+      "independent-01": "The Spanish answer locates the garden correctly. It moves the first week after admission to the first calendar week of May.",
+      "third-06": "The answer correctly distinguishes work outdoors and in the studio. It places all thirty paintings over the summer, whereas the museum counts them across seasons by the following summer."
+    },
+    "additional_precision_or_citation_issues": {
+      "published-05": "1881 is correct in the artwork catalog. The displayed passage gives only the 1882 exhibition date.",
+      "independent-10": "The English guide identifies a light patch on drapery. The Spanish answer narrows the location to a fold.",
+      "third-05": "The answer correctly notes uncertainty about the identity of the festival. Its phrase “most resembles” strengthens Getty’s “perhaps most resembling.”",
+      "third-11": "The cited passage identifies the Royal Academy exhibition in April 1776, but does not name London as its location.",
+      "third-13": "1893 agrees with the artwork catalog. The only displayed passage describes how Munch painted the sky and does not give the year."
+    },
+    "statuses": {
+      "answered": 72,
+      "insufficient": 1
+    },
+    "languages": {
+      "en": 66,
+      "es": 3,
+      "zh-CN": 2,
+      "ko": 2
+    },
+    "citations_checked": 81
+  }
+}

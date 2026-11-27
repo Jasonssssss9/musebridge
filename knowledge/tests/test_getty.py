@@ -42,6 +42,9 @@ class GettyRetrievalTests(unittest.TestCase):
             "Which detail should a visitor focus on in this scene?",
             "What would you recommend looking at in the foreground?",
             "Give me a close-looking exercise for this work.",
+            "How could I follow the lines across the background?",
+            "What should I compare in the sky and water?",
+            "How could I spot the main action?",
             "Where to begin looking at the fence and shore?",
             "What does the MuseBridge guide suggest about looking at this painting at the Getty?",
             "What is MuseBridge's recommendation for this Getty painting?",
@@ -71,6 +74,44 @@ class GettyRetrievalTests(unittest.TestCase):
                 overview, = self.search(key, "Give me an overview.", top_k=1)
                 self.assertTrue(overview["source_locator"].startswith("Object description"))
 
+    def test_scoped_vector_query_omits_page_title_and_possessive_artist(self):
+        from knowledge.passage_ranking import _plain, _within_artwork
+        work = {"title": "The Calydonian Boar Hunt", "artist": "Peter Paul Rubens"}
+        query = "Who strikes the boar in Rubens' The Calydonian Boar Hunt?"
+        self.assertEqual(_within_artwork(_plain(query), work), "who strikes the boar in this artwork?")
+        photographer = {"title": "J.F.W. Herschel", "artist": "Julia Margaret Cameron"}
+        subject = "How did Julia Margaret Cameron know the scientist depicted in the portrait "
+        for ref in ('J.F.W. Herschel?', '"J.F.W. Herschel"?'):
+            self.assertEqual(_within_artwork(_plain(subject + ref), photographer),
+                             "how did the artist know the scientist depicted in this artwork?")
+        spring = {"title": "Spring", "artist": "Lawrence Alma-Tadema"}
+        self.assertIn("in spring", _within_artwork(_plain("When was the festival held in spring?"), spring))
+
+    def test_specific_viewing_activity_ranks_among_multiple_team_notes(self):
+        from dataclasses import replace
+        key = "getty-103rgh"
+        original = next(c for c in self.dataset.chunks if c["chunk_id"] == key + "-guide-01")
+        detail = {**original, "chunk_id": key + "-test-guide-02", "topics": ("reflection", "water"),
+                  "excerpt": "Follow a reflection in the water, then trace its edge."}
+        with_two_guides = replace(self.dataset, chunks=(*self.dataset.chunks, detail))
+        for question, first in (("How could I trace the reflections in the water?", detail["chunk_id"]),
+                                ("Where should I look to follow the pale fence?", original["chunk_id"])):
+            records = retrieve(with_two_guides, artwork_id=key, query=question, dataset_version=VERSION,
+                               top_k=1)["evidence"]
+            self.assertEqual([(r["chunk_id"], r["source_kind"]) for r in records], [(first, "guide_note")])
+
+    def test_common_word_title_does_not_override_the_active_artwork(self):
+        from dataclasses import replace
+        works = dict(self.dataset.artworks)
+        key = "getty-108hgy"
+        works["getty-test"] = {**works[key], "title": "Spring", "artist": "Lawrence Alma-Tadema"}
+        dataset = replace(self.dataset, artworks=works)
+        def search(query):
+            return retrieve(dataset, artwork_id=key, query=query, dataset_version=VERSION)["evidence"]
+        self.assertTrue(search("Where did Monet work in spring?"))
+        self.assertFalse(search("What is the medium of the painting titled Spring?"))
+        self.assertFalse(search("Describe Alma-Tadema's Spring."))
+
     def test_dense_neighbors_obey_artwork_and_source_kind(self):
         class Dense:
             def rank(self, artwork, query):
@@ -81,6 +122,27 @@ class GettyRetrievalTests(unittest.TestCase):
         self.assertEqual([r["chunk_id"] for r in records], ["getty-108hgy-medium"])
         self.assertEqual(self.search("getty-108hgy", "Which medium was used for Starry Night?",
                                      vector_index=Dense()), [])
+
+    def test_image_rights_are_bound_to_the_image_source(self):
+        source = json.loads(SEED.read_bytes())
+        art = source["artworks"][0]
+        getty = art["image_source_url"]
+        commons = "https://commons.wikimedia.org/wiki/File:Joshua_Reynolds_-_Portrait_of_Omai.jpg"
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "catalog.json"
+            for url, rights, allowed in [
+                (getty, "CC0-1.0", True), (commons, "Public Domain Mark 1.0", True),
+                (getty, "Public Domain Mark 1.0", False), (commons, "CC0-1.0", False),
+                ("https://commons.wikimedia.org/wiki/Main_Page", "Public Domain Mark 1.0", False),
+            ]:
+                with self.subTest(url=url, rights=rights):
+                    art.update(image_source_url=url, image_license=rights)
+                    path.write_text(json.dumps(source))
+                    if allowed:
+                        load_dataset(path, expected_version=VERSION)
+                    else:
+                        with self.assertRaises(DatasetValidationError):
+                            load_dataset(path, expected_version=VERSION)
 
     def test_incorrect_parent_or_guide_attribution_is_rejected(self):
         original = json.loads(SEED.read_bytes())
