@@ -14,6 +14,8 @@ The [private service guide](agent-service.md) records B phase-3 behavior and con
 
 The [opt-in Ollama provider](ollama-provider.md) now implements real transport, model identity, grammar preparation and tokenizer budgets. Failed local workflow acceptance prevents readiness; these implementation details do not alter the authoritative schemas or their assertions.
 
+The [Talk with Vincent contract](vincent-contract.md) defines the separate v0.4/v3 implementation target. This document remains authoritative for deployed v0.3/v2 callers.
+
 ## 1. Conventions and ownership
 
 | Item | Rule |

@@ -1,0 +1,885 @@
+{
+  "description": "Synthetic examples for the agreed Vincent interfaces. The public receipt and history represent the same committed turn. The Getty record and its catalog values come from getty-gallery-v2. Release timestamps and responses illustrate the protocol and do not claim a live run.",
+  "schema_cases": [
+    {
+      "name": "create_public_v03_guide",
+      "schema": "v2",
+      "definition": "PublicCreateConversationRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "artwork_id": "getty-103jnh"
+      }
+    },
+    {
+      "name": "create_public_v03_rejects_mode",
+      "schema": "v2",
+      "definition": "PublicCreateConversationRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-demo-v0.3",
+        "artwork_id": "getty-103jnh",
+        "conversation_mode": "vincent"
+      }
+    },
+    {
+      "name": "create_public_default_guide",
+      "definition": "PublicCreateConversationRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.4",
+        "artwork_id": "getty-103jnh"
+      }
+    },
+    {
+      "name": "create_public_explicit_vincent",
+      "definition": "PublicCreateConversationRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.4",
+        "artwork_id": "getty-103jnh",
+        "conversation_mode": "vincent"
+      }
+    },
+    {
+      "name": "create_public_unknown_mode",
+      "definition": "PublicCreateConversationRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-demo-v0.4",
+        "artwork_id": "getty-103jnh",
+        "conversation_mode": "artist"
+      }
+    },
+    {
+      "name": "guide_created",
+      "definition": "PublicConversationResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.4",
+          "conversation_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "guide",
+          "reference_pack_version": null,
+          "created_at": "2026-11-27T18:00:00Z",
+          "expires_at": "2026-11-28T18:00:00Z",
+          "revision": 0,
+          "language_preference": "auto",
+          "auto_language": "en",
+          "last_answer_language": null
+        },
+        "created": true
+      }
+    },
+    {
+      "name": "vincent_created",
+      "definition": "PublicConversationResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.4",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1",
+          "created_at": "2026-11-27T18:00:00Z",
+          "expires_at": "2026-11-28T18:00:00Z",
+          "revision": 0,
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": null
+        },
+        "created": true
+      }
+    },
+    {
+      "name": "vincent_restored_after_one_turn",
+      "definition": "PublicConversationResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.4",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1",
+          "created_at": "2026-11-27T18:00:00Z",
+          "expires_at": "2026-11-28T18:00:00Z",
+          "revision": 1,
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "created": false
+      }
+    },
+    {
+      "name": "confirmed_transcription",
+      "definition": "TranscriptionResult",
+      "valid": true,
+      "payload": {
+        "text": "Vincent, what did you paint these irises on?",
+        "language": "en"
+      }
+    },
+    {
+      "name": "empty_transcription",
+      "definition": "TranscriptionResult",
+      "valid": false,
+      "payload": {
+        "text": "",
+        "language": "en"
+      }
+    },
+    {
+      "name": "wrong_transcription_language",
+      "definition": "TranscriptionResult",
+      "valid": false,
+      "payload": {
+        "text": "Quelle couleur ?",
+        "language": "fr"
+      }
+    },
+    {
+      "name": "submit_vincent_transcript",
+      "definition": "PublicMessageRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.4",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "Vincent, what did you paint these irises on?",
+        "language_override": null,
+        "expected_revision": 0
+      }
+    },
+    {
+      "name": "retry_same_message_and_revision",
+      "definition": "PublicMessageRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.4",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "Vincent, what did you paint these irises on?",
+        "language_override": null,
+        "expected_revision": 0
+      }
+    },
+    {
+      "name": "public_completed_turn",
+      "definition": "PublicSubmissionResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.4",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1",
+          "created_at": "2026-11-27T18:00:00Z",
+          "expires_at": "2026-11-28T18:00:00Z",
+          "revision": 1,
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "turn": {
+          "turn_id": "44444444-4444-4444-8444-444444444444",
+          "sequence": 1,
+          "client_message_id": "33333333-3333-4333-8333-333333333333",
+          "question": "Vincent, what did you paint these irises on?",
+          "language_override": null,
+          "answer_language": "en",
+          "dataset_version": "getty-gallery-v2",
+          "created_at": "2026-11-27T18:00:09Z",
+          "answer": {
+            "mode": "llm",
+            "status": "answered",
+            "text": "I painted these irises on canvas, using oil paint.",
+            "citations": [
+              {
+                "chunk_id": "getty-103jnh-medium",
+                "artwork_id": "getty-103jnh",
+                "source_id": "getty-103jnh-record",
+                "source_kind": "museum_record",
+                "source_title": "Irises — Getty Museum record",
+                "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+                "source_language": "en",
+                "source_locator": "Medium",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "J. Paul Getty Museum",
+                "normalization": "none"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "history_recovers_same_committed_turn",
+      "definition": "PublicHistoryResponse",
+      "valid": true,
+      "payload": {
+        "conversation": {
+          "contract_version": "agent-demo-v0.4",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1",
+          "created_at": "2026-11-27T18:00:00Z",
+          "expires_at": "2026-11-28T18:00:00Z",
+          "revision": 1,
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": "en"
+        },
+        "turns": [
+          {
+            "turn_id": "44444444-4444-4444-8444-444444444444",
+            "sequence": 1,
+            "client_message_id": "33333333-3333-4333-8333-333333333333",
+            "question": "Vincent, what did you paint these irises on?",
+            "language_override": null,
+            "answer_language": "en",
+            "dataset_version": "getty-gallery-v2",
+            "created_at": "2026-11-27T18:00:09Z",
+            "answer": {
+              "mode": "llm",
+              "status": "answered",
+              "text": "I painted these irises on canvas, using oil paint.",
+              "citations": [
+                {
+                  "chunk_id": "getty-103jnh-medium",
+                  "artwork_id": "getty-103jnh",
+                  "source_id": "getty-103jnh-record",
+                  "source_kind": "museum_record",
+                  "source_title": "Irises — Getty Museum record",
+                  "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+                  "source_language": "en",
+                  "source_locator": "Medium",
+                  "excerpt": "Oil on canvas",
+                  "license": "CC0-1.0",
+                  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                  "attribution": "J. Paul Getty Museum",
+                  "normalization": "none"
+                }
+              ]
+            }
+          }
+        ],
+        "pending_request": null
+      }
+    },
+    {
+      "name": "follow_up_uses_current_revision",
+      "definition": "PublicMessageRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-demo-v0.4",
+        "client_message_id": "66666666-6666-4666-8666-666666666666",
+        "question": "Was it oil paint?",
+        "language_override": null,
+        "expected_revision": 1
+      }
+    },
+    {
+      "name": "transcription_no_speech",
+      "definition": "PublicErrorEnvelope",
+      "valid": true,
+      "payload": {
+        "request_id": "77777777-7777-4777-8777-777777777777",
+        "error": {
+          "code": "no_speech",
+          "message": "No clear speech was recognized. Record another question.",
+          "retryable": false
+        }
+      }
+    },
+    {
+      "name": "run_initial_vincent",
+      "definition": "RunRequest",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v3",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "Vincent, what did you paint these irises on?",
+        "language_override": null,
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "context": {
+          "artwork_title": "Irises",
+          "artist": "Vincent van Gogh",
+          "recent_turns": [],
+          "catalog_facts": [
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-title",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "title",
+              "value": "Irises",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].title",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            },
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-artist",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "artist",
+              "value": "Vincent van Gogh",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            },
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-date_display",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "date_display",
+              "value": "1889",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            }
+          ]
+        },
+        "conversation_state": {
+          "state_version": "conversation-state-v2",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "conversation_mode": "vincent",
+            "reference_pack_version": "vincent-irises-v1"
+          },
+          "revision": 0,
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v3",
+          "profile_id": "local-ollama-v2",
+          "deadline_at": "2026-11-27T18:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "run_rejects_unknown_mode",
+      "definition": "RunRequest",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-run-v3",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "client_message_id": "33333333-3333-4333-8333-333333333333",
+        "question": "Vincent, what did you paint these irises on?",
+        "language_override": null,
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "unknown",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "context": {
+          "artwork_title": "Irises",
+          "artist": "Vincent van Gogh",
+          "recent_turns": [],
+          "catalog_facts": [
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-title",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "title",
+              "value": "Irises",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].title",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            },
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-artist",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "artist",
+              "value": "Vincent van Gogh",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            },
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-date_display",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "date_display",
+              "value": "1889",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            }
+          ]
+        },
+        "conversation_state": {
+          "state_version": "conversation-state-v2",
+          "conversation_id": "22222222-2222-4222-8222-222222222222",
+          "scope": {
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "conversation_mode": "vincent",
+            "reference_pack_version": "vincent-irises-v1"
+          },
+          "revision": 0,
+          "language_preference": "en",
+          "auto_language": "en",
+          "last_answer_language": null,
+          "active_topic": null,
+          "continuity_summary": "",
+          "pending_clarification": null,
+          "verified_evidence": []
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v3",
+          "profile_id": "local-ollama-v2",
+          "deadline_at": "2026-11-27T18:00:55Z"
+        }
+      }
+    },
+    {
+      "name": "vincent_scope_rejects_another_artwork",
+      "definition": "Scope",
+      "valid": false,
+      "payload": {
+        "artwork_id": "getty-103qt5",
+        "dataset_version": "getty-gallery-v2",
+        "conversation_mode": "vincent",
+        "reference_pack_version": "vincent-irises-v1"
+      }
+    },
+    {
+      "name": "guide_scope_rejects_persona_pack",
+      "definition": "Scope",
+      "valid": false,
+      "payload": {
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "conversation_mode": "guide",
+        "reference_pack_version": "vincent-irises-v1"
+      }
+    },
+    {
+      "name": "vincent_public_projection_requires_pack",
+      "definition": "PublicConversation",
+      "valid": false,
+      "payload": {
+        "contract_version": "agent-demo-v0.4",
+        "conversation_id": "22222222-2222-4222-8222-222222222222",
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "conversation_mode": "vincent",
+        "reference_pack_version": null,
+        "created_at": "2026-11-27T18:00:00Z",
+        "expires_at": "2026-11-28T18:00:00Z",
+        "revision": 0,
+        "language_preference": "en",
+        "auto_language": "en",
+        "last_answer_language": null
+      }
+    },
+    {
+      "name": "evidence_rejects_freeform_attribution_kind",
+      "definition": "Evidence",
+      "valid": false,
+      "payload": {
+        "chunk_id": "getty-103jnh-medium",
+        "artwork_id": "getty-103jnh",
+        "source_id": "getty-103jnh-record",
+        "source_kind": "personal_anecdote",
+        "source_title": "Irises — Getty Museum record",
+        "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+        "source_language": "en",
+        "source_locator": "Medium",
+        "excerpt": "Oil on canvas",
+        "license": "CC0-1.0",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "attribution": "J. Paul Getty Museum",
+        "normalization": "none"
+      }
+    },
+    {
+      "name": "vincent_grounded_run_result",
+      "definition": "RunResult",
+      "valid": true,
+      "payload": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "answered",
+          "text": "I painted these irises on canvas, using oil paint.",
+          "citations": [
+            {
+              "chunk_id": "getty-103jnh-medium",
+              "artwork_id": "getty-103jnh",
+              "source_id": "getty-103jnh-record",
+              "source_kind": "museum_record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_language": "en",
+              "source_locator": "Medium",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "none"
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "Vincent, what did you paint these irises on?",
+            "intent": "What material is Irises by Vincent van Gogh painted on?",
+            "kind": "artwork_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "I painted these irises on canvas, using oil paint.",
+            "citation_ids": [
+              "getty-103jnh-medium"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "getty-103jnh-medium",
+            "artwork_id": "getty-103jnh",
+            "source_id": "getty-103jnh-record",
+            "source_kind": "museum_record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "Medium",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "none"
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What material is Irises by Vincent van Gogh painted on?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "The canvas and oil paint used for Irises",
+            "continuity_summary": "The visitor asked what Irises was painted on. The museum record identifies its medium as oil on canvas.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "execution": {
+          "workflow_id": "museum_qa_v3",
+          "profile_id": "local-ollama-v2",
+          "prompt_version": "museum-prompts-v3",
+          "schema_version": "agent-schema-v3",
+          "retrieval_strategy_version": "openai-hybrid-v1",
+          "model_provider": "ollama",
+          "model_name": "SYNTHETIC-CAPABILITY-EXAMPLE",
+          "model_digest": "SYNTHETIC-NOT-AN-OBSERVED-MODEL-DIGEST",
+          "model_calls": 2,
+          "retrieval_calls": 1,
+          "refinement_rounds": 0,
+          "duration_ms": 1000
+        },
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ]
+      }
+    },
+    {
+      "name": "vincent_completed_run_snapshot",
+      "definition": "RunSnapshot",
+      "valid": true,
+      "payload": {
+        "contract_version": "agent-run-v3",
+        "run_id": "11111111-1111-4111-8111-111111111111",
+        "state": "completed",
+        "result": {
+          "scope": {
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "conversation_mode": "vincent",
+            "reference_pack_version": "vincent-irises-v1"
+          },
+          "answer_language": "en",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "answer": {
+            "status": "answered",
+            "text": "I painted these irises on canvas, using oil paint.",
+            "citations": [
+              {
+                "chunk_id": "getty-103jnh-medium",
+                "artwork_id": "getty-103jnh",
+                "source_id": "getty-103jnh-record",
+                "source_kind": "museum_record",
+                "source_title": "Irises — Getty Museum record",
+                "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+                "source_language": "en",
+                "source_locator": "Medium",
+                "excerpt": "Oil on canvas",
+                "license": "CC0-1.0",
+                "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+                "attribution": "J. Paul Getty Museum",
+                "normalization": "none"
+              }
+            ]
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "Vincent, what did you paint these irises on?",
+              "intent": "What material is Irises by Vincent van Gogh painted on?",
+              "kind": "artwork_fact",
+              "resolution": "clear"
+            }
+          ],
+          "request_results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "I painted these irises on canvas, using oil paint.",
+              "citation_ids": [
+                "getty-103jnh-medium"
+              ]
+            }
+          ],
+          "evidence_snapshot": [
+            {
+              "chunk_id": "getty-103jnh-medium",
+              "artwork_id": "getty-103jnh",
+              "source_id": "getty-103jnh-record",
+              "source_kind": "museum_record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_language": "en",
+              "source_locator": "Medium",
+              "excerpt": "Oil on canvas",
+              "license": "CC0-1.0",
+              "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "none"
+            }
+          ],
+          "reused_chunk_ids": [],
+          "executed_queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What material is Irises by Vincent van Gogh painted on?"
+            }
+          ],
+          "conversation_update": {
+            "base_revision": 0,
+            "memory": {
+              "active_topic": "The canvas and oil paint used for Irises",
+              "continuity_summary": "The visitor asked what Irises was painted on. The museum record identifies its medium as oil on canvas.",
+              "pending_update": {
+                "action": "clear"
+              }
+            }
+          },
+          "execution": {
+            "workflow_id": "museum_qa_v3",
+            "profile_id": "local-ollama-v2",
+            "prompt_version": "museum-prompts-v3",
+            "schema_version": "agent-schema-v3",
+            "retrieval_strategy_version": "openai-hybrid-v1",
+            "model_provider": "ollama",
+            "model_name": "SYNTHETIC-CAPABILITY-EXAMPLE",
+            "model_digest": "SYNTHETIC-NOT-AN-OBSERVED-MODEL-DIGEST",
+            "model_calls": 2,
+            "retrieval_calls": 1,
+            "refinement_rounds": 0,
+            "duration_ms": 1000
+          },
+          "catalog_snapshot": [
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-title",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "title",
+              "value": "Irises",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].title",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            },
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-artist",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "artist",
+              "value": "Vincent van Gogh",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            },
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-date_display",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "date_display",
+              "value": "1889",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            }
+          ]
+        },
+        "error": null
+      }
+    },
+    {
+      "name": "shape_only_synthetic_letter_not_released_for_retrieval",
+      "definition": "Evidence",
+      "valid": true,
+      "payload": {
+        "chunk_id": "fixture-only-letter-paragraph",
+        "artwork_id": "getty-103jnh",
+        "source_id": "fixture-only-letter-edition",
+        "source_kind": "artist_letter",
+        "source_title": "Synthetic letter, 2026 test edition (fixture only)",
+        "source_url": "https://example.org/letter",
+        "source_language": "en",
+        "source_locator": "Synthetic English edition, 2026, paragraph 1",
+        "excerpt": "This sentence is a test fixture created to demonstrate how the source card displays a letter.",
+        "license": "In Copyright",
+        "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+        "attribution": "MuseBridge synthetic fixture author, 2026 test edition",
+        "normalization": "none"
+      }
+    }
+  ]
+}

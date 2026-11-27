@@ -4,6 +4,8 @@ The root README introduces the project. This directory provides entry points to 
 
 | Guide | Purpose |
 | --- | --- |
+| [Talk with Vincent interfaces](vincent-contract.md) | Agreed implementation target for roles, session isolation, Agent execution, sources and ownership |
+| [Phone voice and playback](vincent-voice.md) | Mobile capture, local Whisper, cloud speech synthesis, frontend states and real-device checks |
 | [Getty gallery](getty-gallery.md) | Run the 20-work illustrated collection and verify QR codes, answers and citations |
 | [Getting started](getting-started.md) | Compose startup, native development and verification |
 | [System design](design.md) | Stage-one target behavior, module boundaries and later decisions |

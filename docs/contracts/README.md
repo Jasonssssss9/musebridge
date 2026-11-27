@@ -31,6 +31,38 @@ files or external schema fetches at runtime. It uses the pinned
 with format assertions, external loading disabled and an adapter for the schema's
 Unicode escapes/nonblank regex semantics.
 
+### Vincent target schema and examples
+
+The [Vincent interface](../vincent-contract.md) specifies public `agent-demo-v0.4` and private `agent-run-v3`. Their effective JSON Schema is the [v3 JSON Patch](agent-v3.patch.json) applied in order to [agent-v2.schema.json](agent-v2.schema.json) at SHA-256 `8abc3f29b4c366c5a19cfb2c3ffe78cd68236852e7eb43d68fadc77ae6b8ab20`. This keeps the deployed v2 definitions fixed. The [examples](vincent-examples.json) contain complete public and private payloads, legacy compatibility checks and rejected shapes. Wire them to versioned runtime codecs during implementation. These examples check the protocol; they do not measure the model or the microphone.
+
+Verify the patch and every example from the repository root using the existing Agent virtual environment:
+
+~~~bash
+.venv/bin/python - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+
+import jsonpatch
+from jsonschema import Draft202012Validator, FormatChecker
+
+root = Path("docs/contracts")
+base_bytes = (root / "agent-v2.schema.json").read_bytes()
+assert hashlib.sha256(base_bytes).hexdigest() == "8abc3f29b4c366c5a19cfb2c3ffe78cd68236852e7eb43d68fadc77ae6b8ab20"
+base = json.loads(base_bytes)
+patch = json.loads((root / "agent-v3.patch.json").read_text())
+schemas = {"v2": base, "v3": jsonpatch.apply_patch(base, patch)}
+Draft202012Validator.check_schema(schemas["v3"])
+cases = json.loads((root / "vincent-examples.json").read_text())["schema_cases"]
+for case in cases:
+    schema = dict(schemas[case.get("schema", "v3")])
+    schema["$ref"] = "#/$defs/" + case["definition"]
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    assert validator.is_valid(case["payload"]) == case["valid"], case["name"]
+print(f"{len(cases)} Vincent contract examples passed")
+PY
+~~~
+
 ## Go boundary
 
 ```go
