@@ -58,5 +58,9 @@
   {"op":"add","path":"/$defs/PublicError/properties/code/enum/-","value":"voice_busy"},
   {"op":"add","path":"/$defs/PublicError/properties/code/enum/-","value":"transcription_unavailable"},
   {"op":"add","path":"/$defs/PublicError/properties/code/enum/-","value":"speech_unavailable"},
-  {"op":"add","path":"/$defs/PublicError/properties/code/enum/-","value":"voice_timeout"}
+  {"op":"add","path":"/$defs/PublicError/properties/code/enum/-","value":"voice_timeout"},
+  {"op":"add","path":"/$defs/Evidence/properties/license/enum/-","value":"CC-BY-NC-SA-4.0"},
+  {"op":"add","path":"/$defs/Evidence/properties/license_url/enum/-","value":"https://creativecommons.org/licenses/by-nc-sa/4.0/"},
+  {"op":"add","path":"/$defs/Evidence/allOf","value":[{"if":{"properties":{"license":{"const":"CC-BY-NC-SA-4.0"}}},"then":{"properties":{"license_url":{"const":"https://creativecommons.org/licenses/by-nc-sa/4.0/"}}},"else":{"properties":{"license_url":{"not":{"const":"https://creativecommons.org/licenses/by-nc-sa/4.0/"}}}}}]},
+  {"op":"add","path":"/$defs/VincentReferencePack","value":{"type":"object","required":["reference_pack_version","artwork_id","dataset_version","records"],"additionalProperties":false,"properties":{"reference_pack_version":{"const":"vincent-irises-v1"},"artwork_id":{"const":"getty-103jnh"},"dataset_version":{"const":"getty-gallery-v2"},"records":{"type":"array","minItems":1,"uniqueItems":true,"items":{"allOf":[{"$ref":"#/$defs/Evidence"},{"required":["source_kind"],"properties":{"artwork_id":{"const":"getty-103jnh"}}}]}}}}}
 ]

@@ -1,0 +1,67 @@
+{
+  "reference_pack_version": "vincent-irises-v1",
+  "artwork_id": "getty-103jnh",
+  "dataset_version": "getty-gallery-v2",
+  "records": [
+    {
+      "chunk_id": "vincent-772-garden-colors",
+      "artwork_id": "getty-103jnh",
+      "source_id": "vincent-letter-772",
+      "source_kind": "artist_letter",
+      "source_title": "Vincent to Theo and Jo, 9 May 1889 (letter 772)",
+      "source_url": "https://vangoghletters.org/vg/letters/let772/letter.html",
+      "source_language": "en",
+      "source_locator": "Saint-Rémy, section addressed to Theo, English translation p.trans.6. Editorial note 4 identifies Irises (F 608 / JH 1691).",
+      "excerpt": "I have two others on the go — violet irises and a lilac bush. Two subjects taken from the garden.",
+      "license": "CC-BY-NC-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+      "normalization": "English edition wording. Editorial note markers omitted."
+    },
+    {
+      "chunk_id": "vincent-789-studies-after-nature",
+      "artwork_id": "getty-103jnh",
+      "source_id": "vincent-letter-789",
+      "source_kind": "artist_letter",
+      "source_title": "Vincent to Theo, 14 or 15 July 1889 (letter 789)",
+      "source_url": "https://vangoghletters.org/vg/letters/let789/letter.html",
+      "source_language": "en",
+      "source_locator": "Saint-Rémy, English translation p.trans.8 and the first item of p.trans.10. Editorial note 9 identifies Irises (F 608 / JH 1691).",
+      "excerpt": "I’m also enclosing another 7 studies which are dry but which are studies after nature rather than subjects for paintings. […] The irises",
+      "license": "CC-BY-NC-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+      "normalization": "Two extracts in their original order. The bracketed ellipsis marks an omission. The second extract ends at the name of the first study."
+    },
+    {
+      "chunk_id": "vincent-getty-light-change",
+      "artwork_id": "getty-103jnh",
+      "source_id": "vincent-getty-ultra-violet-exhibition",
+      "source_kind": "museum_record",
+      "source_title": "Ultra-Violet: New Light on Van Gogh’s Irises — Getty exhibition record",
+      "source_url": "https://www.getty.edu/art/collection/exhibition/16D4X1",
+      "source_language": "en",
+      "source_locator": "Exhibition Details, sentence beginning “Lastly”.",
+      "excerpt": "Lastly, the exhibition reveals how light has irrevocably changed some of the colors in Irises.",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "J. Paul Getty Museum, Museum Collection exhibition record 16D4X1.",
+      "normalization": "One sentence from the exhibition description. Formatting removed."
+    },
+    {
+      "chunk_id": "vincent-getty-faded-red",
+      "artwork_id": "getty-103jnh",
+      "source_id": "vincent-getty-search-for-violet",
+      "source_kind": "museum_record",
+      "source_title": "Vincent van Gogh, Irises: the search for violet — Getty Conversations",
+      "source_url": "https://smarthistory.org/vincent-van-gogh-irises-the-search-for-violet-getty-conversations/",
+      "source_language": "en",
+      "source_locator": "English transcript, Devi Ormond’s first response, starting at 00:20.8.",
+      "excerpt": "considerable fading of a particular red pigment called geranium lake. And that geranium lake was used with the blues to create wonderful violet colors.",
+      "license": "CC-BY-NC-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "attribution": "Devi Ormond, Beth Harris and the J. Paul Getty Museum, Getty Conversations (Smarthistory, 18 September 2024). Speaker: Getty paintings conservator Devi Ormond.",
+      "normalization": "Continuous extract starting within a sentence. Speaker label and timestamp supplied in the locator."
+    }
+  ]
+}
