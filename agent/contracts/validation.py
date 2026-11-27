@@ -27,8 +27,8 @@ def check_run_request(run: dict, manifest) -> dict:
     return validate_run_context(run, manifest, validator=_VALIDATOR)
 
 
-def _projection(definition: str, value: dict) -> dict:
-    properties = _VALIDATOR.schema(definition)["$defs"][definition]["properties"]
+def _projection(definition: str, value: dict, validator=_VALIDATOR) -> dict:
+    properties = validator.schema(definition)["$defs"][definition]["properties"]
     return {key: value[key] for key in properties if key in value}
 
 
@@ -53,14 +53,14 @@ def _valid_attribution(record: dict) -> bool:
     return record["attribution"] == museum and record["license"] != "In Copyright"
 
 
-def check_run_result(run: dict, result: dict) -> dict:
+def check_run_result(run: dict, result: dict, *, validator=_VALIDATOR, manifest=None) -> dict:
     """Validate a result against supplied snapshots without advancing state.
 
     Call check_run_request at admission. Source hash/catalog reconstruction and
     current-revision/deadline guards belong to their respective owners.
     """
-    _VALIDATOR.validate("RunRequest", run)
-    _VALIDATOR.validate("RunResult", result)
+    validator.validate("RunRequest", run)
+    validator.validate("RunResult", result)
     state = run["conversation_state"]
     _check(result["scope"] == run["scope"])
     _check(result["conversation_update"]["base_revision"] == state["revision"])
@@ -88,17 +88,32 @@ def check_run_result(run: dict, result: dict) -> dict:
     licenses = {"CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
                 "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
                 "In Copyright": "https://rightsstatements.org/vocab/InC/1.0/"}
+    if manifest is not None:
+        # v3 validates all URLs, fields, rights and exact excerpts against the
+        # trusted scope's manifest, including gallery-only guide conversations.
+        manifest.validate_candidates(run["scope"]["artwork_id"], run["scope"]["dataset_version"],
+                                     evidence, limit=8)
     for record in evidence:
         _check(record["chunk_id"] not in by_id and record["artwork_id"] == run["scope"]["artwork_id"]
                and "kind" not in record and "fact_id" not in record
-               and _source_url(record["source_url"])
-               and licenses[record["license"]] == record["license_url"]
-               and _valid_attribution(record))
-        by_id[record["chunk_id"]] = _projection("Evidence", record)
+               and (manifest is not None or (_source_url(record["source_url"])
+                    and licenses.get(record["license"]) == record["license_url"]
+                    and _valid_attribution(record))))
+        by_id[record["chunk_id"]] = _projection("Evidence", record, validator)
     cached = state["verified_evidence"]
     _check(result["reused_chunk_ids"] == [record["chunk_id"] for record in cached])
+    cached_ids = [r["chunk_id"] for r in cached]
+    if "conversation_mode" in run["scope"]:
+        retained = [identifier for identifier in cached_ids if identifier in by_id]
+        new_count = len(by_id) - len(retained)
+        # Direct or cached responses may not introduce fresh records. Eviction
+        # is authorized only to make room for actual bounded tool lookups.
+        _check(new_count <= 2 * len(queries))
+        _check(len(cached) - len(retained) == max(0, len(cached) + new_count - 8))
+        _check(list(by_id)[:len(retained)] == retained)
     for record in cached:
-        _check(by_id.get(record["chunk_id"]) == _projection("Evidence", record))
+        if "conversation_mode" not in run["scope"] or record["chunk_id"] in by_id:
+            _check(by_id.get(record["chunk_id"]) == _projection("Evidence", record, validator))
 
     # Reconstruct only a validation envelope, not a claim about the model's
     # original route. The C validator checks parts, language, sources and pending.
@@ -123,13 +138,13 @@ def check_run_result(run: dict, result: dict) -> dict:
         decision = ({"action": "finish", "results": parts, "memory_update": memory} if parts else
                     {"action": "clarify", "text": result["answer"]["text"], "memory_update": memory})
     answer, expected_parts, expected_memory = assemble_answer(
-        run, plan, decision, evidence, result["catalog_snapshot"], _VALIDATOR)
-    _check(_projection_answer(answer) == _projection_answer(result["answer"]))
+        run, plan, decision, evidence, result["catalog_snapshot"], validator)
+    _check(_projection_answer(answer, validator) == _projection_answer(result["answer"], validator))
     _check(expected_parts == parts and expected_memory == memory)
     return deepcopy(result)
 
 
-def _projection_answer(answer: dict) -> dict:
+def _projection_answer(answer: dict, validator=_VALIDATOR) -> dict:
     return {"status": answer["status"], "text": answer["text"],
-            "citations": [_projection("CatalogFact" if item.get("kind") == "catalog" else "Evidence", item)
+            "citations": [_projection("CatalogFact" if item.get("kind") == "catalog" else "Evidence", item, validator)
                           for item in answer["citations"]]}

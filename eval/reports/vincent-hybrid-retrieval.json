@@ -1,0 +1,1547 @@
+{
+  "stage": "retrieval",
+  "planned_turns": 13,
+  "inputs_sha256": {
+    "vincent_hybrid_cases.json": "3e912d96ac580af706ac47607115943437917e881c690c8f660928c58194e111",
+    "getty-gallery-v2.json": "75b238885db065f7de6e3d3f6c6d7cdb735c47618c9a7ef939e45ee3718d80d9",
+    "vincent-irises-v1.json": "f8eda43a1da4ca6f1b5df00174be6bd55ca4b023b97bb18920c8298bc7f95dc4"
+  },
+  "scope": {
+    "artwork_id": "getty-103jnh",
+    "dataset_version": "getty-gallery-v2",
+    "conversation_mode": "vincent",
+    "reference_pack_version": "vincent-irises-v1"
+  },
+  "probes": [
+    {
+      "case": "letter-and-laboratory",
+      "turn": 1,
+      "input": "visitor_verbatim",
+      "query": "Vincent, what word did you put down for the color of those flowers?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-772-garden-colors"
+      ],
+      "ids": [
+        "vincent-getty-faded-red",
+        "vincent-772-garden-colors"
+      ],
+      "lexical": [
+        "vincent-getty-faded-red",
+        "getty-103jnh-description-03",
+        "getty-103jnh-guide-01",
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature",
+        "getty-103jnh-description-01",
+        "getty-103jnh-guide-02",
+        "vincent-getty-light-change",
+        "getty-103jnh-description-02"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.5473234881228152
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.5426580240110624
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.438309394904401
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.4175357468910962
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.40309016681614646
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.3959115097062617
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.3385439252510989
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.338117142064713
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.3057049821310169
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.22497223677874661
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.20864287820697722
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "letter-and-laboratory",
+      "turn": 1,
+      "input": "human_standalone",
+      "query": "What color did Vincent describe the irises as in his letter?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-772-garden-colors"
+      ],
+      "ids": [
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature"
+      ],
+      "lexical": [
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.5911234696250769
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.5428686524051568
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "letter-and-laboratory",
+      "turn": 2,
+      "input": "visitor_verbatim",
+      "query": "What did later researchers find in the paint that accounts for the difference I see now?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-getty-faded-red"
+      ],
+      "ids": [
+        "getty-103jnh-guide-02",
+        "vincent-getty-faded-red"
+      ],
+      "lexical": [
+        "getty-103jnh-guide-02",
+        "getty-103jnh-guide-01"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.37687861983274334
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.36620378710947327
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.3299147541846164
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.3266633393521698
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.32380716740215865
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.2937042888247309
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.2836898169797309
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.2715340685732487
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.24112583974851431
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.23010276194256843
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.2281562978627803
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "letter-and-laboratory",
+      "turn": 2,
+      "input": "human_standalone",
+      "query": "What did Getty researchers discover about the paint mixture that explains the changed color of Irises?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-getty-faded-red"
+      ],
+      "ids": [
+        "vincent-getty-light-change",
+        "vincent-getty-faded-red"
+      ],
+      "lexical": [
+        "vincent-getty-light-change",
+        "vincent-getty-faded-red",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.6287478029298864
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.6067833102979934
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.5069357525027554
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.40965249244989216
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.3019298164958117
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.2831712913030288
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.19382059066843557
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "garden-and-shipment",
+      "turn": 1,
+      "input": "visitor_verbatim",
+      "query": "In the note about your garden subjects, what were you working on besides these flowers?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-772-garden-colors"
+      ],
+      "ids": [
+        "vincent-772-garden-colors",
+        "getty-103jnh-guide-01"
+      ],
+      "lexical": [
+        "getty-103jnh-description-01",
+        "getty-103jnh-guide-01",
+        "getty-103jnh-description-03",
+        "vincent-772-garden-colors",
+        "getty-103jnh-guide-02",
+        "vincent-789-studies-after-nature"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.5118846487441723
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.42663677297439406
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.36176511903469916
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.35615098757518315
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.33272953778952075
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.33205189058342716
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.3163274311165899
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.3118958130080006
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.23325236393035126
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.23052972550211462
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.1838435037837472
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "garden-and-shipment",
+      "turn": 1,
+      "input": "human_standalone",
+      "query": "What other subject from the garden did Vincent mention alongside the irises in his letter?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-772-garden-colors"
+      ],
+      "ids": [
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature"
+      ],
+      "lexical": [
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.697433205110953
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.6313413048052184
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "garden-and-shipment",
+      "turn": 2,
+      "input": "visitor_verbatim",
+      "query": "Later, when you sent the work to Theo, does the number in the letter count paintings of this flower alone?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-789-studies-after-nature"
+      ],
+      "ids": [
+        "vincent-789-studies-after-nature",
+        "vincent-772-garden-colors"
+      ],
+      "lexical": [
+        "vincent-789-studies-after-nature",
+        "vincent-772-garden-colors"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.6206676373348124
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.608040879850344
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "garden-and-shipment",
+      "turn": 2,
+      "input": "human_standalone",
+      "query": "In the letter enclosing Irises, what does the number of studies after nature refer to?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-789-studies-after-nature"
+      ],
+      "ids": [
+        "vincent-789-studies-after-nature",
+        "vincent-772-garden-colors"
+      ],
+      "lexical": [
+        "vincent-789-studies-after-nature",
+        "vincent-772-garden-colors"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.5605812332330988
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.4459946456574543
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "who-said-what",
+      "turn": 1,
+      "input": "visitor_verbatim",
+      "query": "Whose words were 'full of air and life' when this was being exhibited?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-description-02"
+      ],
+      "ids": [
+        "getty-103jnh-description-02",
+        "vincent-772-garden-colors"
+      ],
+      "lexical": [
+        "getty-103jnh-description-02"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.39154730304758306
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.3835919322098565
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.36536587958177164
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.35701943986193974
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.3411454898742369
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.3341887859750413
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.32470795100690014
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.3149941335737363
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.28852378829167136
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.18986532087967345
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.15621068684762332
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "who-said-what",
+      "turn": 1,
+      "input": "human_standalone",
+      "query": "Who described Irises as full of air and life in connection with its exhibition?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-description-02"
+      ],
+      "ids": [
+        "vincent-getty-light-change",
+        "vincent-772-garden-colors"
+      ],
+      "lexical": [
+        "getty-103jnh-description-02",
+        "vincent-getty-light-change",
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature",
+        "vincent-getty-faded-red",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.5665892024071755
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.5569133090406545
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.5171332233001465
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.47742042701398524
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.45550345369018624
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.4469701751452039
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.4366200178127229
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.34975344986562357
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.3087133077568538
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.2885411230621052
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.25421394350721843
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": false,
+        "all_required": false,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "who-said-what",
+      "turn": 2,
+      "input": "visitor_verbatim",
+      "query": "And was it you or him who submitted it for the show?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-description-02"
+      ],
+      "ids": [
+        "getty-103jnh-description-02"
+      ],
+      "lexical": [
+        "getty-103jnh-description-02"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.2337108304635704
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.21430711084465076
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.20999797997574823
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.15942722732729703
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.15332982695137806
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.14414298289669697
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.13295531125010648
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.12777081622060402
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.1243408809819324
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.10026781400580907
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.041485293925898684
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "who-said-what",
+      "turn": 2,
+      "input": "human_standalone",
+      "query": "Who submitted Irises to the Salon des Indépendants?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-description-02"
+      ],
+      "ids": [
+        "vincent-772-garden-colors",
+        "getty-103jnh-description-02"
+      ],
+      "lexical": [
+        "getty-103jnh-description-02",
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature",
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.47807259035358923
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.4357710978196496
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.43106088469180076
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.42334181458177395
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.4193121963397328
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.40994497120428114
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.40093219975849603
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.3436827400332067
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.3116224436919711
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.3104296813353102
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.15919186634779567
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "white-flower",
+      "turn": 2,
+      "input": "visitor_verbatim",
+      "query": "Is there anything to show you actually meant it as a symbol of courage?",
+      "expected": "gap",
+      "required_ids": [],
+      "ids": [],
+      "lexical": [],
+      "dense": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.1922662491739662
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.1826218924453596
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.16566777792126433
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.1588926435291104
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.15496055624149804
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.15093694418553855
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.14174689543589994
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.13619702923552615
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.13603827246950334
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.12259992416052437
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.09291635176343088
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "white-flower",
+      "turn": 2,
+      "input": "human_standalone",
+      "query": "What evidence documents an intention to make the white iris symbolize courage?",
+      "expected": "gap",
+      "required_ids": [],
+      "ids": [
+        "getty-103jnh-guide-01",
+        "getty-103jnh-guide-02"
+      ],
+      "lexical": [
+        "getty-103jnh-guide-01",
+        "getty-103jnh-guide-02"
+      ],
+      "dense": [
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.4279433000523772
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.3767218530058524
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.36049244737527486
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.3545709804198501
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.34831733028092815
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.32480726374014196
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.31668235472848444
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.2647037588566008
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.22335677835004714
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.20680342565123871
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.14635871794710842
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "looking-and-material",
+      "turn": 1,
+      "input": "visitor_verbatim",
+      "query": "I'd like to try a little experiment with the white bloom while I stand here. What could I do?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-guide-01"
+      ],
+      "ids": [
+        "getty-103jnh-guide-01"
+      ],
+      "lexical": [
+        "getty-103jnh-guide-01"
+      ],
+      "dense": [
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.43839843650906396
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.2957952794727641
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.27128725348528115
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.2669490354403465
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.24341751511808407
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.22557363094686467
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.21828583313995562
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.18096909919622803
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.16132877683609842
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.1467154911619038
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.1304686664950007
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "looking-and-material",
+      "turn": 1,
+      "input": "human_standalone",
+      "query": "What looking exercise does MuseBridge suggest using the single white iris?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-guide-01"
+      ],
+      "ids": [
+        "getty-103jnh-guide-01",
+        "getty-103jnh-guide-02"
+      ],
+      "lexical": [
+        "getty-103jnh-guide-01",
+        "getty-103jnh-guide-02"
+      ],
+      "dense": [
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.6051189525789964
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.371409555148572
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "looking-and-material",
+      "turn": 2,
+      "input": "visitor_verbatim",
+      "query": "What is this painted on, by the way?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-medium"
+      ],
+      "ids": [
+        "getty-103jnh-medium",
+        "getty-103jnh-dimensions"
+      ],
+      "lexical": [
+        "getty-103jnh-medium"
+      ],
+      "dense": [
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.4353377112350214
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.36678360710688973
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.3516869685073084
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.3385652463603115
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.3196241302580287
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.2925830307036634
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.24972572700624882
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.24768147962931053
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.24760421577421113
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.2391202851666702
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.17698938131512243
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "looking-and-material",
+      "turn": 2,
+      "input": "human_standalone",
+      "query": "What is the medium and support for Getty’s Irises?",
+      "expected": "supported",
+      "required_ids": [
+        "getty-103jnh-medium"
+      ],
+      "ids": [
+        "vincent-getty-light-change",
+        "vincent-getty-faded-red"
+      ],
+      "lexical": [
+        "getty-103jnh-medium",
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.5606516604419794
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.5379482548726213
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.4623702568354472
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.41211184351952074
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.31956007359310973
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.312538226650322
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.26634014874463535
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": false,
+        "all_required": false,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "conservation-limits",
+      "turn": 1,
+      "input": "visitor_verbatim",
+      "query": "Did the exhibition say that the effects of light on this picture were reversible?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-getty-light-change"
+      ],
+      "ids": [
+        "vincent-getty-light-change",
+        "getty-103jnh-description-02"
+      ],
+      "lexical": [
+        "vincent-getty-light-change",
+        "getty-103jnh-description-02",
+        "getty-103jnh-guide-02"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.48261755164038306
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.3478755501292518
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.27337468694391753
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.24300658894073915
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.24148019155487976
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.2410323082384683
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.23637460091333445
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.23384890572210934
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.22171075024555661
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.19602047837417816
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.1880992190943511
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "conservation-limits",
+      "turn": 1,
+      "input": "human_standalone",
+      "query": "What did the Getty exhibition report about whether exposure to light permanently changed colors in Irises?",
+      "expected": "supported",
+      "required_ids": [
+        "vincent-getty-light-change"
+      ],
+      "ids": [
+        "vincent-getty-light-change",
+        "vincent-getty-faded-red"
+      ],
+      "lexical": [
+        "vincent-getty-light-change",
+        "vincent-getty-faded-red",
+        "getty-103jnh-description-02",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.6977114483221145
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.5902954924282717
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.4787257912626452
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.404059519396157
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.2781178701435067
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.2626471543069135
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.21289150381639427
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "any_required": true,
+        "all_required": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "conservation-limits",
+      "turn": 2,
+      "input": "visitor_verbatim",
+      "query": "Could I reconstruct it by using exactly a third of each color?",
+      "expected": "gap",
+      "required_ids": [],
+      "ids": [
+        "getty-103jnh-description-03",
+        "getty-103jnh-description-01"
+      ],
+      "lexical": [
+        "getty-103jnh-description-03",
+        "getty-103jnh-description-01",
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.2857619165656966
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.27731718446438913
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.24749182344250722
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.2451404066820703
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.23898778688092492
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.21485243105236634
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.20739035909308276
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.18813053463352009
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.17378084100685307
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.15392150894139733
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.11387528964325336
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "conservation-limits",
+      "turn": 2,
+      "input": "human_standalone",
+      "query": "What are the exact pigment mixing proportions for the original violet irises?",
+      "expected": "gap",
+      "required_ids": [],
+      "ids": [
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change"
+      ],
+      "lexical": [
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change",
+        "vincent-772-garden-colors",
+        "vincent-789-studies-after-nature",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.5563114434712867
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.4913390183394326
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.4567436099457427
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.450954799058539
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.42047510841545427
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.399775335083759
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.3685262376768968
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.2564113259122981
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.243434967089315
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.21692928938378409
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.17991518797179556
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "unrelated",
+      "turn": 1,
+      "input": "visitor_verbatim",
+      "query": "What's tomorrow's winning lottery number?",
+      "expected": "unrelated",
+      "required_ids": [],
+      "ids": [
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change"
+      ],
+      "lexical": [
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.12134727753180519
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.10760094574041827
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.1016706750715729
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.09528123296818171
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.07323704801235159
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.06475928981807978
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.05682608813876364
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.056706348532674374
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.053834133035199794
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.052714497740671135
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.04835154570712188
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "unrelated_false_return": true,
+        "canonical_and_scoped": true
+      }
+    },
+    {
+      "case": "unrelated",
+      "turn": 1,
+      "input": "human_standalone",
+      "query": "What is tomorrow’s winning lottery number?",
+      "expected": "unrelated",
+      "required_ids": [],
+      "ids": [
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change"
+      ],
+      "lexical": [
+        "vincent-getty-faded-red",
+        "vincent-getty-light-change",
+        "getty-103jnh-description-01",
+        "getty-103jnh-description-03"
+      ],
+      "dense": [
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "cosine": 0.13057587088302222
+        },
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "cosine": 0.1103395813969443
+        },
+        {
+          "chunk_id": "getty-103jnh-dimensions",
+          "cosine": 0.09165765363329836
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "cosine": 0.09003168984698773
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "cosine": 0.0713076418702468
+        },
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "cosine": 0.0697667099632054
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "cosine": 0.06755007720007236
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "cosine": 0.05240543169194731
+        },
+        {
+          "chunk_id": "getty-103jnh-description-03",
+          "cosine": 0.05202205130796637
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "cosine": 0.04517946627887916
+        },
+        {
+          "chunk_id": "getty-103jnh-description-01",
+          "cosine": 0.040860635145171756
+        }
+      ],
+      "strategy": "openai-hybrid-v1",
+      "checks": {
+        "unrelated_false_return": true,
+        "canonical_and_scoped": true
+      }
+    }
+  ],
+  "isolation": [
+    {
+      "mode": "guide",
+      "artwork_id": "getty-103jnh",
+      "ids": [],
+      "passed": true
+    },
+    {
+      "mode": "guide",
+      "artwork_id": "getty-103qt5",
+      "ids": [],
+      "passed": true
+    },
+    {
+      "incorrect_vincent_scope_field": "artwork_id",
+      "passed": true
+    },
+    {
+      "incorrect_vincent_scope_field": "conversation_mode",
+      "passed": true
+    },
+    {
+      "incorrect_vincent_scope_field": "dataset_version",
+      "passed": true
+    },
+    {
+      "incorrect_vincent_scope_field": "reference_pack_version",
+      "passed": true
+    }
+  ],
+  "summary": {
+    "visitor_verbatim": {
+      "planned": 12,
+      "errors": 0,
+      "any_required": {
+        "positive": 9,
+        "observed": 9
+      },
+      "all_required": {
+        "positive": 9,
+        "observed": 9
+      },
+      "unrelated_false_return": {
+        "positive": 1,
+        "observed": 1
+      },
+      "canonical_and_scoped": {
+        "positive": 12,
+        "observed": 12
+      }
+    },
+    "human_standalone": {
+      "planned": 12,
+      "errors": 0,
+      "any_required": {
+        "positive": 7,
+        "observed": 9
+      },
+      "all_required": {
+        "positive": 7,
+        "observed": 9
+      },
+      "unrelated_false_return": {
+        "positive": 1,
+        "observed": 1
+      },
+      "canonical_and_scoped": {
+        "positive": 12,
+        "observed": 12
+      }
+    }
+  }
+}

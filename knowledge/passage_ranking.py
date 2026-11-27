@@ -83,7 +83,18 @@ def _within_artwork(query, work):
     return " ".join(query.split())
 
 
-def rank(dataset, artwork_id, query, vector_index):
+def _vincent_kinds(intent):
+    kinds = set()
+    if _OFFICIAL.search(_VENUE.sub(" ", intent)):
+        kinds.add("museum_record")
+    if _GUIDE.search(intent) or _TEAM.search(intent):
+        kinds.add("guide_note")
+    if re.search(r"\b(?:letters?|correspondence|(?:wrote|write|writing|written) to)\b", intent):
+        kinds.add("artist_letter")
+    return kinds or {"artist_letter", "guide_note", "museum_record"}
+
+
+def rank(dataset, artwork_id, query, vector_index, *, artist_conversation=False):
     text = _plain(query)
     active = dataset.artworks[artwork_id]
     intent = _within_artwork(text, active)
@@ -92,9 +103,9 @@ def rank(dataset, artwork_id, query, vector_index):
     # A comparison is outside a single-artwork search.
     if other_work:
         return [], [], []
-    source_kind = _source_kind(intent)
+    kinds = _vincent_kinds(intent) if artist_conversation else {_source_kind(intent)}
     chunks = [chunk for chunk in dataset.chunks if chunk["artwork_id"] == artwork_id
-              and dataset.sources[chunk["source_id"]]["source_kind"] == source_kind]
+              and dataset.sources[chunk["source_id"]]["source_kind"] in kinds]
     query_words = _tokens(intent)
     if re.search(r"\b(where|location|place)\b", intent):
         query_words.add("setting")
@@ -118,7 +129,7 @@ def rank(dataset, artwork_id, query, vector_index):
         matched = query_words & (tags | words)
         weight = sum((3 if term in tags else 1) * (1 + log((1 + len(chunks)) / (1 + frequencies[term])))
                      for term in matched)
-        if weight or source_kind == "guide_note":
+        if weight or kinds == {"guide_note"}:
             scored.append((-weight, chunk["chunk_id"]))
     lexical = [key for _, key in sorted(scored)]
     if not vector_index or not chunks:

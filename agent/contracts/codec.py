@@ -1,9 +1,11 @@
 """Strict detached wire decoding using C's canonical v2 schema validator."""
 from copy import deepcopy
 import json
+from functools import lru_cache
+from pathlib import Path
 from typing import cast
 
-from agent.runtime.validation import ContractViolation, strict_json
+from agent.runtime.validation import ContractValidator, ContractViolation, strict_json
 from agent.runtime.validation_v2 import ContractValidatorV2
 from . import models
 from .errors import ContractFailure
@@ -15,6 +17,17 @@ STATE_VERSION = "conversation-state-v1"
 PROFILE_ID = "local-ollama-v2"
 PUBLIC_BODY_LIMIT = 8 * 1024
 PRIVATE_BODY_LIMIT = 256 * 1024
+
+
+@lru_cache(maxsize=1)
+def v3_validator():
+    """Apply the shared v3 contract delta once for all private operations."""
+    import jsonpatch
+
+    directory = Path(__file__).resolve().parents[2] / "docs" / "contracts"
+    base = strict_json((directory / "agent-v2.schema.json").read_bytes())
+    patch = strict_json((directory / "agent-v3.patch.json").read_bytes())
+    return ContractValidator(document=jsonpatch.apply_patch(base, patch))
 
 
 class ContractCodec:
@@ -78,3 +91,10 @@ class ContractCodec:
         if version != PUBLIC_VERSION:
             raise ContractFailure(409, "agent_contract_mismatch")
         return validated
+
+
+class ContractCodecV3(ContractCodec):
+    """Codec for the private role-aware Agent routes."""
+
+    def __init__(self):
+        self.validator = v3_validator()

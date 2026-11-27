@@ -5,6 +5,7 @@ The root README introduces the project. This directory provides entry points to 
 | Guide | Purpose |
 | --- | --- |
 | [Talk with Vincent interfaces](vincent-contract.md) | Agreed implementation target for roles, session isolation, Agent execution, sources and ownership |
+| [Vincent hybrid retrieval and evaluation](vincent-hybrid.md) | Private v3 setup, evidence selection and real Qwen results for Getty’s *Irises* |
 | [Phone voice and playback](vincent-voice.md) | Mobile capture, local Whisper, cloud speech synthesis, frontend states and real-device checks |
 | [Vincent voice setup](vincent-voice-setup.md) | A's implementation status, local startup with HTTPS tunnel and Whisper, configuration and the browser controller for B |
 | [Getty gallery](getty-gallery.md) | Run the 20-work illustrated collection and verify QR codes, answers and citations |

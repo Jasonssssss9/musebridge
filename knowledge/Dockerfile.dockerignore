@@ -1,4 +1,4 @@
-# Limit the build context to the retrieval package, dependencies and released seed.
+# Limit the build context to the retrieval package, dependencies and released evidence.
 **
 !knowledge/
 knowledge/**
@@ -7,3 +7,8 @@ knowledge/**
 !knowledge/data/
 knowledge/data/**
 !knowledge/data/aic-seed-v0.1.json
+!knowledge/data/getty-gallery-v2.json
+!knowledge/data/getty-gallery-v2.sha256
+!knowledge/data/reference-packs/
+!knowledge/data/reference-packs/vincent-irises-v1.json
+!knowledge/data/reference-packs/vincent-irises-v1.sha256

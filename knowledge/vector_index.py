@@ -87,7 +87,7 @@ def _parts(dataset: Dataset) -> tuple[list[Passage], str]:
         source = dataset.sources[chunk["source_id"]]
         sources.append((chunk_id, source["source_id"], source["source_url"],
                         chunk["source_locator"], chunk["excerpt"]))
-        for part in splitter.split_text(chunk["excerpt"]):
+        for part in splitter.split_text(chunk.get("index_text", chunk["excerpt"])):
             # A single unbroken word can exceed the word splitter's target size.
             pieces = character_splitter.split_text(part) if len(part) > CHUNK_SIZE else [part]
             passages.extend((artwork_id, chunk_id, text) for text in pieces)

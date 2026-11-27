@@ -116,7 +116,9 @@ def validate_run_context(
 def _base_context(run: dict[str, Any]) -> dict[str, Any]:
     """Project a validated run, allowing an already fitted recent-turn window."""
     state, context = run["conversation_state"], run["context"]
+    role_scope = {"scope": run["scope"]} if run["contract_version"] == "agent-run-v3" else {}
     return deepcopy({
+        **role_scope,
         "original_question": run["question"],
         "artwork_context": {"artwork_title": context["artwork_title"], "artist": context["artist"]},
         "catalog_facts": context["catalog_facts"],
@@ -211,6 +213,26 @@ def fit_model_call(
             or type(output_tokens) is not int or output_tokens <= 0
             or type(safety_tokens) is not int or safety_tokens < 0):
         raise ValueError("Context sizing configuration must use positive integer limits.")
+    if operation == "plan" and payload.get("scope", {}).get("conversation_mode") == "vincent":
+        # Guide the decoder with the same identities and route constraints that
+        # are already mandatory in this particular run. Validate the original
+        # contract and its cross-field relationships after generation as well.
+        output_schema = deepcopy(output_schema)
+        output_schema["x-vincent-planning"] = True
+        definitions = output_schema["$defs"]
+        definitions["LanguageDecision"]["properties"]["answer_language"] = {"type": "string", "const": "en"}
+        allowed_ids = [fact["fact_id"] for fact in payload["catalog_facts"]]
+        for variant in definitions["RequestResult"]["oneOf"]:
+            slots = variant["properties"]["citation_ids"]
+            if slots["minItems"]:
+                slots["items"] = {"type": "string", "enum": allowed_ids}
+        unavailable = set()
+        if not payload["cached_evidence"]:
+            unavailable.add("#/$defs/ContextAnswerPlan")
+        if payload["complete_scope"]:
+            unavailable.add("#/$defs/RetrievePlan")
+        plan = definitions["Plan"]
+        plan["oneOf"] = [arm for arm in plan["oneOf"] if arm["$ref"] not in unavailable]
     if operation in {"assess", "final"} and "FinishDecision" in output_schema.get("$defs", {}):
         output_schema = _finish_schema_for_requests(output_schema, payload["requests"])
     if "MemoryUpdate" in output_schema.get("$defs", {}):

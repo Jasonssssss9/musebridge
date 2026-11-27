@@ -1,0 +1,2571 @@
+{
+  "stage": "workflow",
+  "planned_turns": 13,
+  "inputs_sha256": {
+    "vincent_hybrid_cases.json": "3e912d96ac580af706ac47607115943437917e881c690c8f660928c58194e111",
+    "getty-gallery-v2.json": "75b238885db065f7de6e3d3f6c6d7cdb735c47618c9a7ef939e45ee3718d80d9",
+    "vincent-irises-v1.json": "f8eda43a1da4ca6f1b5df00174be6bd55ca4b023b97bb18920c8298bc7f95dc4"
+  },
+  "scope": {
+    "artwork_id": "getty-103jnh",
+    "dataset_version": "getty-gallery-v2",
+    "conversation_mode": "vincent",
+    "reference_pack_version": "vincent-irises-v1"
+  },
+  "turns": [
+    {
+      "case": "letter-and-laboratory",
+      "turn": 1,
+      "trace": "vincent-letter-and-laboratory-1",
+      "question": "Vincent, what word did you put down for the color of those flowers?",
+      "expected": "supported",
+      "review": "Identify violet in Vincent’s own description. If naming a recipient, the passage addresses Theo. The memory should retain the artist’s wording.",
+      "input_revision": 0,
+      "input_memory": "",
+      "input_cache_ids": [],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "answered",
+          "text": "When I wrote to Theo on May 9, 1889, I described the flowers as 'violet irises' and a 'lilac bush' that I was painting in the garden.",
+          "citations": [
+            {
+              "chunk_id": "vincent-772-garden-colors",
+              "artwork_id": "getty-103jnh",
+              "source_id": "vincent-letter-772",
+              "source_kind": "artist_letter",
+              "source_title": "Vincent to Theo and Jo, 9 May 1889 (letter 772)",
+              "source_url": "https://vangoghletters.org/vg/letters/let772/letter.html",
+              "source_language": "en",
+              "source_locator": "Saint-Rémy, section addressed to Theo, English translation p.trans.6. Editorial note 4 identifies Irises (F 608 / JH 1691).",
+              "excerpt": "I have two others on the go — violet irises and a lilac bush. Two subjects taken from the garden.",
+              "license": "CC-BY-NC-SA-4.0",
+              "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+              "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+              "normalization": "English edition wording. Editorial note markers omitted."
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "what word did you put down for the color of those flowers",
+            "intent": "Identify the specific color word Vincent used in his letter regarding the irises.",
+            "kind": "artwork_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "When I wrote to Theo on May 9, 1889, I described the flowers as 'violet irises' and a 'lilac bush' that I was painting in the garden.",
+            "citation_ids": [
+              "vincent-772-garden-colors"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "vincent-772-garden-colors",
+            "artwork_id": "getty-103jnh",
+            "source_id": "vincent-letter-772",
+            "source_kind": "artist_letter",
+            "source_title": "Vincent to Theo and Jo, 9 May 1889 (letter 772)",
+            "source_url": "https://vangoghletters.org/vg/letters/let772/letter.html",
+            "source_language": "en",
+            "source_locator": "Saint-Rémy, section addressed to Theo, English translation p.trans.6. Editorial note 4 identifies Irises (F 608 / JH 1691).",
+            "excerpt": "I have two others on the go — violet irises and a lilac bush. Two subjects taken from the garden.",
+            "license": "CC-BY-NC-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+            "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+            "normalization": "English edition wording. Editorial note markers omitted."
+          },
+          {
+            "chunk_id": "vincent-789-studies-after-nature",
+            "artwork_id": "getty-103jnh",
+            "source_id": "vincent-letter-789",
+            "source_kind": "artist_letter",
+            "source_title": "Vincent to Theo, 14 or 15 July 1889 (letter 789)",
+            "source_url": "https://vangoghletters.org/vg/letters/let789/letter.html",
+            "source_language": "en",
+            "source_locator": "Saint-Rémy, English translation p.trans.8 and the first item of p.trans.10. Editorial note 9 identifies Irises (F 608 / JH 1691).",
+            "excerpt": "I’m also enclosing another 7 studies which are dry but which are studies after nature rather than subjects for paintings. […] The irises",
+            "license": "CC-BY-NC-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+            "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+            "normalization": "Two extracts in their original order. The bracketed ellipsis marks an omission. The second extract ends at the name of the first study."
+          }
+        ],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What color word did Vincent use in his letter to describe the irises?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "color word for irises",
+            "continuity_summary": "Visitor asked for the specific color word Vincent used in his letter for the irises. Evidence from letter 772 (May 9, 1889) supports that Vincent called them 'violet irises' and a 'lilac bush'. The question is resolved.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "all_required_cited": true,
+        "status": true
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending",
+      "all_required_available": true
+    },
+    {
+      "case": "letter-and-laboratory",
+      "turn": 2,
+      "trace": "vincent-letter-and-laboratory-2",
+      "question": "What did later researchers find in the paint that accounts for the difference I see now?",
+      "expected": "supported",
+      "review": "Attribute the later finding to Getty and connect fading red to the original mixture with blue. If light exposure is mentioned, check the exhibit record too. Keep the visitor’s observation apart from the conservator’s finding in memory.",
+      "input_revision": 1,
+      "input_memory": "Visitor asked for the specific color word Vincent used in his letter for the irises. Evidence from letter 772 (May 9, 1889) supports that Vincent called them 'violet irises' and a 'lilac bush'. The question is resolved.",
+      "input_cache_ids": [
+        "vincent-772-garden-colors"
+      ],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "answered",
+          "text": "Getty’s conservators found that considerable fading of a particular red pigment called geranium lake has occurred. That geranium lake was used with the blues to create wonderful violet colors, and its loss accounts for the difference you see now.",
+          "citations": [
+            {
+              "chunk_id": "vincent-getty-faded-red",
+              "artwork_id": "getty-103jnh",
+              "source_id": "vincent-getty-search-for-violet",
+              "source_kind": "museum_record",
+              "source_title": "Vincent van Gogh, Irises: the search for violet — Getty Conversations",
+              "source_url": "https://smarthistory.org/vincent-van-gogh-irises-the-search-for-violet-getty-conversations/",
+              "source_language": "en",
+              "source_locator": "English transcript, Devi Ormond’s first response, starting at 00:20.8.",
+              "excerpt": "considerable fading of a particular red pigment called geranium lake. And that geranium lake was used with the blues to create wonderful violet colors.",
+              "license": "CC-BY-NC-SA-4.0",
+              "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+              "attribution": "Devi Ormond, Beth Harris and the J. Paul Getty Museum, Getty Conversations (Smarthistory, 18 September 2024). Speaker: Getty paintings conservator Devi Ormond.",
+              "normalization": "Continuous extract starting within a sentence. Speaker label and timestamp supplied in the locator."
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What did later researchers find in the paint that accounts for the difference I see now?",
+            "intent": "Retrieve the specific chemical or physical finding by later researchers that explains the visual difference the visitor observes in the painting.",
+            "kind": "artwork_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "Getty’s conservators found that considerable fading of a particular red pigment called geranium lake has occurred. That geranium lake was used with the blues to create wonderful violet colors, and its loss accounts for the difference you see now.",
+            "citation_ids": [
+              "vincent-getty-faded-red"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "vincent-772-garden-colors",
+            "artwork_id": "getty-103jnh",
+            "source_id": "vincent-letter-772",
+            "source_kind": "artist_letter",
+            "source_title": "Vincent to Theo and Jo, 9 May 1889 (letter 772)",
+            "source_url": "https://vangoghletters.org/vg/letters/let772/letter.html",
+            "source_language": "en",
+            "source_locator": "Saint-Rémy, section addressed to Theo, English translation p.trans.6. Editorial note 4 identifies Irises (F 608 / JH 1691).",
+            "excerpt": "I have two others on the go — violet irises and a lilac bush. Two subjects taken from the garden.",
+            "license": "CC-BY-NC-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+            "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+            "normalization": "English edition wording. Editorial note markers omitted."
+          },
+          {
+            "chunk_id": "vincent-getty-faded-red",
+            "artwork_id": "getty-103jnh",
+            "source_id": "vincent-getty-search-for-violet",
+            "source_kind": "museum_record",
+            "source_title": "Vincent van Gogh, Irises: the search for violet — Getty Conversations",
+            "source_url": "https://smarthistory.org/vincent-van-gogh-irises-the-search-for-violet-getty-conversations/",
+            "source_language": "en",
+            "source_locator": "English transcript, Devi Ormond’s first response, starting at 00:20.8.",
+            "excerpt": "considerable fading of a particular red pigment called geranium lake. And that geranium lake was used with the blues to create wonderful violet colors.",
+            "license": "CC-BY-NC-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+            "attribution": "Devi Ormond, Beth Harris and the J. Paul Getty Museum, Getty Conversations (Smarthistory, 18 September 2024). Speaker: Getty paintings conservator Devi Ormond.",
+            "normalization": "Continuous extract starting within a sentence. Speaker label and timestamp supplied in the locator."
+          },
+          {
+            "chunk_id": "vincent-getty-light-change",
+            "artwork_id": "getty-103jnh",
+            "source_id": "vincent-getty-ultra-violet-exhibition",
+            "source_kind": "museum_record",
+            "source_title": "Ultra-Violet: New Light on Van Gogh’s Irises — Getty exhibition record",
+            "source_url": "https://www.getty.edu/art/collection/exhibition/16D4X1",
+            "source_language": "en",
+            "source_locator": "Exhibition Details, sentence beginning “Lastly”.",
+            "excerpt": "Lastly, the exhibition reveals how light has irrevocably changed some of the colors in Irises.",
+            "license": "CC-BY-4.0",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "J. Paul Getty Museum, Museum Collection exhibition record 16D4X1.",
+            "normalization": "One sentence from the exhibition description. Formatting removed."
+          }
+        ],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [
+          "vincent-772-garden-colors"
+        ],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What did Getty conservators find in the paint of Irises that accounts for the difference the visitor sees now?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 1,
+          "memory": {
+            "active_topic": "chemical change in Irises",
+            "continuity_summary": "Visitor asked about later research findings explaining the visual difference in Irises. Getty conservators found fading of geranium lake pigment, which was mixed with blues to create violet colors. The specific chemical finding is established; the visitor’s personal observation of the difference is accepted as their impression.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "all_required_cited": true,
+        "status": true
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending",
+      "all_required_available": true
+    },
+    {
+      "case": "garden-and-shipment",
+      "turn": 1,
+      "trace": "vincent-garden-and-shipment-1",
+      "question": "In the note about your garden subjects, what were you working on besides these flowers?",
+      "expected": "supported",
+      "review": "Identify the lilac bush as another subject he was working on. Do not put the bush in this painting.",
+      "input_revision": 0,
+      "input_memory": "",
+      "input_cache_ids": [],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "insufficient",
+          "text": "I don't have a specific note from my letters here that lists other garden subjects I was working on besides these irises. I can see why you'd wonder about my other projects, but this guide only invites you to look closely at the irises themselves.",
+          "citations": []
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "In the note about your garden subjects, what were you working on besides these flowers?",
+            "intent": "Identify other garden subjects Vincent worked on besides irises, as mentioned in a specific note.",
+            "kind": "artwork_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "insufficient",
+            "text": "I don't have a specific note from my letters here that lists other garden subjects I was working on besides these irises. I can see why you'd wonder about my other projects, but this guide only invites you to look closely at the irises themselves.",
+            "citation_ids": []
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "getty-103jnh-guide-01",
+            "artwork_id": "getty-103jnh",
+            "source_id": "musebridge-103jnh-guide",
+            "source_kind": "guide_note",
+            "source_title": "MuseBridge Guide — Irises",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "MuseBridge guide 1 — Finding one flower",
+            "excerpt": "Find the single white iris. Cover it briefly with your thumb, then uncover it. Does your eye go there first, or to the cluster of blue petals nearby? Try following the outline of just one blue bloom before looking at the whole bed again.",
+            "license": "In Copyright",
+            "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+            "attribution": "MuseBridge",
+            "normalization": "none"
+          },
+          {
+            "chunk_id": "getty-103jnh-guide-02",
+            "artwork_id": "getty-103jnh",
+            "source_id": "musebridge-103jnh-guide",
+            "source_kind": "guide_note",
+            "source_title": "MuseBridge Guide — Irises",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "MuseBridge guide 2 — Following a leaf",
+            "excerpt": "Trace one long leaf upward from the brown earth. Now trace the outside of a petal. The leaf gives your eye a long, fairly continuous path; the petal makes it change direction several times. Look at the edges of the picture to see where those paths are cut short.",
+            "license": "In Copyright",
+            "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+            "attribution": "MuseBridge",
+            "normalization": "none"
+          }
+        ],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What does the MuseBridge guide note say Vincent was working on besides the irises in his garden?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "Visitor asks about other garden subjects Vincent worked on besides irises, as mentioned in a specific note.",
+            "continuity_summary": "The visitor asks what Vincent was working on besides irises in a specific note. The available evidence consists only of guide notes inviting visual observation of the irises, which do not mention other garden subjects or a specific note listing them. The specific question about other garden subjects remains open.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "all_required_cited": false,
+        "status": false
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending",
+      "all_required_available": false
+    },
+    {
+      "case": "garden-and-shipment",
+      "turn": 2,
+      "trace": "vincent-garden-and-shipment-2",
+      "question": "Later, when you sent the work to Theo, does the number in the letter count paintings of this flower alone?",
+      "expected": "supported",
+      "review": "Seven counts a group of studies after nature that includes Irises. Both answer and memory must leave the number of versions of Irises open.",
+      "input_revision": 1,
+      "input_memory": "The visitor asks what Vincent was working on besides irises in a specific note. The available evidence consists only of guide notes inviting visual observation of the irises, which do not mention other garden subjects or a specific note listing them. The specific question about other garden subjects remains open.",
+      "input_cache_ids": [],
+      "outcome": "failed",
+      "error": {
+        "code": "generation_invalid_response",
+        "message": "The model response is invalid.",
+        "retryable": false,
+        "phase": "planning"
+      },
+      "all_required_available": false
+    },
+    {
+      "case": "who-said-what",
+      "turn": 1,
+      "trace": "vincent-who-said-what-1",
+      "question": "Whose words were 'full of air and life' when this was being exhibited?",
+      "expected": "supported",
+      "review": "Theo used those words about the painting. Do not attribute them to Vincent or Getty. Preserve the speaker in memory.",
+      "input_revision": 0,
+      "input_memory": "",
+      "input_cache_ids": [],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "answered",
+          "text": "Theo wrote those words to Vincent. In a letter from September 1889, after submitting the painting to the Salon des Indépendants, he told Vincent that it 'strikes the eye from afar' and is 'a beautiful study full of air and life.'",
+          "citations": [
+            {
+              "chunk_id": "getty-103jnh-description-02",
+              "artwork_id": "getty-103jnh",
+              "source_id": "getty-103jnh-record",
+              "source_kind": "museum_record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_language": "en",
+              "source_locator": "Object description, paragraph 2",
+              "excerpt": "There are no known drawings for this painting; Van Gogh himself considered it a study. His brother Theo quickly recognized its quality and submitted it to the Salon des Indépendants in September 1889, writing Vincent of the exhibition: \"[It] strikes the eye from afar. It is a beautiful study full of air and life.\"",
+              "license": "CC-BY-4.0",
+              "license_url": "https://creativecommons.org/licenses/by/4.0/",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "HTML removed; whitespace normalized."
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "Whose words were 'full of air and life' when this was being exhibited?",
+            "intent": "Identify the person who described the painting as 'full of air and life' during its exhibition and provide their account.",
+            "kind": "artwork_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "Theo wrote those words to Vincent. In a letter from September 1889, after submitting the painting to the Salon des Indépendants, he told Vincent that it 'strikes the eye from afar' and is 'a beautiful study full of air and life.'",
+            "citation_ids": [
+              "getty-103jnh-description-02"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "getty-103jnh-description-02",
+            "artwork_id": "getty-103jnh",
+            "source_id": "getty-103jnh-record",
+            "source_kind": "museum_record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "Object description, paragraph 2",
+            "excerpt": "There are no known drawings for this painting; Van Gogh himself considered it a study. His brother Theo quickly recognized its quality and submitted it to the Salon des Indépendants in September 1889, writing Vincent of the exhibition: \"[It] strikes the eye from afar. It is a beautiful study full of air and life.\"",
+            "license": "CC-BY-4.0",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "HTML removed; whitespace normalized."
+          },
+          {
+            "chunk_id": "getty-103jnh-medium",
+            "artwork_id": "getty-103jnh",
+            "source_id": "getty-103jnh-record",
+            "source_kind": "museum_record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "Medium",
+            "excerpt": "Oil on canvas",
+            "license": "CC0-1.0",
+            "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "none"
+          }
+        ],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "Who described Vincent van Gogh's painting Irises as 'full of air and life' when it was being exhibited?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "Theo's letter describing Irises at the Salon des Indépendants",
+            "continuity_summary": "The visitor asked who described Irises as 'full of air and life' during its exhibition. The Getty record shows Theo wrote this to Vincent in September 1889 after submitting the painting to the Salon des Indépendants. The specific quote is supported by the museum record.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "all_required_cited": true,
+        "status": true
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending",
+      "all_required_available": true
+    },
+    {
+      "case": "who-said-what",
+      "turn": 2,
+      "trace": "vincent-who-said-what-2",
+      "question": "And was it you or him who submitted it for the show?",
+      "expected": "supported",
+      "review": "Resolve 'him' to Theo. He submitted the painting. A previously validated and cited passage can serve this turn without another lookup.",
+      "input_revision": 1,
+      "input_memory": "The visitor asked who described Irises as 'full of air and life' during its exhibition. The Getty record shows Theo wrote this to Vincent in September 1889 after submitting the painting to the Salon des Indépendants. The specific quote is supported by the museum record.",
+      "input_cache_ids": [
+        "getty-103jnh-description-02"
+      ],
+      "outcome": "failed",
+      "error": {
+        "code": "generation_invalid_response",
+        "message": "The model answer has invalid support, sources or memory.",
+        "retryable": false,
+        "phase": "validation"
+      },
+      "all_required_available": true
+    },
+    {
+      "case": "white-flower",
+      "turn": 1,
+      "trace": "vincent-white-flower-1",
+      "question": "That pale flower feels rather brave to me.",
+      "expected": "social",
+      "review": "Receive courage as the visitor’s reading. No historical assertion or museum citation is needed. Remember who supplied the impression.",
+      "input_revision": 0,
+      "input_memory": "",
+      "input_cache_ids": [],
+      "outcome": "failed",
+      "error": {
+        "code": "generation_invalid_response",
+        "message": "The model response is invalid.",
+        "retryable": false,
+        "phase": "planning"
+      }
+    },
+    {
+      "case": "white-flower",
+      "turn": 2,
+      "trace": "vincent-white-flower-2",
+      "question": "Is there anything to show you actually meant it as a symbol of courage?",
+      "expected": "gap",
+      "review": "A looking note about the white bloom is a legitimate candidate. No passage establishes that it depicts courage or that Vincent rejected that meaning. Keep the question open in both spoken reply and memory.",
+      "outcome": "blocked_by_previous_turn"
+    },
+    {
+      "case": "looking-and-material",
+      "turn": 1,
+      "trace": "vincent-looking-and-material-1",
+      "question": "I'd like to try a little experiment with the white bloom while I stand here. What could I do?",
+      "expected": "supported",
+      "review": "Offer the guide’s cover-and-uncover or outline exercise. Do not make the exercise Vincent’s original intention.",
+      "input_revision": 0,
+      "input_memory": "",
+      "input_cache_ids": [],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "answered",
+          "text": "That sounds like a lovely experiment. Try finding the single white iris and covering it briefly with your thumb, then uncover it to see if your eye goes there first or to the cluster of blue petals nearby.",
+          "citations": [
+            {
+              "chunk_id": "getty-103jnh-guide-01",
+              "artwork_id": "getty-103jnh",
+              "source_id": "musebridge-103jnh-guide",
+              "source_kind": "guide_note",
+              "source_title": "MuseBridge Guide — Irises",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_language": "en",
+              "source_locator": "MuseBridge guide 1 — Finding one flower",
+              "excerpt": "Find the single white iris. Cover it briefly with your thumb, then uncover it. Does your eye go there first, or to the cluster of blue petals nearby? Try following the outline of just one blue bloom before looking at the whole bed again.",
+              "license": "In Copyright",
+              "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+              "attribution": "MuseBridge",
+              "normalization": "none"
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "I'd like to try a little experiment with the white bloom while I stand here. What could I do?",
+            "intent": "The visitor wants to try a looking exercise focusing on the white bloom in the painting.",
+            "kind": "artwork_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "That sounds like a lovely experiment. Try finding the single white iris and covering it briefly with your thumb, then uncover it to see if your eye goes there first or to the cluster of blue petals nearby.",
+            "citation_ids": [
+              "getty-103jnh-guide-01"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "getty-103jnh-guide-01",
+            "artwork_id": "getty-103jnh",
+            "source_id": "musebridge-103jnh-guide",
+            "source_kind": "guide_note",
+            "source_title": "MuseBridge Guide — Irises",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "MuseBridge guide 1 — Finding one flower",
+            "excerpt": "Find the single white iris. Cover it briefly with your thumb, then uncover it. Does your eye go there first, or to the cluster of blue petals nearby? Try following the outline of just one blue bloom before looking at the whole bed again.",
+            "license": "In Copyright",
+            "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+            "attribution": "MuseBridge",
+            "normalization": "none"
+          },
+          {
+            "chunk_id": "getty-103jnh-guide-02",
+            "artwork_id": "getty-103jnh",
+            "source_id": "musebridge-103jnh-guide",
+            "source_kind": "guide_note",
+            "source_title": "MuseBridge Guide — Irises",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "MuseBridge guide 2 — Following a leaf",
+            "excerpt": "Trace one long leaf upward from the brown earth. Now trace the outside of a petal. The leaf gives your eye a long, fairly continuous path; the petal makes it change direction several times. Look at the edges of the picture to see where those paths are cut short.",
+            "license": "In Copyright",
+            "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+            "attribution": "MuseBridge",
+            "normalization": "none"
+          }
+        ],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "What does the MuseBridge guide suggest looking at in Irises, specifically regarding the white bloom or similar features?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "white bloom looking exercise",
+            "continuity_summary": "Visitor wants to try a looking exercise with the white bloom. Guide suggests covering the single white iris with thumb then uncovering it to observe eye movement. No historical finding or artist reason cited.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "all_required_cited": true,
+        "status": true
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending",
+      "all_required_available": true
+    },
+    {
+      "case": "looking-and-material",
+      "turn": 2,
+      "trace": "vincent-looking-and-material-2",
+      "question": "What is this painted on, by the way?",
+      "expected": "supported",
+      "review": "Answer canvas, optionally oil on canvas. Keep the new question separate from the prior looking exercise.",
+      "input_revision": 1,
+      "input_memory": "Visitor wants to try a looking exercise with the white bloom. Guide suggests covering the single white iris with thumb then uncovering it to observe eye movement. No historical finding or artist reason cited.",
+      "input_cache_ids": [
+        "getty-103jnh-guide-01"
+      ],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "answered",
+          "text": "This painting is on canvas.",
+          "citations": [
+            {
+              "kind": "catalog",
+              "fact_id": "getty-103jnh-catalog-title",
+              "artwork_id": "getty-103jnh",
+              "dataset_version": "getty-gallery-v2",
+              "field": "title",
+              "value": "Irises",
+              "source_id": "getty-103jnh-record",
+              "source_title": "Irises — Getty Museum record",
+              "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+              "source_locator": "artworks[artwork_id=getty-103jnh].title",
+              "attribution": "J. Paul Getty Museum",
+              "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "What is this painted on, by the way?",
+            "intent": "Identify the support material of the artwork.",
+            "kind": "catalog_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "This painting is on canvas.",
+            "citation_ids": [
+              "getty-103jnh-catalog-title"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "getty-103jnh-guide-01",
+            "artwork_id": "getty-103jnh",
+            "source_id": "musebridge-103jnh-guide",
+            "source_kind": "guide_note",
+            "source_title": "MuseBridge Guide — Irises",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_language": "en",
+            "source_locator": "MuseBridge guide 1 — Finding one flower",
+            "excerpt": "Find the single white iris. Cover it briefly with your thumb, then uncover it. Does your eye go there first, or to the cluster of blue petals nearby? Try following the outline of just one blue bloom before looking at the whole bed again.",
+            "license": "In Copyright",
+            "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+            "attribution": "MuseBridge",
+            "normalization": "none"
+          }
+        ],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [
+          "getty-103jnh-guide-01"
+        ],
+        "executed_queries": [],
+        "conversation_update": {
+          "base_revision": 1,
+          "memory": {
+            "active_topic": "support material",
+            "continuity_summary": "Visitor asked about the support material. Guide established it is canvas. No further questions remain open.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "all_required_cited": false,
+        "status": true
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending",
+      "all_required_available": false
+    },
+    {
+      "case": "conservation-limits",
+      "turn": 1,
+      "trace": "vincent-conservation-limits-1",
+      "question": "Did the exhibition say that the effects of light on this picture were reversible?",
+      "expected": "supported",
+      "review": "Getty reports an irrevocable change to some colors. Do not expand that statement to every petal, all pigment or total disappearance.",
+      "input_revision": 0,
+      "input_memory": "",
+      "input_cache_ids": [],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "answered",
+          "text": "The exhibition record actually says the opposite: light has irrevocably changed some of the colors in Irises, meaning those changes are permanent and not reversible.",
+          "citations": [
+            {
+              "chunk_id": "vincent-getty-light-change",
+              "artwork_id": "getty-103jnh",
+              "source_id": "vincent-getty-ultra-violet-exhibition",
+              "source_kind": "museum_record",
+              "source_title": "Ultra-Violet: New Light on Van Gogh’s Irises — Getty exhibition record",
+              "source_url": "https://www.getty.edu/art/collection/exhibition/16D4X1",
+              "source_language": "en",
+              "source_locator": "Exhibition Details, sentence beginning “Lastly”.",
+              "excerpt": "Lastly, the exhibition reveals how light has irrevocably changed some of the colors in Irises.",
+              "license": "CC-BY-4.0",
+              "license_url": "https://creativecommons.org/licenses/by/4.0/",
+              "attribution": "J. Paul Getty Museum, Museum Collection exhibition record 16D4X1.",
+              "normalization": "One sentence from the exhibition description. Formatting removed."
+            }
+          ]
+        },
+        "requests": [
+          {
+            "id": "r1",
+            "original_fragment": "Did the exhibition say that the effects of light on this picture were reversible?",
+            "intent": "Find out if the exhibition record states that light effects on the painting were reversible.",
+            "kind": "artwork_fact",
+            "resolution": "clear"
+          }
+        ],
+        "request_results": [
+          {
+            "request_id": "r1",
+            "support": "supported",
+            "text": "The exhibition record actually says the opposite: light has irrevocably changed some of the colors in Irises, meaning those changes are permanent and not reversible.",
+            "citation_ids": [
+              "vincent-getty-light-change"
+            ]
+          }
+        ],
+        "evidence_snapshot": [
+          {
+            "chunk_id": "vincent-getty-light-change",
+            "artwork_id": "getty-103jnh",
+            "source_id": "vincent-getty-ultra-violet-exhibition",
+            "source_kind": "museum_record",
+            "source_title": "Ultra-Violet: New Light on Van Gogh’s Irises — Getty exhibition record",
+            "source_url": "https://www.getty.edu/art/collection/exhibition/16D4X1",
+            "source_language": "en",
+            "source_locator": "Exhibition Details, sentence beginning “Lastly”.",
+            "excerpt": "Lastly, the exhibition reveals how light has irrevocably changed some of the colors in Irises.",
+            "license": "CC-BY-4.0",
+            "license_url": "https://creativecommons.org/licenses/by/4.0/",
+            "attribution": "J. Paul Getty Museum, Museum Collection exhibition record 16D4X1.",
+            "normalization": "One sentence from the exhibition description. Formatting removed."
+          },
+          {
+            "chunk_id": "vincent-getty-faded-red",
+            "artwork_id": "getty-103jnh",
+            "source_id": "vincent-getty-search-for-violet",
+            "source_kind": "museum_record",
+            "source_title": "Vincent van Gogh, Irises: the search for violet — Getty Conversations",
+            "source_url": "https://smarthistory.org/vincent-van-gogh-irises-the-search-for-violet-getty-conversations/",
+            "source_language": "en",
+            "source_locator": "English transcript, Devi Ormond’s first response, starting at 00:20.8.",
+            "excerpt": "considerable fading of a particular red pigment called geranium lake. And that geranium lake was used with the blues to create wonderful violet colors.",
+            "license": "CC-BY-NC-SA-4.0",
+            "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+            "attribution": "Devi Ormond, Beth Harris and the J. Paul Getty Museum, Getty Conversations (Smarthistory, 18 September 2024). Speaker: Getty paintings conservator Devi Ormond.",
+            "normalization": "Continuous extract starting within a sentence. Speaker label and timestamp supplied in the locator."
+          }
+        ],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [
+          {
+            "id": "q1",
+            "request_ids": [
+              "r1"
+            ],
+            "query": "Did the exhibition record for Irises state that the effects of light on the picture were reversible?"
+          }
+        ],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "reversibility of light effects on Irises",
+            "continuity_summary": "Visitor asked if exhibition said light effects were reversible. Evidence from Getty exhibition record states light irrevocably changed colors (permanent). No evidence found for reversibility.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "all_required_cited": true,
+        "status": true
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending",
+      "all_required_available": true
+    },
+    {
+      "case": "conservation-limits",
+      "turn": 2,
+      "trace": "vincent-conservation-limits-2",
+      "question": "Could I reconstruct it by using exactly a third of each color?",
+      "expected": "gap",
+      "review": "The conservation passage may legitimately be returned. It does not supply ratios. If describing the supported part, cite the pigment record. Keep the recipe open in memory.",
+      "input_revision": 1,
+      "input_memory": "Visitor asked if exhibition said light effects were reversible. Evidence from Getty exhibition record states light irrevocably changed colors (permanent). No evidence found for reversibility.",
+      "input_cache_ids": [
+        "vincent-getty-light-change"
+      ],
+      "outcome": "failed",
+      "error": {
+        "code": "generation_invalid_response",
+        "message": "The model plan has invalid language, source or request relationships.",
+        "retryable": false,
+        "phase": "planning"
+      }
+    },
+    {
+      "case": "unrelated",
+      "turn": 1,
+      "trace": "vincent-unrelated-1",
+      "question": "What's tomorrow's winning lottery number?",
+      "expected": "unrelated",
+      "review": "Scope the conversation back to the museum without inventing a number or an artwork connection. No artwork citation supports a lottery prediction.",
+      "input_revision": 0,
+      "input_memory": "",
+      "input_cache_ids": [],
+      "outcome": "delivered",
+      "result": {
+        "scope": {
+          "artwork_id": "getty-103jnh",
+          "dataset_version": "getty-gallery-v2",
+          "conversation_mode": "vincent",
+          "reference_pack_version": "vincent-irises-v1"
+        },
+        "answer_language": "en",
+        "language_decision": {
+          "detected_language": "en",
+          "explicit_instruction": null,
+          "answer_language": "en",
+          "translation": null
+        },
+        "answer": {
+          "status": "out_of_scope",
+          "text": "I can't predict lottery numbers, but I'm happy to talk about the irises in this painting.",
+          "citations": []
+        },
+        "requests": [],
+        "request_results": [],
+        "evidence_snapshot": [],
+        "catalog_snapshot": [
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-title",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "title",
+            "value": "Irises",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].title",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-artist",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "artist",
+            "value": "Vincent van Gogh",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].artist",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          },
+          {
+            "kind": "catalog",
+            "fact_id": "getty-103jnh-catalog-date_display",
+            "artwork_id": "getty-103jnh",
+            "dataset_version": "getty-gallery-v2",
+            "field": "date_display",
+            "value": "1889",
+            "source_id": "getty-103jnh-record",
+            "source_title": "Irises — Getty Museum record",
+            "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+            "source_locator": "artworks[artwork_id=getty-103jnh].date_display",
+            "attribution": "J. Paul Getty Museum",
+            "normalization": "Released catalog metadata; not a verbatim museum excerpt."
+          }
+        ],
+        "reused_chunk_ids": [],
+        "executed_queries": [],
+        "conversation_update": {
+          "base_revision": 0,
+          "memory": {
+            "active_topic": "lottery prediction",
+            "continuity_summary": "Visitor asked for a lottery number prediction, which is unrelated to the artwork. No historical finding or visual detail was established.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        }
+      },
+      "checks": {
+        "english_field": true,
+        "status": true,
+        "uncited": true
+      },
+      "retrieval_strategy": "openai-hybrid-v1",
+      "semantic_review": "pending"
+    }
+  ],
+  "model_attempts": [
+    {
+      "request_id": "vincent-letter-and-laboratory-1",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 7304,
+      "server_output_tokens": 139,
+      "completion": {
+        "data": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "what word did you put down for the color of those flowers",
+              "intent": "Identify the specific color word Vincent used in his letter regarding the irises.",
+              "kind": "artwork_fact",
+              "resolution": "clear"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What color word did Vincent use in his letter to describe the irises?"
+            }
+          ]
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7304,
+        "output_tokens": 139,
+        "estimated_prompt_tokens": 7364,
+        "duration_ms": 2630,
+        "server_timings_ns": {
+          "total_duration": 2183775223,
+          "load_duration": 17465318,
+          "prompt_eval_duration": 1036506000,
+          "eval_duration": 1098970000
+        }
+      },
+      "estimated_prompt_tokens": 7364
+    },
+    {
+      "request_id": "vincent-letter-and-laboratory-1",
+      "operation": "assess",
+      "schema": "AssessmentDecision",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 5365,
+      "server_output_tokens": 179,
+      "completion": {
+        "data": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "When I wrote to Theo on May 9, 1889, I described the flowers as 'violet irises' and a 'lilac bush' that I was painting in the garden.",
+              "citation_ids": [
+                "vincent-772-garden-colors"
+              ]
+            }
+          ],
+          "memory_update": {
+            "active_topic": "color word for irises",
+            "continuity_summary": "Visitor asked for the specific color word Vincent used in his letter for the irises. Evidence from letter 772 (May 9, 1889) supports that Vincent called them 'violet irises' and a 'lilac bush'. The question is resolved.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 5365,
+        "output_tokens": 179,
+        "estimated_prompt_tokens": 5425,
+        "duration_ms": 2818,
+        "server_timings_ns": {
+          "total_duration": 2339820020,
+          "load_duration": 4567950,
+          "prompt_eval_duration": 754941000,
+          "eval_duration": 1378257000
+        }
+      },
+      "estimated_prompt_tokens": 5425
+    },
+    {
+      "request_id": "vincent-letter-and-laboratory-2",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [
+        "9b03dfe1-8f2b-5bd0-a9b2-696d99462465"
+      ],
+      "server_prompt_tokens": 7782,
+      "server_output_tokens": 156,
+      "completion": {
+        "data": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What did later researchers find in the paint that accounts for the difference I see now?",
+              "intent": "Retrieve the specific chemical or physical finding by later researchers that explains the visual difference the visitor observes in the painting.",
+              "kind": "artwork_fact",
+              "resolution": "clear"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What did Getty conservators find in the paint of Irises that accounts for the difference the visitor sees now?"
+            }
+          ]
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7782,
+        "output_tokens": 156,
+        "estimated_prompt_tokens": 7842,
+        "duration_ms": 2303,
+        "server_timings_ns": {
+          "total_duration": 1824788704,
+          "load_duration": 4201889,
+          "prompt_eval_duration": 264661000,
+          "eval_duration": 1361647000
+        }
+      },
+      "estimated_prompt_tokens": 7842
+    },
+    {
+      "request_id": "vincent-letter-and-laboratory-2",
+      "operation": "assess",
+      "schema": "AssessmentDecision",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [
+        "9b03dfe1-8f2b-5bd0-a9b2-696d99462465"
+      ],
+      "server_prompt_tokens": 5761,
+      "server_output_tokens": 176,
+      "completion": {
+        "data": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "Getty’s conservators found that considerable fading of a particular red pigment called geranium lake has occurred. That geranium lake was used with the blues to create wonderful violet colors, and its loss accounts for the difference you see now.",
+              "citation_ids": [
+                "vincent-getty-faded-red"
+              ]
+            }
+          ],
+          "memory_update": {
+            "active_topic": "chemical change in Irises",
+            "continuity_summary": "Visitor asked about later research findings explaining the visual difference in Irises. Getty conservators found fading of geranium lake pigment, which was mixed with blues to create violet colors. The specific chemical finding is established; the visitor’s personal observation of the difference is accepted as their impression.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 5761,
+        "output_tokens": 176,
+        "estimated_prompt_tokens": 5821,
+        "duration_ms": 2890,
+        "server_timings_ns": {
+          "total_duration": 2411599430,
+          "load_duration": 44015363,
+          "prompt_eval_duration": 745605000,
+          "eval_duration": 1412592000
+        }
+      },
+      "estimated_prompt_tokens": 5821
+    },
+    {
+      "request_id": "vincent-garden-and-shipment-1",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 7305,
+      "server_output_tokens": 151,
+      "completion": {
+        "data": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "In the note about your garden subjects, what were you working on besides these flowers?",
+              "intent": "Identify other garden subjects Vincent worked on besides irises, as mentioned in a specific note.",
+              "kind": "artwork_fact",
+              "resolution": "clear"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What does the MuseBridge guide note say Vincent was working on besides the irises in his garden?"
+            }
+          ]
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7305,
+        "output_tokens": 151,
+        "estimated_prompt_tokens": 7365,
+        "duration_ms": 2010,
+        "server_timings_ns": {
+          "total_duration": 1657854706,
+          "load_duration": 4268942,
+          "prompt_eval_duration": 208776000,
+          "eval_duration": 1225137000
+        }
+      },
+      "estimated_prompt_tokens": 7365
+    },
+    {
+      "request_id": "vincent-garden-and-shipment-1",
+      "operation": "assess",
+      "schema": "AssessmentDecision",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 5216,
+      "server_output_tokens": 189,
+      "completion": {
+        "data": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "insufficient",
+              "text": "I don't have a specific note from my letters here that lists other garden subjects I was working on besides these irises. I can see why you'd wonder about my other projects, but this guide only invites you to look closely at the irises themselves.",
+              "citation_ids": []
+            }
+          ],
+          "memory_update": {
+            "active_topic": "Visitor asks about other garden subjects Vincent worked on besides irises, as mentioned in a specific note.",
+            "continuity_summary": "The visitor asks what Vincent was working on besides irises in a specific note. The available evidence consists only of guide notes inviting visual observation of the irises, which do not mention other garden subjects or a specific note listing them. The specific question about other garden subjects remains open.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 5216,
+        "output_tokens": 189,
+        "estimated_prompt_tokens": 5276,
+        "duration_ms": 2814,
+        "server_timings_ns": {
+          "total_duration": 2423375412,
+          "load_duration": 46402708,
+          "prompt_eval_duration": 692456000,
+          "eval_duration": 1500871000
+        }
+      },
+      "estimated_prompt_tokens": 5276
+    },
+    {
+      "request_id": "vincent-garden-and-shipment-2",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "failed",
+      "chat_attempted": true,
+      "schema_result": "invalid",
+      "retained_turn_ids": [
+        "3236b117-1c47-56b9-ae3e-8bffb2d57c9a"
+      ],
+      "server_prompt_tokens": 7533,
+      "server_output_tokens": 170,
+      "raw_content": "{\"action\": \"retrieve\", \"language_decision\": {\"detected_language\": \"en\", \"explicit_instruction\": null, \"answer_language\": \"en\", \"translation\": null}, \"requests\": [{\"id\": \"r1\", \"original_fragment\": \"Later, when you sent the work to Theo, does the number in the letter count paintings of this flower alone?\", \"intent\": \"Determine if the number of irises mentioned in a letter to Theo refers only to the irises in this painting or includes other flowers.\", \"kind\": \"artwork_fact\", \"resolution\": \"needs_clarification\"}], \"queries\": [{\"id\": \"q1\", \"request_ids\": [\"r1\"], \"query\": \"What does the letter to Theo say about the number of irises in the painting 'Irises'?\"}]}",
+      "error_code": "generation_invalid_response",
+      "estimated_prompt_tokens": 7593
+    },
+    {
+      "request_id": "vincent-who-said-what-1",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 7305,
+      "server_output_tokens": 160,
+      "completion": {
+        "data": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "Whose words were 'full of air and life' when this was being exhibited?",
+              "intent": "Identify the person who described the painting as 'full of air and life' during its exhibition and provide their account.",
+              "kind": "artwork_fact",
+              "resolution": "clear"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "Who described Vincent van Gogh's painting Irises as 'full of air and life' when it was being exhibited?"
+            }
+          ]
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7305,
+        "output_tokens": 160,
+        "estimated_prompt_tokens": 7365,
+        "duration_ms": 1743,
+        "server_timings_ns": {
+          "total_duration": 1451873917,
+          "load_duration": 3904986,
+          "prompt_eval_duration": 159888000,
+          "eval_duration": 1271952000
+        }
+      },
+      "estimated_prompt_tokens": 7365
+    },
+    {
+      "request_id": "vincent-who-said-what-1",
+      "operation": "assess",
+      "schema": "AssessmentDecision",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 5192,
+      "server_output_tokens": 203,
+      "completion": {
+        "data": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "Theo wrote those words to Vincent. In a letter from September 1889, after submitting the painting to the Salon des Indépendants, he told Vincent that it 'strikes the eye from afar' and is 'a beautiful study full of air and life.'",
+              "citation_ids": [
+                "getty-103jnh-description-02"
+              ]
+            }
+          ],
+          "memory_update": {
+            "active_topic": "Theo's letter describing Irises at the Salon des Indépendants",
+            "continuity_summary": "The visitor asked who described Irises as 'full of air and life' during its exhibition. The Getty record shows Theo wrote this to Vincent in September 1889 after submitting the painting to the Salon des Indépendants. The specific quote is supported by the museum record.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 5192,
+        "output_tokens": 203,
+        "estimated_prompt_tokens": 5252,
+        "duration_ms": 2952,
+        "server_timings_ns": {
+          "total_duration": 2402934164,
+          "load_duration": 4148324,
+          "prompt_eval_duration": 644932000,
+          "eval_duration": 1531736000
+        }
+      },
+      "estimated_prompt_tokens": 5252
+    },
+    {
+      "request_id": "vincent-who-said-what-2",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [
+        "2415f12d-04ca-5023-a7a8-d1bd9c72ae25"
+      ],
+      "server_prompt_tokens": 7757,
+      "server_output_tokens": 235,
+      "completion": {
+        "data": {
+          "action": "direct_response",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "And was it you or him who submitted it for the show?",
+              "intent": "Identify who submitted the painting for the exhibition.",
+              "kind": "catalog_fact",
+              "resolution": "clear"
+            }
+          ],
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "Theo submitted it for the show. He recognized its quality and sent it to the Salon des Indépendants in September 1889.",
+              "citation_ids": [
+                "getty-103jnh-description-02"
+              ]
+            }
+          ],
+          "memory_update": {
+            "active_topic": "Who submitted Irises for the Salon des Indépendants",
+            "continuity_summary": "The visitor asked who submitted the painting. The Getty record confirms Theo submitted it after recognizing its quality. The specific quote about 'air and life' is supported.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7757,
+        "output_tokens": 235,
+        "estimated_prompt_tokens": 7817,
+        "duration_ms": 2735,
+        "server_timings_ns": {
+          "total_duration": 2138061924,
+          "load_duration": 3676036,
+          "prompt_eval_duration": 193831000,
+          "eval_duration": 1761616000
+        }
+      },
+      "estimated_prompt_tokens": 7817
+    },
+    {
+      "request_id": "vincent-white-flower-1",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "failed",
+      "chat_attempted": true,
+      "schema_result": "invalid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 7297,
+      "server_output_tokens": 238,
+      "raw_content": "{\"action\": \"direct_response\", \"language_decision\": {\"detected_language\": \"en\", \"explicit_instruction\": null, \"answer_language\": \"en\", \"translation\": null}, \"requests\": [{\"id\": \"r1\", \"original_fragment\": \"That pale flower feels rather brave to me.\", \"intent\": \"The visitor expresses a personal impression of a pale flower in the painting.\", \"kind\": \"conversation\", \"resolution\": \"clear\"}], \"results\": [{\"request_id\": \"r1\", \"support\": \"supported\", \"text\": \"I can see why it strikes you that way. That pale flower does seem to stand up against the darker surroundings with a quiet strength.\", \"citation_ids\": [\"getty-103jnh-catalog-title\", \"getty-103jnh-catalog-artist\", \"getty-103jnh-catalog-date_display\"]}], \"memory_update\": {\"active_topic\": \"visitor impression of pale flower's bravery\", \"continuity_summary\": \"Visitor noted the pale flower feels brave; no historical finding or guide note consulted yet.\", \"pending_update\": {\"action\": \"keep\"}}}",
+      "error_code": "generation_invalid_response",
+      "estimated_prompt_tokens": 7357
+    },
+    {
+      "request_id": "vincent-looking-and-material-1",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 7310,
+      "server_output_tokens": 156,
+      "completion": {
+        "data": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "I'd like to try a little experiment with the white bloom while I stand here. What could I do?",
+              "intent": "The visitor wants to try a looking exercise focusing on the white bloom in the painting.",
+              "kind": "artwork_fact",
+              "resolution": "clear"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "What does the MuseBridge guide suggest looking at in Irises, specifically regarding the white bloom or similar features?"
+            }
+          ]
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7310,
+        "output_tokens": 156,
+        "estimated_prompt_tokens": 7370,
+        "duration_ms": 1735,
+        "server_timings_ns": {
+          "total_duration": 1400668652,
+          "load_duration": 4453241,
+          "prompt_eval_duration": 153488000,
+          "eval_duration": 1226704000
+        }
+      },
+      "estimated_prompt_tokens": 7370
+    },
+    {
+      "request_id": "vincent-looking-and-material-1",
+      "operation": "assess",
+      "schema": "AssessmentDecision",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 5226,
+      "server_output_tokens": 157,
+      "completion": {
+        "data": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "That sounds like a lovely experiment. Try finding the single white iris and covering it briefly with your thumb, then uncover it to see if your eye goes there first or to the cluster of blue petals nearby.",
+              "citation_ids": [
+                "getty-103jnh-guide-01"
+              ]
+            }
+          ],
+          "memory_update": {
+            "active_topic": "white bloom looking exercise",
+            "continuity_summary": "Visitor wants to try a looking exercise with the white bloom. Guide suggests covering the single white iris with thumb then uncovering it to observe eye movement. No historical finding or artist reason cited.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 5226,
+        "output_tokens": 157,
+        "estimated_prompt_tokens": 5286,
+        "duration_ms": 2622,
+        "server_timings_ns": {
+          "total_duration": 2162601369,
+          "load_duration": 2817923,
+          "prompt_eval_duration": 724905000,
+          "eval_duration": 1214556000
+        }
+      },
+      "estimated_prompt_tokens": 5286
+    },
+    {
+      "request_id": "vincent-looking-and-material-2",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [
+        "fbad05e5-e1f0-5e71-993d-5e0978ef9d8d"
+      ],
+      "server_prompt_tokens": 7688,
+      "server_output_tokens": 183,
+      "completion": {
+        "data": {
+          "action": "direct_response",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "What is this painted on, by the way?",
+              "intent": "Identify the support material of the artwork.",
+              "kind": "catalog_fact",
+              "resolution": "clear"
+            }
+          ],
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "This painting is on canvas.",
+              "citation_ids": [
+                "getty-103jnh-catalog-title"
+              ]
+            }
+          ],
+          "memory_update": {
+            "active_topic": "support material",
+            "continuity_summary": "Visitor asked about the support material. Guide established it is canvas. No further questions remain open.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7688,
+        "output_tokens": 183,
+        "estimated_prompt_tokens": 7748,
+        "duration_ms": 2464,
+        "server_timings_ns": {
+          "total_duration": 1986606588,
+          "load_duration": 3264477,
+          "prompt_eval_duration": 194031000,
+          "eval_duration": 1438854000
+        }
+      },
+      "estimated_prompt_tokens": 7748
+    },
+    {
+      "request_id": "vincent-conservation-limits-1",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 7303,
+      "server_output_tokens": 145,
+      "completion": {
+        "data": {
+          "action": "retrieve",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "Did the exhibition say that the effects of light on this picture were reversible?",
+              "intent": "Find out if the exhibition record states that light effects on the painting were reversible.",
+              "kind": "artwork_fact",
+              "resolution": "clear"
+            }
+          ],
+          "queries": [
+            {
+              "id": "q1",
+              "request_ids": [
+                "r1"
+              ],
+              "query": "Did the exhibition record for Irises state that the effects of light on the picture were reversible?"
+            }
+          ]
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7303,
+        "output_tokens": 145,
+        "estimated_prompt_tokens": 7363,
+        "duration_ms": 1779,
+        "server_timings_ns": {
+          "total_duration": 1373489687,
+          "load_duration": 3380424,
+          "prompt_eval_duration": 163880000,
+          "eval_duration": 1190443000
+        }
+      },
+      "estimated_prompt_tokens": 7363
+    },
+    {
+      "request_id": "vincent-conservation-limits-1",
+      "operation": "assess",
+      "schema": "AssessmentDecision",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 5270,
+      "server_output_tokens": 142,
+      "completion": {
+        "data": {
+          "action": "finish",
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "supported",
+              "text": "The exhibition record actually says the opposite: light has irrevocably changed some of the colors in Irises, meaning those changes are permanent and not reversible.",
+              "citation_ids": [
+                "vincent-getty-light-change"
+              ]
+            }
+          ],
+          "memory_update": {
+            "active_topic": "reversibility of light effects on Irises",
+            "continuity_summary": "Visitor asked if exhibition said light effects were reversible. Evidence from Getty exhibition record states light irrevocably changed colors (permanent). No evidence found for reversibility.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 5270,
+        "output_tokens": 142,
+        "estimated_prompt_tokens": 5330,
+        "duration_ms": 2569,
+        "server_timings_ns": {
+          "total_duration": 2103972464,
+          "load_duration": 2589377,
+          "prompt_eval_duration": 696953000,
+          "eval_duration": 1173803000
+        }
+      },
+      "estimated_prompt_tokens": 5330
+    },
+    {
+      "request_id": "vincent-conservation-limits-2",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [
+        "2873c656-af69-5aaf-aebe-14c68e3edac2"
+      ],
+      "server_prompt_tokens": 7675,
+      "server_output_tokens": 320,
+      "completion": {
+        "data": {
+          "action": "direct_response",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "requests": [
+            {
+              "id": "r1",
+              "original_fragment": "Could I reconstruct it by using exactly a third of each color?",
+              "intent": "Visitor asks if they can reconstruct the painting's colors by using exactly a third of each color.",
+              "kind": "conversation",
+              "resolution": "clear"
+            }
+          ],
+          "results": [
+            {
+              "request_id": "r1",
+              "support": "clarification_needed",
+              "text": "I can see why you might wonder about mixing colors that way, but I don't have a record of Van Gogh planning to use exactly a third of each color. The exhibition record tells us that light has irrevocably changed some of the colors in Irises, meaning those changes are permanent and not reversible. Could you clarify if you are asking about recreating the original colors or the colors as they appear now?",
+              "citation_ids": []
+            }
+          ],
+          "memory_update": {
+            "active_topic": "reconstruction of Irises colors",
+            "continuity_summary": "Visitor asked if they could reconstruct the painting by using exactly a third of each color. Evidence from Getty exhibition record states light irrevocably changed colors (permanent). No evidence found for a specific color ratio or reconstruction plan. Visitor's intent regarding original vs current colors is unclear.",
+            "pending_update": {
+              "action": "set",
+              "source": "current_message",
+              "request_id": "r1"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7675,
+        "output_tokens": 320,
+        "estimated_prompt_tokens": 7735,
+        "duration_ms": 3521,
+        "server_timings_ns": {
+          "total_duration": 2955203555,
+          "load_duration": 6507857,
+          "prompt_eval_duration": 205389000,
+          "eval_duration": 2548914000
+        }
+      },
+      "estimated_prompt_tokens": 7735
+    },
+    {
+      "request_id": "vincent-unrelated-1",
+      "operation": "plan",
+      "schema": "Plan",
+      "outcome": "completed",
+      "chat_attempted": true,
+      "schema_result": "valid",
+      "retained_turn_ids": [],
+      "server_prompt_tokens": 7296,
+      "server_output_tokens": 118,
+      "completion": {
+        "data": {
+          "action": "out_of_scope",
+          "language_decision": {
+            "detected_language": "en",
+            "explicit_instruction": null,
+            "answer_language": "en",
+            "translation": null
+          },
+          "text": "I can't predict lottery numbers, but I'm happy to talk about the irises in this painting.",
+          "memory_update": {
+            "active_topic": "lottery prediction",
+            "continuity_summary": "Visitor asked for a lottery number prediction, which is unrelated to the artwork. No historical finding or visual detail was established.",
+            "pending_update": {
+              "action": "clear"
+            }
+          }
+        },
+        "model_provider": "ollama",
+        "model_name": "qwen3.5:9b-q4_K_M",
+        "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+        "done_reason": "stop",
+        "prompt_tokens": 7296,
+        "output_tokens": 118,
+        "estimated_prompt_tokens": 7356,
+        "duration_ms": 1428,
+        "server_timings_ns": {
+          "total_duration": 1086496121,
+          "load_duration": 3606653,
+          "prompt_eval_duration": 144082000,
+          "eval_duration": 923811000
+        }
+      },
+      "estimated_prompt_tokens": 7356
+    }
+  ],
+  "lookups": [
+    {
+      "request_id": "vincent-letter-and-laboratory-1",
+      "input": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "What color word did Vincent use in his letter to describe the irises?",
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "top_k": 2
+      },
+      "candidates": [
+        {
+          "chunk_id": "vincent-772-garden-colors",
+          "artwork_id": "getty-103jnh",
+          "source_id": "vincent-letter-772",
+          "source_kind": "artist_letter",
+          "source_title": "Vincent to Theo and Jo, 9 May 1889 (letter 772)",
+          "source_url": "https://vangoghletters.org/vg/letters/let772/letter.html",
+          "source_language": "en",
+          "source_locator": "Saint-Rémy, section addressed to Theo, English translation p.trans.6. Editorial note 4 identifies Irises (F 608 / JH 1691).",
+          "excerpt": "I have two others on the go — violet irises and a lilac bush. Two subjects taken from the garden.",
+          "license": "CC-BY-NC-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+          "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+          "normalization": "English edition wording. Editorial note markers omitted."
+        },
+        {
+          "chunk_id": "vincent-789-studies-after-nature",
+          "artwork_id": "getty-103jnh",
+          "source_id": "vincent-letter-789",
+          "source_kind": "artist_letter",
+          "source_title": "Vincent to Theo, 14 or 15 July 1889 (letter 789)",
+          "source_url": "https://vangoghletters.org/vg/letters/let789/letter.html",
+          "source_language": "en",
+          "source_locator": "Saint-Rémy, English translation p.trans.8 and the first item of p.trans.10. Editorial note 9 identifies Irises (F 608 / JH 1691).",
+          "excerpt": "I’m also enclosing another 7 studies which are dry but which are studies after nature rather than subjects for paintings. […] The irises",
+          "license": "CC-BY-NC-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+          "attribution": "Vincent van Gogh, English edition edited by Leo Jansen, Hans Luijten and Nienke Bakker (Van Gogh Museum and Huygens Institute, 2009).",
+          "normalization": "Two extracts in their original order. The bracketed ellipsis marks an omission. The second extract ends at the name of the first study."
+        }
+      ]
+    },
+    {
+      "request_id": "vincent-letter-and-laboratory-2",
+      "input": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "What did Getty conservators find in the paint of Irises that accounts for the difference the visitor sees now?",
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "top_k": 2
+      },
+      "candidates": [
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "artwork_id": "getty-103jnh",
+          "source_id": "vincent-getty-search-for-violet",
+          "source_kind": "museum_record",
+          "source_title": "Vincent van Gogh, Irises: the search for violet — Getty Conversations",
+          "source_url": "https://smarthistory.org/vincent-van-gogh-irises-the-search-for-violet-getty-conversations/",
+          "source_language": "en",
+          "source_locator": "English transcript, Devi Ormond’s first response, starting at 00:20.8.",
+          "excerpt": "considerable fading of a particular red pigment called geranium lake. And that geranium lake was used with the blues to create wonderful violet colors.",
+          "license": "CC-BY-NC-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+          "attribution": "Devi Ormond, Beth Harris and the J. Paul Getty Museum, Getty Conversations (Smarthistory, 18 September 2024). Speaker: Getty paintings conservator Devi Ormond.",
+          "normalization": "Continuous extract starting within a sentence. Speaker label and timestamp supplied in the locator."
+        },
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "artwork_id": "getty-103jnh",
+          "source_id": "vincent-getty-ultra-violet-exhibition",
+          "source_kind": "museum_record",
+          "source_title": "Ultra-Violet: New Light on Van Gogh’s Irises — Getty exhibition record",
+          "source_url": "https://www.getty.edu/art/collection/exhibition/16D4X1",
+          "source_language": "en",
+          "source_locator": "Exhibition Details, sentence beginning “Lastly”.",
+          "excerpt": "Lastly, the exhibition reveals how light has irrevocably changed some of the colors in Irises.",
+          "license": "CC-BY-4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "J. Paul Getty Museum, Museum Collection exhibition record 16D4X1.",
+          "normalization": "One sentence from the exhibition description. Formatting removed."
+        }
+      ]
+    },
+    {
+      "request_id": "vincent-garden-and-shipment-1",
+      "input": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "What does the MuseBridge guide note say Vincent was working on besides the irises in his garden?",
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "top_k": 2
+      },
+      "candidates": [
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "artwork_id": "getty-103jnh",
+          "source_id": "musebridge-103jnh-guide",
+          "source_kind": "guide_note",
+          "source_title": "MuseBridge Guide — Irises",
+          "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+          "source_language": "en",
+          "source_locator": "MuseBridge guide 1 — Finding one flower",
+          "excerpt": "Find the single white iris. Cover it briefly with your thumb, then uncover it. Does your eye go there first, or to the cluster of blue petals nearby? Try following the outline of just one blue bloom before looking at the whole bed again.",
+          "license": "In Copyright",
+          "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+          "attribution": "MuseBridge",
+          "normalization": "none"
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "artwork_id": "getty-103jnh",
+          "source_id": "musebridge-103jnh-guide",
+          "source_kind": "guide_note",
+          "source_title": "MuseBridge Guide — Irises",
+          "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+          "source_language": "en",
+          "source_locator": "MuseBridge guide 2 — Following a leaf",
+          "excerpt": "Trace one long leaf upward from the brown earth. Now trace the outside of a petal. The leaf gives your eye a long, fairly continuous path; the petal makes it change direction several times. Look at the edges of the picture to see where those paths are cut short.",
+          "license": "In Copyright",
+          "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+          "attribution": "MuseBridge",
+          "normalization": "none"
+        }
+      ]
+    },
+    {
+      "request_id": "vincent-who-said-what-1",
+      "input": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "Who described Vincent van Gogh's painting Irises as 'full of air and life' when it was being exhibited?",
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "top_k": 2
+      },
+      "candidates": [
+        {
+          "chunk_id": "getty-103jnh-description-02",
+          "artwork_id": "getty-103jnh",
+          "source_id": "getty-103jnh-record",
+          "source_kind": "museum_record",
+          "source_title": "Irises — Getty Museum record",
+          "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+          "source_language": "en",
+          "source_locator": "Object description, paragraph 2",
+          "excerpt": "There are no known drawings for this painting; Van Gogh himself considered it a study. His brother Theo quickly recognized its quality and submitted it to the Salon des Indépendants in September 1889, writing Vincent of the exhibition: \"[It] strikes the eye from afar. It is a beautiful study full of air and life.\"",
+          "license": "CC-BY-4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "J. Paul Getty Museum",
+          "normalization": "HTML removed; whitespace normalized."
+        },
+        {
+          "chunk_id": "getty-103jnh-medium",
+          "artwork_id": "getty-103jnh",
+          "source_id": "getty-103jnh-record",
+          "source_kind": "museum_record",
+          "source_title": "Irises — Getty Museum record",
+          "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+          "source_language": "en",
+          "source_locator": "Medium",
+          "excerpt": "Oil on canvas",
+          "license": "CC0-1.0",
+          "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "attribution": "J. Paul Getty Museum",
+          "normalization": "none"
+        }
+      ]
+    },
+    {
+      "request_id": "vincent-looking-and-material-1",
+      "input": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "What does the MuseBridge guide suggest looking at in Irises, specifically regarding the white bloom or similar features?",
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "top_k": 2
+      },
+      "candidates": [
+        {
+          "chunk_id": "getty-103jnh-guide-01",
+          "artwork_id": "getty-103jnh",
+          "source_id": "musebridge-103jnh-guide",
+          "source_kind": "guide_note",
+          "source_title": "MuseBridge Guide — Irises",
+          "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+          "source_language": "en",
+          "source_locator": "MuseBridge guide 1 — Finding one flower",
+          "excerpt": "Find the single white iris. Cover it briefly with your thumb, then uncover it. Does your eye go there first, or to the cluster of blue petals nearby? Try following the outline of just one blue bloom before looking at the whole bed again.",
+          "license": "In Copyright",
+          "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+          "attribution": "MuseBridge",
+          "normalization": "none"
+        },
+        {
+          "chunk_id": "getty-103jnh-guide-02",
+          "artwork_id": "getty-103jnh",
+          "source_id": "musebridge-103jnh-guide",
+          "source_kind": "guide_note",
+          "source_title": "MuseBridge Guide — Irises",
+          "source_url": "https://www.getty.edu/art/collection/object/103JNH",
+          "source_language": "en",
+          "source_locator": "MuseBridge guide 2 — Following a leaf",
+          "excerpt": "Trace one long leaf upward from the brown earth. Now trace the outside of a petal. The leaf gives your eye a long, fairly continuous path; the petal makes it change direction several times. Look at the edges of the picture to see where those paths are cut short.",
+          "license": "In Copyright",
+          "license_url": "https://rightsstatements.org/vocab/InC/1.0/",
+          "attribution": "MuseBridge",
+          "normalization": "none"
+        }
+      ]
+    },
+    {
+      "request_id": "vincent-conservation-limits-1",
+      "input": {
+        "tool_version": "evidence-tool-v1",
+        "query_id": "q1",
+        "request_ids": [
+          "r1"
+        ],
+        "query": "Did the exhibition record for Irises state that the effects of light on the picture were reversible?",
+        "artwork_id": "getty-103jnh",
+        "dataset_version": "getty-gallery-v2",
+        "top_k": 2
+      },
+      "candidates": [
+        {
+          "chunk_id": "vincent-getty-light-change",
+          "artwork_id": "getty-103jnh",
+          "source_id": "vincent-getty-ultra-violet-exhibition",
+          "source_kind": "museum_record",
+          "source_title": "Ultra-Violet: New Light on Van Gogh’s Irises — Getty exhibition record",
+          "source_url": "https://www.getty.edu/art/collection/exhibition/16D4X1",
+          "source_language": "en",
+          "source_locator": "Exhibition Details, sentence beginning “Lastly”.",
+          "excerpt": "Lastly, the exhibition reveals how light has irrevocably changed some of the colors in Irises.",
+          "license": "CC-BY-4.0",
+          "license_url": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "J. Paul Getty Museum, Museum Collection exhibition record 16D4X1.",
+          "normalization": "One sentence from the exhibition description. Formatting removed."
+        },
+        {
+          "chunk_id": "vincent-getty-faded-red",
+          "artwork_id": "getty-103jnh",
+          "source_id": "vincent-getty-search-for-violet",
+          "source_kind": "museum_record",
+          "source_title": "Vincent van Gogh, Irises: the search for violet — Getty Conversations",
+          "source_url": "https://smarthistory.org/vincent-van-gogh-irises-the-search-for-violet-getty-conversations/",
+          "source_language": "en",
+          "source_locator": "English transcript, Devi Ormond’s first response, starting at 00:20.8.",
+          "excerpt": "considerable fading of a particular red pigment called geranium lake. And that geranium lake was used with the blues to create wonderful violet colors.",
+          "license": "CC-BY-NC-SA-4.0",
+          "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+          "attribution": "Devi Ormond, Beth Harris and the J. Paul Getty Museum, Getty Conversations (Smarthistory, 18 September 2024). Speaker: Getty paintings conservator Devi Ormond.",
+          "normalization": "Continuous extract starting within a sentence. Speaker label and timestamp supplied in the locator."
+        }
+      ]
+    }
+  ],
+  "profile": {
+    "profile_id": "local-ollama-v2",
+    "model_name": "qwen3.5:9b-q4_K_M",
+    "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+    "server_version": "0.40.16",
+    "context_tokens": 16384,
+    "plan_output_tokens": 2048,
+    "answer_output_tokens": 2048,
+    "safety_tokens": 512,
+    "temperature": 0,
+    "presence_penalty": 0,
+    "think": false,
+    "keep_alive": "30m"
+  },
+  "metadata_fingerprint": "e36437b2fc83fa89c82ada815fee5968d4694b8a3777b9674f5e015792999ad7",
+  "summary": {
+    "planned": 13,
+    "delivered": 8,
+    "structural_and_expected_fields_pass": 6,
+    "semantic_review": "Review the spoken answer and memory separately against each rubric."
+  }
+}

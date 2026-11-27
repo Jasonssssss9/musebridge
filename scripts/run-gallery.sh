@@ -50,7 +50,11 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT TERM
 go -C api build -o "$run_dir/api" ./cmd/server
-"${RETRIEVAL_PYTHON:-$python_bin}" -m knowledge.http_service --host 127.0.0.1 --port "$retrieval_port" &
+retrieval_args=()
+if [[ "${MUSEBRIDGE_ENABLE_VINCENT:-0}" == 1 ]]; then
+    retrieval_args+=(--enable-vincent)
+fi
+"${RETRIEVAL_PYTHON:-$python_bin}" -m knowledge.http_service --host 127.0.0.1 --port "$retrieval_port" "${retrieval_args[@]}" &
 children+=("$!")
 unset OPENAI_API_KEY OPENAI_API_KEY_FILE
 "$python_bin" -m uvicorn agent.testing.integration_app:create_app --factory --host 127.0.0.1 --port "$agent_port" --no-access-log &

@@ -57,3 +57,41 @@ def create_workflow_runtime(*, model, profile, prompt_sizer, manifest, retrieval
     runtime.dataset_version = manifest.dataset_version
     runtime.inference_gate = gate
     return runtime
+
+
+def create_workflow_runtime_v3(*, model, profile, prompt_sizer, manifest, retrieval,
+                               role_manifest, role_retrieval, identity: ModelIdentity,
+                               readiness, gate=None, shared_with=None):
+    """Bind the authenticated run's role once, before planning and source validation."""
+    from agent.contracts.codec import ContractCodecV3
+    from agent.contracts.validation import check_run_result
+    from agent.workflows.museum_qa_v3 import MuseumQAWorkflowV3, create_vincent_workflow
+
+    gate = gate if gate is not None else InferenceGate()
+    deps = dict(model=gate.wrap(model), profile=profile, prompt_sizer=prompt_sizer)
+    guide = MuseumQAWorkflowV3(conversation_mode="guide", manifest=manifest, retrieval=retrieval, **deps)
+    vincent = create_vincent_workflow(manifest=role_manifest, retrieval=role_retrieval, **deps)
+    workflows = {"guide": guide, "vincent": vincent}
+    codec = ContractCodecV3()
+    if profile.profile_id != identity.profile_id:
+        raise ValueError("The provider identity and workflow profile must agree.")
+
+    async def execute(run, *, request_id, budget):
+        workflow = workflows[run["scope"]["conversation_mode"]]
+        return await WorkflowExecutor(workflow, identity)(run, request_id=request_id, budget=budget)
+
+    def admit(run):
+        workflow = workflows[run["scope"]["conversation_mode"]]
+        return workflow._validate_input(run, "scope-validation")
+
+    def check_result(run, result):
+        workflow = workflows[run["scope"]["conversation_mode"]]
+        return check_run_result(run, result, validator=codec.validator, manifest=workflow.manifest)
+
+    runtime = RunRegistry(execute, validate_input=admit, ready=readiness, codec=codec,
+                          private_version="agent-run-v3", workflow_id="museum_qa_v3",
+                          check_result=check_result, shared_with=shared_with)
+    runtime.retrieval_strategy_version = role_retrieval.retrieval_strategy_version
+    runtime.dataset_version = manifest.dataset_version
+    runtime.inference_gate = gate
+    return runtime

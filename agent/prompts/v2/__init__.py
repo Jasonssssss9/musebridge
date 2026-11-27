@@ -47,12 +47,21 @@ def build_messages(operation: str, payload: dict[str, Any],
     files = ("core_policy.md", "memory_policy.md", *_OPERATION_POLICIES[operation])
     policies = [(_PROMPT_DIRECTORY / name).read_text(encoding="utf-8").strip()
                 for name in files]
-    if compact_schema:
+    vincent = payload.get("scope", {}).get("conversation_mode") == "vincent"
+    if vincent:
+        role_directory = _PROMPT_DIRECTORY.parent / "vincent"
+        policies[0] = (role_directory / "dialogue.md").read_text(encoding="utf-8").strip()
+        if operation == "plan":
+            policies[2] = (role_directory / "plan.md").read_text(encoding="utf-8").strip()
+    if compact_schema or vincent:
         guide = json.dumps(_schema_guide(output_schema), ensure_ascii=False, allow_nan=False, separators=(",", ":"))
         policies.append("Output structure. The server enforces the full schema.\n" + guide)
     else:
         schema_json = json.dumps(output_schema, ensure_ascii=False, allow_nan=False)
         policies.append("Required JSON output schema:\n" + schema_json)
     system = "\n\n".join(policies)
+    if vincent:
+        payload = dict(payload)
+        payload["original_question"] = payload.pop("original_question")
     data = json.dumps(payload, ensure_ascii=False, allow_nan=False)
     return [{"role": "system", "content": system}, {"role": "user", "content": data}]

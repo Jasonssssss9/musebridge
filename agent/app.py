@@ -25,8 +25,8 @@ _TRACE = re.compile(r"[\x21-\x7e]{1,128}\Z")
 _CODEC = ContractCodec()
 
 
-def _reply(definition: str, body: dict, status: int = 200, headers=None) -> Response:
-    return Response(_CODEC.encode(definition, body), status_code=status,
+def _reply(definition: str, body: dict, status: int = 200, headers=None, codec=_CODEC) -> Response:
+    return Response(codec.encode(definition, body), status_code=status,
                     media_type="application/json", headers=headers)
 
 
@@ -136,7 +136,8 @@ async def _body(request: Request) -> bytes:
     return bytes(content)
 
 
-def create_app(runtime: RunRegistry | None = None, *, service_token: str | None = None) -> FastAPI:
+def create_app(runtime: RunRegistry | None = None, *, service_token: str | None = None,
+               v3_runtime: RunRegistry | None = None) -> FastAPI:
     """Uvicorn factory; real inference requires explicit provider configuration."""
     token = service_token if service_token is not None else os.environ.get("AGENT_SERVICE_TOKEN", "")
     try:
@@ -219,5 +220,46 @@ def create_app(runtime: RunRegistry | None = None, *, service_token: str | None 
             raise failure("invalid_request")
         request.state.run_id = run_id
         return _reply("RunSnapshot", await request.app.state.runtime.get(run_id))
+
+    if v3_runtime is not None or os.environ.get("MUSEBRIDGE_ENABLE_VINCENT") == "1":
+        from agent.contracts.codec import ContractCodecV3
+
+        codec_v3 = ContractCodecV3()
+
+        def versioned_runtime(request):
+            registry = v3_runtime or getattr(request.app.state.runtime, "v3_runtime", None)
+            if registry is None:
+                raise failure("service_not_ready", "capacity")
+            return registry
+
+        @app.get("/internal/v3/agent/readyz")
+        async def ready_v3(request: Request):
+            registry = versioned_runtime(request)
+            if not registry.is_ready():
+                raise failure("service_not_ready", "capacity")
+            return _reply("ReadinessResponse", {
+                "status": "ok", "contract_version": "agent-run-v3", "workflow_id": "museum_qa_v3",
+                "profile_id": "local-ollama-v2", "dataset_version": registry.dataset_version,
+                "state_version": "conversation-state-v2", "supported_languages": ["en", "es", "zh-CN", "ko"],
+                "history_turn_limit": 5,
+            }, headers={"X-Retrieval-Strategy": registry.retrieval_strategy_version}, codec=codec_v3)
+
+        @app.post("/internal/v3/agent/runs")
+        async def create_v3(request: Request):
+            try:
+                value = strict_json(await _body(request), max_bytes=PRIVATE_BODY_LIMIT)
+                run = validate_run_shape(value, codec_v3, private_version="agent-run-v3", workflow_id="museum_qa_v3")
+            except ContractViolation as exc:
+                raise failure("invalid_request") from exc
+            request.state.run_id = run["run_id"]
+            snapshot = await versioned_runtime(request).submit(run, request_id=request.state.request_id)
+            return _reply("RunSnapshot", snapshot, codec=codec_v3)
+
+        @app.get("/internal/v3/agent/runs/{run_id}")
+        async def get_v3(run_id: str, request: Request):
+            if _UUID.fullmatch(run_id) is None:
+                raise failure("invalid_request")
+            request.state.run_id = run_id
+            return _reply("RunSnapshot", await versioned_runtime(request).get(run_id), codec=codec_v3)
 
     return app

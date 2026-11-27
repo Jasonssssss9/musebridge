@@ -36,11 +36,15 @@ async def start_ollama_runtime():
                 # A renewed attestation must still describe this running implementation.
                 return current is not None and current["implementation_fingerprint"] == record["implementation_fingerprint"]
 
+            guide_tool = RetrievalTool(manifest, mode=configured_mode(),
+                base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001"))
             registry = create_workflow_runtime(model=model, profile=model.profile, prompt_sizer=model.sizer,
-                manifest=manifest, retrieval=RetrievalTool(manifest,
-                    mode=configured_mode(), base_url=os.environ.get("RETRIEVAL_BASE_URL", "http://127.0.0.1:8001")),
+                manifest=manifest, retrieval=guide_tool,
                 identity=ModelIdentity(model.profile.model_name, model.profile.model_digest),
                 readiness=ready)
+
+            from agent.providers.vincent import attach_vincent, refresh_vincent
+            await attach_vincent(registry, model, manifest, guide_tool)
 
             async def refresh():
                 while True:
@@ -50,6 +54,7 @@ async def start_ollama_runtime():
                         model.verified = True
                     except Exception:
                         model.verified = False
+                    await refresh_vincent(registry)
 
             watcher = asyncio.create_task(refresh(), name="musebridge-model-identity")
         else:

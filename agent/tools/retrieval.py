@@ -86,6 +86,7 @@ class RetrievalTool:
         base_url: str,
         client: httpx.AsyncClient | None = None,
         mode: str = "lexical",
+        vincent: bool = False,
     ):
         parsed = urlsplit(base_url)
         # Accessing port validates malformed and out-of-range port strings.
@@ -102,9 +103,13 @@ class RetrievalTool:
             raise ValueError("The retrieval base URL must be an HTTP(S) service origin.")
         self.retrieval_strategy_version = STRATEGIES[mode]
         self.manifest = manifest
-        self.url = base_url.rstrip("/") + "/retrieve"
+        self.url = base_url.rstrip("/") + ("/retrieve/vincent" if vincent else "/retrieve")
         self.client = client
-        self.validator = ContractValidator()
+        if vincent:
+            from agent.contracts.codec import v3_validator
+            self.validator = v3_validator()
+        else:
+            self.validator = ContractValidator()
 
     async def search(
         self,

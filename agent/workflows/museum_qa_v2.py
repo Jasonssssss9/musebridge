@@ -44,6 +44,7 @@ class State(TypedDict, total=False):
     translation: dict | None
     answer_language: str
     evidence: list[dict]
+    fresh_evidence: list[dict]
     catalog: list[dict]
     executed_queries: list[dict]
     complete_scope: bool
@@ -88,12 +89,23 @@ class WorkflowOutcomeV2:
 
     def execution_fields(self) -> dict:
         """B adds verified profile/model identity and measured total duration."""
+        role_aware = "conversation_mode" in self.scope
         return {
-            "workflow_id": WORKFLOW_ID, "prompt_version": PROMPT_VERSION,
-            "schema_version": SCHEMA_VERSION, "retrieval_strategy_version": self.retrieval_strategy_version,
+            "workflow_id": "museum_qa_v3" if role_aware else WORKFLOW_ID,
+            "prompt_version": "museum-prompts-v3" if role_aware else PROMPT_VERSION,
+            "schema_version": "agent-schema-v3" if role_aware else SCHEMA_VERSION, "retrieval_strategy_version": self.retrieval_strategy_version,
             "model_calls": self.model_calls, "retrieval_calls": self.retrieval_calls,
             "refinement_rounds": self.refinement_rounds,
         }
+
+
+def _role_evidence_window(cache, fresh):
+    """Retain all this run's hits, then fill unused slots from newest prior citations."""
+    fresh_ids = {r["chunk_id"] for r in fresh}
+    cached_ids = {r["chunk_id"] for r in cache}
+    older = [r["chunk_id"] for r in cache if r["chunk_id"] not in fresh_ids]
+    keep = fresh_ids.union(older[:8 - len(fresh)])
+    return [r for r in cache if r["chunk_id"] in keep] + [r for r in fresh if r["chunk_id"] not in cached_ids]
 
 
 class MuseumQAWorkflowV2:
@@ -227,6 +239,7 @@ class MuseumQAWorkflowV2:
             started = monotonic()
             scope = run["scope"]
             evidence = deepcopy(state["evidence"])
+            fresh_evidence = list(state.get("fresh_evidence", []))
             executed = deepcopy(state["executed_queries"])
             if refinement:
                 budget.check_active()
@@ -246,7 +259,7 @@ class MuseumQAWorkflowV2:
                 tool_input = {
                     "tool_version": "evidence-tool-v1", "query_id": query["id"],
                     "request_ids": list(query["request_ids"]), "query": query["query"],
-                    **scope, "top_k": 2,
+                    "artwork_id": scope["artwork_id"], "dataset_version": scope["dataset_version"], "top_k": 2,
                 }
                 remaining = budget.remaining_seconds()
                 if remaining <= 0:
@@ -261,14 +274,21 @@ class MuseumQAWorkflowV2:
                     raise
                 budget.check_active()
                 self._validate_tool_result(tool_input, reply)
-                evidence = self.manifest.merge(
-                    scope["artwork_id"], scope["dataset_version"], evidence, reply["candidates"],
-                )
+                if "conversation_mode" in scope:
+                    # A run can retrieve at most eight distinct fresh hits. All of
+                    # those must be available together, even with a full prior cache.
+                    fresh_evidence = self.manifest.merge(
+                        scope["artwork_id"], scope["dataset_version"], fresh_evidence, reply["candidates"])
+                    evidence = _role_evidence_window(run["conversation_state"]["verified_evidence"], fresh_evidence)
+                else:
+                    evidence = self.manifest.merge(
+                        scope["artwork_id"], scope["dataset_version"], evidence, reply["candidates"])
                 executed.append(deepcopy(query))
             timings = dict(state["phase_timings_ms"])
             timings["refinement_retrieval" if refinement else "retrieval"] = int((monotonic() - started) * 1000)
             return {
-                "evidence": evidence, "executed_queries": executed, "retrieval_calls": len(executed),
+                "evidence": evidence, "fresh_evidence": fresh_evidence,
+                "executed_queries": executed, "retrieval_calls": len(executed),
                 "refinement_rounds": 1 if refinement else 0, "phase_timings_ms": timings,
                 "complete_scope": self.manifest.complete_scope(
                     scope["artwork_id"], scope["dataset_version"], evidence),
@@ -369,7 +389,7 @@ class MuseumQAWorkflowV2:
             refinement_rounds=result["refinement_rounds"],
             retrieval_strategy_version=self.retrieval_strategy_version,
             diagnostics={
-                "implementation_stage": "C-v2", "complete_scope": result["complete_scope"],
+                "implementation_stage": "C-v3" if "conversation_mode" in run["scope"] else "C-v2", "complete_scope": result["complete_scope"],
                 "retained_history_turns": len(result["retained_run"]["context"]["recent_turns"]),
                 "phase_timings_ms": deepcopy(result["phase_timings_ms"]),
             },

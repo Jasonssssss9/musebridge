@@ -81,6 +81,24 @@ def validate_request(dataset, *, artwork_id, query, dataset_version, top_k):
         raise RetrievalError("artwork_not_found", "The requested artwork is not in the dataset.")
 
 
+def evidence_record(chunk, source):
+    return {
+        "chunk_id": chunk["chunk_id"],
+        "artwork_id": chunk["artwork_id"],
+        "source_id": chunk["source_id"],
+        **({"source_kind": source["source_kind"]} if "source_kind" in source else {}),
+        "source_title": source["source_title"],
+        "source_url": source["source_url"],
+        "source_language": source["source_language"],
+        "source_locator": chunk["source_locator"],
+        "excerpt": chunk["excerpt"],
+        "license": chunk["license"],
+        "license_url": chunk["license_url"],
+        "attribution": chunk["attribution"],
+        "normalization": chunk["normalization"],
+    }
+
+
 def retrieve(
     dataset: Dataset,
     *,
@@ -127,27 +145,8 @@ def retrieve_with_trace(
         candidates = request["chunk_ids"]
         request["chunk_ids"] = [key for key in selected if key in candidates]
 
-    evidence = []
-    for chunk_id in selected:
-        chunk = scoped_chunks[chunk_id]
-        source = dataset.sources[chunk["source_id"]]
-        evidence.append(
-            {
-                "chunk_id": chunk["chunk_id"],
-                "artwork_id": chunk["artwork_id"],
-                "source_id": chunk["source_id"],
-                **({"source_kind": source["source_kind"]} if "source_kind" in source else {}),
-                "source_title": source["source_title"],
-                "source_url": source["source_url"],
-                "source_language": source["source_language"],
-                "source_locator": chunk["source_locator"],
-                "excerpt": chunk["excerpt"],
-                "license": chunk["license"],
-                "license_url": chunk["license_url"],
-                "attribution": chunk["attribution"],
-                "normalization": chunk["normalization"],
-            }
-        )
+    evidence = [evidence_record(scoped_chunks[key], dataset.sources[scoped_chunks[key]["source_id"]])
+                for key in selected]
     result = {"dataset_version": dataset.dataset_version, "evidence": evidence}
     trace = {"normalized_query": normalized_query, "requests": trace_requests}
     if vector_index is not None:
