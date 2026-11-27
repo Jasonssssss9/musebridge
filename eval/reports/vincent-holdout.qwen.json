@@ -1,0 +1,37 @@
+{
+  "evaluation": "Fixed-evidence Vincent text rehearsal",
+  "artwork_id": "getty-103jnh",
+  "prompt_sha256": "efaa54ad0516cc4c77c701be0aa5f7c5bfbe5310182a1943cbe94a4ec46140e7",
+  "cases_sha256": "28465956d6279faec2de8bc068bb4efb0f8ca61bdd212730abf8ac0b0af65a11",
+  "evidence_releases": {
+    "gallery": {
+      "version": "getty-gallery-v2",
+      "sha256": "75b238885db065f7de6e3d3f6c6d7cdb735c47618c9a7ef939e45ee3718d80d9"
+    },
+    "reference_pack": {
+      "version": "vincent-irises-v1",
+      "sha256": "f8eda43a1da4ca6f1b5df00174be6bd55ca4b023b97bb18920c8298bc7f95dc4"
+    }
+  },
+  "profile": {
+    "profile_id": "local-ollama-v2",
+    "model_name": "qwen3.5:9b-q4_K_M",
+    "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+    "server_version": "0.40.16",
+    "context_tokens": 16384,
+    "plan_output_tokens": 2048,
+    "answer_output_tokens": 2048,
+    "safety_tokens": 512,
+    "temperature": 0,
+    "presence_penalty": 0,
+    "think": false,
+    "keep_alive": "30m"
+  },
+  "conversations": [],
+  "error": {
+    "code": "generation_timeout",
+    "message": "The model stage exceeded its deadline.",
+    "retryable": true,
+    "phase": "admission"
+  }
+}

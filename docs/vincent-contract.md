@@ -1,6 +1,6 @@
 # Talk with Vincent interface contract
 
-**Status:** Agreed implementation target. The deployed gallery uses `agent-demo-v0.3`. The iPhone prototype verified recording, playback and local English transcription. End-to-end Vincent conversations, historical-source validation and speech playback from committed turns still require implementation and acceptance.
+**Status:** Agreed implementation target. The deployed gallery uses `agent-demo-v0.3`. The iPhone prototype verified recording, playback and local English transcription. The [text rehearsal](vincent-rehearsal.md) records real Qwen replies and memory against fixed evidence for Getty’s *Irises*. End-to-end Vincent conversations, historical-source validation and speech playback from committed turns still require implementation and acceptance.
 
 This contract defines the English conversation on Getty’s *Irises* (`getty-103jnh`) and preserves the published 20-work release (`getty-gallery-v2`). The [voice contract](vincent-voice.md) defines the audio bytes, HTTP errors and phone controls. The [schema changes](contracts/agent-v3.patch.json) and [wire examples](contracts/vincent-examples.json) specify the exact JSON. For fields and relationships inherited below, use the [Agent v2 contract](agent-api-contract.md).
 

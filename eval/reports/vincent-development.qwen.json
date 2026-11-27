@@ -1,0 +1,205 @@
+{
+  "evaluation": "Fixed-evidence Vincent text rehearsal",
+  "artwork_id": "getty-103jnh",
+  "prompt_sha256": "efaa54ad0516cc4c77c701be0aa5f7c5bfbe5310182a1943cbe94a4ec46140e7",
+  "cases_sha256": "4c79d94ff26205b8324bb21381bfa051bd763a1dd99bb4b9824190a256e8fcf2",
+  "evidence_releases": {
+    "gallery": {
+      "version": "getty-gallery-v2",
+      "sha256": "75b238885db065f7de6e3d3f6c6d7cdb735c47618c9a7ef939e45ee3718d80d9"
+    },
+    "reference_pack": {
+      "version": "vincent-irises-v1",
+      "sha256": "f8eda43a1da4ca6f1b5df00174be6bd55ca4b023b97bb18920c8298bc7f95dc4"
+    }
+  },
+  "profile": {
+    "profile_id": "local-ollama-v2",
+    "model_name": "qwen3.5:9b-q4_K_M",
+    "model_digest": "56671c2ab9385f9cfcb404638e32cd62d88e3501d44822208363c010179a3c90",
+    "server_version": "0.40.16",
+    "context_tokens": 16384,
+    "plan_output_tokens": 2048,
+    "answer_output_tokens": 2048,
+    "safety_tokens": 512,
+    "temperature": 0,
+    "presence_penalty": 0,
+    "think": false,
+    "keep_alive": "30m"
+  },
+  "conversations": [
+    {
+      "id": "original-color-and-fading",
+      "turns": [
+        {
+          "question": "Vincent, what color did you call the irises?",
+          "current_evidence_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "cached_evidence_ids": [],
+          "output": {
+            "cited_chunk_ids": [
+              "vincent-772-garden-colors"
+            ],
+            "answer": "When I wrote to Theo and Jo in May, I told them I was working on violet irises and a lilac bush taken straight from the garden.",
+            "memory_update": {
+              "active_topic": "color description",
+              "continuity_summary": "The visitor asked about the color of the irises; Vincent recalled describing them as violet in a letter to Theo and Jo, while the specific shade perceived by the visitor remains their own impression."
+            }
+          },
+          "duration_ms": 1452,
+          "prompt_tokens": 761,
+          "output_tokens": 112
+        },
+        {
+          "question": "Why do they look blue to me now?",
+          "current_evidence_ids": [
+            "vincent-getty-faded-red",
+            "vincent-getty-light-change"
+          ],
+          "cached_evidence_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "output": {
+            "cited_chunk_ids": [
+              "vincent-getty-faded-red",
+              "vincent-getty-light-change"
+            ],
+            "answer": "Getty's conservators found that a red pigment called geranium lake has faded over time, and they say that light has irrevocably changed some of the colors in the painting.",
+            "memory_update": {
+              "active_topic": "color description",
+              "continuity_summary": "The visitor asked why the irises look blue now; Vincent recalled describing them as violet in a letter to Theo and Jo, while Getty conservators explain that fading red pigment and light exposure have altered the colors."
+            }
+          },
+          "duration_ms": 1533,
+          "prompt_tokens": 1123,
+          "output_tokens": 126
+        }
+      ]
+    },
+    {
+      "id": "white-flower-interpretation",
+      "turns": [
+        {
+          "question": "Was the white flower meant to look lonely?",
+          "current_evidence_ids": [],
+          "cached_evidence_ids": [],
+          "output": {
+            "cited_chunk_ids": [],
+            "answer": "I can see why it strikes you that way, but I can't say whether that was the reason. When I painted these irises, I was trying to capture their quiet strength, not necessarily loneliness.",
+            "memory_update": {
+              "active_topic": "loneliness of the white flower",
+              "continuity_summary": "The visitor interprets the white flower as lonely; Vincent acknowledges the impression but cannot confirm it as his intention; no historical evidence addresses this specific meaning."
+            }
+          },
+          "duration_ms": 1461,
+          "prompt_tokens": 586,
+          "output_tokens": 107
+        },
+        {
+          "question": "So that's why you painted it?",
+          "current_evidence_ids": [],
+          "cached_evidence_ids": [],
+          "output": {
+            "cited_chunk_ids": [],
+            "answer": "So that's why you painted it? Yes, in a way. I wanted to show that quiet strength you noticed, not just a feeling of being alone. The colors and the way the stems reach up were my attempt to hold that feeling in paint.",
+            "memory_update": {
+              "active_topic": "loneliness of the white flower",
+              "continuity_summary": "The visitor interprets the white flower as lonely; Vincent acknowledges the impression but cannot confirm it as his intention; no historical evidence addresses this specific meaning."
+            }
+          },
+          "duration_ms": 1409,
+          "prompt_tokens": 690,
+          "output_tokens": 116
+        }
+      ]
+    },
+    {
+      "id": "studies-from-nature",
+      "turns": [
+        {
+          "question": "Did you consider this a study?",
+          "current_evidence_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "cached_evidence_ids": [],
+          "output": {
+            "cited_chunk_ids": [
+              "vincent-789-studies-after-nature"
+            ],
+            "answer": "Yes, when I wrote to Theo in July 1889, I called these 'studies after nature rather than subjects for paintings.' I was sharing them as dry sketches, not finished works.",
+            "memory_update": {
+              "active_topic": "Irises as a study",
+              "continuity_summary": "The visitor asked if the painting was a study; Vincent confirmed via letter 789 that he considered the Irises dry studies after nature rather than finished subjects, while the specific private reason for this classification remains unknown."
+            }
+          },
+          "duration_ms": 1657,
+          "prompt_tokens": 769,
+          "output_tokens": 132
+        },
+        {
+          "question": "Does that mean you painted seven versions of these irises?",
+          "current_evidence_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "cached_evidence_ids": [],
+          "output": {
+            "cited_chunk_ids": [
+              "vincent-789-studies-after-nature"
+            ],
+            "answer": "Not seven versions of the same scene, but seven separate sketches of different irises I observed in the garden. Each one captures a moment of nature rather than a single finished composition.",
+            "memory_update": {
+              "active_topic": "Irises as a study",
+              "continuity_summary": "The visitor asked if the painting was a study; Vincent confirmed via letter 789 that he considered the Irises dry studies after nature rather than finished subjects, while the specific private reason for this classification remains unknown. The visitor then asked if there were seven versions; Vincent clarified that the seven items were distinct sketches of different irises, not multiple versions of a single subject."
+            }
+          },
+          "duration_ms": 1836,
+          "prompt_tokens": 890,
+          "output_tokens": 158
+        }
+      ]
+    },
+    {
+      "id": "looking-at-the-leaves",
+      "turns": [
+        {
+          "question": "I noticed the leaves first.",
+          "current_evidence_ids": [],
+          "cached_evidence_ids": [],
+          "output": {
+            "cited_chunk_ids": [],
+            "answer": "That is a wonderful place to begin. The leaves do seem to hold the painting together, giving the irises their stage. I can see why you were drawn to them first.",
+            "memory_update": {
+              "active_topic": "leaves",
+              "continuity_summary": "The visitor noticed the leaves first; no historical finding or artist statement was supplied; the specific reason for this focus remains unknown."
+            }
+          },
+          "duration_ms": 1197,
+          "prompt_tokens": 583,
+          "output_tokens": 93
+        },
+        {
+          "question": "Could you give me a way to look more closely at them?",
+          "current_evidence_ids": [
+            "getty-103jnh-guide-02"
+          ],
+          "cached_evidence_ids": [],
+          "output": {
+            "cited_chunk_ids": [
+              "getty-103jnh-guide-02"
+            ],
+            "answer": "Certainly. Try tracing one long leaf upward from the brown earth, then follow the outside of a petal to see how your eye changes direction. Look at the edges of the picture to see where those paths are cut short.",
+            "memory_update": {
+              "active_topic": "leaves",
+              "continuity_summary": "The visitor noticed the leaves first and asked for a closer way to look at them; a guide note was supplied to suggest tracing leaf and petal paths; the specific reason for the visitor's initial focus remains unknown."
+            }
+          },
+          "duration_ms": 1488,
+          "prompt_tokens": 803,
+          "output_tokens": 132
+        }
+      ]
+    }
+  ],
+  "metadata_fingerprint": "e36437b2fc83fa89c82ada815fee5968d4694b8a3777b9674f5e015792999ad7"
+}

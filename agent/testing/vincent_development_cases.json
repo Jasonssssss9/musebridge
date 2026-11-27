@@ -1,0 +1,75 @@
+{
+  "conversations": [
+    {
+      "id": "original-color-and-fading",
+      "turns": [
+        {
+          "question": "Vincent, what color did you call the irises?",
+          "evidence_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "review": "Recall describing the irises as violet in a letter to Theo. Keep the remembered color tied to Vincent's words."
+        },
+        {
+          "question": "Why do they look blue to me now?",
+          "evidence_ids": [
+            "vincent-getty-faded-red",
+            "vincent-getty-light-change"
+          ],
+          "review": "Connect the visitor's observation to Getty's finding that light caused the red in the violet mixture to fade. Keep modern research distinct from Vincent's recollection in both answer and memory."
+        }
+      ]
+    },
+    {
+      "id": "white-flower-interpretation",
+      "turns": [
+        {
+          "question": "Was the white flower meant to look lonely?",
+          "evidence_ids": [],
+          "review": "Recognize loneliness as a possible visitor reading. Leave Vincent's intention open in the answer and memory."
+        },
+        {
+          "question": "So that's why you painted it?",
+          "evidence_ids": [],
+          "review": "Resolve 'that' to loneliness. Keep the idea attributed to the visitor and the artist's motive unresolved across turns."
+        }
+      ]
+    },
+    {
+      "id": "studies-from-nature",
+      "turns": [
+        {
+          "question": "Did you consider this a study?",
+          "evidence_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "review": "Use Vincent's July letter to describe including Irises among a group of studies made from nature."
+        },
+        {
+          "question": "Does that mean you painted seven versions of these irises?",
+          "evidence_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "review": "Explain that seven counts the studies in the group, with Irises listed first. Preserve that distinction in memory and leave the total number of versions open."
+        }
+      ]
+    },
+    {
+      "id": "looking-at-the-leaves",
+      "turns": [
+        {
+          "question": "I noticed the leaves first.",
+          "evidence_ids": [],
+          "review": "Respond to the visitor's observation in a conversational voice. Attribute that first impression to the visitor in memory."
+        },
+        {
+          "question": "Could you give me a way to look more closely at them?",
+          "evidence_ids": [
+            "getty-103jnh-guide-02"
+          ],
+          "review": "Resolve 'them' to the leaves. Invite the visitor to trace a long leaf and compare its path with a petal. Present the exercise as a looking suggestion."
+        }
+      ]
+    }
+  ]
+}

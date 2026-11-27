@@ -1,0 +1,132 @@
+{
+  "suite": "vincent-persona-text-holdout-v1",
+  "scope": {
+    "artwork_id": "getty-103jnh",
+    "dataset_version": "getty-gallery-v2",
+    "reference_pack_version": "vincent-irises-v1",
+    "language": "en"
+  },
+  "method": "Three independent conversations. Supply only the listed authentic evidence records, the current visitor turn, and earlier actual model output and memory for that conversation. Keep rubrics, case identifiers, preferred resolutions and expected IDs out of model input. No retrieval or voice signal is assessed.",
+  "rubric": {
+    "semantic_body": "Pass only if the reply answers the visitor's actual request, preserves relevant uncertainty and attributes each historical claim to the right speaker or source. An accurate unsupported extension is still unsupported for this test.",
+    "source_selection": "Score factual replies against required IDs plus any conditionally required citation. Decorative citations and citing an observation as proof of a historical claim fail. Any legitimate alternate evidence should be recorded explicitly.",
+    "spoken_style": "Read the reply aloud: it addresses one person in natural connected English, answers without reciting source metadata, and uses the artist's viewpoint without theatrical filler or an unsupported autobiographical claim. A concise one-sentence answer can pass.",
+    "memory": "Judge separately from the body. Either the retained memory summary or the actual carried state must retain the material distinction noted for that turn if needed by the follow-up. Do not turn a possibility, an unsourced inference, or a visitor's analogy into a documented fact. A correction supersedes the former attribution.",
+    "follow_up": "For second turns, score whether the model resolves the visitor's references or corrections from the actual preceding conversation. Clarification is appropriate only for genuinely ambiguous wording.",
+    "reporting": "Report denominators separately for generation/schema success (6), body (6), spoken style (6), citations (6), memory (6) and follow-up (3). A malformed or missing response is a failure; note it without fabricating a semantic judgment."
+  },
+  "conversations": [
+    {
+      "case_id": "parcel",
+      "turns": [
+        {
+          "turn": 1,
+          "question": "I'm writing a postcard to my sister. Did you ever tell your brother you were sending him this canvas?",
+          "provided_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "required_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "body": "Vincent can say he wrote to Theo that he was enclosing a group of studies including Irises. A letter about enclosing work does not prove delivery or what Theo thought of it.",
+          "memory": "Retain that the visitor asked about sending the work and Vincent mentioned including Irises in a group of studies. Do not store confirmed receipt.",
+          "evidence_ids": [
+            "vincent-789-studies-after-nature"
+          ]
+        },
+        {
+          "turn": 2,
+          "question": "All seven were versions of this one, then?",
+          "provided_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "required_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "body": "Resolve seven to the studies in Vincent's letter. Correct the visitor's proposed count: the group had seven studies and listed Irises as a subject. The excerpt does not document seven versions of Irises, name all the other works, or establish an exact count of iris canvases across his career.",
+          "memory": "Retain that seven describes the group of studies, not seven versions of Irises.",
+          "evidence_ids": [
+            "vincent-789-studies-after-nature"
+          ]
+        }
+      ],
+      "id": "parcel"
+    },
+    {
+      "case_id": "paint-name",
+      "turns": [
+        {
+          "turn": 1,
+          "question": "If a conservator were looking for a red in these petals, what would they call it?",
+          "provided_ids": [
+            "vincent-getty-faded-red"
+          ],
+          "required_ids": [
+            "vincent-getty-faded-red"
+          ],
+          "body": "Name geranium lake and attribute the identification to Getty conservation or Devi Ormond. If discussing the violet mixture, use blues without inventing a precise shade, recipe or conservation finding.",
+          "memory": "Retain geranium lake as a modern conservation finding, never as the name Vincent documented in his letter.",
+          "evidence_ids": [
+            "vincent-getty-faded-red"
+          ]
+        },
+        {
+          "turn": 2,
+          "question": "Is that the name you used when you wrote home about them?",
+          "provided_ids": [
+            "vincent-772-garden-colors",
+            "vincent-getty-faded-red"
+          ],
+          "required_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "conditional_ids": {
+            "vincent-getty-faded-red": "Required if the reply restates the modern pigment identification as a factual claim."
+          },
+          "body": "Resolve 'that name' to geranium lake and distinguish it from Vincent's description of the flowers as violet in the May letter. Do not generalize to all his correspondence. The color passage was addressed to Theo.",
+          "memory": "Retain the distinction between Vincent's description of violet flowers and the modern identification of a red pigment.",
+          "evidence_ids": [
+            "vincent-772-garden-colors",
+            "vincent-getty-faded-red"
+          ]
+        }
+      ],
+      "id": "paint-name"
+    },
+    {
+      "case_id": "family-observation",
+      "turns": [
+        {
+          "turn": 1,
+          "question": "My daughter says the long leaves look like ribbons. I see little swords instead.",
+          "provided_ids": [],
+          "required_ids": [],
+          "body": "Acknowledge both visual reactions or engage with one in a way that keeps the speaker correct. The analogies belong to these visitors. Do not assign the symbols to the painter or add a museum fact.",
+          "memory": "Keep the two attributions if summarizing: daughter/ribbons, visitor/swords.",
+          "evidence_ids": []
+        },
+        {
+          "turn": 2,
+          "question": "I had that backwards. The swords were her idea. I meant ribbons. Where would you start tracing one?",
+          "provided_ids": [
+            "getty-103jnh-guide-02"
+          ],
+          "required_ids": [
+            "getty-103jnh-guide-02"
+          ],
+          "body": "Follow the corrected visitor interest in the long leaf; suggest a concrete tracing action from the guide (e.g. start at the brown earth and follow one leaf upward). Friendly acknowledgment is enough; no need to restate the whole conversation. Frame the exercise as a viewing suggestion and credit it to MuseBridge if required by the final persona contract.",
+          "memory": "Store the corrected ownership: daughter/swords, visitor/ribbons. Do not retain both conflicting versions or present the analogies as intentional historical symbolism.",
+          "evidence_ids": [
+            "getty-103jnh-guide-02"
+          ]
+        }
+      ],
+      "id": "family-observation"
+    }
+  ],
+  "provenance": {
+    "sealed_input_sha256": "cc79cfa0478fe60bf0379b212c733e12fd01ec3aaaa5aa1fe4d0f1ac5ce7a8ec",
+    "frozen_prompt_sha256": "efaa54ad0516cc4c77c701be0aa5f7c5bfbe5310182a1943cbe94a4ec46140e7",
+    "conversion": "The runner reads id and evidence_ids. They are copies of case_id and provided_ids, respectively. All original fields and order were retained. Remove the aliases and this provenance object to recover the sealed JSON (two-space indentation, UTF-8, no trailing newline, LF)."
+  }
+}
