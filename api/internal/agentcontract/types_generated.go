@@ -5,6 +5,10 @@ import "reflect"
 
 const SchemaSHA256 = "8abc3f29b4c366c5a19cfb2c3ffe78cd68236852e7eb43d68fadc77ae6b8ab20"
 
+const SchemaV3SHA256 = "d5f731e621710770d0a8fa77b0ef526c145d64d2d4c854aa50b1365c9bc79529"
+
+const ReferencePackSHA256 = "f8eda43a1da4ca6f1b5df00174be6bd55ca4b023b97bb18920c8298bc7f95dc4"
+
 type UUID string
 
 type RequestID string
@@ -12,8 +16,10 @@ type RequestID string
 type QueryID string
 
 type Scope struct {
-	ArtworkID      string `json:"artwork_id"`
-	DatasetVersion string `json:"dataset_version"`
+	ArtworkID            string                         `json:"artwork_id"`
+	DatasetVersion       string                         `json:"dataset_version"`
+	ConversationMode     Optional[ConversationMode]     `json:"conversation_mode,omitzero"`
+	ReferencePackVersion Optional[ReferencePackVersion] `json:"reference_pack_version,omitzero"`
 }
 
 type Evidence struct {
@@ -318,6 +324,7 @@ type PlanInput struct {
 	AvailableSourceKinds Optional[[]string]  `json:"available_source_kinds,omitzero"`
 	QueryPolicy          QueryPolicy         `json:"query_policy"`
 	CatalogFacts         []CatalogFact       `json:"catalog_facts"`
+	Scope                Optional[Scope]     `json:"scope,omitzero"`
 }
 
 type AnswerInput struct {
@@ -333,6 +340,7 @@ type AnswerInput struct {
 	AllowRefinement     bool                 `json:"allow_refinement"`
 	CatalogFacts        []CatalogFact        `json:"catalog_facts"`
 	Translation         *ResolvedTranslation `json:"translation"`
+	Scope               Optional[Scope]      `json:"scope,omitzero"`
 }
 
 type FinalInput struct {
@@ -348,6 +356,7 @@ type FinalInput struct {
 	AllowRefinement     bool                 `json:"allow_refinement"`
 	CatalogFacts        []CatalogFact        `json:"catalog_facts"`
 	Translation         *ResolvedTranslation `json:"translation"`
+	Scope               Optional[Scope]      `json:"scope,omitzero"`
 }
 
 type AgentAnswer struct {
@@ -407,8 +416,9 @@ type RunSnapshot struct {
 }
 
 type PublicCreateConversationRequest struct {
-	ContractVersion string `json:"contract_version"`
-	ArtworkID       string `json:"artwork_id"`
+	ContractVersion  string                     `json:"contract_version"`
+	ArtworkID        string                     `json:"artwork_id"`
+	ConversationMode Optional[ConversationMode] `json:"conversation_mode,omitzero"`
 }
 
 type PublicMessageRequest struct {
@@ -420,16 +430,18 @@ type PublicMessageRequest struct {
 }
 
 type PublicConversation struct {
-	ContractVersion    string             `json:"contract_version"`
-	ConversationID     UUID               `json:"conversation_id"`
-	ArtworkID          string             `json:"artwork_id"`
-	DatasetVersion     string             `json:"dataset_version"`
-	CreatedAt          string             `json:"created_at"`
-	ExpiresAt          string             `json:"expires_at"`
-	Revision           int64              `json:"revision"`
-	LanguagePreference LanguagePreference `json:"language_preference"`
-	AutoLanguage       Language           `json:"auto_language"`
-	LastAnswerLanguage *Language          `json:"last_answer_language"`
+	ContractVersion      string                         `json:"contract_version"`
+	ConversationID       UUID                           `json:"conversation_id"`
+	ArtworkID            string                         `json:"artwork_id"`
+	DatasetVersion       string                         `json:"dataset_version"`
+	CreatedAt            string                         `json:"created_at"`
+	ExpiresAt            string                         `json:"expires_at"`
+	Revision             int64                          `json:"revision"`
+	LanguagePreference   LanguagePreference             `json:"language_preference"`
+	AutoLanguage         Language                       `json:"auto_language"`
+	LastAnswerLanguage   *Language                      `json:"last_answer_language"`
+	ConversationMode     Optional[ConversationMode]     `json:"conversation_mode,omitzero"`
+	ReferencePackVersion Optional[ReferencePackVersion] `json:"reference_pack_version,omitzero"`
 }
 
 type PublicTurn struct {
@@ -550,6 +562,22 @@ type ResolvedTranslation struct {
 	Text           string            `json:"text"`
 }
 
+type ConversationMode string
+
+type ReferencePackVersion *string
+
+type TranscriptionResult struct {
+	Text     string `json:"text"`
+	Language string `json:"language"`
+}
+
+type VincentReferencePack struct {
+	ReferencePackVersion string     `json:"reference_pack_version"`
+	ArtworkID            string     `json:"artwork_id"`
+	DatasetVersion       string     `json:"dataset_version"`
+	Records              []Evidence `json:"records"`
+}
+
 var wireTypes = map[string]reflect.Type{
 	"UUID":                            reflect.TypeFor[UUID](),
 	"RequestID":                       reflect.TypeFor[RequestID](),
@@ -618,4 +646,79 @@ var wireTypes = map[string]reflect.Type{
 	"TranslationSource":               reflect.TypeFor[TranslationSource](),
 	"TranslationTask":                 reflect.TypeFor[TranslationTask](),
 	"ResolvedTranslation":             reflect.TypeFor[ResolvedTranslation](),
+	"ConversationMode":                reflect.TypeFor[ConversationMode](),
+	"ReferencePackVersion":            reflect.TypeFor[ReferencePackVersion](),
+	"TranscriptionResult":             reflect.TypeFor[TranscriptionResult](),
+	"VincentReferencePack":            reflect.TypeFor[VincentReferencePack](),
+}
+
+// v2Definitions are the names compiled from the deployed v2 schema.
+var v2Definitions = []string{
+	"UUID",
+	"RequestID",
+	"QueryID",
+	"Scope",
+	"Evidence",
+	"SearchQuery",
+	"ArtworkContext",
+	"QueryPolicy",
+	"ToolInput",
+	"ToolResult",
+	"LegacyRetrieveRequest",
+	"LegacyRetrieveResponse",
+	"AgentError",
+	"ErrorEnvelope",
+	"Language",
+	"LanguagePreference",
+	"LanguageInstruction",
+	"LanguageDecision",
+	"AgentStatus",
+	"PendingClarification",
+	"PendingUpdate",
+	"MemoryUpdate",
+	"ConversationContext",
+	"ConversationState",
+	"HistoryTurn",
+	"Context",
+	"RunExecution",
+	"RunRequest",
+	"InterpretedRequest",
+	"RequestResult",
+	"RetrievePlan",
+	"ContextAnswerPlan",
+	"DirectResponsePlan",
+	"ClarificationPlan",
+	"ScopePlan",
+	"Plan",
+	"FinishDecision",
+	"ClarificationDecision",
+	"RefineDecision",
+	"AssessmentDecision",
+	"FinalDecision",
+	"PlanInput",
+	"AnswerInput",
+	"FinalInput",
+	"AgentAnswer",
+	"PublicAnswer",
+	"ExecutionRecord",
+	"ConversationUpdate",
+	"RunResult",
+	"RunSnapshot",
+	"PublicCreateConversationRequest",
+	"PublicMessageRequest",
+	"PublicConversation",
+	"PublicTurn",
+	"PublicError",
+	"PendingRequest",
+	"PublicConversationResponse",
+	"PublicHistoryResponse",
+	"PublicSubmissionResponse",
+	"PublicErrorEnvelope",
+	"HealthResponse",
+	"ReadinessResponse",
+	"CatalogFact",
+	"Citation",
+	"TranslationSource",
+	"TranslationTask",
+	"ResolvedTranslation",
 }

@@ -36,16 +36,36 @@ export interface VoiceSnapshot {
   recordingSeconds: number;
   /** True while the opening greeting (not an answer) is playing. */
   welcome: boolean;
+  /**
+   * The recognized question that was not committed, after a message failure.
+   * After conversation_state_conflict the page shows it for review and lets the
+   * visitor send it again as a new message or record again.
+   */
+  unsent: string | null;
+}
+
+/**
+ * One logical spoken question. The ID and revision are fixed when Record is
+ * tapped, so a retry or history recovery sends exactly the same message.
+ */
+export interface VoiceMessage {
+  question: string;
+  clientMessageId: string;
+  expectedRevision: number;
+  languageOverride: null;
 }
 
 export interface VoiceOptions {
   /**
-   * Sends one transcribed question through the existing chat client, with one
-   * client_message_id and the current expected_revision, and resolves with the
-   * committed turn (after history recovery if the response was lost). The chat
-   * client keeps its own retry rules; reject to report a message failure.
+   * Sends one transcribed question through the existing chat client as
+   * {contract_version, client_message_id, question, language_override, expected_revision}
+   * and resolves with the committed turn. If the response is lost, recover the
+   * turn from history by clientMessageId before sending again. Reject with the
+   * public error ({code, message, retryable}) to report a message failure.
    */
-  submit: (question: string) => Promise<{ turnId: string }>;
+  submit: (message: VoiceMessage) => Promise<{ turnId: string }>;
+  /** The conversation revision the visitor is answering, read when Record is tapped. */
+  revision: () => number;
   /** Optional prerecorded greeting in the same voice. It is never a conversation turn. */
   welcomeUrl?: string;
   /** Test seam; defaults to the browser. */
@@ -57,6 +77,7 @@ export interface VoiceEnvironment {
   getUserMedia: ((constraints: MediaStreamConstraints) => Promise<MediaStream>) | null;
   MediaRecorder: typeof MediaRecorder | null;
   createAudio: () => HTMLAudioElement;
+  randomUUID: () => string;
   createObjectURL: (blob: Blob) => string;
   revokeObjectURL: (url: string) => void;
   setTimeout: (fn: () => void, ms: number) => unknown;
@@ -89,6 +110,7 @@ function browserEnvironment(): VoiceEnvironment {
     getUserMedia: devices?.getUserMedia ? (c) => devices.getUserMedia(c) : null,
     MediaRecorder: typeof MediaRecorder !== 'undefined' ? MediaRecorder : null,
     createAudio: () => new Audio(),
+    randomUUID: () => crypto.randomUUID(),
     createObjectURL: (blob) => URL.createObjectURL(blob),
     revokeObjectURL: (url) => URL.revokeObjectURL(url),
     setTimeout: (fn, ms) => setTimeout(fn, ms),
@@ -122,12 +144,17 @@ export class VoiceController {
   private readonly env: VoiceEnvironment;
   private snapshot: VoiceSnapshot;
   private readonly listeners = new Set<() => void>();
-  private readonly audio: HTMLAudioElement;
+  private element: HTMLAudioElement | null = null;
   private disposed = false;
   /** Bumped by each new capture and by dispose; stale async results check it and stop. */
   private epoch = 0;
   private playbackToken = 0;
   private playback: Playback = null;
+  /** Bumped by every Play, Stop, Record and dispose. Only the latest request may start audio. */
+  private playRequest = 0;
+  /** The message bound to the current recording; resent unchanged by retryMessage(). */
+  private message: VoiceMessage | null = null;
+  private pendingQuestion = false;
 
   private stream: MediaStream | null = null;
   private recorder: MediaRecorder | null = null;
@@ -138,19 +165,33 @@ export class VoiceController {
   private ticker: unknown = null;
   /** The last unsubmitted clip, kept only while transcription can be retried. */
   private clip: Blob | null = null;
+  private bound: { clientMessageId: string; expectedRevision: number } | null = null;
   private readonly answers = new Map<string, string>(); // turnId -> object URL
   private readonly aborts = new Set<AbortController>();
 
-  constructor(private readonly conversationId: string, private readonly options: VoiceOptions) {
+  // The constructor has no side effects (React may construct and discard one).
+  // The audio element is created on first use.
+  constructor(readonly conversationId: string, private readonly options: VoiceOptions) {
     this.env = { ...browserEnvironment(), ...options.env };
     this.snapshot = {
-      conversationId, phase: 'ready', transcript: null, turnId: null, error: null, recordingSeconds: 0, welcome: false,
+      conversationId, phase: 'ready', transcript: null, turnId: null, error: null, recordingSeconds: 0, welcome: false, unsent: null,
     };
-    this.audio = this.env.createAudio();
-    this.audio.preload = 'auto';
-    this.audio.addEventListener('playing', () => this.onPlaying());
-    this.audio.addEventListener('ended', () => this.onEnded());
-    this.audio.addEventListener('error', () => this.onAudioError());
+  }
+
+  get isDisposed(): boolean {
+    return this.disposed;
+  }
+
+  private get audio(): HTMLAudioElement {
+    if (!this.element) {
+      const element = this.env.createAudio();
+      element.preload = 'auto';
+      element.addEventListener('playing', () => this.onPlaying(element));
+      element.addEventListener('ended', () => this.onEnded(element));
+      element.addEventListener('error', () => this.onAudioError(element));
+      this.element = element;
+    }
+    return this.element;
   }
 
   // ---- state for the page -----------------------------------------------------------
@@ -194,9 +235,19 @@ export class VoiceController {
     const phase = this.snapshot.phase;
     if (this.disposed || phase === 'recording' || phase === 'transcribing' || phase === 'generating') return;
     this.stopAudio();
+    this.playRequest++;
     this.unlockAudio();
     const epoch = ++this.epoch;
     this.clip = null; // a new recording replaces an unsubmitted clip
+    this.bound = null;
+    this.message = null; // and is a new logical question
+    let bound: { clientMessageId: string; expectedRevision: number };
+    try {
+      bound = { clientMessageId: this.env.randomUUID(), expectedRevision: this.options.revision() };
+    } catch {
+      this.fail(failure('capture', 'The conversation is not ready yet. Try again in a moment.', true, null));
+      return;
+    }
     const type = captureType(this.env.MediaRecorder);
     if (!this.env.getUserMedia) {
       this.fail(failure('capture', 'Voice needs the secure HTTPS page. You can type your question instead.', false, 'microphone_requires_https'));
@@ -241,9 +292,10 @@ export class VoiceController {
       if (event.data && event.data.size > 0) this.chunks.push(event.data);
     });
     recorder.addEventListener('stop', () => { void this.onRecorderStop(epoch); });
+    this.bound = bound;
     recorder.start();
     this.recordStarted = this.env.now();
-    this.set({ phase: 'recording', error: null, transcript: null, turnId: null, recordingSeconds: 0, welcome: false });
+    this.set({ phase: 'recording', error: null, transcript: null, turnId: null, recordingSeconds: 0, welcome: false, unsent: null });
     this.tick(epoch);
     this.autoStop = this.env.setTimeout(() => {
       if (epoch === this.epoch) this.stopRecording();
@@ -316,25 +368,50 @@ export class VoiceController {
       this.fail(error instanceof MediaFailure ? error.failure : unexpected('transcription'));
       return;
     }
-    if (epoch !== this.epoch || this.disposed) return; // never submit a late transcript
+    if (epoch !== this.epoch || this.disposed || !this.bound) return; // never submit a late transcript
     this.clip = null;
-    this.set({ phase: 'generating', transcript: text, error: null });
-    await this.ask(epoch, text);
+    // The transcript becomes one logical message, bound to the Record tap.
+    this.message = { question: text, ...this.bound, languageOverride: null };
+    this.bound = null;
+    this.set({ phase: 'generating', transcript: text, error: null, unsent: null });
+    await this.ask(epoch);
   }
 
-  private async ask(epoch: number, question: string): Promise<void> {
+  /**
+   * Resends the same logical message (same ID, question and revision) after a
+   * retryable message failure such as a lost response. Not used after a
+   * revision conflict: that question is kept in snapshot.unsent for review.
+   */
+  async retryMessage(): Promise<void> {
+    const error = this.snapshot.error;
+    if (!this.message || this.pendingQuestion || this.snapshot.phase !== 'error' || error?.stage !== 'message' || !error.retryable) return;
+    this.set({ phase: 'generating', error: null, unsent: null });
+    await this.ask(this.epoch);
+  }
+
+  private async ask(epoch: number): Promise<void> {
+    const message = this.message;
+    if (!message) return;
     let turnId: string;
+    this.pendingQuestion = true;
     try {
-      ({ turnId } = await this.options.submit(question));
+      ({ turnId } = await this.options.submit({ ...message }));
     } catch (error) {
       if (epoch !== this.epoch || this.disposed) return;
       const e = error as { code?: unknown; retryable?: unknown; message?: unknown };
+      const code = typeof e.code === 'string' ? e.code : null;
+      const retryable = e.retryable === true;
+      if (!retryable) this.message = null; // a retry would be rejected; the words stay in unsent
       this.fail(failure('message',
         typeof e.message === 'string' && e.message ? e.message : 'Your question could not be sent. Try again.',
-        e.retryable === true, typeof e.code === 'string' ? e.code : null));
+        retryable, code));
+      this.set({ unsent: message.question });
       return;
+    } finally {
+      this.pendingQuestion = false;
     }
     if (epoch !== this.epoch || this.disposed) return;
+    this.message = null;
     await this.playTurn(turnId);
   }
 
@@ -345,11 +422,13 @@ export class VoiceController {
    * Also the Play button after a blocked autoplay, and the retry after a speech failure.
    */
   async playTurn(turnId: string): Promise<void> {
-    if (this.disposed || this.snapshot.phase === 'recording' || this.snapshot.phase === 'transcribing') return;
+    const phase = this.snapshot.phase;
+    if (this.disposed || phase === 'recording' || phase === 'transcribing' || (phase === 'generating' && this.pendingQuestion)) return;
     this.stopAudio();
+    // The latest Play or Stop wins: an older download that finishes later stays silent.
+    const request = ++this.playRequest;
     let url = this.answers.get(turnId);
     if (!url) {
-      const epoch = this.epoch;
       this.set({ phase: 'preparing_audio', turnId, error: null, welcome: false });
       let audio: Blob;
       try {
@@ -357,14 +436,16 @@ export class VoiceController {
         audio = await response.blob();
         if (audio.size === 0) throw new MediaFailure(failure('speech', 'The spoken answer is unavailable right now. You can still read it.', true, null));
       } catch (error) {
-        if (epoch !== this.epoch || this.disposed) return;
+        if (request !== this.playRequest || this.disposed) return;
         this.fail(error instanceof MediaFailure ? error.failure : unexpected('speech'));
         this.set({ turnId });
         return;
       }
-      if (epoch !== this.epoch || this.disposed) return;
-      url = this.env.createObjectURL(audio.type ? audio : new Blob([audio], { type: 'audio/mpeg' }));
+      if (this.disposed) return;
+      // Keep the clip for a later Replay even if this request was superseded.
+      url = this.answers.get(turnId) ?? this.env.createObjectURL(audio.type ? audio : new Blob([audio], { type: 'audio/mpeg' }));
       this.remember(turnId, url);
+      if (request !== this.playRequest) return;
     }
     const token = this.startPlayback('answer', turnId, url);
     this.set({ phase: 'preparing_audio', turnId, error: null, welcome: false });
@@ -384,7 +465,10 @@ export class VoiceController {
 
   /** Stops the answer or greeting. The answer and sources stay on screen; the page can offer replay. */
   stopPlayback(): void {
-    if (!this.playback) return;
+    const phase = this.snapshot.phase;
+    const downloading = phase === 'preparing_audio' || phase === 'awaiting_play';
+    if (!this.playback && !downloading) return;
+    this.playRequest++; // a download still in flight must not start afterwards
     this.stopAudio();
     this.set({ phase: 'ready', welcome: false });
   }
@@ -397,21 +481,21 @@ export class VoiceController {
     return token;
   }
 
-  private onPlaying(): void {
-    if (!this.playback) return;
+  private onPlaying(element: HTMLAudioElement): void {
+    if (!this.playback || element !== this.element) return;
     // "playing" comes from the media element, so captions start with the voice.
     this.set({ phase: 'playing', turnId: this.playback.turnId ?? this.snapshot.turnId, welcome: this.playback.kind === 'welcome' });
   }
 
-  private onEnded(): void {
-    if (!this.playback) return;
+  private onEnded(element: HTMLAudioElement): void {
+    if (!this.playback || element !== this.element) return;
     this.playback = null;
     this.set({ phase: 'ready', welcome: false });
   }
 
-  private onAudioError(): void {
+  private onAudioError(element: HTMLAudioElement): void {
     const current = this.playback;
-    if (!current) return;
+    if (!current || element !== this.element) return;
     this.playback = null;
     if (current.kind === 'welcome') {
       this.set({ phase: 'ready', welcome: false });
@@ -425,7 +509,7 @@ export class VoiceController {
     this.playback = null;
     this.playbackToken++;
     try {
-      this.audio.pause();
+      this.element?.pause();
     } catch { /* not playing */ }
   }
 
@@ -496,6 +580,7 @@ export class VoiceController {
   dispose(): void {
     if (this.disposed) return;
     this.epoch++;
+    this.playRequest++;
     this.clearTimers();
     try {
       if (this.recorder && this.recorder.state !== 'inactive') this.recorder.stop();
@@ -507,6 +592,9 @@ export class VoiceController {
     this.answers.forEach((url) => this.env.revokeObjectURL(url));
     this.answers.clear();
     this.clip = null;
+    this.bound = null;
+    this.message = null;
+    if (this.element) this.element.removeAttribute?.('src');
     this.listeners.clear();
     this.disposed = true;
   }

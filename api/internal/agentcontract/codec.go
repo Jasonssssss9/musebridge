@@ -28,10 +28,27 @@ const (
 	PrivateBodyLimit = 256 * 1024
 )
 
+// The mode-aware Vincent contract (docs/vincent-contract.md). Guide and
+// Vincent conversations created through v0.4 both run on the private v3 Agent.
+const (
+	PublicVersionV3       = "agent-demo-v0.4"
+	PrivateVersionV3      = "agent-run-v3"
+	WorkflowIDV3          = "museum_qa_v3"
+	StateVersionV3        = "conversation-state-v2"
+	ModeGuide             = "guide"
+	ModeVincent           = "vincent"
+	VincentPackVersion    = "vincent-irises-v1"
+	VincentArtworkID      = "getty-103jnh"
+	VincentDatasetVersion = "getty-gallery-v2"
+)
+
 //go:generate python3 ../../../scripts/generate_agent_contracts.py
 
 //go:embed schema_generated.json
 var schemaJSON []byte
+
+//go:embed schema_v3_generated.json
+var schemaV3JSON []byte
 
 // Optional preserves absent versus present-null union fields. Required nullable
 // fields use ordinary pointers and are checked for presence by the schema.
@@ -76,12 +93,54 @@ func compilePattern(pattern string) (jsonschema.Regexp, error) {
 	return regexp.Compile(pattern)
 }
 
-// Validator compiles the embedded, generated copy of the shared schema once.
+// Validator compiles the embedded, generated copy of one schema version once.
 // Compiled schemas are immutable and safe for concurrent validation.
-type Validator struct{ schemas map[string]*jsonschema.Schema }
+type Validator struct {
+	schemas map[string]*jsonschema.Schema
+	// Version identifies the public, private, workflow and state contracts.
+	public, private, workflow, state string
+	// pack holds the pinned Vincent records by chunk ID (v3 only).
+	pack map[string]Evidence
+}
+
+// PublicVersion, PrivateVersion, WorkflowID and StateVersion of this validator.
+func (v *Validator) PublicVersion() string  { return v.public }
+func (v *Validator) PrivateVersion() string { return v.private }
+func (v *Validator) WorkflowID() string     { return v.workflow }
+func (v *Validator) StateVersion() string   { return v.state }
+
+// ModeAware reports whether the validator speaks the v0.4/v3 contracts.
+func (v *Validator) ModeAware() bool { return v.public == PublicVersionV3 }
 
 func NewValidator() (*Validator, error) {
-	doc, err := jsonschema.UnmarshalJSON(bytes.NewReader(schemaJSON))
+	v, err := compileValidator(schemaJSON, "https://musebridge.local/contracts/agent-v2.schema.json", v2Definitions)
+	if err != nil {
+		return nil, err
+	}
+	v.public, v.private, v.workflow, v.state = PublicVersion, PrivateVersion, WorkflowID, StateVersion
+	return v, nil
+}
+
+// NewValidatorV3 compiles the effective v3 schema (v2 plus agent-v3.patch.json)
+// and loads the pinned Vincent reference pack.
+func NewValidatorV3() (*Validator, error) {
+	names := make([]string, 0, len(wireTypes))
+	for name := range wireTypes {
+		names = append(names, name)
+	}
+	v, err := compileValidator(schemaV3JSON, "https://musebridge.local/contracts/agent-v3.schema.json", names)
+	if err != nil {
+		return nil, err
+	}
+	v.public, v.private, v.workflow, v.state = PublicVersionV3, PrivateVersionV3, WorkflowIDV3, StateVersionV3
+	if v.pack, err = loadReferencePack(v); err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+func compileValidator(source []byte, origin string, names []string) (*Validator, error) {
+	doc, err := jsonschema.UnmarshalJSON(bytes.NewReader(source))
 	if err != nil {
 		return nil, err
 	}
@@ -89,12 +148,11 @@ func NewValidator() (*Validator, error) {
 	c.UseLoader(noLoader{})
 	c.UseRegexpEngine(compilePattern)
 	c.AssertFormat()
-	const origin = "https://musebridge.local/contracts/agent-v2.schema.json"
 	if err := c.AddResource(origin, doc); err != nil {
 		return nil, err
 	}
 	v := &Validator{schemas: make(map[string]*jsonschema.Schema)}
-	for name := range wireTypes {
+	for _, name := range names {
 		s, err := c.Compile(origin + "#/$defs/" + name)
 		if err != nil {
 			return nil, fmt.Errorf("compile %s: %w", name, err)
@@ -105,8 +163,23 @@ func NewValidator() (*Validator, error) {
 }
 
 var defaultValidator = sync.OnceValues(NewValidator)
+var defaultValidatorV3 = sync.OnceValues(NewValidatorV3)
 
 func DefaultValidator() (*Validator, error) { return defaultValidator() }
+
+// DefaultValidatorV3 serves agent-demo-v0.4 and agent-run-v3.
+func DefaultValidatorV3() (*Validator, error) { return defaultValidatorV3() }
+
+// ValidatorFor returns the validator of a supported public contract version.
+func ValidatorFor(publicVersion string) (*Validator, error) {
+	switch publicVersion {
+	case PublicVersion:
+		return DefaultValidator()
+	case PublicVersionV3:
+		return DefaultValidatorV3()
+	}
+	return nil, fmt.Errorf("unsupported public contract")
+}
 
 func parse(data []byte, limit int) (any, error) {
 	if len(data) > limit || jsonwire.Validate(data) != nil {
@@ -202,7 +275,7 @@ func project(value any, kind reflect.Type) any {
 
 func (v *Validator) decodeValue(name string, value any, destination any) error {
 	kind, exists := wireTypes[name]
-	if !exists {
+	if !exists || v.schemas[name] == nil {
 		return invalid("unknown definition")
 	}
 	if v.schemas[name].Validate(value) != nil {
@@ -337,11 +410,11 @@ func (v *Validator) decodePublic(name string, data []byte, destination any) *Fai
 	if question, ok := object["question"].(string); ok {
 		object["question"] = strings.TrimSpace(question)
 	}
-	object["contract_version"] = PublicVersion
+	object["contract_version"] = v.public
 	if v.decodeValue(name, object, destination) != nil {
 		return publicFailure(400, "invalid_request", false)
 	}
-	if version != PublicVersion {
+	if version != v.public {
 		return publicFailure(409, "agent_contract_mismatch", false)
 	}
 	return nil

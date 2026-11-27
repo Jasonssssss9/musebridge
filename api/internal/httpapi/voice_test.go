@@ -2,7 +2,6 @@ package httpapi
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -10,35 +9,15 @@ import (
 	"strings"
 	"sync/atomic"
 	"testing"
-	"time"
 
 	ac "github.com/Jasonssssss9/musebridge/api/internal/agentcontract"
-	"github.com/Jasonssssss9/musebridge/api/internal/conversation"
 	"github.com/Jasonssssss9/musebridge/api/internal/voice"
 )
 
-// vincentStore marks chosen conversations as Vincent mode until the v0.4 create
-// path exists; ownership, expiry and turns still come from the real store.
-type vincentStore struct {
-	store   *conversation.Store
-	vincent map[string]bool
-}
-
-func (v vincentStore) VoiceConversation(token, id string) (string, time.Time, bool) {
-	mode, expires, found := v.store.VoiceConversation(token, id)
-	if found && v.vincent[id] {
-		mode = "vincent"
-	}
-	return mode, expires, found
-}
-
-func (v vincentStore) CommittedAnswer(token, id, turn string) (string, bool) {
-	return v.store.CommittedAnswer(token, id, turn)
-}
-
 type voiceFixture struct {
 	h            *handler
-	conversation ac.PublicConversation
+	conversation ac.PublicConversation // a real Vincent conversation with one turn
+	guide        ac.PublicConversation // a guide conversation of the same visitor
 	cookie       *http.Cookie
 	turn         ac.PublicTurn
 	whisperCalls atomic.Int32
@@ -70,38 +49,27 @@ func newVoiceFixture(t *testing.T) *voiceFixture {
 	}))
 	t.Cleanup(tts.Close)
 
-	completed := snapshotFactory(t)
-	port := &agentPort{run: func(_ context.Context, run ac.RunRequest, _ string) (ac.RunSnapshot, error) {
-		return completed(run), nil
-	}}
+	agent := newV3Agent(t)
 	cfg := voice.Config{Enabled: true, WhisperBaseURL: whisper.URL, OpenAIKey: "sk-test-0123456789abcdef",
 		SpeechModel: voice.DefaultSpeechModel, SpeechVoice: voice.DefaultSpeechVoice, SpeechDelivery: voice.DefaultDelivery,
 		SpeechEndpoint: tts.URL, SpeechConcurrency: 2}
-	handlerValue, err := NewAgent(testDataset(t), nil, Settings{PublicBaseURL: browserOrigin, Voice: cfg}, port)
+	handlerValue, err := NewAgent(gettyDataset(t), nil, Settings{PublicBaseURL: browserOrigin, Voice: cfg}, agent)
 	if err != nil {
 		t.Fatal(err)
 	}
 	f.h = handlerValue.(*handler)
 	f.cfg = cfg
-	f.agentRuns = port.posts.Load
-	f.conversation, f.cookie, _ = openAgentSession(t, f.h, "aic-28560", nil)
-	w := postAgent(f.h, f.conversation.ConversationID, agentMessage(1, 0), f.cookie)
-	var submitted ac.PublicSubmissionResponse
-	if w.Code != 200 || json.Unmarshal(w.Body.Bytes(), &submitted) != nil {
+	f.agentRuns = func() int64 { return int64(agent.count()) }
+	_, created, cookie := createV04(t, f.h, `{"contract_version":"agent-demo-v0.4","artwork_id":"getty-103jnh","conversation_mode":"vincent"}`, nil)
+	f.conversation, f.cookie = created.Conversation, cookie
+	_, guide, _ := createV04(t, f.h, `{"contract_version":"agent-demo-v0.4","artwork_id":"getty-103jnh"}`, cookie)
+	f.guide = guide.Conversation
+	w, submitted := submitV04(t, f.h, f.conversation.ConversationID, v04Message(messageID(1), "What color did you call the irises?", 0, ""), cookie)
+	if w.Code != 200 {
 		t.Fatalf("setup turn failed: %d %s", w.Code, w.Body.String())
 	}
 	f.turn, f.revision = submitted.Turn, submitted.Conversation.Revision
 	return f
-}
-
-// useVincent rebuilds the voice service so the fixture conversation counts as Vincent.
-func (f *voiceFixture) useVincent(t *testing.T, cfg voice.Config) {
-	t.Helper()
-	service, err := voice.New(cfg, browserOrigin, vincentStore{f.h.sessions, map[string]bool{string(f.conversation.ConversationID): true}})
-	if err != nil {
-		t.Fatal(err)
-	}
-	f.h.voice = service
 }
 
 func voiceCall(h http.Handler, method, path string, body []byte, contentType string, cookie *http.Cookie) *httptest.ResponseRecorder {
@@ -129,14 +97,16 @@ func TestVoiceRoutesEndToEnd(t *testing.T) {
 	transcribe := "/api/conversations/" + id + "/transcriptions"
 	speech := "/api/conversations/" + id + "/turns/" + string(f.turn.TurnID) + "/speech"
 
-	// The setup conversation is a guide conversation: both routes refuse it before private work.
-	requireSessionError(t, voiceCall(f.h, "POST", transcribe, mp4Clip(), "audio/mp4", f.cookie), 409, "voice_mode_unavailable")
-	requireSessionError(t, voiceCall(f.h, "POST", speech, nil, "", f.cookie), 409, "voice_mode_unavailable")
+	// The visitor's guide conversation refuses both routes before private work.
+	guide := "/api/conversations/" + string(f.guide.ConversationID)
+	requireSessionError(t, voiceCall(f.h, "POST", guide+"/transcriptions", mp4Clip(), "audio/mp4", f.cookie), 409, "voice_mode_unavailable")
+	requireSessionError(t, voiceCall(f.h, "POST", guide+"/turns/"+string(f.turn.TurnID)+"/speech", nil, "", f.cookie), 409, "voice_mode_unavailable")
+	legacy, _, _ := openAgentSession(t, f.h, irises, f.cookie)
+	requireSessionError(t, voiceCall(f.h, "POST", "/api/conversations/"+string(legacy.ConversationID)+"/transcriptions", mp4Clip(), "audio/mp4", f.cookie), 409, "voice_mode_unavailable")
 	if f.whisperCalls.Load() != 0 || f.ttsCalls.Load() != 0 {
 		t.Fatal("guide conversations must not reach the worker or the provider")
 	}
 
-	f.useVincent(t, f.cfg)
 	revision := f.revision
 	w := voiceCall(f.h, "POST", transcribe, mp4Clip(), "audio/mp4; codecs=mp4a.40.2", f.cookie)
 	if w.Code != 200 || w.Header().Get("Cache-Control") != "no-store" || w.Header().Get("X-Request-ID") == "" ||
@@ -161,7 +131,7 @@ func TestVoiceRoutesEndToEnd(t *testing.T) {
 	}
 
 	// Media routes never create a turn, advance the revision or rerun the Agent.
-	history := agentHistoryResponse(t, f.h, f.conversation, f.cookie)
+	history := historyV04(t, f.h, f.conversation.ConversationID, f.cookie)
 	if history.Conversation.Revision != revision || len(history.Turns) != 1 || f.agentRuns() != 1 {
 		t.Fatal("voice routes changed conversation state")
 	}
@@ -171,7 +141,7 @@ func TestVoiceRoutesEndToEnd(t *testing.T) {
 	requireSessionError(t, voiceCall(f.h, "POST", transcribe, mp4Clip(), "audio/mp4", nil), 404, "conversation_not_found")
 	requireSessionError(t, voiceCall(f.h, "POST", speech, []byte(`{"text":"say this"}`), "application/json", f.cookie), 400, "invalid_request")
 	requireSessionError(t, voiceCall(f.h, "POST", "/api/conversations/"+id+"/turns/33333333-3333-4333-8333-333333333333/speech", nil, "", f.cookie), 404, "turn_not_found")
-	_, otherCookie, _ := openAgentSession(t, f.h, "aic-28560", nil)
+	_, otherCookie, _ := openAgentSession(t, f.h, irises, nil)
 	requireSessionError(t, voiceCall(f.h, "POST", speech, nil, "", otherCookie), 404, "conversation_not_found")
 }
 

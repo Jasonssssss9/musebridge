@@ -39,7 +39,7 @@ func (v *Validator) CheckState(state ConversationState) error {
 	}
 	seen := make(map[string]bool)
 	for _, evidence := range state.VerifiedEvidence {
-		if evidence.ArtworkID != state.Scope.ArtworkID || seen[evidence.ChunkID] || !validEvidence(evidence) {
+		if evidence.ArtworkID != state.Scope.ArtworkID || seen[evidence.ChunkID] || !v.evidenceAllowed(state.Scope, evidence) {
 			return invalid("evidence cache")
 		}
 		seen[evidence.ChunkID] = true
@@ -77,7 +77,7 @@ func (v *Validator) CheckRunRequest(run RunRequest) error {
 		return invalid("RunRequest")
 	}
 	state := run.ConversationState
-	if run.Question != strings.TrimSpace(run.Question) || state.Scope != run.Scope || state.ConversationID != run.ConversationID {
+	if run.Question != strings.TrimSpace(run.Question) || !SameScope(state.Scope, run.Scope) || state.ConversationID != run.ConversationID {
 		return invalid("run identity")
 	}
 	count := min(int64(5), state.Revision)
@@ -165,10 +165,10 @@ func (v *Validator) CheckRunResult(run RunRequest, result RunResult) error {
 	if v.CheckRunRequest(run) != nil || v.check("RunResult", result) != nil {
 		return invalid("RunResult")
 	}
-	if result.Scope != run.Scope || result.ConversationUpdate.BaseRevision != run.ConversationState.Revision || !sameJSON(result.CatalogSnapshot, run.Context.CatalogFacts) {
+	if !SameScope(result.Scope, run.Scope) || result.ConversationUpdate.BaseRevision != run.ConversationState.Revision || !sameJSON(result.CatalogSnapshot, run.Context.CatalogFacts) {
 		return invalid("result identity")
 	}
-	resolved, err := v.ResolveLanguage(run.Question, run.LanguageOverride, run.ConversationState.LanguagePreference, run.ConversationState.AutoLanguage, result.LanguageDecision)
+	resolved, err := v.ResolveRunLanguage(run, result.LanguageDecision)
 	if err != nil || resolved.AnswerLanguage != result.AnswerLanguage {
 		return invalid("result language")
 	}
@@ -205,7 +205,7 @@ func (v *Validator) CheckRunResult(run RunRequest, result RunResult) error {
 	}
 	sources := make(map[string]Citation)
 	for _, evidence := range result.EvidenceSnapshot {
-		if evidence.ArtworkID != run.Scope.ArtworkID || !validEvidence(evidence) {
+		if evidence.ArtworkID != run.Scope.ArtworkID || !v.evidenceAllowed(run.Scope, evidence) {
 			return invalid("result evidence")
 		}
 		var citation Citation
@@ -226,9 +226,19 @@ func (v *Validator) CheckRunResult(run RunRequest, result RunResult) error {
 	if len(result.ReusedChunkIDs) != len(run.ConversationState.VerifiedEvidence) {
 		return invalid("reused cache")
 	}
+	if v.ModeAware() {
+		// v3 may leave cached records out of the eight-record working snapshot
+		// to make room for this run's search results (docs/vincent-contract.md).
+		if err := v.checkWorkingSnapshot(run, result, sources); err != nil {
+			return err
+		}
+	}
 	for i, cached := range run.ConversationState.VerifiedEvidence {
 		if result.ReusedChunkIDs[i] != cached.ChunkID {
 			return invalid("reused cache")
+		}
+		if _, kept := sources[cached.ChunkID]; v.ModeAware() && !kept {
+			continue
 		}
 		var expected Citation
 		data, _ := json.Marshal(cached)
@@ -374,6 +384,30 @@ func (v *Validator) checkPending(run RunRequest, result RunResult) error {
 		}
 	} else if p.Action == "set" {
 		return invalid("unexpected pending update")
+	}
+	return nil
+}
+
+// checkWorkingSnapshot mirrors the Agent's v3 rule. Cached records retained in
+// the evidence snapshot come first, in cache order. Fresh records are limited
+// to two per executed query, and a cached record is left out only when the
+// snapshot would otherwise exceed eight records.
+func (v *Validator) checkWorkingSnapshot(run RunRequest, result RunResult, sources map[string]Citation) error {
+	cached := run.ConversationState.VerifiedEvidence
+	retained := []string{}
+	for _, record := range cached {
+		if _, kept := sources[record.ChunkID]; kept {
+			retained = append(retained, record.ChunkID)
+		}
+	}
+	fresh := len(result.EvidenceSnapshot) - len(retained)
+	if fresh < 0 || fresh > 2*len(result.ExecutedQueries) || len(cached)-len(retained) != max(0, len(cached)+fresh-8) {
+		return invalid("evidence snapshot")
+	}
+	for i, id := range retained {
+		if result.EvidenceSnapshot[i].ChunkID != id {
+			return invalid("evidence snapshot order")
+		}
 	}
 	return nil
 }

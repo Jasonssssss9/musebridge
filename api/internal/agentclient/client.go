@@ -27,11 +27,12 @@ const MaxCallDuration = 60 * time.Second
 // Client can be reused concurrently. Authentication is private configuration;
 // artwork scope, snapshots and the Agent deadline come from the original run.
 type Client struct {
-	endpoint  string
-	token     string
-	http      *http.Client
-	validator *ac.Validator
-	timeout   time.Duration
+	endpoint, endpointV3 string
+	token                string
+	http                 *http.Client
+	validator            *ac.Validator
+	validatorV3          *ac.Validator
+	timeout              time.Duration
 }
 
 // New requires an HTTP(S) origin and a visible ASCII service token of at least
@@ -62,11 +63,16 @@ func New(baseURL, serviceToken string) (*Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Agent contract initialization failed")
 	}
+	validatorV3, err := ac.DefaultValidatorV3()
+	if err != nil {
+		return nil, fmt.Errorf("Agent contract initialization failed")
+	}
 	transport := http.DefaultTransport.(*http.Transport).Clone()
 	transport.Proxy = nil
 	transport.DisableCompression = true
-	return &Client{endpoint: strings.TrimSuffix(baseURL, "/") + "/internal/v2/agent/runs",
-		token: serviceToken, validator: validator, timeout: MaxCallDuration,
+	origin := strings.TrimSuffix(baseURL, "/")
+	return &Client{endpoint: origin + "/internal/v2/agent/runs", endpointV3: origin + "/internal/v3/agent/runs",
+		token: serviceToken, validator: validator, validatorV3: validatorV3, timeout: MaxCallDuration,
 		http: &http.Client{Transport: transport,
 			CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}, nil
 }
@@ -110,20 +116,25 @@ func (c *Client) call(ctx context.Context, input ac.RunRequest, requestID, metho
 	if err := contextFailure(ctx, attempt); err != nil {
 		return ac.RunSnapshot{}, err
 	}
-	body, err := c.validator.Encode("RunRequest", input)
+	// The run's private version selects the route and contract: agent-run-v3
+	// runs (mode-aware conversations) use /internal/v3/agent/runs.
+	validator, endpoint := c.validator, c.endpoint
+	if input.ContractVersion == ac.PrivateVersionV3 {
+		validator, endpoint = c.validatorV3, c.endpointV3
+	}
+	body, err := validator.Encode("RunRequest", input)
 	if err != nil {
 		return failed(invalidResponse())
 	}
 	// Decode the encoded copy before I/O so later caller edits cannot change the
 	// request against which this response is checked.
 	var run ac.RunRequest
-	if c.validator.Decode("RunRequest", body, &run) != nil || c.validator.CheckRunRequest(run) != nil {
+	if validator.Decode("RunRequest", body, &run) != nil || validator.CheckRunRequest(run) != nil {
 		return failed(invalidResponse())
 	}
 	if err := contextFailure(ctx, attempt); err != nil {
 		return ac.RunSnapshot{}, err
 	}
-	endpoint := c.endpoint
 	var content io.Reader
 	if method == http.MethodPost {
 		content = bytes.NewReader(body)
@@ -166,15 +177,15 @@ func (c *Client) call(ctx context.Context, input ac.RunRequest, requestID, metho
 		return failed(invalidResponse())
 	}
 	if response.StatusCode != http.StatusOK {
-		return failed(c.decodeFailure(response.StatusCode, data, run.RunID, requestID))
+		return failed(decodeFailure(validator, response.StatusCode, data, run.RunID, requestID))
 	}
 	var snapshot ac.RunSnapshot
-	if c.validator.Decode("RunSnapshot", data, &snapshot) != nil || snapshot.RunID != run.RunID {
+	if validator.Decode("RunSnapshot", data, &snapshot) != nil || snapshot.RunID != run.RunID {
 		return failed(invalidResponse())
 	}
 	switch snapshot.State {
 	case "completed":
-		if snapshot.Result == nil || snapshot.Error != nil || c.validator.CheckRunResult(run, *snapshot.Result) != nil {
+		if snapshot.Result == nil || snapshot.Error != nil || validator.CheckRunResult(run, *snapshot.Result) != nil {
 			return failed(invalidResponse())
 		}
 	case "processing":
@@ -199,9 +210,9 @@ func (c *Client) call(ctx context.Context, input ac.RunRequest, requestID, metho
 	return snapshot, nil
 }
 
-func (c *Client) decodeFailure(status int, data []byte, runID ac.UUID, requestID string) error {
+func decodeFailure(validator *ac.Validator, status int, data []byte, runID ac.UUID, requestID string) error {
 	var envelope ac.ErrorEnvelope
-	if c.validator.Decode("ErrorEnvelope", data, &envelope) != nil || envelope.RequestID != requestID ||
+	if validator.Decode("ErrorEnvelope", data, &envelope) != nil || envelope.RequestID != requestID ||
 		(envelope.RunID != nil && *envelope.RunID != runID) {
 		return invalidResponse()
 	}

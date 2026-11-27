@@ -38,7 +38,7 @@ class FakeAudio {
 }
 
 function harness({ supported = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4'], micError = null, routes = {}, submit, welcomeUrl } = {}) {
-  const h = { now: 0, timers: [], requests: [], tracks: [], submits: [], revoked: [], urls: 0 };
+  const h = { now: 0, timers: [], requests: [], tracks: [], submits: [], messages: [], revoked: [], urls: 0, revision: 1, ids: 0 };
   h.audio = new FakeAudio();
   class FakeRecorder {
     static isTypeSupported(type) { return supported.includes(type); }
@@ -66,8 +66,15 @@ function harness({ supported = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4'], micE
   };
   h.controller = createVoiceController(CONVERSATION, {
     welcomeUrl,
-    submit: submit ?? (async (question) => { h.submits.push(question); return { turnId: TURN }; }),
+    submit: async (message) => {
+      h.messages.push(message);
+      if (submit) return submit(message);
+      h.submits.push(message.question);
+      return { turnId: TURN };
+    },
+    revision: () => h.revision,
     env: {
+      randomUUID: () => `00000000-0000-4000-8000-${String(++h.ids).padStart(12, '0')}`,
       fetch: respond,
       getUserMedia: async (constraints) => {
         h.constraints = constraints;
@@ -298,4 +305,144 @@ test('the greeting plays once and recording cancels it', async () => {
   blocked.controller.playWelcome();
   await settle();
   assert.equal(blocked.snap().phase, 'ready', 'a blocked greeting is skipped quietly');
+});
+
+// ---- recording-to-message handoff ---------------------------------------------------
+
+test('a recording is bound to the message ID and revision at the Record tap', async () => {
+  let release;
+  const h = harness({ routes: { transcribe: [() => new Promise((resolve) => { release = resolve; })] } });
+  h.revision = 3;
+  await h.controller.startRecording();
+  h.revision = 4; // the conversation advances while the visitor is speaking
+  h.advance(2000);
+  h.controller.stopRecording();
+  await settle();
+  release(Response.json({ text: 'Why?', language: 'en' }));
+  await settle();
+  assert.deepEqual(h.messages, [{
+    question: 'Why?', clientMessageId: '00000000-0000-4000-8000-000000000001', expectedRevision: 3, languageOverride: null,
+  }]);
+});
+
+test('a lost response is retried with the identical logical message', async () => {
+  let calls = 0;
+  const h = harness({
+    submit: async () => {
+      if (++calls === 1) throw Object.assign(new Error('The connection dropped. Try again.'), { code: null, retryable: true });
+      return { turnId: TURN };
+    },
+  });
+  await recordQuestion(h);
+  assert.equal(h.snap().phase, 'error');
+  assert.equal(h.snap().error.stage, 'message');
+  assert.equal(h.snap().unsent, 'What do you mean by that?');
+  await h.controller.retryMessage();
+  await settle();
+  assert.equal(h.messages.length, 2);
+  assert.deepEqual(h.messages[1], h.messages[0], 'same ID, question, revision and override');
+  assert.equal(h.snap().phase, 'playing');
+  assert.equal(h.snap().unsent, null);
+});
+
+test('a revision conflict keeps the transcript for review and never resends it', async () => {
+  const h = harness({
+    submit: async () => { throw Object.assign(new Error('The conversation changed.'), { code: 'conversation_state_conflict', retryable: false }); },
+  });
+  await recordQuestion(h);
+  assert.deepEqual({ ...h.snap().error, message: undefined }, { stage: 'message', code: 'conversation_state_conflict', retryable: false, message: undefined });
+  assert.equal(h.snap().unsent, 'What do you mean by that?');
+  assert.equal(h.snap().transcript, 'What do you mean by that?');
+  await h.controller.retryMessage();
+  assert.equal(h.messages.length, 1, 'no automatic resend after a conflict');
+  assert.equal(h.requests.filter((r) => r.path.endsWith('/speech')).length, 0);
+});
+
+test('a fresh recording is a new logical question', async () => {
+  const h = harness();
+  await recordQuestion(h);
+  h.revision = 2;
+  await recordQuestion(h);
+  assert.equal(h.messages.length, 2);
+  assert.notEqual(h.messages[0].clientMessageId, h.messages[1].clientMessageId);
+  assert.equal(h.messages[1].expectedRevision, 2);
+});
+
+// ---- the latest Play or Stop wins ---------------------------------------------------
+
+const TURN_2 = 'd4fc3fee-17cb-44c5-b44e-b64910511601';
+function deferredSpeech() {
+  const pending = [];
+  const route = () => new Promise((resolve) => pending.push(resolve));
+  const reply = (index, label) => pending[index](new Response(new Blob([label], { type: 'audio/mpeg' })));
+  return { route, reply, pending };
+}
+
+test('an older speech response that arrives last stays silent', async () => {
+  const speech = deferredSpeech();
+  const h = harness({ routes: { speech: [speech.route] } });
+  const first = h.controller.playTurn(TURN);
+  const second = h.controller.playTurn(TURN_2);
+  await settle();
+  assert.equal(speech.pending.length, 2);
+  speech.reply(1, 'second'); // the selected answer arrives first
+  await second;
+  await settle();
+  assert.equal(h.snap().phase, 'playing');
+  assert.equal(h.snap().turnId, TURN_2);
+  const playing = h.audio.src;
+  const plays = h.audio.plays.length;
+  speech.reply(0, 'first'); // then the older request finishes
+  await first;
+  await settle();
+  assert.equal(h.audio.src, playing, 'the older clip never replaces the selected answer');
+  assert.equal(h.audio.plays.length, plays, 'and is never played');
+  assert.equal(h.snap().turnId, TURN_2);
+  assert.equal(h.snap().phase, 'playing');
+});
+
+test('Stop while the answer is downloading keeps it silent', async () => {
+  const speech = deferredSpeech();
+  const h = harness({ routes: { speech: [speech.route] } });
+  const play = h.controller.playTurn(TURN);
+  await settle();
+  assert.equal(h.snap().phase, 'preparing_audio');
+  h.controller.stopPlayback();
+  assert.equal(h.snap().phase, 'ready');
+  speech.reply(0, 'late');
+  await play;
+  await settle();
+  assert.equal(h.snap().phase, 'ready');
+  assert.deepEqual(h.audio.plays.filter((src) => !src.startsWith('data:')), [], 'nothing was played');
+  // The downloaded clip is kept, so Replay needs no new speech request.
+  await h.controller.playTurn(TURN);
+  await settle();
+  assert.equal(h.snap().phase, 'playing');
+  assert.equal(speech.pending.length, 1);
+});
+
+test('a speech failure for an older request does not replace the selected answer', async () => {
+  const speech = deferredSpeech();
+  const h = harness({ routes: { speech: [speech.route] } });
+  const first = h.controller.playTurn(TURN);
+  const second = h.controller.playTurn(TURN_2);
+  await settle();
+  speech.reply(1, 'second');
+  await second;
+  await settle();
+  speech.pending[0](Response.json({ request_id: 'r', error: { code: 'speech_unavailable', message: 'Unavailable.', retryable: true } }, { status: 503 }));
+  await first;
+  await settle();
+  assert.equal(h.snap().phase, 'playing');
+  assert.equal(h.snap().error, null);
+  assert.equal(h.snap().turnId, TURN_2);
+});
+
+test('constructing a controller has no side effects until it is used', () => {
+  let created = 0;
+  createVoiceController(CONVERSATION, {
+    submit: async () => ({ turnId: TURN }), revision: () => 0,
+    env: { createAudio: () => { created++; return new FakeAudio(); } },
+  });
+  assert.equal(created, 0);
 });

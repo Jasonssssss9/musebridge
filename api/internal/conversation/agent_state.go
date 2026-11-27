@@ -89,7 +89,7 @@ func nextAgentState(validator *ac.Validator, run ac.RunRequest, result ac.RunRes
 	if state.Revision == 2147483647 {
 		return ac.ConversationState{}, fmt.Errorf("revision limit reached")
 	}
-	language, err := validator.ResolveLanguage(run.Question, run.LanguageOverride, state.LanguagePreference, state.AutoLanguage, result.LanguageDecision)
+	language, err := validator.ResolveRunLanguage(run, result.LanguageDecision)
 	if err != nil {
 		return ac.ConversationState{}, err
 	}

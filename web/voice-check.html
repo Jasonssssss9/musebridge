@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="icon" href="data:," />
+    <title>Vincent voice check</title>
+    <style>
+      :root { color-scheme: light dark; --bg: #f4efe6; --fg: #1f1b16; --muted: #6b6257; --line: #d8cfc2; --accent: #2f4f7f; }
+      @media (prefers-color-scheme: dark) { :root { --bg: #17140f; --fg: #f1ece4; --muted: #a39a8e; --line: #3a342c; --accent: #8fb0e0; } }
+      body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.45 system-ui, -apple-system, sans-serif; }
+      main { max-width: 640px; margin: 0 auto; padding: 16px; }
+      h1 { font-size: 1.2rem; margin: 0 0 4px; }
+      .muted { color: var(--muted); font-size: 0.9rem; }
+      .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+      button { font: inherit; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--fg); }
+      button.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+      button:disabled { opacity: 0.4; }
+      #phase { font-weight: 600; }
+      .box { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin: 12px 0; }
+      .turn p { margin: 4px 0; }
+      .source { font-size: 0.85rem; color: var(--muted); }
+      #error { color: #b3261e; }
+      textarea { width: 100%; box-sizing: border-box; font: inherit; padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Talk with Vincent: voice check</h1>
+      <p class="muted">A's device test page (docs/vincent-voice-setup.md). It is not the visitor page.</p>
+      <p>Conversation: <span id="conversation">opening…</span> · revision <span id="revision">–</span></p>
+      <p>State: <span id="phase">ready</span> <span id="seconds" class="muted"></span></p>
+      <div class="row">
+        <button id="record" class="primary">Record</button>
+        <button id="stop">Stop</button>
+        <button id="retry">Retry</button>
+        <button id="play">Play</button>
+      </div>
+      <p>Heard: <span id="transcript" class="muted">–</span></p>
+      <p id="error" hidden></p>
+      <div id="unsentBox" hidden>
+        <p class="muted">Not sent. Review the question, then send it as a new message.</p>
+        <textarea id="unsent" rows="2"></textarea>
+        <div class="row"><button id="sendUnsent">Send</button></div>
+      </div>
+      <div id="turns"></div>
+    </main>
+    <script type="module" src="/src/voice/check.ts"></script>
+  </body>
+</html>

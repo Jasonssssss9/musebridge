@@ -1,4 +1,8 @@
-"""Generate boundary types and the Go embedded schema from the shared v2 schema.
+"""Generate boundary types and the Go embedded schemas from the shared v2 schema.
+
+The v3 schema is the v2 schema with docs/contracts/agent-v3.patch.json applied
+(RFC 6902). Go types cover both versions: a field that exists only in v3 is
+generated as Optional, so v2 values never carry it. Python models stay v2.
 
 Run with --check in CI. Validation remains authoritative: generated union
 containers represent wire fields, while the schema selects legal variants.
@@ -15,8 +19,55 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "docs/contracts/agent-v2.schema.json"
+PATCH = ROOT / "docs/contracts/agent-v3.patch.json"
+PACK = ROOT / "knowledge/data/reference-packs/vincent-irises-v1.json"
+PACK_DIGEST = ROOT / "knowledge/data/reference-packs/vincent-irises-v1.sha256"
 DOCUMENT = json.loads(SOURCE.read_text())
-DEFINITIONS = DOCUMENT["$defs"]
+
+
+def _pointer(path: str) -> list[str]:
+    return [part.replace("~1", "/").replace("~0", "~") for part in path.split("/")[1:]]
+
+
+def apply_patch(document, operations):
+    """The RFC 6902 subset used by the v3 delta: test, add, replace, remove."""
+    import copy
+    result = copy.deepcopy(document)
+    for op in operations:
+        *parents, last = _pointer(op["path"])
+        target = result
+        for part in parents:
+            target = target[int(part)] if isinstance(target, list) else target[part]
+        if op["op"] == "test":
+            current = target[int(last)] if isinstance(target, list) else target[last]
+            if current != op["value"]:
+                raise ValueError(f"patch test failed at {op['path']}")
+        elif op["op"] == "add":
+            if isinstance(target, list):
+                target.insert(len(target) if last == "-" else int(last), copy.deepcopy(op["value"]))
+            else:
+                target[last] = copy.deepcopy(op["value"])
+        elif op["op"] == "replace":
+            if isinstance(target, list):
+                target[int(last)] = copy.deepcopy(op["value"])
+            else:
+                if last not in target:
+                    raise ValueError(f"replace of missing {op['path']}")
+                target[last] = copy.deepcopy(op["value"])
+        elif op["op"] == "remove":
+            if isinstance(target, list):
+                del target[int(last)]
+            else:
+                del target[last]
+        else:
+            raise ValueError(f"unsupported patch operation {op['op']}")
+    return result
+
+
+DOCUMENT_V3 = apply_patch(DOCUMENT, json.loads(PATCH.read_text()))
+V2_DEFINITIONS = DOCUMENT["$defs"]
+# Go types are generated from v3; object_shape/go_type read these definitions.
+DEFINITIONS = DOCUMENT_V3["$defs"]
 GO_DECLARATIONS: dict[str, str] = {}
 PY_DECLARATIONS: dict[str, str] = {}
 
@@ -60,6 +111,19 @@ def object_shape(node: dict) -> dict | None:
     return None
 
 
+def v2_properties(name: str) -> set[str] | None:
+    """Wire fields of a v2 definition, or None when the definition is v3-only."""
+    global DEFINITIONS
+    if name not in V2_DEFINITIONS:
+        return None
+    saved, DEFINITIONS = DEFINITIONS, V2_DEFINITIONS
+    try:
+        shape = object_shape(V2_DEFINITIONS[name])
+    finally:
+        DEFINITIONS = saved
+    return set(shape["properties"]) if shape else None
+
+
 def go_type(node: dict, name: str) -> str:
     if "$ref" in node:
         return node["$ref"].split("/")[-1]
@@ -74,9 +138,11 @@ def go_type(node: dict, name: str) -> str:
         if name not in GO_DECLARATIONS:
             GO_DECLARATIONS[name] = ""
             fields = []
+            v2_fields = v2_properties(name)
             for key, value in shape["properties"].items():
                 kind = go_type(value, name + title(key))
-                optional = key not in shape.get("required", [])
+                # A field added by v3 is absent from every v2 value.
+                optional = key not in shape.get("required", []) or (v2_fields is not None and key not in v2_fields)
                 if optional:
                     kind = f"Optional[{kind}]"
                 tag = key + (",omitzero" if optional else "")
@@ -137,19 +203,33 @@ def py_type(node: dict, name: str) -> str:
 
 
 def outputs() -> dict[Path, str]:
+    global DEFINITIONS
     for name, node in DEFINITIONS.items():
         kind = go_type(node, name)
         if kind != name:
             GO_DECLARATIONS[name] = f"type {name} {kind}\n"
+    DEFINITIONS = V2_DEFINITIONS  # Python models describe the deployed v2 boundary
+    for name, node in DEFINITIONS.items():
         kind = py_type(node, name)
         if kind != name:
             PY_DECLARATIONS[name] = f"{name}: TypeAlias = {kind}\n"
+    DEFINITIONS = DOCUMENT_V3["$defs"]
     digest = hashlib.sha256(SOURCE.read_bytes()).hexdigest()
+    v3_json = json.dumps(DOCUMENT_V3, indent=2, ensure_ascii=False) + "\n"
+    v3_digest = hashlib.sha256(v3_json.encode()).hexdigest()
+    pack_bytes = PACK.read_bytes()
+    pinned = PACK_DIGEST.read_text().split()[0]
+    if hashlib.sha256(pack_bytes).hexdigest() != pinned:
+        raise ValueError("The Vincent reference pack does not match its pinned SHA-256.")
     go = ("// Code generated by scripts/generate_agent_contracts.py; DO NOT EDIT.\n"
           "package agentcontract\n\nimport \"reflect\"\n\n"
-          f'const SchemaSHA256 = "{digest}"\n\n' +
+          f'const SchemaSHA256 = "{digest}"\n\n'
+          f'const SchemaV3SHA256 = "{v3_digest}"\n\n'
+          f'const ReferencePackSHA256 = "{pinned}"\n\n' +
           "\n".join(GO_DECLARATIONS.values()) + "\nvar wireTypes = map[string]reflect.Type{\n" +
-          "".join(f'\t"{name}": reflect.TypeFor[{name}](),\n' for name in DEFINITIONS) + "}\n")
+          "".join(f'\t"{name}": reflect.TypeFor[{name}](),\n' for name in DEFINITIONS) + "}\n\n" +
+          "// v2Definitions are the names compiled from the deployed v2 schema.\n"
+          "var v2Definitions = []string{\n" + "".join(f'\t"{name}",\n' for name in V2_DEFINITIONS) + "}\n")
     go = subprocess.run(["gofmt"], input=go, text=True, capture_output=True, check=True).stdout
     py = ('"""Generated from docs/contracts/agent-v2.schema.json; do not edit.\n\n'
           'TypedDicts provide static wire types. Use ContractCodec for runtime validation.\n"""\n'
@@ -158,6 +238,8 @@ def outputs() -> dict[Path, str]:
           f'SCHEMA_SHA256 = "{digest}"\n\n' + "\n\n".join(PY_DECLARATIONS.values()))
     return {ROOT / "api/internal/agentcontract/types_generated.go": go,
             ROOT / "api/internal/agentcontract/schema_generated.json": SOURCE.read_text(),
+            ROOT / "api/internal/agentcontract/schema_v3_generated.json": v3_json,
+            ROOT / "api/internal/agentcontract/reference_pack_generated.json": pack_bytes.decode(),
             ROOT / "api/internal/agentcontract/errors_generated.json": (ROOT / "docs/contracts/agent-v2.errors.json").read_text(),
             ROOT / "agent/contracts/models.py": py}
 
@@ -177,7 +259,7 @@ def main() -> int:
     if stale:
         print("Generated contracts are stale: " + ", ".join(stale))
         return 1
-    print("Generated contracts are current." if args.check else "Generated Go/Python v2 contracts.")
+    print("Generated contracts are current." if args.check else "Generated Go v2/v3 and Python v2 contracts.")
     return 0
 
 

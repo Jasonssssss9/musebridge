@@ -92,16 +92,26 @@ func (s *Service) Submit(parent context.Context, token, id string, message ac.Pu
 		status, code = failure.Status, failure.Code
 		return ac.PublicSubmissionResponse{}, failure
 	}
+	// The run's private version selects its contract: agent-demo-v0.4
+	// conversations (guide or Vincent) run on agent-run-v3.
+	validator := s.validator
+	if attempt.Request.ContractVersion == ac.PrivateVersionV3 {
+		v3, err := ac.DefaultValidatorV3()
+		if err != nil {
+			return fail(invalidResponse())
+		}
+		validator = v3
+	}
 	// Keep independent encoded source bytes for every operation. A transport
 	// cannot mutate the snapshot used for later GETs or result validation.
-	frozen, err := s.validator.Encode("RunRequest", attempt.Request)
-	if err != nil || s.validator.CheckRunRequest(attempt.Request) != nil {
+	frozen, err := validator.Encode("RunRequest", attempt.Request)
+	if err != nil || validator.CheckRunRequest(attempt.Request) != nil {
 		return fail(invalidResponse())
 	}
 	queryContext := ctx
 	call := func(query bool) (ac.RunSnapshot, error) {
 		var request ac.RunRequest
-		if s.validator.Decode("RunRequest", frozen, &request) != nil {
+		if validator.Decode("RunRequest", frozen, &request) != nil {
 			return ac.RunSnapshot{}, &agentclient.Error{Failure: ac.Failure{Status: 502,
 				Error: ac.PublicError{Code: "agent_invalid_response", Message: "Invalid snapshot."}}}
 		}
@@ -149,7 +159,7 @@ func (s *Service) Submit(parent context.Context, token, id string, message ac.Pu
 				}
 				continue
 			}
-			if s.checkSnapshot(attempt.Request, snapshot, true) != nil {
+			if checkSnapshot(validator, attempt.Request, snapshot, true) != nil {
 				return fail(invalidResponse())
 			}
 			if snapshot.State == "processing" {
@@ -158,7 +168,7 @@ func (s *Service) Submit(parent context.Context, token, id string, message ac.Pu
 			break
 		}
 	}
-	if s.checkSnapshot(attempt.Request, snapshot, false) != nil {
+	if checkSnapshot(validator, attempt.Request, snapshot, false) != nil {
 		return fail(invalidResponse())
 	}
 	if ctx.Err() != nil {
@@ -173,8 +183,8 @@ func (s *Service) Submit(parent context.Context, token, id string, message ac.Pu
 	return response, nil
 }
 
-func (s *Service) checkSnapshot(run ac.RunRequest, snapshot ac.RunSnapshot, allowProcessing bool) error {
-	if _, err := s.validator.Encode("RunSnapshot", snapshot); err != nil || snapshot.RunID != run.RunID {
+func checkSnapshot(validator *ac.Validator, run ac.RunRequest, snapshot ac.RunSnapshot, allowProcessing bool) error {
+	if _, err := validator.Encode("RunSnapshot", snapshot); err != nil || snapshot.RunID != run.RunID {
 		return fmt.Errorf("invalid Agent snapshot")
 	}
 	if snapshot.State == "processing" && allowProcessing && snapshot.Result == nil && snapshot.Error == nil {
@@ -183,7 +193,7 @@ func (s *Service) checkSnapshot(run ac.RunRequest, snapshot ac.RunSnapshot, allo
 	if snapshot.State != "completed" || snapshot.Result == nil || snapshot.Error != nil {
 		return fmt.Errorf("invalid Agent terminal state")
 	}
-	return s.validator.CheckRunResult(run, *snapshot.Result)
+	return validator.CheckRunResult(run, *snapshot.Result)
 }
 
 // invoke bounds even an injected client which ignores cancellation. Results

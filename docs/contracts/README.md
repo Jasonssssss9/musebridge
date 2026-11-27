@@ -33,7 +33,7 @@ Unicode escapes/nonblank regex semantics.
 
 ### Vincent target schema and examples
 
-The [Vincent interface](../vincent-contract.md) specifies public `agent-demo-v0.4` and private `agent-run-v3`. Their effective JSON Schema is the [v3 JSON Patch](agent-v3.patch.json) applied in order to [agent-v2.schema.json](agent-v2.schema.json) at SHA-256 `8abc3f29b4c366c5a19cfb2c3ffe78cd68236852e7eb43d68fadc77ae6b8ab20`. This keeps the deployed v2 definitions fixed. The [examples](vincent-examples.json) contain complete public and private payloads, legacy compatibility checks and rejected shapes. Wire them to versioned runtime codecs during implementation. These examples check the protocol; they do not measure the model or the microphone.
+The [Vincent interface](../vincent-contract.md) specifies public `agent-demo-v0.4` and private `agent-run-v3`. Their effective JSON Schema is the [v3 JSON Patch](agent-v3.patch.json) applied in order to [agent-v2.schema.json](agent-v2.schema.json) at SHA-256 `8abc3f29b4c366c5a19cfb2c3ffe78cd68236852e7eb43d68fadc77ae6b8ab20`. This keeps the deployed v2 definitions fixed. The [examples](vincent-examples.json) contain complete public and private payloads, legacy compatibility checks and rejected shapes. Go wires them to versioned runtime codecs: the generator applies the patch and embeds the effective v3 schema (`schema_v3_generated.json`) and the pinned reference pack (`reference_pack_generated.json`). `agentcontract.DefaultValidatorV3()` serves v0.4/v3, and `TestVincentSharedExamples` checks every case. These examples check the protocol; they do not measure the model or the microphone.
 
 Verify the patch and every example from the repository root using the existing Agent virtual environment:
 

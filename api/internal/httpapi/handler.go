@@ -27,14 +27,17 @@ type handler struct {
 	questions *chat.Service
 	agent     *agentchat.Service
 	voice     *voice.Service
+	// vincent offers Talk with Vincent on Irises (agent deployments only).
+	vincent bool
 }
 
 // Settings carries the browser profile validated by the application config.
 type Settings struct {
 	PublicBaseURL string
 	CookieSecure  bool
-	// Voice enables the Talk with Vincent media routes. It is honored only by
-	// NewAgent; fixture deployments never mount the routes.
+	// Voice enables Talk with Vincent: the vincent conversation mode on Irises
+	// and its media routes. It is honored only by NewAgent; fixture deployments
+	// never offer the mode or mount the routes.
 	Voice voice.Config
 }
 
@@ -62,6 +65,7 @@ func NewAgent(dataset *catalog.Dataset, logger *slog.Logger, settings Settings, 
 		if err != nil {
 			return nil, err
 		}
+		h.vincent = true
 	}
 	return h, nil
 }
@@ -158,6 +162,12 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	if isList {
 		status, code = http.StatusOK, "ok"
+		if h.agent != nil {
+			h.writeJSON(w, r, status, struct {
+				Artworks []modeCard `json:"artworks"`
+			}{h.cards(h.dataset.Artworks())})
+			return
+		}
 		h.writeJSON(w, r, status, struct {
 			Artworks []catalog.Artwork `json:"artworks"`
 		}{h.dataset.Artworks()})
@@ -223,6 +233,12 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	artworkID, status, code = artwork.ArtworkID, http.StatusOK, "ok"
+	if h.agent != nil {
+		h.writeJSON(w, r, status, struct {
+			Artwork modeCard `json:"artwork"`
+		}{h.cards([]catalog.Artwork{artwork})[0]})
+		return
+	}
 	h.writeJSON(w, r, status, struct {
 		Artwork catalog.Artwork `json:"artwork"`
 	}{artwork})

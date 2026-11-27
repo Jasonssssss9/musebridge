@@ -11,8 +11,10 @@ import (
 
 const Lifetime = 24 * time.Hour
 
+// scope is the conversation key within one visitor: artwork, release, public
+// contract and, for agent-demo-v0.4, mode and role pack version.
 type scope struct {
-	artworkID, datasetVersion, contractVersion string
+	artworkID, datasetVersion, contractVersion, mode, packVersion string
 }
 
 type visitor struct {
@@ -119,7 +121,7 @@ func (s *Store) expire(now time.Time) {
 			if v := s.visitors[item.owner]; v != nil {
 				key := scope{artworkID: item.conversation.ArtworkID, datasetVersion: item.conversation.DatasetVersion}
 				if item.agent != nil {
-					key.contractVersion = item.agent.stateContract
+					key.contractVersion, key.mode, key.packVersion = item.agent.stateContract, item.agent.mode, item.agent.packVersion
 				}
 				delete(v.conversations, key)
 			}
