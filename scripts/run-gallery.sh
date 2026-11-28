@@ -36,6 +36,8 @@ if [[ "${VINCENT_ENABLED:-false}" == true ]]; then
     speech_key="$OPENAI_API_KEY"
     whisper_port="${WHISPER_PORT:-8003}"
     export VINCENT_ENABLED WHISPER_BASE_URL="http://127.0.0.1:$whisper_port"
+    # Vincent conversations run on the private v3 Agent and Vincent retrieval.
+    export MUSEBRIDGE_ENABLE_VINCENT="${MUSEBRIDGE_ENABLE_VINCENT:-1}"
 fi
 run_dir="$(mktemp -d -t musebridge-gallery.XXXXXXXX)"
 children=()
