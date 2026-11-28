@@ -8,7 +8,7 @@ This is A's implementation of [Talk with Vincent](vincent-contract.md) and its [
 | --- | --- |
 | Vincent conversations in Go (`agent-demo-v0.4`) | Implemented. Create, restore, history and submit carry `conversation_mode` and `reference_pack_version`. Guide, Vincent and the old v0.3 history are separate conversations. The artwork cards list `conversation_modes`. |
 | Go → Agent v3 (`agent-run-v3`) | Implemented. Every v0.4 conversation, guide or Vincent, runs on `/internal/v3/agent/runs` with its frozen scope. Go checks the returned scope and language, and checks every source against the pinned gallery release and the [Vincent reference pack](../knowledge/data/reference-packs/vincent-irises-v1.json) before saving the turn. |
-| Whisper worker (`whisper_worker/`) | Implemented. Tested with a stand-in recognizer; not yet run with the real faster-whisper model. |
+| Whisper worker (`whisper_worker/`) | Implemented. Stand-in HTTP tests and an optional installed-decoder regression cover the interface and dependency compatibility. Real microphone recognition remains part of the target-device acceptance. |
 | Go media routes (`api/internal/voice`) | Implemented and wired behind `VINCENT_ENABLED`. Transcription, speech, the error table, coalescing, cache and busy limits are tested, and the routes now serve real Vincent conversations. |
 | Browser voice controller (`web/src/voice`) | Implemented with the contract's method and snapshot names. Tested with fake microphone, recorder and audio. The two reported bugs are fixed: under StrictMode the first Record tap opens the microphone once, and the most recent Play or Stop always wins. A recording is bound to its message ID and revision when Record is tapped. |
 | v0.4 browser client and device-check page | Implemented in `web/src/voice/vincentClient.ts` and `web/voice-check.html` for testing the voice flow on a phone. |
@@ -35,6 +35,20 @@ The Go code was compiled and tested with Go 1.24 instead of the project's 1.27. 
    python3 -m venv .venv-whisper
    .venv-whisper/bin/pip install -r whisper_worker/requirements.txt
    ```
+
+   Keep this environment separate from the Agent environment. The requirements
+   explicitly include `requests`, which faster-whisper 1.1.1 imports, and pin
+   PyAV 16.0.1 to retain the decoder's `metadata_errors` argument. Newer PyAV
+   versions can make otherwise valid recordings fail as `audio_invalid`.
+   Validate the installed decoder without downloading speech weights:
+
+   ```bash
+   .venv-whisper/bin/python -B -m unittest whisper_worker.tests.test_real_decoder
+   ```
+
+   An environment outside the checkout also works: set `WHISPER_PYTHON` to its
+   interpreter. Set `WHISPER_MODEL` to an already downloaded model directory
+   to load local weights; keep the model directory and environment out of Git.
 
    The first start downloads the `small.en` model, about 500 MB. Set `WHISPER_MODEL=base.en` for a smaller and faster model that is less accurate.
 

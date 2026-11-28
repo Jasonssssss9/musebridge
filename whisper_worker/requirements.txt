@@ -1,1 +1,5 @@
 faster-whisper==1.1.1
+# Keep the metadata_errors argument used by this faster-whisper decoder.
+av==16.0.1
+# faster-whisper 1.1.1 imports requests directly; newer Hub packages do not install it.
+requests==2.34.2
