@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import type { VoiceSnapshot } from '../voice/controller';
 import { Link } from '../ui/App';
 import { VincentSources, type VincentCitation } from './Sources';
+import { VincentPortrait } from './Portrait';
 import './styles.css';
 
 export type VincentVoiceState = Pick<VoiceSnapshot, 'phase' | 'transcript' | 'turnId' | 'error' | 'recordingSeconds' | 'welcome'>;
@@ -46,8 +47,8 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
   portraitUrl?: string;
 }) {
   const [draft, setDraft] = useState('');
-  const [showArtwork, setShowArtwork] = useState(state.phase === 'playing' && !state.welcome);
-  const [portraitFailed, setPortraitFailed] = useState(false);
+  const [showArtwork, setShowArtwork] = useState(state.phase === 'playing' && !state.welcome && state.turnId === reply?.id);
+  const [greetingDismissed, setGreetingDismissed] = useState(false);
   const [artworkFailed, setArtworkFailed] = useState(false);
   const recording = state.phase === 'recording';
   const playing = state.phase === 'playing';
@@ -59,14 +60,18 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
 
   useEffect(() => {
     if (answerPlaying) setShowArtwork(true);
-    else if (recording || state.welcome) setShowArtwork(false);
-  }, [answerPlaying, recording, state.welcome]);
-  useEffect(() => setPortraitFailed(false), [portraitUrl]);
+    else if (recording || processing || state.welcome) setShowArtwork(false);
+  }, [answerPlaying, recording, processing, state.welcome]);
+
+  function interruptGreeting(action: () => void) {
+    setGreetingDismissed(true);
+    action();
+  }
 
   function submitDraft(event: FormEvent) {
     event.preventDefault();
     if (!canStart || questionLength === 0 || questionLength > 500) return;
-    actions.submit(draft.trim());
+    interruptGreeting(() => actions.submit(draft.trim()));
     setDraft('');
   }
 
@@ -93,17 +98,14 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
 
       <figure className={`vincent-stage${showArtwork ? ' vincent-stage-artwork' : ''}`}>
         <div className="vincent-visual">
-          {showArtwork ? artworkFailed ? <p className="vincent-image-fallback">The painting could not be loaded. Your reply is still available below.</p>
+          <div className="vincent-character" hidden={showArtwork}>
+            <VincentPortrait portraitUrl={portraitUrl} allowGreeting={!greetingDismissed && !showArtwork &&
+              (state.phase === 'ready' || (state.phase === 'playing' && state.welcome))} />
+          </div>
+          {showArtwork && (artworkFailed ? <p className="vincent-image-fallback">The painting could not be loaded. Your reply is still available below.</p>
             : <img key={reply?.id} className="vincent-painting" src="/artworks/getty-103jnh.jpg"
               alt="Blue irises and long green leaves, with one white bloom among the flowers."
-              style={{ animationPlayState: answerPlaying ? 'running' : 'paused' }} onError={() => setArtworkFailed(true)} />
-            : portraitUrl && !portraitFailed ? <img className="vincent-portrait" src={portraitUrl}
-              alt="An illustrated interpretation of Vincent van Gogh looking toward you." onError={() => setPortraitFailed(true)} />
-              : <div className="vincent-portrait-placeholder" role="img" aria-label="Space reserved for Vincent’s portrait">
-                <span className="vincent-monogram" aria-hidden="true">V.</span>
-                <p>Vincent’s portrait</p>
-                <span className="small">The character illustration will appear here.</span>
-              </div>}
+              style={{ animationPlayState: answerPlaying ? 'running' : 'paused' }} onError={() => setArtworkFailed(true)} />)}
           <span className="vincent-stage-label">{showArtwork ? 'Irises · 1889' : 'Vincent van Gogh'}</span>
         </div>
         <figcaption>An AI interpretation of Vincent van Gogh, with an AI-generated voice.</figcaption>
@@ -143,10 +145,10 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
           {reply.question !== state.transcript && <p className="muted small">In reply to: {reply.question}</p>}
           <p className="vincent-answer-text">{reply.text}</p>
           <div className="actions vincent-playback" aria-label="Answer playback">
-            <button className="btn btn-quiet" disabled={!canPlay} onClick={() => actions.playTurn(reply.id)}>
+            <button className="btn btn-quiet" disabled={!canPlay} onClick={() => interruptGreeting(() => actions.playTurn(reply.id))}>
               {showArtwork ? 'Replay answer' : 'Play answer'}
             </button>
-            <button className="btn btn-quiet" disabled={!enabled || !playing} onClick={actions.stopPlayback}>Stop playback</button>
+            <button className="btn btn-quiet" disabled={!enabled || !playing} onClick={() => interruptGreeting(actions.stopPlayback)}>Stop playback</button>
           </div>
           {reply.citations.length > 0 ? <VincentSources key={reply.id} citations={reply.citations} />
             : <p className="muted small">No sources are attached to this reply.</p>}
@@ -170,10 +172,10 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
       <footer className="vincent-recording-controls">
         <div className="vincent-record-actions">
           <button className={`btn vincent-record-button${recording ? ' is-recording' : ''}`} disabled={recording ? !enabled : !canStart}
-            onClick={recording ? actions.stopRecording : actions.startRecording}>
+            onClick={() => interruptGreeting(recording ? actions.stopRecording : actions.startRecording)}>
             <span aria-hidden="true">{recording ? '■' : '●'}</span> {recording ? 'Stop recording' : 'Start recording'}
           </button>
-          {playing && <button className="btn btn-quiet" disabled={!enabled} onClick={actions.stopPlayback}>
+          {playing && <button className="btn btn-quiet" disabled={!enabled} onClick={() => interruptGreeting(actions.stopPlayback)}>
             {state.welcome ? 'Stop greeting' : 'Stop playback'}
           </button>}
         </div>

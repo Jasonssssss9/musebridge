@@ -11,12 +11,13 @@ const scenarios = [
 ] as const;
 type Scenario = typeof scenarios[number][0];
 
-/** No media, network, conversation storage or model calls are made by this preview. */
+/** Only local visual assets load; capture, speech, conversation storage and model calls stay simulated. */
 export default function VincentPreview() {
   const [state, setState] = useState<VincentVoiceState>(INITIAL_VOICE_STATE);
   const [reply, setReply] = useState<VincentReply | null>(null);
   const [scenario, setScenario] = useState<Scenario>('ready');
   const [question, setQuestion] = useState(SAMPLE_REPLY.question);
+  const [entry, setEntry] = useState(0);
   const sequence = useRef(1);
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function VincentPreview() {
   }
 
   function choose(value: Scenario) {
+    if (value === 'welcome') setEntry((current) => current + 1);
     setScenario(value);
     setQuestion(SAMPLE_REPLY.question);
     const answered = ['preparing_audio', 'awaiting_play', 'playing', 'ended', 'speech_error', 'long_reply'].includes(value);
@@ -87,7 +89,7 @@ export default function VincentPreview() {
     }
   }
 
-  return <VincentView state={state} reply={reply} enabled actions={{
+  return <VincentView key={entry} state={state} reply={reply} enabled actions={{
     startRecording() {
       setQuestion(SAMPLE_REPLY.question);
       setState({ ...INITIAL_VOICE_STATE, phase: 'recording' });
@@ -108,14 +110,14 @@ export default function VincentPreview() {
   }} previewControls={
     <details className="vincent-preview" open>
       <summary>Interface preview · Simulated conversation</summary>
-      <p className="vincent-preview-note">No microphone, audio or AI services are used. Choose a state, or use Next step to move through processing. Sample replies are not generated answers.</p>
+      <p className="vincent-preview-note">The silent greeting video is real. No microphone, audio or AI services are used. Choose a state, or use Next step to move through processing. Sample replies are not generated answers.</p>
       <div className="vincent-preview-controls">
         <label>Preview state<select value={scenario} onChange={(event) => choose(event.target.value as Scenario)}>
           {scenarios.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select></label>
         <button className="btn btn-quiet" onClick={nextStep}
           disabled={!['transcribing', 'generating', 'preparing_audio', 'playing'].includes(state.phase)}>Next step</button>
-        <button className="btn btn-quiet" onClick={() => choose('ready')}>Reset preview</button>
+        <button className="btn btn-quiet" onClick={() => { setEntry((current) => current + 1); choose('ready'); }}>Reset preview</button>
       </div>
     </details>
   } />;

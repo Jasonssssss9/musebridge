@@ -12,8 +12,10 @@
 .vincent-unavailable p { margin-top: 4px; }
 .vincent-stage { margin: 0; }
 .vincent-visual { position: relative; height: clamp(230px, 36svh, 340px); overflow: hidden; border: 1px solid #d4bd8c; border-radius: 18px; background: #f2dfb6; }
-.vincent-portrait, .vincent-painting { display: block; width: 100%; height: 100%; }
-.vincent-portrait { object-fit: contain; }
+.vincent-character { position: relative; width: 100%; height: 100%; }
+.vincent-portrait, .vincent-greeting, .vincent-painting { display: block; width: 100%; height: 100%; }
+.vincent-portrait, .vincent-greeting { object-fit: contain; }
+.vincent-greeting { position: absolute; inset: 0; pointer-events: none; }
 .vincent-painting { object-fit: cover; animation: vincent-push-in 28s ease-out both; transform-origin: 45% 50%; }
 @keyframes vincent-push-in { from { transform: scale(1); } to { transform: scale(1.055); } }
 .vincent-portrait-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #5b4a2e; padding: 20px 16px 48px; text-align: center; }

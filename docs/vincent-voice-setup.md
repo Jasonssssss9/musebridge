@@ -10,7 +10,7 @@ This is A's implementation of the [voice contract](vincent-voice.md): the privat
 | Go media routes (`api/internal/voice`) | Implemented and wired behind `VINCENT_ENABLED`. Transcription, speech, error table, coalescing, cache and busy limits are tested. |
 | Browser voice controller (`web/src/voice`) | Implemented with the method and snapshot names from the contract. Tested with fake microphone, recorder and audio; not yet run on an iPhone. |
 | Vincent conversations (v0.4 create and submit, Go→Agent v3) | **Not implemented.** Until a conversation can be created in Vincent mode, every voice request returns `409 voice_mode_unavailable`. This depends on C's v3 Agent endpoint. |
-| Vincent page and portrait | B's [mobile layout and development preview](../web/README.md#talk-with-vincent-entry) are implemented. Live controls remain disabled; the v0.4 client, controller binding, portrait and animation are still pending. |
+| Vincent page and portrait | B's [mobile layout, silent greeting, listening portrait and development preview](../web/README.md#talk-with-vincent-entry) are implemented. Live controls remain disabled; the v0.4 client, controller binding and physical iPhone acceptance are still pending. |
 
 The Go code was compiled and tested here with an older Go than the project's 1.27 and with stand-ins for two libraries, because module downloads were unavailable. Run `go test ./...` in `api/` with the project toolchain before merging.
 

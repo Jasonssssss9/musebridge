@@ -13,6 +13,9 @@ for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'HTMLTextAr
 Object.defineProperty(globalThis, 'crypto', { configurable: true, value: webcrypto });
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 dom.window.HTMLElement.prototype.scrollIntoView = () => {};
+// JSDOM does not decode media; lifecycle tests dispatch the browser events explicitly.
+dom.window.HTMLMediaElement.prototype.play = async () => {};
+dom.window.HTMLMediaElement.prototype.pause = () => {};
 const { act, createElement } = await import('react');
 const { createRoot } = await import('react-dom/client');
 const vite = await createServer({
@@ -33,6 +36,7 @@ const { ArtworkPage } = await vite.ssrLoadModule('/src/ui/ArtworkPage.tsx');
 const { default: VincentPreview } = await vite.ssrLoadModule('/src/vincent/Preview.tsx');
 const { SAMPLE_REPLY } = await vite.ssrLoadModule('/src/vincent/previewData.ts');
 const { VincentSources } = await vite.ssrLoadModule('/src/vincent/Sources.tsx');
+const { VincentPortrait } = await vite.ssrLoadModule('/src/vincent/Portrait.tsx');
 const { ARTWORKS, CITATIONS } = await vite.ssrLoadModule('/src/api/mockData.ts');
 const artwork = ARTWORKS[0];
 const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
@@ -372,10 +376,99 @@ test('the Vincent preview walks through capture and playback without services or
   await previewClick('Replay answer');
   await previewClick('Start recording');
   assert.equal(container.querySelector('.vincent-painting'), null);
-  assert.ok(container.querySelector('.vincent-portrait-placeholder'));
+  assert.ok(container.querySelector('.vincent-portrait'));
+  assert.equal(container.querySelector('.vincent-greeting'), null, 'recording never restarts the opening animation');
   assert.equal(network.mock.calls.length, 0);
   assert.equal(localStorage.length, 0);
   assert.equal(sessionStorage.length, 0);
+});
+
+test('Vincent greeting ends at the listening portrait and does not replay across turns', async () => {
+  await render(createElement(VincentPreview));
+  const video = container.querySelector('.vincent-greeting');
+  assert.ok(video.muted && video.playsInline && video.autoplay);
+  assert.equal(video.loop, false);
+  assert.equal(video.getAttribute('poster'), '/vincent/greeting-poster.webp');
+  assert.equal(container.querySelector('.vincent-portrait').getAttribute('src'), '/vincent/listening.webp');
+  await act(async () => video.dispatchEvent(new Event('ended')));
+  assert.equal(container.querySelector('video'), null);
+  await previewState('playing');
+  assert.ok(container.querySelector('.vincent-character').hidden);
+  await previewClick('Stop playback');
+  assert.equal(container.querySelector('.vincent-painting').style.animationPlayState, 'paused');
+  await previewClick('Start recording');
+  assert.equal(container.querySelector('.vincent-character').hidden, false);
+  assert.equal(container.querySelector('video'), null);
+  await previewClick('Stop recording');
+  await previewState('ready');
+  assert.equal(container.querySelector('video'), null);
+  await previewClick('Reset preview');
+  assert.ok(container.querySelector('video'), 'the explicit preview reset simulates a new page entry');
+});
+
+test('recording or stopping the welcome interrupts the greeting and pauses its video', async (t) => {
+  const paused = t.mock.method(window.HTMLMediaElement.prototype, 'pause', () => {});
+  await render(createElement(VincentPreview));
+  const first = container.querySelector('video');
+  await previewClick('Start recording');
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(paused.mock.calls.some((call) => call.this === first));
+  await previewState('welcome');
+  const welcome = container.querySelector('video');
+  assert.ok(welcome);
+  await previewClick('Stop greeting');
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(paused.mock.calls.some((call) => call.this === welcome));
+});
+
+test('blocked autoplay and a failed video both leave the listening portrait usable', async (t) => {
+  const playing = t.mock.method(window.HTMLMediaElement.prototype, 'play', async () => { throw new Error('Autoplay blocked'); });
+  await render(createElement(VincentPreview));
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(container.querySelector('.vincent-portrait'));
+  assert.equal([...container.querySelectorAll('button')].find((b) => b.textContent.includes('Start recording')).disabled, false);
+  playing.mock.restore();
+  await previewClick('Reset preview');
+  await act(async () => container.querySelector('video').dispatchEvent(new Event('error')));
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(container.querySelector('.vincent-portrait'));
+  await act(async () => container.querySelector('.vincent-portrait').dispatchEvent(new Event('error')));
+  assert.match(container.querySelector('.vincent-portrait-placeholder').textContent, /could not be loaded/);
+});
+
+test('reduced motion skips the greeting and applies immediately during playback', async (t) => {
+  const listeners = new Set();
+  const preference = {
+    matches: true,
+    addEventListener(_event, listener) { listeners.add(listener); },
+    removeEventListener(_event, listener) { listeners.delete(listener); },
+  };
+  Object.defineProperty(window, 'matchMedia', { configurable: true, value: () => preference });
+  t.after(() => { delete window.matchMedia; });
+  await render(createElement(VincentPreview));
+  assert.equal(container.querySelector('video'), null);
+  preference.matches = false;
+  await previewClick('Reset preview');
+  assert.ok(container.querySelector('video'));
+  await act(async () => {
+    preference.matches = true;
+    for (const listener of listeners) listener();
+  });
+  assert.equal(container.querySelector('video'), null);
+  assert.equal(listeners.size, 0, 'the completed greeting removes its preference listener');
+});
+
+test('leaving during autoplay ignores its late rejection and pauses the old video', async (t) => {
+  let rejectPlay;
+  t.mock.method(window.HTMLMediaElement.prototype, 'play', () => new Promise((_resolve, reject) => { rejectPlay = reject; }));
+  const paused = t.mock.method(window.HTMLMediaElement.prototype, 'pause', () => {});
+  await render(createElement(VincentPortrait, { allowGreeting: true }));
+  const video = container.querySelector('video');
+  await act(async () => root.unmount());
+  root = null;
+  await act(async () => { rejectPlay(new Error('The old page was closed')); });
+  assert.ok(paused.mock.calls.some((call) => call.this === video));
+  assert.equal(container.textContent, '');
 });
 
 test('Vincent media error previews offer stage-specific recovery and retain the reply', async () => {
