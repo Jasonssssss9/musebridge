@@ -53,6 +53,14 @@ Citations keep the museum's original text. Changing the selector while an earlie
 | Waiting | One 70-second budget covers the request and any recovery polling. After 8 seconds the page says answers can take up to a minute. |
 | Unknown values | A reply with an unknown status, mode, contract version or malformed source is treated as a service error, not shown as an answer. |
 
+## Talk with Vincent entry
+
+The entry follows the [Vincent contract](../docs/vincent-contract.md). The *Irises* page shows **Talk with Vincent** only when its artwork response advertises `conversation_modes: ["guide", "vincent"]` for `getty-103jnh` in `getty-gallery-v2`. A missing field means guide only. Other artworks and releases do not show the entry. The frontend does not enable this capability on behalf of Go or modify the released catalog data.
+
+Set `PUBLIC_BASE_URL` to the public HTTPS origin when starting Vite or building the frontend. The entry uses that origin, including when the visitor is browsing an HTTP gallery. Without it, the entry uses the current page's origin. Non-HTTPS destinations are disabled except for localhost development. All API requests remain relative to the page's own origin. Restart Vite or rebuild the static app when the configured origin changes.
+
+This increment provides the entry and an explicit unavailable page at `/a/getty-103jnh/vincent`, with a link back to the artwork. It does not open a conversation, request the microphone or play audio. The existing Go catalog does not yet advertise Vincent, so the live entry remains hidden until the public integration is delivered. The full Vincent page, v0.4 conversation client, portrait and voice wiring are subsequent work. Automated frontend checks use controlled artwork responses to exercise the enabled entry without claiming real voice integration.
+
 ## QR cards and the phone test
 
 `/qr` shows a printable card for each artwork. The codes are built from the address the page was opened at, so open it through your LAN address (Vite prints it as "Network" on startup), not `localhost`. The step-by-step phone check is in [PHONE-TEST.md](PHONE-TEST.md). The QR address must be a complete HTTP(S) origin, without a page path, query, fragment or credentials. Invalid values hide the cards and disable printing; computer-local addresses receive a warning.

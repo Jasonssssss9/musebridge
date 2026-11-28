@@ -5,6 +5,8 @@ import { ArtworkPage } from './ArtworkPage';
 import { Home } from './Home';
 import { MockPanel } from './MockPanel';
 import { QrPage } from './QrPage';
+import { VincentPage } from './VincentPage';
+import { VINCENT_PATH } from '../vincent';
 
 /** In-app navigation without a page reload, so switching artworks mid-request can be exercised. */
 export function navigate(path: string): void {
@@ -37,10 +39,12 @@ export function App() {
   }
 
   const artworkRoute = match !== null;
+  const vincentRoute = path === VINCENT_PATH || path === `${VINCENT_PATH}/`;
   useEffect(() => {
     // ArtworkPage owns its asynchronous title; other routes must clear a previous artwork's title.
-    if (!artworkRoute) document.title = path === '/qr' ? `${t.qrTitle} · MuseBridge` : 'MuseBridge';
-  }, [artworkRoute, path]);
+    if (!artworkRoute) document.title = vincentRoute ? `${t.vincentTitle} · MuseBridge`
+      : path === '/qr' ? `${t.qrTitle} · MuseBridge` : 'MuseBridge';
+  }, [artworkRoute, path, vincentRoute]);
 
   return (
     <div className="shell">
@@ -49,7 +53,8 @@ export function App() {
         {IS_MOCK && <MockPanel />}
       </header>
       {/* key: a different artwork is a different page with its own conversation state */}
-      {match ? <ArtworkPage key={slug ?? match[1]} slug={slug} /> : path === '/qr' ? <QrPage /> : <Home />}
+      {match ? <ArtworkPage key={slug ?? match[1]} slug={slug} />
+        : vincentRoute ? <VincentPage /> : path === '/qr' ? <QrPage /> : <Home />}
     </div>
   );
 }

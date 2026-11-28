@@ -29,6 +29,7 @@ const { Chat } = await vite.ssrLoadModule('/src/ui/Chat.tsx');
 const { Citation } = await vite.ssrLoadModule('/src/ui/Citation.tsx');
 const { QrPage } = await vite.ssrLoadModule('/src/ui/QrPage.tsx');
 const { App, navigate } = await vite.ssrLoadModule('/src/ui/App.tsx');
+const { ArtworkPage } = await vite.ssrLoadModule('/src/ui/ArtworkPage.tsx');
 const { ARTWORKS, CITATIONS } = await vite.ssrLoadModule('/src/api/mockData.ts');
 const artwork = ARTWORKS[0];
 const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
@@ -267,6 +268,64 @@ test('Getty gallery, image enlargement, suggested questions and QR cards use the
   await act(async () => navigate('/qr'));
   await flush();
   assert.deepEqual([...container.querySelectorAll('svg.qr')].map((el) => new URL(el.getAttribute('aria-label')).pathname), artworks.map((a) => `/a/${a.slug}`));
+});
+
+test('only enabled Irises artwork responses display the Vincent entry', async (t) => {
+  const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-gallery-v2.json', import.meta.url)));
+  const irises = artworks.find((a) => a.artwork_id === 'getty-103jnh');
+  let active;
+  t.mock.method(globalThis, 'fetch', async (url, init) => {
+    if (url === `/api/artworks/${active.slug}`) return Response.json({ artwork: active });
+    const scoped = conversation({ artwork_id: active.artwork_id, dataset_version: active.dataset_version });
+    if (init.method === 'POST') return Response.json({ conversation: scoped, created: false });
+    return Response.json({ conversation: scoped, turns: [], pending_request: null });
+  });
+  const cases = [
+    [irises, false],
+    [{ ...irises, conversation_modes: ['guide'] }, false],
+    [{ ...irises, conversation_modes: ['guide', 'vincent'] }, true],
+    [{ ...irises, dataset_version: 'getty-pilot-v1', conversation_modes: ['guide', 'vincent'] }, false],
+    [{ ...artworks.find((a) => a.artwork_id !== irises.artwork_id), conversation_modes: ['guide', 'vincent'] }, false],
+  ];
+  for (const [index, [record, enabled]] of cases.entries()) {
+    active = record;
+    const page = createElement(ArtworkPage, { key: index, slug: active.slug });
+    if (!root) await render(page);
+    else { await act(async () => root.render(page)); await flush(); }
+    const entry = [...container.querySelectorAll('a')].find((a) => a.textContent === 'Talk with Vincent');
+    assert.equal(Boolean(entry), enabled);
+    if (entry) assert.equal(entry.href, 'http://localhost:8080/a/getty-103jnh/vincent');
+    assert.ok(container.querySelector('.composer'), 'the ordinary guide stays available');
+  }
+});
+
+test('the Vincent destination has an honest landing page and returns to the ordinary guide', async (t) => {
+  const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-gallery-v2.json', import.meta.url)));
+  const irises = artworks.find((a) => a.artwork_id === 'getty-103jnh');
+  const requests = [];
+  t.mock.method(globalThis, 'fetch', async (url, init) => {
+    requests.push(url);
+    if (url === `/api/artworks/${irises.slug}`) return Response.json({ artwork: irises });
+    const scoped = conversation({ artwork_id: irises.artwork_id, dataset_version: irises.dataset_version });
+    if (init.method === 'POST') return Response.json({ conversation: scoped, created: false });
+    return Response.json({ conversation: scoped, turns: [], pending_request: null });
+  });
+  window.history.replaceState(null, '', '/a/getty-103jnh/vincent');
+  await render(createElement(App));
+  assert.equal(document.title, 'Talk with Vincent · MuseBridge');
+  assert.match(container.textContent, /not available yet/);
+  assert.equal(container.querySelector('form'), null);
+  assert.deepEqual(requests, [], 'the landing page must not create an ordinary guide conversation');
+  const back = [...container.querySelectorAll('a')].find((a) => a.textContent === 'Back to artwork');
+  await act(async () => back.click());
+  await flush();
+  assert.equal(window.location.pathname, '/a/getty-103jnh');
+  assert.equal(document.title, 'Irises · MuseBridge');
+  assert.ok(container.querySelector('.composer'));
+  await act(async () => navigate('/a/getty-103jnh/vincent/'));
+  await flush();
+  assert.match(container.textContent, /not available yet/);
+  assert.equal(container.querySelector('.composer'), null);
 });
 
 test('Getty museum passages and MuseBridge guide notes display distinct author and destination labels', async () => {

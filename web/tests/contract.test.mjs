@@ -21,6 +21,7 @@ async function load(contract) {
   };
 }
 const { types, client } = await load('agent');
+const { vincentEntryUrl } = await servers[0].ssrLoadModule('/src/vincent.ts');
 const fixture = await load('fixture');
 after(() => Promise.all(servers.map((s) => s.close())));
 
@@ -52,6 +53,36 @@ const turn = (sequence = 1) => ({
 });
 const history = (count = 1) => ({
   conversation: conversation(count), turns: Array.from({ length: count }, (_, i) => turn(i + 1)), pending_request: null,
+});
+
+test('artwork capabilities default to guide and reject malformed mode declarations', () => {
+  const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-gallery-v2.json', import.meta.url)));
+  const irises = artworks.find((a) => a.artwork_id === 'getty-103jnh');
+  assert.deepEqual(types.parseArtwork(irises).conversation_modes, ['guide']);
+  for (const modes of [['guide'], ['guide', 'vincent']]) {
+    assert.deepEqual(types.parseArtwork({ ...irises, conversation_modes: modes }).conversation_modes, modes);
+  }
+  for (const modes of [null, 'vincent', [], ['vincent'], ['vincent', 'guide'], ['guide', 'guide'], ['guide', 'unknown'], ['guide', 'vincent', 'vincent']]) {
+    assert.throws(() => types.parseArtwork({ ...irises, conversation_modes: modes }), types.InvalidResponse);
+  }
+});
+
+test('Vincent entry requires the advertised release and a secure public destination', () => {
+  const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-gallery-v2.json', import.meta.url)));
+  const irises = { ...artworks.find((a) => a.artwork_id === 'getty-103jnh'), conversation_modes: ['guide', 'vincent'] };
+  const path = '/a/getty-103jnh/vincent';
+  assert.equal(vincentEntryUrl(irises, 'https://vincent.example'), `https://vincent.example${path}`);
+  for (const origin of ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://[::1]:8080']) {
+    assert.equal(vincentEntryUrl(irises, origin), `${origin}${path}`);
+  }
+  for (const origin of ['', 'http://192.168.1.20:8080', 'http://vincent.example', 'javascript:alert(1)',
+    'https://user:secret@vincent.example', 'https://vincent.example/path', 'https://vincent.example/?key=secret', 'https://vincent.example/#fragment']) {
+    assert.equal(vincentEntryUrl(irises, origin), null);
+  }
+  for (const change of [{ conversation_modes: undefined }, { conversation_modes: ['guide'] },
+    { artwork_id: 'getty-103qtz' }, { slug: 'getty-103qtz' }, { dataset_version: 'getty-pilot-v1' }]) {
+    assert.equal(vincentEntryUrl({ ...irises, ...change }, 'https://vincent.example'), null);
+  }
 });
 const pending = (revision = 1) => ({
   contract_version: 'agent-demo-v0.3', client_message_id: id(99), question: 'Thanks', language_override: null,
