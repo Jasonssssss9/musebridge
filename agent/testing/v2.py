@@ -183,7 +183,7 @@ def medium_answer(run, *, text="The museum lists the medium as oil on canvas.") 
     }
 
 
-def simulate_commit(run: dict, result: dict) -> tuple[dict, dict]:
+def simulate_commit(run: dict, result: dict, *, validate=_validate) -> tuple[dict, dict]:
     """Derive one successful next snapshot for tests, without saving anything.
 
     The caller supplies an already validated workflow result. This independent
@@ -256,6 +256,6 @@ def simulate_commit(run: dict, result: dict) -> tuple[dict, dict]:
         "answer_status": result["answer"]["status"], "answer_mode": "llm",
         "answer_text": result["answer"]["text"],
     }
-    _validate("ConversationState", state)
-    _validate("HistoryTurn", turn)
+    validate("ConversationState", state)
+    validate("HistoryTurn", turn)
     return state, turn

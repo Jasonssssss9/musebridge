@@ -13,6 +13,9 @@ for (const key of ['window', 'document', 'navigator', 'HTMLElement', 'HTMLTextAr
 Object.defineProperty(globalThis, 'crypto', { configurable: true, value: webcrypto });
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 dom.window.HTMLElement.prototype.scrollIntoView = () => {};
+// JSDOM does not decode media; lifecycle tests dispatch the browser events explicitly.
+dom.window.HTMLMediaElement.prototype.play = async () => {};
+dom.window.HTMLMediaElement.prototype.pause = () => {};
 const { act, createElement } = await import('react');
 const { createRoot } = await import('react-dom/client');
 const vite = await createServer({
@@ -29,6 +32,11 @@ const { Chat } = await vite.ssrLoadModule('/src/ui/Chat.tsx');
 const { Citation } = await vite.ssrLoadModule('/src/ui/Citation.tsx');
 const { QrPage } = await vite.ssrLoadModule('/src/ui/QrPage.tsx');
 const { App, navigate } = await vite.ssrLoadModule('/src/ui/App.tsx');
+const { ArtworkPage } = await vite.ssrLoadModule('/src/ui/ArtworkPage.tsx');
+const { default: VincentPreview } = await vite.ssrLoadModule('/src/vincent/Preview.tsx');
+const { SAMPLE_REPLY } = await vite.ssrLoadModule('/src/vincent/previewData.ts');
+const { VincentSources } = await vite.ssrLoadModule('/src/vincent/Sources.tsx');
+const { VincentPortrait } = await vite.ssrLoadModule('/src/vincent/Portrait.tsx');
 const { ARTWORKS, CITATIONS } = await vite.ssrLoadModule('/src/api/mockData.ts');
 const artwork = ARTWORKS[0];
 const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
@@ -267,6 +275,274 @@ test('Getty gallery, image enlargement, suggested questions and QR cards use the
   await act(async () => navigate('/qr'));
   await flush();
   assert.deepEqual([...container.querySelectorAll('svg.qr')].map((el) => new URL(el.getAttribute('aria-label')).pathname), artworks.map((a) => `/a/${a.slug}`));
+});
+
+test('only enabled Irises artwork responses display the Vincent entry', async (t) => {
+  const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-gallery-v2.json', import.meta.url)));
+  const irises = artworks.find((a) => a.artwork_id === 'getty-103jnh');
+  let active;
+  t.mock.method(globalThis, 'fetch', async (url, init) => {
+    if (url === `/api/artworks/${active.slug}`) return Response.json({ artwork: active });
+    const scoped = conversation({ artwork_id: active.artwork_id, dataset_version: active.dataset_version });
+    if (init.method === 'POST') return Response.json({ conversation: scoped, created: false });
+    return Response.json({ conversation: scoped, turns: [], pending_request: null });
+  });
+  const cases = [
+    [irises, false],
+    [{ ...irises, conversation_modes: ['guide'] }, false],
+    [{ ...irises, conversation_modes: ['guide', 'vincent'] }, true],
+    [{ ...irises, dataset_version: 'getty-pilot-v1', conversation_modes: ['guide', 'vincent'] }, false],
+    [{ ...artworks.find((a) => a.artwork_id !== irises.artwork_id), conversation_modes: ['guide', 'vincent'] }, false],
+  ];
+  for (const [index, [record, enabled]] of cases.entries()) {
+    active = record;
+    const page = createElement(ArtworkPage, { key: index, slug: active.slug });
+    if (!root) await render(page);
+    else { await act(async () => root.render(page)); await flush(); }
+    const entry = [...container.querySelectorAll('a')].find((a) => a.textContent === 'Talk with Vincent');
+    assert.equal(Boolean(entry), enabled);
+    if (entry) assert.equal(entry.href, 'http://localhost:8080/a/getty-103jnh/vincent');
+    assert.ok(container.querySelector('.composer'), 'the ordinary guide stays available');
+  }
+});
+
+test('the Vincent destination has an honest landing page and returns to the ordinary guide', async (t) => {
+  const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-gallery-v2.json', import.meta.url)));
+  const irises = artworks.find((a) => a.artwork_id === 'getty-103jnh');
+  const requests = [];
+  t.mock.method(globalThis, 'fetch', async (url, init) => {
+    requests.push(url);
+    if (url === `/api/artworks/${irises.slug}`) return Response.json({ artwork: irises });
+    const scoped = conversation({ artwork_id: irises.artwork_id, dataset_version: irises.dataset_version });
+    if (init.method === 'POST') return Response.json({ conversation: scoped, created: false });
+    return Response.json({ conversation: scoped, turns: [], pending_request: null });
+  });
+  window.history.replaceState(null, '', '/a/getty-103jnh/vincent');
+  await render(createElement(App));
+  assert.equal(document.title, 'Talk with Vincent · MuseBridge');
+  assert.match(container.textContent, /not available yet/);
+  assert.ok(container.querySelector('textarea').disabled);
+  assert.ok([...container.querySelectorAll('button')].every((button) => button.disabled));
+  assert.equal(container.querySelector('.vincent-preview'), null);
+  assert.deepEqual(requests, [], 'the landing page must not create an ordinary guide conversation');
+  const back = [...container.querySelectorAll('a')].find((a) => a.textContent.endsWith('Back to artwork'));
+  await act(async () => back.click());
+  await flush();
+  assert.equal(window.location.pathname, '/a/getty-103jnh');
+  assert.equal(document.title, 'Irises · MuseBridge');
+  assert.ok(container.querySelector('.composer'));
+  await act(async () => navigate('/a/getty-103jnh/vincent/'));
+  await flush();
+  assert.match(container.textContent, /not available yet/);
+  assert.equal(container.querySelector('.composer'), null);
+});
+
+async function previewState(value) {
+  await act(async () => {
+    const select = container.querySelector('.vincent-preview select');
+    select.value = value;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await flush();
+}
+
+async function previewClick(text) {
+  const button = [...container.querySelectorAll('button')].find((item) => item.textContent.trim().endsWith(text));
+  assert.ok(button && !button.disabled, `the ${text} action must be available`);
+  await act(async () => button.click());
+  await flush();
+}
+
+test('the Vincent preview walks through capture and playback without services or saved history', async (t) => {
+  const network = t.mock.method(globalThis, 'fetch', () => { throw new Error('The preview must stay offline.'); });
+  await render(createElement(VincentPreview));
+  assert.match(container.querySelector('.vincent-preview').textContent, /No microphone, audio or AI services/);
+  await previewClick('Start recording');
+  assert.match(container.querySelector('.vincent-status').textContent, /Listening/);
+  assert.ok(container.querySelector('.vincent-timer'));
+  await previewClick('Stop recording');
+  assert.match(container.querySelector('.vincent-status').textContent, /Turning your recording into words/);
+  await previewClick('Next step');
+  assert.match(container.querySelector('.vincent-question').textContent, /What color did you call the irises/);
+  await previewClick('Next step');
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+  assert.equal(container.querySelector('.vincent-playback button').disabled, true, 'reply is readable while audio prepares');
+  await previewClick('Next step');
+  await previewClick('Play answer');
+  assert.equal(container.querySelector('.vincent-painting').style.animationPlayState, 'running');
+  await previewClick('Stop playback');
+  assert.equal(container.querySelector('.vincent-painting').style.animationPlayState, 'paused');
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+  await previewClick('Replay answer');
+  await previewClick('Start recording');
+  assert.equal(container.querySelector('.vincent-painting'), null);
+  assert.ok(container.querySelector('.vincent-portrait'));
+  assert.equal(container.querySelector('.vincent-greeting'), null, 'recording never restarts the opening animation');
+  assert.equal(network.mock.calls.length, 0);
+  assert.equal(localStorage.length, 0);
+  assert.equal(sessionStorage.length, 0);
+});
+
+test('Vincent greeting ends at the listening portrait and does not replay across turns', async () => {
+  await render(createElement(VincentPreview));
+  const video = container.querySelector('.vincent-greeting');
+  assert.ok(video.muted && video.playsInline && video.autoplay);
+  assert.equal(video.loop, false);
+  assert.equal(video.getAttribute('poster'), '/vincent/greeting-poster.webp');
+  assert.equal(container.querySelector('.vincent-portrait').getAttribute('src'), '/vincent/listening.webp');
+  await act(async () => video.dispatchEvent(new Event('ended')));
+  assert.equal(container.querySelector('video'), null);
+  await previewState('playing');
+  assert.ok(container.querySelector('.vincent-character').hidden);
+  await previewClick('Stop playback');
+  assert.equal(container.querySelector('.vincent-painting').style.animationPlayState, 'paused');
+  await previewClick('Start recording');
+  assert.equal(container.querySelector('.vincent-character').hidden, false);
+  assert.equal(container.querySelector('video'), null);
+  await previewClick('Stop recording');
+  await previewState('ready');
+  assert.equal(container.querySelector('video'), null);
+  await previewClick('Reset preview');
+  assert.ok(container.querySelector('video'), 'the explicit preview reset simulates a new page entry');
+});
+
+test('recording or stopping the welcome interrupts the greeting and pauses its video', async (t) => {
+  const paused = t.mock.method(window.HTMLMediaElement.prototype, 'pause', () => {});
+  await render(createElement(VincentPreview));
+  const first = container.querySelector('video');
+  await previewClick('Start recording');
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(paused.mock.calls.some((call) => call.this === first));
+  await previewState('welcome');
+  const welcome = container.querySelector('video');
+  assert.ok(welcome);
+  await previewClick('Stop greeting');
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(paused.mock.calls.some((call) => call.this === welcome));
+});
+
+test('blocked autoplay and a failed video both leave the listening portrait usable', async (t) => {
+  const playing = t.mock.method(window.HTMLMediaElement.prototype, 'play', async () => { throw new Error('Autoplay blocked'); });
+  await render(createElement(VincentPreview));
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(container.querySelector('.vincent-portrait'));
+  assert.equal([...container.querySelectorAll('button')].find((b) => b.textContent.includes('Start recording')).disabled, false);
+  playing.mock.restore();
+  await previewClick('Reset preview');
+  await act(async () => container.querySelector('video').dispatchEvent(new Event('error')));
+  assert.equal(container.querySelector('video'), null);
+  assert.ok(container.querySelector('.vincent-portrait'));
+  await act(async () => container.querySelector('.vincent-portrait').dispatchEvent(new Event('error')));
+  assert.match(container.querySelector('.vincent-portrait-placeholder').textContent, /could not be loaded/);
+});
+
+test('reduced motion skips the greeting and applies immediately during playback', async (t) => {
+  const listeners = new Set();
+  const preference = {
+    matches: true,
+    addEventListener(_event, listener) { listeners.add(listener); },
+    removeEventListener(_event, listener) { listeners.delete(listener); },
+  };
+  Object.defineProperty(window, 'matchMedia', { configurable: true, value: () => preference });
+  t.after(() => { delete window.matchMedia; });
+  await render(createElement(VincentPreview));
+  assert.equal(container.querySelector('video'), null);
+  preference.matches = false;
+  await previewClick('Reset preview');
+  assert.ok(container.querySelector('video'));
+  await act(async () => {
+    preference.matches = true;
+    for (const listener of listeners) listener();
+  });
+  assert.equal(container.querySelector('video'), null);
+  assert.equal(listeners.size, 0, 'the completed greeting removes its preference listener');
+});
+
+test('leaving during autoplay ignores its late rejection and pauses the old video', async (t) => {
+  let rejectPlay;
+  t.mock.method(window.HTMLMediaElement.prototype, 'play', () => new Promise((_resolve, reject) => { rejectPlay = reject; }));
+  const paused = t.mock.method(window.HTMLMediaElement.prototype, 'pause', () => {});
+  await render(createElement(VincentPortrait, { allowGreeting: true }));
+  const video = container.querySelector('video');
+  await act(async () => root.unmount());
+  root = null;
+  await act(async () => { rejectPlay(new Error('The old page was closed')); });
+  assert.ok(paused.mock.calls.some((call) => call.this === video));
+  assert.equal(container.textContent, '');
+});
+
+test('Vincent media error previews offer stage-specific recovery and retain the reply', async () => {
+  await render(createElement(VincentPreview));
+  await previewState('microphone_denied');
+  assert.ok(container.querySelector('.vincent-write').open);
+  assert.match(container.querySelector('[role="alert"]').textContent, /type your question/);
+  await previewState('no_speech');
+  assert.match(container.querySelector('[role="alert"]').textContent, /Record another question/);
+  assert.equal([...container.querySelectorAll('button')].some((b) => b.textContent === 'Retry transcription'), false);
+  await previewState('transcription_error');
+  await previewClick('Retry transcription');
+  assert.equal(container.querySelector('[role="alert"]'), null);
+  assert.match(container.querySelector('.vincent-status').textContent, /Turning your recording into words/);
+  await previewState('speech_error');
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+  assert.ok(container.querySelector('.vincent-sources'));
+  await previewClick('Play answer');
+  assert.equal(container.querySelector('[role="alert"]'), null);
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+});
+
+test('the typed preview keeps submitted words literal and does not invent sources for arbitrary questions', async () => {
+  await render(createElement(VincentPreview));
+  const textarea = container.querySelector('textarea');
+  const send = [...container.querySelectorAll('button')].find((button) => button.textContent === 'Send question');
+  assert.ok(send.disabled);
+  async function type(value) {
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(textarea, value);
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+  await type('x'.repeat(501));
+  assert.ok(send.disabled);
+  assert.equal(textarea.getAttribute('aria-invalid'), 'true');
+  await type('🌻'.repeat(500));
+  assert.equal(send.disabled, false, 'the limit counts Unicode characters');
+  const question = '<img src=x onerror=alert(1)> Why is that?';
+  await type(question);
+  await previewClick('Send question');
+  assert.ok(container.querySelector('.vincent-question').textContent.includes(question));
+  assert.equal(container.querySelector('.vincent-question img'), null);
+  await previewClick('Next step');
+  assert.match(container.querySelector('.vincent-answer-text').textContent, /sample reply for checking the layout/);
+  assert.equal(container.querySelector('.vincent-sources'), null);
+});
+
+test('Vincent preview source cards retain the pinned wording, edition credit and license', async () => {
+  const pack = JSON.parse(readFileSync(new URL('../../knowledge/data/reference-packs/vincent-irises-v1.json', import.meta.url)));
+  for (const { kind, ...citation } of SAMPLE_REPLY.citations) {
+    assert.equal(kind, 'evidence');
+    assert.deepEqual(citation, pack.records.find((record) => record.chunk_id === citation.chunk_id));
+  }
+  await render(createElement(VincentPreview));
+  await previewState('awaiting_play');
+  const sources = container.querySelector('.vincent-sources');
+  assert.equal(sources.open, false);
+  await act(async () => sources.querySelector('summary').click());
+  assert.equal(sources.open, true);
+  assert.deepEqual([...sources.querySelectorAll('.cite-kind')].map((el) => el.textContent), ['Artist’s letter', 'Museum source']);
+  assert.deepEqual([...sources.querySelectorAll('blockquote')].map((el) => el.textContent), SAMPLE_REPLY.citations.map((c) => c.excerpt));
+  assert.ok(sources.querySelector('a[href="https://creativecommons.org/licenses/by-nc-sa/4.0/"]'));
+  await previewState('long_reply');
+  assert.ok(container.querySelector('.vincent-answer-text').textContent.length > 1000);
+});
+
+test('Vincent sources distinguish guide notes and leave unsafe links and HTML inert', async () => {
+  const c = { ...SAMPLE_REPLY.citations[0], source_kind: 'guide_note',
+    excerpt: '<script>not executable</script>', source_url: 'javascript:alert(1)', license_url: 'data:text/html,unsafe' };
+  await render(createElement(VincentSources, { citations: [c] }));
+  assert.equal(container.querySelector('.cite-kind').textContent, 'MuseBridge guide');
+  assert.equal(container.querySelector('blockquote').textContent, c.excerpt);
+  assert.equal(container.querySelectorAll('a,script').length, 0);
 });
 
 test('Getty museum passages and MuseBridge guide notes display distinct author and destination labels', async () => {

@@ -116,7 +116,9 @@ def validate_run_context(
 def _base_context(run: dict[str, Any]) -> dict[str, Any]:
     """Project a validated run, allowing an already fitted recent-turn window."""
     state, context = run["conversation_state"], run["context"]
+    role_scope = {"scope": run["scope"]} if run["contract_version"] == "agent-run-v3" else {}
     return deepcopy({
+        **role_scope,
         "original_question": run["question"],
         "artwork_context": {"artwork_title": context["artwork_title"], "artist": context["artist"]},
         "catalog_facts": context["catalog_facts"],
@@ -201,19 +203,33 @@ def _finish_schema_for_requests(output_schema: dict, requests: list[dict]) -> di
     return schema
 
 
+def vincent_protocol(operation, scope):
+    """Select the private model vocabulary only for the admitted historical role."""
+    if scope.get("conversation_mode") != "vincent":
+        return None
+    if operation == "plan":
+        from agent.runtime import vincent_plan
+        return vincent_plan
+    if operation in {"assess", "final"}:
+        from agent.runtime import vincent_answer
+        return vincent_answer
+    raise ValueError("Unsupported Vincent operation.")
+
+
 def fit_model_call(
     operation: str, payload: dict[str, Any], output_schema: dict[str, Any], *,
     prompt_sizer: PromptSizer, context_limit: int, output_tokens: int, safety_tokens: int = 512,
-    allow_compact: bool = True,
+    allow_compact: bool = True, fresh_ids: frozenset[str] = frozenset(),
 ) -> tuple[dict, dict, list[dict[str, str]]]:
     """Return the fitted payload, authoritative schema and exact measured messages."""
     if (type(context_limit) is not int or context_limit <= 0
             or type(output_tokens) is not int or output_tokens <= 0
             or type(safety_tokens) is not int or safety_tokens < 0):
         raise ValueError("Context sizing configuration must use positive integer limits.")
-    if operation in {"assess", "final"} and "FinishDecision" in output_schema.get("$defs", {}):
+    protocol = vincent_protocol(operation, payload.get("scope", {}))
+    if protocol is None and operation in {"assess", "final"} and "FinishDecision" in output_schema.get("$defs", {}):
         output_schema = _finish_schema_for_requests(output_schema, payload["requests"])
-    if "MemoryUpdate" in output_schema.get("$defs", {}):
+    if protocol is None and "MemoryUpdate" in output_schema.get("$defs", {}):
         # Keep the private handoff language next to the field in the model's output guide.
         # The public prose and the handoff may have different languages.
         if operation == "plan":
@@ -225,8 +241,13 @@ def fit_model_call(
         )
     fitted = deepcopy(payload)
     while True:
-        for compact in ((False, True) if allow_compact else (False,)):
-            messages = build_messages(operation, fitted, output_schema, compact_schema=compact)
+        for compact in ((False, True) if allow_compact and protocol is None else (False,)):
+            if protocol is None:
+                messages = build_messages(operation, fitted, output_schema, compact_schema=compact)
+            elif operation == "plan":
+                output_schema, messages = protocol.model_call(fitted)
+            else:
+                output_schema, messages = protocol.model_call(fitted, fresh_ids=fresh_ids)
             count = prompt_sizer(messages, deepcopy(output_schema))
             if type(count) is not int or count < 0:
                 raise ValueError("The prompt sizer must return a nonnegative integer token count.")

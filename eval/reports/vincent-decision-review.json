@@ -1,0 +1,1026 @@
+{
+  "evaluation": "Vincent decision and grounding review",
+  "reviewer": "Assistant semantic review of real model outputs",
+  "rubric": {
+    "route": "Requires a delivered turn and a fitting decision in the actual available context. Unresolved original scope, caching, lookup, social conversation, out-of-scope routing and genuinely ambiguous referents are assessed independently of whether a ranked passage later proves sufficient.",
+    "body": "Answers what the visitor asked according to the released sources. A factually correct answer with a wrong displayed source can pass this text-only dimension and fails the grounded body-and-citations measure. Every material claim, including volunteered detail, preserves its source's ownership, scope, timing and certainty. A justified clarification can pass when an earlier turn failed and its referent was never committed. Failure to answer an available factual question is counted.",
+    "citations": "The records actually displayed support every material factual statement. A matching record ID alone does not prove the answer. Social conversation or a narrowly stated gap can pass without citations. The answer must cite any additional material facts that it volunteers.",
+    "memory": "Carries forward the current finding or unresolved question, its owner and referent with the appropriate certainty. It can pass while the answer missed a source if it accurately preserves the limits of that lookup. It cannot turn the visitor's idea or a gap into a historical or institutional claim.",
+    "denominators": "Route is rated for all submitted questions. The three output dimensions are unobservable when no turn is delivered. Each metric reports passes, scored turns, all submissions and delivered turns; divide passes by the indicated count. The same standard applies before and after. Missing prior context is explicitly marked on each turn."
+  },
+  "independence": "The fresh suite was sealed before changing the baseline implementation. An exploratory candidate ran once on it; the only interim information relayed before the last revision was its aggregate delivery count, not any question, individual outcome or semantic finding. Changes for the final run used original-suite traces. The final original and fresh runs were each executed once on the same frozen code.",
+  "runs": {
+    "original": {
+      "before": {
+        "raw_report": "vincent-decision-original-before.qwen.json",
+        "raw_sha256": "5f70af627d9358376f4f8d39181e3a3131e7b8ab93a623b77ffd4948a2c9f283",
+        "suite": "vincent_hybrid_cases.json",
+        "suite_sha256": "3e912d96ac580af706ac47607115943437917e881c690c8f660928c58194e111",
+        "submitted": 13,
+        "delivered": 10,
+        "complete_prior_context": 13,
+        "metrics": {
+          "route": {
+            "passed": 8,
+            "scored": 13,
+            "of_all_submitted": 13,
+            "of_delivered": 10
+          },
+          "body": {
+            "passed": 3,
+            "scored": 10,
+            "of_all_submitted": 13,
+            "of_delivered": 10
+          },
+          "citations": {
+            "passed": 2,
+            "scored": 10,
+            "of_all_submitted": 13,
+            "of_delivered": 10
+          },
+          "memory": {
+            "passed": 6,
+            "scored": 10,
+            "of_all_submitted": 13,
+            "of_delivered": 10
+          }
+        },
+        "supported_evidence": {
+          "eligible_supported_questions": 9,
+          "eligible_delivered": 7,
+          "all_required_available": {
+            "passes": 6,
+            "of_supported_submitted": 9,
+            "passes_among_delivered": 5,
+            "of_supported_delivered": 7
+          },
+          "all_required_displayed": {
+            "passes": 3,
+            "of_supported_submitted": 9,
+            "passes_among_delivered": 3,
+            "of_supported_delivered": 7
+          },
+          "definition": "Available means the expected passage IDs were in the incoming verified cache or returned by this turn’s actual lookups. Displayed means all required IDs appeared in the saved answer. Neither proves semantic support for any additional claim."
+        },
+        "grounded_body_and_citations": {
+          "passed": 2,
+          "of_delivered": 10,
+          "of_all_submitted": 13
+        },
+        "reference_followup_route": {
+          "selection": "Second questions requiring a specific antecedent in the designed preceding exchange. A topic change relying only on the known artwork and a self-contained acknowledgment are excluded.",
+          "all_designed": {
+            "passed": 2,
+            "submitted": 4
+          },
+          "with_complete_prior_context": {
+            "passed": 2,
+            "submitted": 4
+          }
+        },
+        "turns": [
+          {
+            "case": "letter-and-laboratory",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "A letter lookup was appropriate and found the right source. The reply supplies violet and then denies that the passage answers which word Vincent used. No citation accompanies the quotations. Memory creates an unnecessary distinction between the documented subject and the final painting.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "letter-and-laboratory",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": true
+            },
+            "reason": "The museum lookup is appropriate. The reply reports light exposure but misses what the researchers found in the paint. Its exhibition claim is uncited. The memory accurately confines the unresolved chemical detail to the excerpts reviewed.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "garden-and-shipment",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "The correct garden letter was retrieved. Both answer and memory count violet irises as another subject besides the irises already mentioned. The cited letter supports the lilac bush, not an additional set of irises.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "garden-and-shipment",
+            "turn": 2,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "Planning failed; no visitor answer, citations or memory.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "who-said-what",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": true
+            },
+            "reason": "Theo, the quotation and the Salon are correct. The answer fixes the letter as after submission. Getty says that he submitted the work and wrote about its exhibition but does not give their order. The displayed passage cannot support that extra chronology. The memory correctly preserves Theo as the speaker without imposing a sequence.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "who-said-what",
+            "turn": 2,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "A valid antecedent and cited record were available, but planning failed.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "white-flower",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "Direct social conversation fits. The reply invents a deep-blue sky, changes one pale bloom into several, and writes both details into memory. The uncited answer would have been appropriate if it stayed with the visitor’s impression.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "white-flower",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "The bounded uncertainty about courage is appropriate. The answer then calls the location his garden and turns working on the irises into multiple studies of them, with no displayed sources. Memory broadens the visitor’s reading of one pale flower to the irises as a group and drops who proposed that interpretation.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "looking-and-material",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": false,
+              "citations": false,
+              "memory": true
+            },
+            "reason": "The visitor asks for a looking activity. The model chooses direct social chat and treats the request as a physical experiment it cannot carry out. It offers no sourced exercise and volunteers multiple delicate white flowers. Memory correctly retains the visitor’s unfulfilled goal.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "looking-and-material",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The scoped medium record supports canvas. The answer addresses the support material, cites the matching record and updates the topic and memory correctly.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "conservation-limits",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": false,
+              "memory": true
+            },
+            "reason": "The exhibition lookup was appropriate, and the reply accurately distinguishes permanent change to some colors from reversibility. Its quoted finding has no displayed citation. Memory preserves the exhibition’s conclusion.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "conservation-limits",
+            "turn": 2,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "Planning failed on a material-recipe follow-up. No output fields were delivered.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "unrelated",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The model routes the lottery request as conversational rather than outside scope. The spoken reply declines the prediction, redirects to art, adds no artwork fact requiring a citation, and remembers the out-of-scope request correctly.",
+            "designed_reference_followup": false
+          }
+        ]
+      },
+      "after": {
+        "raw_report": "vincent-decision-original-after.qwen.json",
+        "raw_sha256": "73f766ba09123f32c0fc84d97c30b06f55e7d7e50a6cb095a9c7a925bd234a42",
+        "suite": "vincent_hybrid_cases.json",
+        "suite_sha256": "3e912d96ac580af706ac47607115943437917e881c690c8f660928c58194e111",
+        "submitted": 13,
+        "delivered": 11,
+        "complete_prior_context": 12,
+        "metrics": {
+          "route": {
+            "passed": 11,
+            "scored": 13,
+            "of_all_submitted": 13,
+            "of_delivered": 11
+          },
+          "body": {
+            "passed": 7,
+            "scored": 11,
+            "of_all_submitted": 13,
+            "of_delivered": 11
+          },
+          "citations": {
+            "passed": 7,
+            "scored": 11,
+            "of_all_submitted": 13,
+            "of_delivered": 11
+          },
+          "memory": {
+            "passed": 7,
+            "scored": 11,
+            "of_all_submitted": 13,
+            "of_delivered": 11
+          }
+        },
+        "supported_evidence": {
+          "eligible_supported_questions": 9,
+          "eligible_delivered": 7,
+          "all_required_available": {
+            "passes": 9,
+            "of_supported_submitted": 9,
+            "passes_among_delivered": 7,
+            "of_supported_delivered": 7
+          },
+          "all_required_displayed": {
+            "passes": 7,
+            "of_supported_submitted": 9,
+            "passes_among_delivered": 7,
+            "of_supported_delivered": 7
+          },
+          "definition": "Available means the expected passage IDs were in the incoming verified cache or returned by this turn’s actual lookups. Displayed means all required IDs appeared in the saved answer. Neither proves semantic support for any additional claim."
+        },
+        "grounded_body_and_citations": {
+          "passed": 7,
+          "of_delivered": 11,
+          "of_all_submitted": 13
+        },
+        "reference_followup_route": {
+          "selection": "Second questions requiring a specific antecedent in the designed preceding exchange. A topic change relying only on the known artwork and a self-contained acknowledgment are excluded.",
+          "all_designed": {
+            "passed": 3,
+            "submitted": 4
+          },
+          "with_complete_prior_context": {
+            "passed": 3,
+            "submitted": 4
+          }
+        },
+        "turns": [
+          {
+            "case": "letter-and-laboratory",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The letter lookup found the word violet. The answer, displayed letter and memory all preserve Vincent’s original description.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "letter-and-laboratory",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The model searches for a modern museum finding and names Devi Ormond. Both the answer and memory explain how fading of the red pigment used with blues changes the violet appearance. The conservation transcript supports that explanation.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "garden-and-shipment",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "The right letter was retrieved, but the response counts violet irises as an additional subject besides the irises already under discussion. The passage supports only the lilac bush as the other subject. Memory repeats the double counting.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "garden-and-shipment",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "A fresh lookup and refinement reached the later shipment letter. The response still presents the seven as studies of irises in particular. The letter lists Irises as one member of a group of studies after nature; it does not substantiate either the full claim or the memory.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "who-said-what",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The Getty record attributes 'full of air and life' to Theo. The reply and memory preserve the owner and avoid imposing an unsupported sequence of events.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "who-said-what",
+            "turn": 2,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "The known prior referent was Theo. Available verified evidence described the submission, but planning failed and no answer, citations or memory were delivered.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "white-flower",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "Direct acknowledgment correctly leaves the impression of bravery with the visitor, requires no museum citation and records whose idea it was.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "white-flower",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "The artist-letter search is appropriate, but a statement about garden subjects cannot establish a purpose for the specific pale bloom. The reply does not address what is knowable about courage. Its cited passage does not support the implied dismissal, and memory expressly rules out the visitor’s reading as an intended meaning.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "looking-and-material",
+            "turn": 1,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "The model selected a guide-note search and found the relevant looking exercise, but assessment failed validation. There was no delivered answer or state update.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "looking-and-material",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": false,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The earlier turn failed, but the new question is independently understandable from the artwork scope. A fresh medium lookup supports canvas, with the right displayed record and a concise accurate memory.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "conservation-limits",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The model searched the museum record. The answer, citation and memory retain irreversible change, its attribution to the exhibition and its limitation to some colors.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "conservation-limits",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "A fresh lookup was appropriate for the recipe question. The retrieved exhibition record describes lasting changes to existing paint but cannot refute a proposed one-third mixture. The answer and memory make this unwarranted inference, and the displayed source cannot substantiate it.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "unrelated",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The visitor is redirected from lottery predictions to art, without an unsupported artwork fact. The source-free reply and memory are appropriate.",
+            "designed_reference_followup": false
+          }
+        ]
+      }
+    },
+    "fresh": {
+      "before": {
+        "raw_report": "vincent-decision-fresh-before.qwen.json",
+        "raw_sha256": "31206e67af45b7058899ce3f3972283048974171bbf4e90dd84061b4688c87f3",
+        "suite": "vincent_visitor_confirmation_cases.json",
+        "suite_sha256": "0d16b099a017a32229d3de92153db7ec2a7a92acb8822a0e814d941e9ea7d478",
+        "submitted": 13,
+        "delivered": 8,
+        "complete_prior_context": 11,
+        "metrics": {
+          "route": {
+            "passed": 8,
+            "scored": 13,
+            "of_all_submitted": 13,
+            "of_delivered": 8
+          },
+          "body": {
+            "passed": 4,
+            "scored": 8,
+            "of_all_submitted": 13,
+            "of_delivered": 8
+          },
+          "citations": {
+            "passed": 4,
+            "scored": 8,
+            "of_all_submitted": 13,
+            "of_delivered": 8
+          },
+          "memory": {
+            "passed": 6,
+            "scored": 8,
+            "of_all_submitted": 13,
+            "of_delivered": 8
+          }
+        },
+        "supported_evidence": {
+          "eligible_supported_questions": 8,
+          "eligible_delivered": 5,
+          "all_required_available": {
+            "passes": 3,
+            "of_supported_submitted": 8,
+            "passes_among_delivered": 3,
+            "of_supported_delivered": 5
+          },
+          "all_required_displayed": {
+            "passes": 1,
+            "of_supported_submitted": 8,
+            "passes_among_delivered": 1,
+            "of_supported_delivered": 5
+          },
+          "definition": "Available means the expected passage IDs were in the incoming verified cache or returned by this turn’s actual lookups. Displayed means all required IDs appeared in the saved answer. Neither proves semantic support for any additional claim."
+        },
+        "grounded_body_and_citations": {
+          "passed": 4,
+          "of_delivered": 8,
+          "of_all_submitted": 13
+        },
+        "reference_followup_route": {
+          "selection": "Second questions requiring a specific antecedent in the designed preceding exchange. A topic change relying only on the known artwork and a self-contained acknowledgment are excluded.",
+          "all_designed": {
+            "passed": 2,
+            "submitted": 5
+          },
+          "with_complete_prior_context": {
+            "passed": 1,
+            "submitted": 4
+          }
+        },
+        "turns": [
+          {
+            "case": "correspondence",
+            "turn": 1,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "Planning failed. No answer, citations or memory were delivered.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "correspondence",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": false,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The first turn failed. With no saved antecedent, the clarification is legitimate. The reply avoids claiming a garden subject and leaves the missing referent in memory.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "conservation",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "Correct retrieval. Names Ormond and geranium lake, cites the conservation record, and remembers the modern finding.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "conservation",
+            "turn": 2,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "Planning failed on a follow-up with its antecedent available.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "shipment",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "Retrieval obtained letter 789, but the answer marked the finding insufficient, described the works as distinct from finished paintings and cited nothing. The summary associates the group description with letters 772 and 789, although only 789 documents the shipment.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "shipment",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": true
+            },
+            "reason": "The date and its uncertainty are correct. The added statement puts seven studies alongside Irises, whereas Irises is one of those studies. The historical answer had no citation. Memory preserves the two possible dates.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "observation",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": true
+            },
+            "reason": "The social route and memory fit the visitor. The uncited reply newly asserts multiple pale blooms against deeper greens and blues without an image or source. It could have received the observation without adding these details.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "observation",
+            "turn": 2,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "No valid plan was delivered despite the preceding observation being in history.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "influence",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": true
+            },
+            "reason": "The route to a museum lookup was appropriate, but neither returned source identified the print tradition. The reply adds uncited facts on outlines, an owner and pigment, and broadens the result to the Getty record. The summary explains which two materials were checked and keeps the print link open.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "influence",
+            "turn": 2,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "No valid plan was delivered on a follow-up about the preceding museum lookup.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "looking",
+            "turn": 1,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "No valid plan was delivered for a well-defined request for a guide exercise.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "looking",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": false,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": false
+            },
+            "reason": "After a failed first turn, the visitor's own statement can be acknowledged directly and without citations. Memory credits a previous explanation despite there being no successful prior turn in this conversation.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "outside",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "Appropriate scope redirection, no invented timetable or art citation. The summary identifies the actual question and why it was outside the guide's scope.",
+            "designed_reference_followup": false
+          }
+        ]
+      },
+      "after": {
+        "raw_report": "vincent-decision-fresh-after.qwen.json",
+        "raw_sha256": "31129f23d8feb9ad72082f0efb58b9c81e48e7fb7fba19655d714409dcd218ba",
+        "suite": "vincent_visitor_confirmation_cases.json",
+        "suite_sha256": "0d16b099a017a32229d3de92153db7ec2a7a92acb8822a0e814d941e9ea7d478",
+        "submitted": 13,
+        "delivered": 12,
+        "complete_prior_context": 12,
+        "metrics": {
+          "route": {
+            "passed": 10,
+            "scored": 13,
+            "of_all_submitted": 13,
+            "of_delivered": 12
+          },
+          "body": {
+            "passed": 7,
+            "scored": 12,
+            "of_all_submitted": 13,
+            "of_delivered": 12
+          },
+          "citations": {
+            "passed": 8,
+            "scored": 12,
+            "of_all_submitted": 13,
+            "of_delivered": 12
+          },
+          "memory": {
+            "passed": 7,
+            "scored": 12,
+            "of_all_submitted": 13,
+            "of_delivered": 12
+          }
+        },
+        "supported_evidence": {
+          "eligible_supported_questions": 8,
+          "eligible_delivered": 7,
+          "all_required_available": {
+            "passes": 6,
+            "of_supported_submitted": 8,
+            "passes_among_delivered": 5,
+            "of_supported_delivered": 7
+          },
+          "all_required_displayed": {
+            "passes": 4,
+            "of_supported_submitted": 8,
+            "passes_among_delivered": 4,
+            "of_supported_delivered": 7
+          },
+          "definition": "Available means the expected passage IDs were in the incoming verified cache or returned by this turn’s actual lookups. Displayed means all required IDs appeared in the saved answer. Neither proves semantic support for any additional claim."
+        },
+        "grounded_body_and_citations": {
+          "passed": 7,
+          "of_delivered": 12,
+          "of_all_submitted": 13
+        },
+        "reference_followup_route": {
+          "selection": "Second questions requiring a specific antecedent in the designed preceding exchange. A topic change relying only on the known artwork and a self-contained acknowledgment are excluded.",
+          "all_designed": {
+            "passed": 3,
+            "submitted": 5
+          },
+          "with_complete_prior_context": {
+            "passed": 3,
+            "submitted": 5
+          }
+        },
+        "turns": [
+          {
+            "case": "correspondence",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "The model searched for the correct correspondence. The source identifies a joint letter to Theo and Jo with this section addressed to Theo. The reply says that the letter was to Theo, not Jo, and memory omits the distinction between the passage and the whole letter.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "correspondence",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The cached letter resolves both pointers: the other subject was a lilac bush, and it too came from the garden. The reply and memory keep the two subjects separate.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "conservation",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The reply names the modern conservator and geranium lake. Her transcript supports the fading, and the memory preserves the attribution and extent.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "conservation",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The follow-up resolves the ingredient correctly. The reply and memory distinguish considerable fading from a finding of total disappearance and cite the relevant conservator.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "shipment",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "A letter lookup is appropriate. The letter about two garden subjects describes a different group from the shipment of studies after nature. The reply, citation and memory all take the garden subjects for the shipment.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "shipment",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": false,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The query asks about the previously misidentified two garden subjects instead of the shipment. Retrieval nevertheless finds the right July letter. Its edition supports the two possible dates, and memory retains them. The reply presents the dating in the artist's own voice without attributing this uncertainty to the editors as requested by the rubric.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "observation",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The direct reply recognizes a visitor's personal impression of the pale bloom. It introduces no historical claim or source, and memory retains the visitor as the observer.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "observation",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": false
+            },
+            "reason": "A targeted letter search is appropriate. The reply contrasts the garden subjects actually mentioned with the intention the letter does not express, with no claim that the letter rules it out. The citation supports that limited contrast. Memory keeps the lack of confirmation but drops the visitor as the person who perceived the interruption.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "influence",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "Searching Getty for a print influence was appropriate. The answer never names the print tradition. It invents a connection between framing and the effect of light. The color-change citation gives no such connection, and memory replaces the question with an unrelated fact.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "influence",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": false,
+              "citations": false,
+              "memory": false
+            },
+            "reason": "The plan resolves the link to a relationship between framing and light from the previous erroneous reply, overlooking the visitor's explicit question about prints. The color-change record does not establish Getty's confidence about the influence of Japanese prints. Memory drops the print question entirely.",
+            "designed_reference_followup": true
+          },
+          {
+            "case": "looking",
+            "turn": 1,
+            "delivered": false,
+            "complete_context": true,
+            "grades": {
+              "route": false,
+              "body": null,
+              "citations": null,
+              "memory": null
+            },
+            "reason": "After a search and attempted refinement, assessment returned an invalid response. No exercise, source display or memory was delivered.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "looking",
+            "turn": 2,
+            "delivered": true,
+            "complete_context": false,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The visitor's feedback stands on its own after the preceding rejected turn. The uncited acknowledgment and memory keep the experience with the visitor, without claiming a previous successful exercise.",
+            "designed_reference_followup": false
+          },
+          {
+            "case": "outside",
+            "turn": 1,
+            "delivered": true,
+            "complete_context": true,
+            "grades": {
+              "route": true,
+              "body": true,
+              "citations": true,
+              "memory": true
+            },
+            "reason": "The reply redirects the bus-schedule question to the artwork, with no invented service information or citation. Memory records what the visitor asked.",
+            "designed_reference_followup": false
+          }
+        ]
+      }
+    }
+  }
+}

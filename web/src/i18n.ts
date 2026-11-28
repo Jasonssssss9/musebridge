@@ -10,6 +10,7 @@ export const UI_TEXT = {
   artworkErrorTitle: 'The artwork could not be loaded',
   artworkErrorBody: 'Check your connection and try again.',
   backToList: 'Browse the collection',
+  vincentTitle: 'Talk with Vincent',
   tryAgain: 'Try again',
   accession: 'Accession no.',
   museumRecord: 'Museum record',

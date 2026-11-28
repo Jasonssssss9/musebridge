@@ -17,6 +17,7 @@ export type FixtureStatus = 'answered' | 'insufficient' | 'unsupported_question'
 export type AgentStatus =
   | 'answered' | 'partially_answered' | 'clarification_needed' | 'insufficient' | 'out_of_scope' | 'conversational';
 export type AnswerStatus = FixtureStatus | AgentStatus;
+export type ConversationMode = 'guide' | 'vincent';
 
 export interface Artwork {
   artwork_id: string;
@@ -34,6 +35,8 @@ export interface Artwork {
   image_license?: string;
   image_source_url?: string;
   suggested_questions?: string[];
+  /** Older artwork responses omit this field and support only the ordinary guide. */
+  conversation_modes?: ConversationMode[];
   dataset_version: string;
 }
 
@@ -193,6 +196,15 @@ function arr(o: Obj, k: string): unknown[] {
   return v;
 }
 
+function parseConversationModes(o: Obj): ConversationMode[] {
+  if (o.conversation_modes === undefined) return ['guide'];
+  const modes = arr(o, 'conversation_modes');
+  if (modes[0] !== 'guide' || (modes.length !== 1 && !(modes.length === 2 && modes[1] === 'vincent'))) {
+    throw new InvalidResponse('invalid conversation_modes');
+  }
+  return modes as ConversationMode[];
+}
+
 export function parseArtwork(v: unknown): Artwork {
   const o = obj(v, 'artwork');
   const img = o.image_url;
@@ -223,6 +235,7 @@ export function parseArtwork(v: unknown): Artwork {
     ...(o.suggested_questions === undefined ? {} : {
       suggested_questions: arr(o, 'suggested_questions').map((q) => str({ q }, 'q', 500)),
     }),
+    conversation_modes: parseConversationModes(o),
     dataset_version: str(o, 'dataset_version', 128),
   };
 }

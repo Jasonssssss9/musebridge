@@ -5,6 +5,7 @@ import { UI_TEXT as t } from '../i18n';
 import { Link } from './App';
 import { Chat } from './Chat';
 import { safeHttps } from './Citation';
+import { vincentEntryUrl } from '../vincent';
 
 type Load = { state: 'loading' } | { state: 'ok'; artwork: Artwork } | { state: 'not_found' } | { state: 'error' };
 
@@ -72,6 +73,7 @@ export function ArtworkPage({ slug }: { slug: string | null }) {
 
   const a = load.artwork;
   const record = safeHttps(a.source_url);
+  const vincentUrl = vincentEntryUrl(a, import.meta.env.VITE_PUBLIC_ORIGIN || window.location.origin);
   return (
     <main className="page artwork">
       <section className="label" aria-label={a.title}>
@@ -82,6 +84,10 @@ export function ArtworkPage({ slug }: { slug: string | null }) {
           {a.museum} · {t.accession} {a.accession_number}
           {record && <> · <a href={record} target="_blank" rel="noopener noreferrer">{t.museumRecord}</a></>}
         </p>
+        {vincentUrl && <div className="actions">
+          {/* Use native navigation so an HTTP gallery can open the configured HTTPS origin. */}
+          <a className="btn" href={vincentUrl}>{t.vincentTitle}</a>
+        </div>}
       </section>
       <Chat artwork={a} />
     </main>

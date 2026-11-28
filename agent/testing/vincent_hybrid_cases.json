@@ -1,0 +1,149 @@
+{
+  "name": "Vincent hybrid acceptance 1",
+  "conversations": [
+    {
+      "id": "letter-and-laboratory",
+      "turns": [
+        {
+          "question": "Vincent, what word did you put down for the color of those flowers?",
+          "control_query": "What color did Vincent describe the irises as in his letter?",
+          "required_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "expected": "supported",
+          "review": "Identify violet in Vincent’s own description. If naming a recipient, the passage addresses Theo. The memory should retain the artist’s wording."
+        },
+        {
+          "question": "What did later researchers find in the paint that accounts for the difference I see now?",
+          "control_query": "What did Getty researchers discover about the paint mixture that explains the changed color of Irises?",
+          "required_ids": [
+            "vincent-getty-faded-red"
+          ],
+          "expected": "supported",
+          "review": "Attribute the later finding to Getty and connect fading red to the original mixture with blue. If light exposure is mentioned, check the exhibit record too. Keep the visitor’s observation apart from the conservator’s finding in memory."
+        }
+      ]
+    },
+    {
+      "id": "garden-and-shipment",
+      "turns": [
+        {
+          "question": "In the note about your garden subjects, what were you working on besides these flowers?",
+          "control_query": "What other subject from the garden did Vincent mention alongside the irises in his letter?",
+          "required_ids": [
+            "vincent-772-garden-colors"
+          ],
+          "expected": "supported",
+          "review": "Identify the lilac bush as another subject he was working on. Do not put the bush in this painting."
+        },
+        {
+          "question": "Later, when you sent the work to Theo, does the number in the letter count paintings of this flower alone?",
+          "control_query": "In the letter enclosing Irises, what does the number of studies after nature refer to?",
+          "required_ids": [
+            "vincent-789-studies-after-nature"
+          ],
+          "expected": "supported",
+          "review": "Seven counts a group of studies after nature that includes Irises. Both answer and memory must leave the number of versions of Irises open."
+        }
+      ]
+    },
+    {
+      "id": "who-said-what",
+      "turns": [
+        {
+          "question": "Whose words were 'full of air and life' when this was being exhibited?",
+          "control_query": "Who described Irises as full of air and life in connection with its exhibition?",
+          "required_ids": [
+            "getty-103jnh-description-02"
+          ],
+          "expected": "supported",
+          "review": "Theo used those words about the painting. Do not attribute them to Vincent or Getty. Preserve the speaker in memory."
+        },
+        {
+          "question": "And was it you or him who submitted it for the show?",
+          "control_query": "Who submitted Irises to the Salon des Indépendants?",
+          "required_ids": [
+            "getty-103jnh-description-02"
+          ],
+          "expected": "supported",
+          "review": "Resolve 'him' to Theo. He submitted the painting. A previously validated and cited passage can serve this turn without another lookup."
+        }
+      ]
+    },
+    {
+      "id": "white-flower",
+      "turns": [
+        {
+          "question": "That pale flower feels rather brave to me.",
+          "control_query": "",
+          "required_ids": [],
+          "expected": "social",
+          "review": "Receive courage as the visitor’s reading. No historical assertion or museum citation is needed. Remember who supplied the impression."
+        },
+        {
+          "question": "Is there anything to show you actually meant it as a symbol of courage?",
+          "control_query": "What evidence documents an intention to make the white iris symbolize courage?",
+          "required_ids": [],
+          "expected": "gap",
+          "review": "A looking note about the white bloom is a legitimate candidate. No passage establishes that it depicts courage or that Vincent rejected that meaning. Keep the question open in both spoken reply and memory."
+        }
+      ]
+    },
+    {
+      "id": "looking-and-material",
+      "turns": [
+        {
+          "question": "I'd like to try a little experiment with the white bloom while I stand here. What could I do?",
+          "control_query": "What looking exercise does MuseBridge suggest using the single white iris?",
+          "required_ids": [
+            "getty-103jnh-guide-01"
+          ],
+          "expected": "supported",
+          "review": "Offer the guide’s cover-and-uncover or outline exercise. Do not make the exercise Vincent’s original intention."
+        },
+        {
+          "question": "What is this painted on, by the way?",
+          "control_query": "What is the medium and support for Getty’s Irises?",
+          "required_ids": [
+            "getty-103jnh-medium"
+          ],
+          "expected": "supported",
+          "review": "Answer canvas, optionally oil on canvas. Keep the new question separate from the prior looking exercise."
+        }
+      ]
+    },
+    {
+      "id": "conservation-limits",
+      "turns": [
+        {
+          "question": "Did the exhibition say that the effects of light on this picture were reversible?",
+          "control_query": "What did the Getty exhibition report about whether exposure to light permanently changed colors in Irises?",
+          "required_ids": [
+            "vincent-getty-light-change"
+          ],
+          "expected": "supported",
+          "review": "Getty reports an irrevocable change to some colors. Do not expand that statement to every petal, all pigment or total disappearance."
+        },
+        {
+          "question": "Could I reconstruct it by using exactly a third of each color?",
+          "control_query": "What are the exact pigment mixing proportions for the original violet irises?",
+          "required_ids": [],
+          "expected": "gap",
+          "review": "The conservation passage may legitimately be returned. It does not supply ratios. If describing the supported part, cite the pigment record. Keep the recipe open in memory."
+        }
+      ]
+    },
+    {
+      "id": "unrelated",
+      "turns": [
+        {
+          "question": "What's tomorrow's winning lottery number?",
+          "control_query": "What is tomorrow’s winning lottery number?",
+          "required_ids": [],
+          "expected": "unrelated",
+          "review": "Scope the conversation back to the museum without inventing a number or an artwork connection. No artwork citation supports a lottery prediction."
+        }
+      ]
+    }
+  ]
+}

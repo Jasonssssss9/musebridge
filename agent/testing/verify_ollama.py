@@ -63,12 +63,14 @@ class ProbeModel(OllamaModel):
 
     async def complete_structured(self, *, operation, messages, output_schema, profile, deadline, trace_context):
         item = {"request_id": trace_context["request_id"], "operation": operation,
-                "schema": output_schema.get("$ref", "sizing-diagnostic").split("/")[-1],
+                "schema": output_schema.get("$ref", output_schema.get("title", "sizing-diagnostic")).split("/")[-1],
                 "outcome": "interrupted", "chat_attempted": False, "schema_result": "unobserved"}
         self.attempts.append(item)
         token = self.current_attempt.set(item)
         try:
-            if item["schema"] != "sizing-diagnostic":
+            if "retained_turn_ids" in trace_context:
+                item["retained_turn_ids"] = list(trace_context["retained_turn_ids"])
+            elif item["schema"] != "sizing-diagnostic":
                 payload = json.loads(messages[-1]["content"])
                 item["retained_turn_ids"] = [t["turn_id"] for t in payload["recent_turns"]]
             # The provider records its own sizing on success. Capture the same bound for failed calls.

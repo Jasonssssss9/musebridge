@@ -89,8 +89,8 @@ def strict_json(raw: str | bytes, *, max_bytes: int = 256 * 1024) -> Any:
 class ContractValidator:
     """Read the checked-in schema rather than maintain a second wire model."""
 
-    def __init__(self, path: Path = SCHEMA_PATH):
-        self._document = strict_json(path.read_bytes())
+    def __init__(self, path: Path = SCHEMA_PATH, *, document=None):
+        self._document = strict_json(path.read_bytes()) if document is None else document
         Draft202012Validator.check_schema(self._document)
         self._validators = {}
 

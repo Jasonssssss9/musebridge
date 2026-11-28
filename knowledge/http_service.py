@@ -16,12 +16,14 @@ from .release import release_path, release_version
 from . import DATASET_VERSION, DatasetValidationError, RetrievalError, load_dataset, retrieve
 
 from .strategy import MODES, VERSIONS, configured_index
+from .vincent import GALLERY, PACK, VINCENT_SCOPE, VincentHybridRetriever
 
 DEFAULT_SEED = Path(__file__).resolve().parent / "data" / f"{DATASET_VERSION}.json"
 MAX_BODY_BYTES = 8192
 READ_TIMEOUT_SECONDS = 5
 LOGGER = logging.getLogger("musebridge.retrieval")
-ROUTES = {"/retrieve": "POST", "/healthz": "GET", "/readyz": "GET"}
+ROUTES = {"/retrieve": "POST", "/healthz": "GET", "/readyz": "GET",
+          "/retrieve/vincent": "POST", "/readyz/vincent": "GET"}
 RETRIEVAL_ERRORS = {
     "invalid_request": (400, False),
     "retrieval_unavailable": (503, True),
@@ -61,7 +63,8 @@ class RetrievalHTTPServer(ThreadingHTTPServer):
 
     daemon_threads = True
 
-    def __init__(self, address, dataset, *, mode="lexical", vector_index=None):
+    def __init__(self, address, dataset, *, mode="lexical", vector_index=None, vincent_resolver=None):
+        self.vincent_resolver = vincent_resolver
         self.dataset = dataset
         self.vector_index = vector_index
         self.strategy_version = VERSIONS[mode]
@@ -232,6 +235,11 @@ class _Handler(BaseHTTPRequestHandler):
                     "dataset_version": dataset.dataset_version if dataset is not None else None,
                 })
                 return
+            if target == "/readyz/vincent":
+                if dataset is None or self.server.vincent_resolver is None:
+                    raise _HTTPError(503, "service_not_ready", "Vincent hybrid retrieval is unavailable.", retryable=True)
+                self._send_json(200, {"status": "ok", "dataset_version": GALLERY, "reference_pack_version": PACK})
+                return
             if target == "/readyz":
                 if dataset is None:
                     raise _HTTPError(
@@ -249,7 +257,13 @@ class _Handler(BaseHTTPRequestHandler):
             candidate = payload["artwork_id"]
             if isinstance(candidate, str) and candidate in dataset.artworks:
                 self._artwork_id = candidate
-            response = retrieve(dataset, vector_index=self.server.vector_index, **payload)
+            if target == "/retrieve/vincent":
+                resolver = self.server.vincent_resolver
+                if resolver is None:
+                    raise _HTTPError(503, "retrieval_unavailable", "Vincent hybrid retrieval is unavailable.", retryable=True)
+                response, _ = resolver.search(**payload)
+            else:
+                response = retrieve(dataset, vector_index=self.server.vector_index, **payload)
             self._chunk_ids = [item["chunk_id"] for item in response["evidence"]]
             self._send_json(200, response)
         except _HTTPError as exc:
@@ -274,6 +288,7 @@ class _Handler(BaseHTTPRequestHandler):
 def create_server(
     host="127.0.0.1", port=0, *,
     seed_path=DEFAULT_SEED, dataset_version=DATASET_VERSION, mode="lexical", vector_index=None,
+    enable_vincent=False, vincent_resolver=None,
 ):
     """Validate the seed before binding; port zero is useful for isolated tests."""
     if not isinstance(host, str) or not host.strip():
@@ -281,11 +296,16 @@ def create_server(
     if type(port) is not int or not 0 <= port <= 65535:
         raise ValueError("port must be an integer from 0 to 65535.")
     dataset = load_dataset(seed_path, expected_version=dataset_version)
+    if (enable_vincent or vincent_resolver is not None) and (mode != "hybrid" or dataset_version != GALLERY):
+        raise ValueError("Vincent requires the Getty gallery release and hybrid retrieval.")
     if vector_index is None:
         vector_index = configured_index(dataset, mode)
     elif mode != "hybrid":
         raise ValueError("An injected vector index requires hybrid mode.")
-    return RetrievalHTTPServer((host, port), dataset, mode=mode, vector_index=vector_index)
+    if enable_vincent and vincent_resolver is None:
+        vincent_resolver = VincentHybridRetriever.open(VINCENT_SCOPE, gallery_path=seed_path)
+    return RetrievalHTTPServer((host, port), dataset, mode=mode, vector_index=vector_index,
+                               vincent_resolver=vincent_resolver)
 
 
 def main(argv=None):
@@ -295,6 +315,7 @@ def main(argv=None):
     parser.add_argument("--seed", type=Path, default=None)
     parser.add_argument("--dataset-version", default=release_version())
     parser.add_argument("--mode", choices=MODES, default=os.environ.get("MUSEBRIDGE_RETRIEVAL_MODE", "hybrid"))
+    parser.add_argument("--enable-vincent", action="store_true", help="Load the pinned Irises hybrid index.")
     args = parser.parse_args(argv)
     if not 1 <= args.port <= 65535:
         parser.error("--port must be an integer from 1 to 65535.")
@@ -302,6 +323,7 @@ def main(argv=None):
     try:
         server = create_server(
             args.host, args.port, seed_path=args.seed or release_path(args.dataset_version), dataset_version=args.dataset_version, mode=args.mode,
+            enable_vincent=args.enable_vincent,
         )
     except (DatasetValidationError, RetrievalError, OSError, ValueError) as exc:
         LOGGER.error(json.dumps({

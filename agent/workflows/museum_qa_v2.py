@@ -20,7 +20,7 @@ from langsmith import tracing_context
 
 from agent.prompts.v2 import PROMPT_VERSION
 from agent.runtime.context_v2 import (
-    build_answer_input, build_plan_input, fit_model_call, validate_run_context,
+    build_answer_input, build_plan_input, fit_model_call, validate_run_context, vincent_protocol,
 )
 from agent.runtime.errors import WorkflowError
 from agent.runtime.validation import ContractViolation, TRACE_ID
@@ -44,6 +44,7 @@ class State(TypedDict, total=False):
     translation: dict | None
     answer_language: str
     evidence: list[dict]
+    fresh_evidence: list[dict]
     catalog: list[dict]
     executed_queries: list[dict]
     complete_scope: bool
@@ -88,12 +89,23 @@ class WorkflowOutcomeV2:
 
     def execution_fields(self) -> dict:
         """B adds verified profile/model identity and measured total duration."""
+        role_aware = "conversation_mode" in self.scope
         return {
-            "workflow_id": WORKFLOW_ID, "prompt_version": PROMPT_VERSION,
-            "schema_version": SCHEMA_VERSION, "retrieval_strategy_version": self.retrieval_strategy_version,
+            "workflow_id": "museum_qa_v3" if role_aware else WORKFLOW_ID,
+            "prompt_version": "museum-prompts-v3" if role_aware else PROMPT_VERSION,
+            "schema_version": "agent-schema-v3" if role_aware else SCHEMA_VERSION, "retrieval_strategy_version": self.retrieval_strategy_version,
             "model_calls": self.model_calls, "retrieval_calls": self.retrieval_calls,
             "refinement_rounds": self.refinement_rounds,
         }
+
+
+def _role_evidence_window(cache, fresh):
+    """Retain all this run's hits, then fill unused slots from newest prior citations."""
+    fresh_ids = {r["chunk_id"] for r in fresh}
+    cached_ids = {r["chunk_id"] for r in cache}
+    older = [r["chunk_id"] for r in cache if r["chunk_id"] not in fresh_ids]
+    keep = fresh_ids.union(older[:8 - len(fresh)])
+    return [r for r in cache if r["chunk_id"] in keep] + [r for r in fresh if r["chunk_id"] not in cached_ids]
 
 
 class MuseumQAWorkflowV2:
@@ -119,16 +131,44 @@ class MuseumQAWorkflowV2:
             raise WorkflowError("service_not_ready", "Raw workflow logging must be disabled.",
                                 phase="admission", retryable=True)
 
+        async def invoke(operation, messages, schema, retained_ids):
+            phase = {"plan": "planning", "assess": "assessment", "final": "final_generation"}[operation]
+            budget.check_active()
+            remaining = budget.remaining_seconds()
+            if remaining <= 0:
+                raise WorkflowError("request_timeout", "The run deadline was exceeded.",
+                                    phase=phase, retryable=True)
+            started = monotonic()
+            deadline = started + min(10.0 if operation == "plan" else 15.0, remaining)
+            trace = {"request_id": request_id}
+            if retained_ids is not None:
+                trace["retained_turn_ids"] = retained_ids
+            try:
+                completion = await self.model.complete_structured(
+                    operation=operation, messages=messages,
+                    output_schema=deepcopy(schema), profile=self.profile, deadline=deadline,
+                    trace_context=trace,
+                )
+            except WorkflowError:
+                budget.check_active()
+                raise
+            budget.check_active()
+            if monotonic() > deadline:
+                raise WorkflowError("generation_timeout", "The model stage exceeded its deadline.",
+                                    phase=phase, retryable=True)
+            return completion, phase, started, deadline
+
         async def call_model(state: State, operation: str, payload: dict,
-                             schema_name: str) -> tuple[dict, dict, int]:
+                             schema_name: str) -> tuple[dict, dict, dict]:
             budget.check_active()
             output_tokens = (self.profile.plan_output_tokens if operation == "plan"
                              else self.profile.answer_output_tokens)
             schema = self.validator.schema(schema_name)
+            fresh_ids = frozenset(r["chunk_id"] for r in state.get("fresh_evidence", ()))
             fitted, schema, messages = fit_model_call(
                 operation, payload, schema, prompt_sizer=self.prompt_sizer,
                 context_limit=self.profile.context_tokens, output_tokens=output_tokens,
-                safety_tokens=512,
+                safety_tokens=512, fresh_ids=fresh_ids,
             )
             # Sizing can consume time. Do not advertise refinement if its full
             # assessment + retrieval + final allowance no longer remains.
@@ -139,7 +179,7 @@ class MuseumQAWorkflowV2:
                 fitted, schema, messages = fit_model_call(
                     operation, fitted, schema, prompt_sizer=self.prompt_sizer,
                     context_limit=self.profile.context_tokens, output_tokens=output_tokens,
-                    safety_tokens=512,
+                    safety_tokens=512, fresh_ids=fresh_ids,
                 )
             input_name = ("PlanInput" if operation == "plan" else
                           "AnswerInput" if fitted["allow_refinement"] else "FinalInput")
@@ -148,29 +188,25 @@ class MuseumQAWorkflowV2:
             except ContractViolation as exc:
                 raise WorkflowError("agent_internal_error", "The prepared model context is invalid.",
                                     phase="context") from exc
-            phase = {"plan": "planning", "assess": "assessment", "final": "final_generation"}[operation]
-            budget.check_active()
-            remaining = budget.remaining_seconds()
-            if remaining <= 0:
-                raise WorkflowError("request_timeout", "The run deadline was exceeded.",
-                                    phase=phase, retryable=True)
-            started = monotonic()
-            deadline = started + min(10.0 if operation == "plan" else 15.0, remaining)
-            try:
-                completion = await self.model.complete_structured(
-                    operation=operation, messages=messages,
-                    output_schema=deepcopy(schema), profile=self.profile, deadline=deadline,
-                    trace_context={"request_id": request_id},
-                )
-            except WorkflowError:
-                budget.check_active()
-                raise
-            budget.check_active()
-            if monotonic() > deadline:
-                raise WorkflowError("generation_timeout", "The model stage exceeded its deadline.",
-                                    phase=phase, retryable=True)
+            protocol = vincent_protocol(operation, run["scope"])
+            retained_ids = [t["turn_id"] for t in fitted["recent_turns"]] if protocol else None
+            completion, phase, started, deadline = await invoke(operation, messages, schema, retained_ids)
+            timings = {}
             try:
                 decision = deepcopy(completion.data)
+                if protocol is not None:
+                    if operation == "plan" and protocol.needs_direct_writer(decision):
+                        # The model selected a terminal route. A second model call writes only
+                        # from the visitor observation or the catalog values selected by that route.
+                        timings[phase] = int((monotonic() - started) * 1000)
+                        writer_schema, writer_messages = protocol.direct_writer_call(decision, fitted)
+                        tokens = self.prompt_sizer(writer_messages, writer_schema)
+                        if tokens + self.profile.answer_output_tokens + 512 > self.profile.context_tokens:
+                            raise WorkflowError("agent_context_limit", "The direct reply exceeds the model context.",
+                                                phase="context")
+                        written, phase, started, deadline = await invoke("final", writer_messages, writer_schema, [])
+                        decision = protocol.with_direct_writing(decision, written.data)
+                    decision = protocol.canonical_decision(decision, fitted)
                 self.validator.validate(schema_name, decision)
             except (ContractViolation, AttributeError, RecursionError) as exc:
                 raise WorkflowError("generation_invalid_response", "The provider returned an invalid decision.",
@@ -191,7 +227,8 @@ class MuseumQAWorkflowV2:
             if monotonic() > deadline:
                 raise WorkflowError("generation_timeout", "The model stage exceeded its deadline.",
                                     phase=phase, retryable=True)
-            return decision, fitted, int((monotonic() - started) * 1000)
+            timings[phase] = int((monotonic() - started) * 1000)
+            return decision, fitted, timings
 
         async def prepare(state: State) -> dict:
             budget.check_active()
@@ -206,7 +243,7 @@ class MuseumQAWorkflowV2:
             }
 
         async def plan_node(state: State) -> dict:
-            decision, payload, elapsed = await call_model(
+            decision, payload, timings = await call_model(
                 state, "plan", build_plan_input(run, self.manifest), "Plan",
             )
             language = resolve_language(run, decision["language_decision"])
@@ -220,13 +257,14 @@ class MuseumQAWorkflowV2:
             return {
                 "plan": decision, "translation": translation,
                 "answer_language": language["answer_language"], "retained_run": retained,
-                "model_calls": 1, "phase_timings_ms": {"planning": elapsed},
+                "model_calls": len(timings), "phase_timings_ms": timings,
             }
 
         async def lookups(state: State, queries: list[dict], *, refinement: bool) -> dict:
             started = monotonic()
             scope = run["scope"]
             evidence = deepcopy(state["evidence"])
+            fresh_evidence = list(state.get("fresh_evidence", []))
             executed = deepcopy(state["executed_queries"])
             if refinement:
                 budget.check_active()
@@ -246,7 +284,7 @@ class MuseumQAWorkflowV2:
                 tool_input = {
                     "tool_version": "evidence-tool-v1", "query_id": query["id"],
                     "request_ids": list(query["request_ids"]), "query": query["query"],
-                    **scope, "top_k": 2,
+                    "artwork_id": scope["artwork_id"], "dataset_version": scope["dataset_version"], "top_k": 2,
                 }
                 remaining = budget.remaining_seconds()
                 if remaining <= 0:
@@ -261,14 +299,21 @@ class MuseumQAWorkflowV2:
                     raise
                 budget.check_active()
                 self._validate_tool_result(tool_input, reply)
-                evidence = self.manifest.merge(
-                    scope["artwork_id"], scope["dataset_version"], evidence, reply["candidates"],
-                )
+                if "conversation_mode" in scope:
+                    # A run can retrieve at most eight distinct fresh hits. All of
+                    # those must be available together, even with a full prior cache.
+                    fresh_evidence = self.manifest.merge(
+                        scope["artwork_id"], scope["dataset_version"], fresh_evidence, reply["candidates"])
+                    evidence = _role_evidence_window(run["conversation_state"]["verified_evidence"], fresh_evidence)
+                else:
+                    evidence = self.manifest.merge(
+                        scope["artwork_id"], scope["dataset_version"], evidence, reply["candidates"])
                 executed.append(deepcopy(query))
             timings = dict(state["phase_timings_ms"])
             timings["refinement_retrieval" if refinement else "retrieval"] = int((monotonic() - started) * 1000)
             return {
-                "evidence": evidence, "executed_queries": executed, "retrieval_calls": len(executed),
+                "evidence": evidence, "fresh_evidence": fresh_evidence,
+                "executed_queries": executed, "retrieval_calls": len(executed),
                 "refinement_rounds": 1 if refinement else 0, "phase_timings_ms": timings,
                 "complete_scope": self.manifest.complete_scope(
                     scope["artwork_id"], scope["dataset_version"], evidence),
@@ -285,14 +330,14 @@ class MuseumQAWorkflowV2:
                 complete_scope=state["complete_scope"], allow_refinement=allow,
                 translation=state["translation"],
             )
-            decision, fitted, elapsed = await call_model(
+            decision, fitted, timings = await call_model(
                 state, "assess", payload, "AssessmentDecision" if allow else "FinalDecision",
             )
             retained = deepcopy(state["retained_run"])
             retained["context"]["recent_turns"] = fitted["recent_turns"]
             return {
                 "decision": decision, "retained_run": retained, "model_calls": 2,
-                "phase_timings_ms": {**state["phase_timings_ms"], "assessment": elapsed},
+                "phase_timings_ms": {**state["phase_timings_ms"], **timings},
             }
 
         async def refine_node(state: State) -> dict:
@@ -305,12 +350,12 @@ class MuseumQAWorkflowV2:
                 complete_scope=state["complete_scope"], allow_refinement=False,
                 translation=state["translation"],
             )
-            decision, fitted, elapsed = await call_model(state, "final", payload, "FinalDecision")
+            decision, fitted, timings = await call_model(state, "final", payload, "FinalDecision")
             retained = deepcopy(state["retained_run"])
             retained["context"]["recent_turns"] = fitted["recent_turns"]
             return {
                 "decision": decision, "retained_run": retained, "model_calls": 3,
-                "phase_timings_ms": {**state["phase_timings_ms"], "final_generation": elapsed},
+                "phase_timings_ms": {**state["phase_timings_ms"], **timings},
             }
 
         async def finalize(state: State) -> dict:
@@ -369,7 +414,7 @@ class MuseumQAWorkflowV2:
             refinement_rounds=result["refinement_rounds"],
             retrieval_strategy_version=self.retrieval_strategy_version,
             diagnostics={
-                "implementation_stage": "C-v2", "complete_scope": result["complete_scope"],
+                "implementation_stage": "C-v3" if "conversation_mode" in run["scope"] else "C-v2", "complete_scope": result["complete_scope"],
                 "retained_history_turns": len(result["retained_run"]["context"]["recent_turns"]),
                 "phase_timings_ms": deepcopy(result["phase_timings_ms"]),
             },

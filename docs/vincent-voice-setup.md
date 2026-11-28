@@ -7,12 +7,12 @@ This is A's implementation of [Talk with Vincent](vincent-contract.md) and its [
 | Part | State |
 | --- | --- |
 | Vincent conversations in Go (`agent-demo-v0.4`) | Implemented. Create, restore, history and submit carry `conversation_mode` and `reference_pack_version`. Guide, Vincent and the old v0.3 history are separate conversations. The artwork cards list `conversation_modes`. |
-| Go → Agent v3 (`agent-run-v3`) | Implemented. Every v0.4 conversation, guide or Vincent, runs on `/internal/v3/agent/runs` with its frozen scope. Go checks the returned scope and language. It also checks every source against the pinned gallery release and the [Vincent reference pack](../knowledge/data/reference-packs/vincent-irises-v1.json) before it saves the turn. |
-| Whisper worker (`whisper_worker/`) | Implemented. Tested with a stand-in recognizer. Not yet run with the real faster-whisper model. |
-| Go media routes (`api/internal/voice`) | Implemented. Transcription, speech, the error table, coalescing, the cache and the busy limits are tested. They now serve real Vincent conversations. |
-| Browser voice controller (`web/src/voice`) | Implemented. The two reported bugs are fixed: under StrictMode the first Record tap opens the microphone once, and the most recent Play or Stop always wins. A recording is bound to its message ID and revision when the visitor taps Record. |
-| v0.4 browser client and device-check page | `web/src/voice/vincentClient.ts` and `web/voice-check.html`. A uses them to test on the phone before B's page exists. |
-| Vincent page and portrait | B. The page uses the controller and client below. |
+| Go → Agent v3 (`agent-run-v3`) | Implemented. Every v0.4 conversation, guide or Vincent, runs on `/internal/v3/agent/runs` with its frozen scope. Go checks the returned scope and language, and checks every source against the pinned gallery release and the [Vincent reference pack](../knowledge/data/reference-packs/vincent-irises-v1.json) before saving the turn. |
+| Whisper worker (`whisper_worker/`) | Implemented. Tested with a stand-in recognizer; not yet run with the real faster-whisper model. |
+| Go media routes (`api/internal/voice`) | Implemented and wired behind `VINCENT_ENABLED`. Transcription, speech, the error table, coalescing, cache and busy limits are tested, and the routes now serve real Vincent conversations. |
+| Browser voice controller (`web/src/voice`) | Implemented with the contract's method and snapshot names. Tested with fake microphone, recorder and audio. The two reported bugs are fixed: under StrictMode the first Record tap opens the microphone once, and the most recent Play or Stop always wins. A recording is bound to its message ID and revision when Record is tapped. |
+| v0.4 browser client and device-check page | Implemented in `web/src/voice/vincentClient.ts` and `web/voice-check.html` for testing the voice flow on a phone. |
+| Vincent page and portrait | Implemented. The page uses the controller and client, with the mobile layout, silent greeting, listening portrait and development preview. |
 | Real-device acceptance | **Not done yet.** It needs the real Whisper model, C's live v3 Agent with Qwen, a real OpenAI key and an iPhone. Use the record at the end of this page. |
 
 A browser run checked the whole chain: Chromium with a fake microphone, the device-check page, Go and stand-in Whisper, Agent and TTS services. The run covered two voice turns in the same conversation, Stop, replay, recording again and restoring after a reload. This shows the pieces connect. It does not replace the iPhone test.

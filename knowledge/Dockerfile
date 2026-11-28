@@ -20,12 +20,16 @@ CMD ["python3", "-m", "knowledge.http_service"]
 
 FROM lexical AS hybrid
 
+COPY knowledge/data/getty-gallery-v2.json knowledge/data/getty-gallery-v2.sha256 ./knowledge/data/
+COPY knowledge/data/reference-packs/vincent-irises-v1.json knowledge/data/reference-packs/vincent-irises-v1.sha256 ./knowledge/data/reference-packs/
+
 USER root
 COPY knowledge/requirements.txt ./knowledge/requirements.txt
 RUN pip install --no-cache-dir -r knowledge/requirements.txt \
     && install -d -m 0700 -o 10001 -g 10001 /var/cache/musebridge
 
 ENV MUSEBRIDGE_RETRIEVAL_MODE=hybrid \
-    MUSEBRIDGE_VECTOR_INDEX=/var/cache/musebridge/embeddings-v1.json
+    MUSEBRIDGE_VECTOR_INDEX=/var/cache/musebridge/embeddings-v1.json \
+    MUSEBRIDGE_VINCENT_VECTOR_INDEX=/var/cache/musebridge/embeddings-getty-gallery-v2-vincent-irises-v1.json
 
 USER 10001:10001

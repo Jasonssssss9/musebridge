@@ -64,6 +64,9 @@ def create_app():
                 if evidence:
                     runtime.executor = EvidenceExecution(runtime.executor, evidence)
 
+                from agent.providers.vincent import attach_vincent, refresh_vincent
+                await attach_vincent(runtime, model, manifest, retrieval)
+
                 async def refresh():
                     while True:
                         await asyncio.sleep(30)
@@ -72,6 +75,7 @@ def create_app():
                             model.verified = True
                         except Exception:
                             model.verified = False
+                        await refresh_vincent(runtime)
 
                 watcher = asyncio.create_task(refresh(), name="m2-controlled-model-identity")
             except Exception as exc:

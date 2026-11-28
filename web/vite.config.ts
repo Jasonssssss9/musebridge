@@ -14,10 +14,17 @@ export default defineConfig(({ mode }) => {
   // A phone reaches the dev server through an HTTPS tunnel (docs/vincent-voice-setup.md).
   // Vite rejects unknown Host headers, so allow the PUBLIC_BASE_URL host explicitly.
   let publicHost: string | undefined;
+  let publicOrigin = '';
   try {
-    publicHost = process.env.PUBLIC_BASE_URL ? new URL(process.env.PUBLIC_BASE_URL).hostname : undefined;
+    if (process.env.PUBLIC_BASE_URL) {
+      const url = new URL(process.env.PUBLIC_BASE_URL);
+      if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password
+        || url.pathname !== '/' || url.search || url.hash) throw new Error('invalid origin');
+      publicHost = url.hostname;
+      publicOrigin = url.origin;
+    }
   } catch {
-    throw new Error('PUBLIC_BASE_URL must be an absolute URL such as https://example.trycloudflare.com.');
+    throw new Error('PUBLIC_BASE_URL must be an HTTP(S) origin without a path, query, fragment or credentials.');
   }
   return {
     plugins: [react()],
@@ -26,6 +33,8 @@ export default defineConfig(({ mode }) => {
       // Live builds speak the fixture contract (local-demo-v0.1) unless PUBLIC_CONTRACT=agent is set,
       // which switches them to agent-demo-v0.3. The mock always speaks the agent contract.
       'import.meta.env.VITE_PUBLIC_CONTRACT': JSON.stringify(publicContract),
+      // Public navigation only; API requests continue to use the page's own origin.
+      'import.meta.env.VITE_PUBLIC_ORIGIN': JSON.stringify(publicOrigin),
     },
     server: {
       host: true, // listen on the LAN so a phone can reach it

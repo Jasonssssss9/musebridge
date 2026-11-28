@@ -66,6 +66,10 @@ def _language(run: dict, decision: dict, validator: ContractValidator) -> dict:
         if (instruction is not None and instruction["purpose"] == "turn_response"
                 and ordinary != answer_language):
             raise ContractViolation("Conflicting temporary language targets.")
+    if run.get("scope", {}).get("conversation_mode") == "vincent":
+        if decision["answer_language"] != "en":
+            raise ContractViolation("Vincent speaks English.")
+        return {"answer_language": "en", "next_language_preference": "en", "next_auto_language": "en"}
     if decision["answer_language"] != answer_language:
         raise ContractViolation("Response language does not follow the priority rules.")
     saved = (instruction["preference"] if instruction is not None
