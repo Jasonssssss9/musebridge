@@ -30,6 +30,9 @@ const { Citation } = await vite.ssrLoadModule('/src/ui/Citation.tsx');
 const { QrPage } = await vite.ssrLoadModule('/src/ui/QrPage.tsx');
 const { App, navigate } = await vite.ssrLoadModule('/src/ui/App.tsx');
 const { ArtworkPage } = await vite.ssrLoadModule('/src/ui/ArtworkPage.tsx');
+const { default: VincentPreview } = await vite.ssrLoadModule('/src/vincent/Preview.tsx');
+const { SAMPLE_REPLY } = await vite.ssrLoadModule('/src/vincent/previewData.ts');
+const { VincentSources } = await vite.ssrLoadModule('/src/vincent/Sources.tsx');
 const { ARTWORKS, CITATIONS } = await vite.ssrLoadModule('/src/api/mockData.ts');
 const artwork = ARTWORKS[0];
 const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
@@ -314,9 +317,11 @@ test('the Vincent destination has an honest landing page and returns to the ordi
   await render(createElement(App));
   assert.equal(document.title, 'Talk with Vincent · MuseBridge');
   assert.match(container.textContent, /not available yet/);
-  assert.equal(container.querySelector('form'), null);
+  assert.ok(container.querySelector('textarea').disabled);
+  assert.ok([...container.querySelectorAll('button')].every((button) => button.disabled));
+  assert.equal(container.querySelector('.vincent-preview'), null);
   assert.deepEqual(requests, [], 'the landing page must not create an ordinary guide conversation');
-  const back = [...container.querySelectorAll('a')].find((a) => a.textContent === 'Back to artwork');
+  const back = [...container.querySelectorAll('a')].find((a) => a.textContent.endsWith('Back to artwork'));
   await act(async () => back.click());
   await flush();
   assert.equal(window.location.pathname, '/a/getty-103jnh');
@@ -326,6 +331,125 @@ test('the Vincent destination has an honest landing page and returns to the ordi
   await flush();
   assert.match(container.textContent, /not available yet/);
   assert.equal(container.querySelector('.composer'), null);
+});
+
+async function previewState(value) {
+  await act(async () => {
+    const select = container.querySelector('.vincent-preview select');
+    select.value = value;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await flush();
+}
+
+async function previewClick(text) {
+  const button = [...container.querySelectorAll('button')].find((item) => item.textContent.trim().endsWith(text));
+  assert.ok(button && !button.disabled, `the ${text} action must be available`);
+  await act(async () => button.click());
+  await flush();
+}
+
+test('the Vincent preview walks through capture and playback without services or saved history', async (t) => {
+  const network = t.mock.method(globalThis, 'fetch', () => { throw new Error('The preview must stay offline.'); });
+  await render(createElement(VincentPreview));
+  assert.match(container.querySelector('.vincent-preview').textContent, /No microphone, audio or AI services/);
+  await previewClick('Start recording');
+  assert.match(container.querySelector('.vincent-status').textContent, /Listening/);
+  assert.ok(container.querySelector('.vincent-timer'));
+  await previewClick('Stop recording');
+  assert.match(container.querySelector('.vincent-status').textContent, /Turning your recording into words/);
+  await previewClick('Next step');
+  assert.match(container.querySelector('.vincent-question').textContent, /What color did you call the irises/);
+  await previewClick('Next step');
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+  assert.equal(container.querySelector('.vincent-playback button').disabled, true, 'reply is readable while audio prepares');
+  await previewClick('Next step');
+  await previewClick('Play answer');
+  assert.equal(container.querySelector('.vincent-painting').style.animationPlayState, 'running');
+  await previewClick('Stop playback');
+  assert.equal(container.querySelector('.vincent-painting').style.animationPlayState, 'paused');
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+  await previewClick('Replay answer');
+  await previewClick('Start recording');
+  assert.equal(container.querySelector('.vincent-painting'), null);
+  assert.ok(container.querySelector('.vincent-portrait-placeholder'));
+  assert.equal(network.mock.calls.length, 0);
+  assert.equal(localStorage.length, 0);
+  assert.equal(sessionStorage.length, 0);
+});
+
+test('Vincent media error previews offer stage-specific recovery and retain the reply', async () => {
+  await render(createElement(VincentPreview));
+  await previewState('microphone_denied');
+  assert.ok(container.querySelector('.vincent-write').open);
+  assert.match(container.querySelector('[role="alert"]').textContent, /type your question/);
+  await previewState('no_speech');
+  assert.match(container.querySelector('[role="alert"]').textContent, /Record another question/);
+  assert.equal([...container.querySelectorAll('button')].some((b) => b.textContent === 'Retry transcription'), false);
+  await previewState('transcription_error');
+  await previewClick('Retry transcription');
+  assert.equal(container.querySelector('[role="alert"]'), null);
+  assert.match(container.querySelector('.vincent-status').textContent, /Turning your recording into words/);
+  await previewState('speech_error');
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+  assert.ok(container.querySelector('.vincent-sources'));
+  await previewClick('Play answer');
+  assert.equal(container.querySelector('[role="alert"]'), null);
+  assert.equal(container.querySelector('.vincent-answer-text').textContent, SAMPLE_REPLY.text);
+});
+
+test('the typed preview keeps submitted words literal and does not invent sources for arbitrary questions', async () => {
+  await render(createElement(VincentPreview));
+  const textarea = container.querySelector('textarea');
+  const send = [...container.querySelectorAll('button')].find((button) => button.textContent === 'Send question');
+  assert.ok(send.disabled);
+  async function type(value) {
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set.call(textarea, value);
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+  await type('x'.repeat(501));
+  assert.ok(send.disabled);
+  assert.equal(textarea.getAttribute('aria-invalid'), 'true');
+  await type('🌻'.repeat(500));
+  assert.equal(send.disabled, false, 'the limit counts Unicode characters');
+  const question = '<img src=x onerror=alert(1)> Why is that?';
+  await type(question);
+  await previewClick('Send question');
+  assert.ok(container.querySelector('.vincent-question').textContent.includes(question));
+  assert.equal(container.querySelector('.vincent-question img'), null);
+  await previewClick('Next step');
+  assert.match(container.querySelector('.vincent-answer-text').textContent, /sample reply for checking the layout/);
+  assert.equal(container.querySelector('.vincent-sources'), null);
+});
+
+test('Vincent preview source cards retain the pinned wording, edition credit and license', async () => {
+  const pack = JSON.parse(readFileSync(new URL('../../knowledge/data/reference-packs/vincent-irises-v1.json', import.meta.url)));
+  for (const { kind, ...citation } of SAMPLE_REPLY.citations) {
+    assert.equal(kind, 'evidence');
+    assert.deepEqual(citation, pack.records.find((record) => record.chunk_id === citation.chunk_id));
+  }
+  await render(createElement(VincentPreview));
+  await previewState('awaiting_play');
+  const sources = container.querySelector('.vincent-sources');
+  assert.equal(sources.open, false);
+  await act(async () => sources.querySelector('summary').click());
+  assert.equal(sources.open, true);
+  assert.deepEqual([...sources.querySelectorAll('.cite-kind')].map((el) => el.textContent), ['Artist’s letter', 'Museum source']);
+  assert.deepEqual([...sources.querySelectorAll('blockquote')].map((el) => el.textContent), SAMPLE_REPLY.citations.map((c) => c.excerpt));
+  assert.ok(sources.querySelector('a[href="https://creativecommons.org/licenses/by-nc-sa/4.0/"]'));
+  await previewState('long_reply');
+  assert.ok(container.querySelector('.vincent-answer-text').textContent.length > 1000);
+});
+
+test('Vincent sources distinguish guide notes and leave unsafe links and HTML inert', async () => {
+  const c = { ...SAMPLE_REPLY.citations[0], source_kind: 'guide_note',
+    excerpt: '<script>not executable</script>', source_url: 'javascript:alert(1)', license_url: 'data:text/html,unsafe' };
+  await render(createElement(VincentSources, { citations: [c] }));
+  assert.equal(container.querySelector('.cite-kind').textContent, 'MuseBridge guide');
+  assert.equal(container.querySelector('blockquote').textContent, c.excerpt);
+  assert.equal(container.querySelectorAll('a,script').length, 0);
 });
 
 test('Getty museum passages and MuseBridge guide notes display distinct author and destination labels', async () => {

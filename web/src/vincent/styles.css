@@ -1,0 +1,74 @@
+.shell:has(.vincent-page) { max-width: 42rem; }
+.vincent-page { --vincent-blue: #244a62; --vincent-gold: #e7c881; gap: 20px; padding-bottom: 0; }
+.vincent-page > * { min-width: 0; }
+.vincent-nav { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; }
+.vincent-back { display: inline-flex; align-items: center; min-height: 44px; font-size: .9rem; text-underline-offset: 3px; padding: 8px 0; }
+.vincent-language { font-size: .75rem; color: var(--muted); }
+.vincent-heading { display: grid; gap: 8px; }
+.vincent-eyebrow { font-size: .72rem; text-transform: uppercase; letter-spacing: .13em; color: var(--vincent-blue); font-weight: 650; }
+.vincent-heading h1 { font: 500 clamp(2rem, 7vw, 3rem)/1.05 var(--serif); letter-spacing: -.035em; }
+.vincent-heading > p:last-child { max-width: 30rem; color: var(--muted); font-size: .95rem; }
+.vincent-unavailable { padding: 14px 16px; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); font-size: .9rem; }
+.vincent-unavailable p { margin-top: 4px; }
+.vincent-stage { margin: 0; }
+.vincent-visual { position: relative; height: clamp(230px, 36svh, 340px); overflow: hidden; border: 1px solid #d4bd8c; border-radius: 18px; background: #f2dfb6; }
+.vincent-portrait, .vincent-painting { display: block; width: 100%; height: 100%; }
+.vincent-portrait { object-fit: contain; }
+.vincent-painting { object-fit: cover; animation: vincent-push-in 28s ease-out both; transform-origin: 45% 50%; }
+@keyframes vincent-push-in { from { transform: scale(1); } to { transform: scale(1.055); } }
+.vincent-portrait-placeholder { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #5b4a2e; padding: 20px 16px 48px; text-align: center; }
+.vincent-monogram { font: italic 5.5rem/1 var(--serif); color: var(--vincent-blue); margin-bottom: 8px; }
+.vincent-portrait-placeholder > p { font: 1.2rem var(--serif); }
+.vincent-stage-label { position: absolute; left: 12px; bottom: 12px; background: #fffdf8ed; color: var(--ink); border-radius: 20px; padding: 5px 12px; font-size: .75rem; }
+.vincent-stage figcaption { color: var(--muted); font-size: .75rem; line-height: 1.5; margin-top: 8px; }
+.vincent-image-credit { font-size: .7rem; color: var(--muted); margin-top: 5px; }
+.vincent-image-fallback { padding: 28px; }
+.vincent-status { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.vincent-status > p { flex: 1; min-width: 10rem; font-size: .95rem; }
+.vincent-status-dot { width: 9px; height: 9px; flex: none; border-radius: 50%; background: var(--vincent-blue); }
+.vincent-status-dot.is-recording { background: #a23d33; box-shadow: 0 0 0 5px #a23d331a; }
+.vincent-timer { font-size: .8rem; font-variant-numeric: tabular-nums; }
+.vincent-question, .vincent-answer { display: grid; gap: 10px; overflow-wrap: anywhere; }
+.vincent-question { border-left: 3px solid var(--vincent-gold); padding-left: 14px; }
+.vincent-page h2 { font-size: .8rem; font-weight: 650; color: var(--vincent-blue); }
+.vincent-answer { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 18px; }
+.vincent-answer-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: space-between; }
+.vincent-reply-label { font-size: .7rem; color: var(--muted); }
+.vincent-answer-text { font-size: 1.04rem; line-height: 1.7; white-space: pre-wrap; }
+.vincent-page .btn { border-color: var(--vincent-blue); background: var(--vincent-blue); }
+.vincent-page .btn-quiet { color: var(--vincent-blue); background: transparent; }
+.vincent-playback { margin-top: 6px; }
+.vincent-playback .btn { flex: 1 1 8rem; }
+.vincent-sources { border-top: 1px solid var(--rule); padding-top: 6px; margin-top: 8px; }
+.vincent-sources > summary, .vincent-write > summary, .vincent-preview > summary { min-height: 44px; padding: 10px 0; cursor: pointer; }
+.vincent-sources > summary { font-weight: 600; color: var(--vincent-blue); }
+.vincent-sources > summary span { margin-left: 8px; padding: 2px 7px; border-radius: 10px; background: var(--paper); font-size: .75rem; }
+.vincent-sources > .cites { margin-top: 12px; }
+.vincent-sources .cite { min-width: 0; }
+.vincent-sources a { overflow-wrap: anywhere; }
+.vincent-write { border-top: 1px solid var(--rule); }
+.vincent-write form { display: grid; gap: 8px; padding: 4px 0 16px; }
+.vincent-write label { font-size: .85rem; }
+.vincent-write textarea { width: 100%; min-width: 0; padding: 12px; font: 16px/1.5 var(--sans); border: 1px solid var(--rule); border-radius: 10px; background: var(--card); color: var(--ink); resize: vertical; }
+.vincent-recording-controls { position: sticky; bottom: 0; z-index: 2; display: grid; gap: 8px; margin: auto -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--paper); border-top: 1px solid var(--rule); }
+.vincent-record-actions { display: flex; gap: 8px; }
+.vincent-record-button { flex: 1; gap: 10px; min-height: 50px; }
+.vincent-page .vincent-record-button.is-recording { background: #923f36; border-color: #923f36; }
+.vincent-recording-controls > p { font-size: .75rem; color: var(--muted); text-align: center; }
+.vincent-error .btn { justify-self: start; }
+
+/* The simulated states are available only in an explicitly opened development preview. */
+.vincent-preview { padding: 0 14px 12px; border: 1px dashed #8c743e; border-radius: 12px; background: #fff5d9; }
+.vincent-preview > summary { font-size: .85rem; font-weight: 600; }
+.vincent-preview-note { font-size: .8rem; margin-bottom: 10px; }
+.vincent-preview-controls { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 10px; }
+.vincent-preview-controls label { display: grid; gap: 4px; flex: 1 1 12rem; font-size: .75rem; }
+.vincent-preview-controls select { width: 100%; min-width: 0; min-height: 44px; padding: 8px; font: 16px var(--sans); border: 1px solid #bba576; border-radius: 8px; background: var(--card); color: var(--ink); }
+.vincent-preview-controls .btn { font-size: .8rem; }
+@media (max-width: 360px) {
+  .vincent-answer { padding: 14px; }
+  .vincent-nav { gap: 0 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vincent-painting { animation: none; }
+}
