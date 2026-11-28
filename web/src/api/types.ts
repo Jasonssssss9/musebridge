@@ -196,6 +196,9 @@ function arr(o: Obj, k: string): unknown[] {
   return v;
 }
 
+/** Shared field checks; each public contract keeps its own scope and policy parser. */
+export const wire = { obj, str, uuid, timestamp, httpsUrl, oneOf, nullableOneOf, int, arr };
+
 function parseConversationModes(o: Obj): ConversationMode[] {
   if (o.conversation_modes === undefined) return ['guide'];
   const modes = arr(o, 'conversation_modes');

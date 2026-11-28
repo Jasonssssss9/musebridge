@@ -1,11 +1,6 @@
-import type { CatalogFact, Evidence } from '../api/types';
+import type { VincentCitation } from '../voice/vincentContract';
+export type { VincentCitation, VincentEvidence } from '../voice/vincentContract';
 import { Citation, safeHttps } from '../ui/Citation';
-
-// Presentation types only. The live v0.3 response parser keeps its existing policy.
-export type VincentEvidence = Omit<Evidence, 'source_kind'> & {
-  source_kind: 'artist_letter' | 'museum_record' | 'guide_note';
-};
-export type VincentCitation = CatalogFact | VincentEvidence;
 
 const labels = { artist_letter: 'Artist’s letter', museum_record: 'Museum source', guide_note: 'MuseBridge guide' };
 

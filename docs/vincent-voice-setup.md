@@ -12,7 +12,7 @@ This is A's implementation of [Talk with Vincent](vincent-contract.md) and its [
 | Go media routes (`api/internal/voice`) | Implemented and wired behind `VINCENT_ENABLED`. Transcription, speech, the error table, coalescing, cache and busy limits are tested, and the routes now serve real Vincent conversations. |
 | Browser voice controller (`web/src/voice`) | Implemented with the contract's method and snapshot names. Tested with fake microphone, recorder and audio. The two reported bugs are fixed: under StrictMode the first Record tap opens the microphone once, and the most recent Play or Stop always wins. A recording is bound to its message ID and revision when Record is tapped. |
 | v0.4 browser client and device-check page | Implemented in `web/src/voice/vincentClient.ts` and `web/voice-check.html` for testing the voice flow on a phone. |
-| Vincent page and portrait | Implemented. The page uses the controller and client, with the mobile layout, silent greeting, listening portrait and development preview. |
+| Vincent page and portrait | Connected in `web/src/vincent/Live.tsx`. The page uses the v0.4 client and voice controller, with history, typing, recording, retry/recovery, sources and actual playback-driven visuals. The greeting remains silent. See [page integration](vincent-page-integration.md). |
 | Real-device acceptance | **Not done yet.** It needs the real Whisper model, C's live v3 Agent with Qwen, a real OpenAI key and an iPhone. Use the record at the end of this page. |
 
 A browser run checked the whole chain: Chromium with a fake microphone, the device-check page, Go and stand-in Whisper, Agent and TTS services. The run covered two voice turns in the same conversation, Stop, replay, recording again and restoring after a reload. This shows the pieces connect. It does not replace the iPhone test.
@@ -21,7 +21,7 @@ The Go code was compiled and tested with Go 1.24 instead of the project's 1.27. 
 
 ## What changed for each teammate
 
-**B (page).** Create the Vincent conversation with `{"contract_version":"agent-demo-v0.4","artwork_id":"getty-103jnh","conversation_mode":"vincent"}`, or call `createVincentClient().open()`. Show Talk with Vincent only when the artwork card's `conversation_modes` includes `"vincent"`. The existing chat client still speaks v0.3 and rejects v0.4 conversations. Either extend it or use `vincentClient.ts` on the Vincent page.
+**B (page).** The visitor page now uses `vincentClient.ts` and `useVincentVoice`; see [page integration](vincent-page-integration.md). The binding follows this contract: create the Vincent conversation with `{"contract_version":"agent-demo-v0.4","artwork_id":"getty-103jnh","conversation_mode":"vincent"}`, or call `createVincentClient().open()`. Show Talk with Vincent only when the artwork card's `conversation_modes` includes `"vincent"`. The existing chat client still speaks v0.3 and rejects v0.4 conversations. Keep that client separate from the Vincent page.
 
 **C (Agent).** Go sends `agent-run-v3` to `POST /internal/v3/agent/runs` for every v0.4 conversation, including guide. The Agent therefore needs `MUSEBRIDGE_ENABLE_VINCENT=1`; `run-gallery.sh` sets it when `VINCENT_ENABLED=true`. Go rejects a result in these cases: its scope differs from the run's, a Vincent answer is not in English, or a source is not an exact pinned record. A pack record cited in guide mode, or a cached record left out without the v3 eviction reason, is also rejected. All of these give `502 agent_invalid_response` and no new revision.
 
@@ -58,7 +58,7 @@ The Go code was compiled and tested with Go 1.24 instead of the project's 1.27. 
 
    The script starts the worker on `127.0.0.1:8003`, enables the v3 Agent and Vincent retrieval, gives the speech key only to Go and lets Vite accept the tunnel's hostname. Check that `http://127.0.0.1:8003/ready` returns `{"ready":true}` once the model has loaded, and that `GET /internal/v3/agent/readyz` on the Agent is ready ([Vincent hybrid](vincent-hybrid.md)).
 
-4. **Open the device-check page on the phone:** `https://<your-tunnel>.trycloudflare.com/voice-check.html`. Use the same HTTPS address for every call, so the cookie and the allowed origin match. When B's page is ready, use `/a/getty-103jnh/vincent` instead.
+4. **Open the visitor page on the phone:** `https://<your-tunnel>.trycloudflare.com/a/getty-103jnh/vincent`. Use the same HTTPS address for every call, so the cookie and the allowed origin match. `/voice-check.html` remains available as a separate diagnostic page.
 
 ## Configuration
 

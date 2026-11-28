@@ -51,7 +51,7 @@ function showTurns(): void {
       link.href = citation.source_url;
       link.textContent = citation.source_title;
       link.target = '_blank';
-      source.append(`${citation.source_kind ?? 'catalog'} · `, link, ` · ${citation.attribution}`);
+      source.append(`${citation.kind === 'catalog' ? 'catalog' : citation.source_kind} · `, link, ` · ${citation.attribution}`);
       box.append(source);
     }
     const replay = document.createElement('button');

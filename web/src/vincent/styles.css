@@ -58,6 +58,10 @@
 .vincent-page .vincent-record-button.is-recording { background: #923f36; border-color: #923f36; }
 .vincent-recording-controls > p { font-size: .75rem; color: var(--muted); text-align: center; }
 .vincent-error .btn { justify-self: start; }
+.vincent-history { display: grid; gap: 10px; overflow-wrap: anywhere; }
+.vincent-history ol { padding-left: 24px; }
+.vincent-history li { margin: 12px 0; }
+.vincent-history .btn { margin-top: 6px; }
 
 /* The simulated states are available only in an explicitly opened development preview. */
 .vincent-preview { padding: 0 14px 12px; border: 1px dashed #8c743e; border-radius: 12px; background: #fff5d9; }

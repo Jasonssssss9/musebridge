@@ -9,6 +9,7 @@
 // Text and citations always come from the committed turn, which the page reads
 // from the chat client. The controller only reports which turn is speaking.
 import { SILENT_MP3 } from './silence';
+import { uuidv4 } from '../api/uuid';
 
 export type VoicePhase =
   | 'ready' | 'recording' | 'transcribing' | 'generating' | 'preparing_audio' | 'playing' | 'awaiting_play' | 'error';
@@ -52,7 +53,7 @@ export interface VoiceMessage {
   question: string;
   clientMessageId: string;
   expectedRevision: number;
-  languageOverride: null;
+  languageOverride: 'en' | null;
 }
 
 export interface VoiceOptions {
@@ -110,7 +111,7 @@ function browserEnvironment(): VoiceEnvironment {
     getUserMedia: devices?.getUserMedia ? (c) => devices.getUserMedia(c) : null,
     MediaRecorder: typeof MediaRecorder !== 'undefined' ? MediaRecorder : null,
     createAudio: () => new Audio(),
-    randomUUID: () => crypto.randomUUID(),
+    randomUUID: uuidv4,
     createObjectURL: (blob) => URL.createObjectURL(blob),
     revokeObjectURL: (url) => URL.revokeObjectURL(url),
     setTimeout: (fn, ms) => setTimeout(fn, ms),
@@ -229,6 +230,39 @@ export class VoiceController {
   }
 
   // ---- recording ----------------------------------------------------------------------
+
+  /** Typed questions use exactly the same identity, retry and speech path as recordings. */
+  async submitText(question: string): Promise<void> {
+    if (this.disposed || ['recording', 'transcribing', 'generating'].includes(this.snapshot.phase)) return;
+    question = question.trim();
+    if (!question || [...question].length > 500) return;
+    this.stopAudio();
+    this.playRequest++;
+    this.unlockAudio();
+    const epoch = ++this.epoch;
+    this.clip = null;
+    this.bound = null;
+    this.message = { question, clientMessageId: this.env.randomUUID(), expectedRevision: this.options.revision(), languageOverride: null };
+    this.pendingQuestion = true;
+    this.set({ phase: 'generating', transcript: question, turnId: null, error: null, welcome: false, unsent: null });
+    await this.ask(epoch);
+  }
+
+  /** Restore a failed request after refresh, without silently submitting it. */
+  restoreMessage(message: VoiceMessage, error: VoiceError): void {
+    if (this.disposed || this.pendingQuestion) return;
+    this.message = error.retryable ? message : null;
+    this.set({ phase: 'error', transcript: message.question, unsent: message.question, error });
+  }
+
+  /** A later history check found the original turn. Clear its error without autoplay. */
+  restoreTurn(turnId: string, question: string): void {
+    if (this.disposed || this.pendingQuestion) return;
+    this.stopAudio();
+    this.playRequest++;
+    this.message = null;
+    this.set({ phase: 'ready', transcript: question, turnId, unsent: null, error: null, welcome: false });
+  }
 
   /** Call from the Record tap. Stops any speech first, then opens the microphone. */
   async startRecording(): Promise<void> {

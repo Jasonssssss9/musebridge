@@ -23,6 +23,7 @@ export interface VincentActions {
   playTurn(turnId: string): void;
   stopPlayback(): void;
   retryTranscription(): void;
+  retryMessage?(): void;
   submit(question: string): void;
 }
 
@@ -38,13 +39,19 @@ const statusText = {
 };
 
 /** Render controller state; only the caller decides when audio has really started. */
-export function VincentView({ state, reply, actions, enabled, previewControls, portraitUrl }: {
+export function VincentView({ state, reply, actions, enabled, previewControls, portraitUrl,
+  interactionBlocked = false, notice, unsent, history = [], selectTurn }: {
   state: VincentVoiceState;
   reply: VincentReply | null;
   actions: VincentActions;
   enabled: boolean;
   previewControls?: ReactNode;
   portraitUrl?: string;
+  interactionBlocked?: boolean;
+  notice?: ReactNode;
+  unsent?: string | null;
+  history?: VincentReply[];
+  selectTurn?: (turnId: string) => void;
 }) {
   const [draft, setDraft] = useState('');
   const [showArtwork, setShowArtwork] = useState(state.phase === 'playing' && !state.welcome && state.turnId === reply?.id);
@@ -54,8 +61,10 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
   const playing = state.phase === 'playing';
   const answerPlaying = playing && !state.welcome && state.turnId === reply?.id;
   const processing = ['transcribing', 'generating', 'preparing_audio'].includes(state.phase);
-  const canStart = enabled && !recording && !processing;
-  const canPlay = enabled && reply !== null && !recording && !processing && !playing;
+  const submitting = ['transcribing', 'generating'].includes(state.phase);
+  const canStart = enabled && !interactionBlocked && !recording && !submitting;
+  const canPlay = enabled && !interactionBlocked && reply !== null && !recording && !processing && !playing;
+  const canStop = enabled && ['preparing_audio', 'playing', 'awaiting_play'].includes(state.phase);
   const questionLength = [...draft.trim()].length;
 
   useEffect(() => {
@@ -91,6 +100,7 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
       </header>
 
       {previewControls}
+      {notice}
       {!enabled && <aside className="vincent-unavailable" role="status">
         <strong>This conversation is not available yet.</strong>
         <p>You can still explore Irises with the <Link to="/a/getty-103jnh">artwork guide</Link>.</p>
@@ -119,7 +129,7 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
         <span className={`vincent-status-dot${recording ? ' is-recording' : ''}`} aria-hidden="true" />
         <p role="status" aria-live="polite">{message}</p>
         {recording && <span className="vincent-timer" aria-label={`${state.recordingSeconds} seconds recorded`}>
-          0:{String(state.recordingSeconds).padStart(2, '0')} / 0:20
+          0:{String(Math.floor(state.recordingSeconds)).padStart(2, '0')} / 0:20
         </span>}
       </section>
 
@@ -129,6 +139,11 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
         {state.error.stage === 'speech' && <p>Your answer and sources are still here. You can read them while audio is unavailable.</p>}
         {state.error.retryable && state.error.stage === 'transcription' &&
           <button className="btn btn-quiet" disabled={!enabled} onClick={actions.retryTranscription}>Retry transcription</button>}
+        {state.error.retryable && state.error.stage === 'message' && actions.retryMessage &&
+          <button className="btn btn-quiet" disabled={!canStart} onClick={actions.retryMessage}>Retry same question</button>}
+        {unsent && <><p>Your question: {unsent}</p>
+          <p>Review these words before starting a new question. Retrying keeps the original request.</p>
+          <button className="btn btn-quiet" disabled={!canStart} onClick={() => setDraft(unsent)}>Review question</button></>}
       </section>}
 
       <section className="vincent-question" aria-labelledby="vincent-question-heading">
@@ -148,14 +163,22 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
             <button className="btn btn-quiet" disabled={!canPlay} onClick={() => interruptGreeting(() => actions.playTurn(reply.id))}>
               {showArtwork ? 'Replay answer' : 'Play answer'}
             </button>
-            <button className="btn btn-quiet" disabled={!enabled || !playing} onClick={() => interruptGreeting(actions.stopPlayback)}>Stop playback</button>
+            <button className="btn btn-quiet" disabled={!canStop} onClick={() => interruptGreeting(actions.stopPlayback)}>Stop playback</button>
           </div>
           {reply.citations.length > 0 ? <VincentSources key={reply.id} citations={reply.citations} />
             : <p className="muted small">No sources are attached to this reply.</p>}
         </> : <p className="muted">Vincent’s reply will appear here. When a reply uses sources, you can open them below.</p>}
       </section>
 
-      <details className="vincent-write" open={state.error?.stage === 'capture' ? true : undefined}>
+      {history.length > 1 && <section className="vincent-history" aria-label="Conversation history">
+        <h2>Earlier in this conversation</h2>
+        <ol>{history.filter((item) => item.id !== reply?.id).map((item) => <li key={item.id}>
+          <p>{item.question}</p>
+          <button className="btn btn-quiet" disabled={!canStart} onClick={() => selectTurn?.(item.id)}>Read reply and sources</button>
+        </li>)}</ol>
+      </section>}
+
+      <details className="vincent-write" open={state.error?.stage === 'capture' || unsent ? true : undefined}>
         <summary>Prefer typing?</summary>
         <form onSubmit={submitDraft}>
           <label htmlFor="vincent-draft">Your question in English</label>
@@ -175,7 +198,7 @@ export function VincentView({ state, reply, actions, enabled, previewControls, p
             onClick={() => interruptGreeting(recording ? actions.stopRecording : actions.startRecording)}>
             <span aria-hidden="true">{recording ? '■' : '●'}</span> {recording ? 'Stop recording' : 'Start recording'}
           </button>
-          {playing && <button className="btn btn-quiet" disabled={!enabled} onClick={() => interruptGreeting(actions.stopPlayback)}>
+          {canStop && <button className="btn btn-quiet" disabled={!enabled} onClick={() => interruptGreeting(actions.stopPlayback)}>
             {state.welcome ? 'Stop greeting' : 'Stop playback'}
           </button>}
         </div>

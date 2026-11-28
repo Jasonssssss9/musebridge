@@ -306,7 +306,7 @@ test('only enabled Irises artwork responses display the Vincent entry', async (t
   }
 });
 
-test('the Vincent destination has an honest landing page and returns to the ordinary guide', async (t) => {
+test('the Vincent destination uses v0.4 and returns to the separate ordinary guide', async (t) => {
   const { artworks } = JSON.parse(readFileSync(new URL('../../knowledge/data/getty-gallery-v2.json', import.meta.url)));
   const irises = artworks.find((a) => a.artwork_id === 'getty-103jnh');
   const requests = [];
@@ -314,6 +314,9 @@ test('the Vincent destination has an honest landing page and returns to the ordi
     requests.push(url);
     if (url === `/api/artworks/${irises.slug}`) return Response.json({ artwork: irises });
     const scoped = conversation({ artwork_id: irises.artwork_id, dataset_version: irises.dataset_version });
+    if (init.method === 'POST' && JSON.parse(init.body).contract_version === 'agent-demo-v0.4') {
+      return Response.json({ error: { code: 'mode_unavailable', message: 'Vincent is not available yet.', retryable: false } }, { status: 409 });
+    }
     if (init.method === 'POST') return Response.json({ conversation: scoped, created: false });
     return Response.json({ conversation: scoped, turns: [], pending_request: null });
   });
@@ -321,10 +324,10 @@ test('the Vincent destination has an honest landing page and returns to the ordi
   await render(createElement(App));
   assert.equal(document.title, 'Talk with Vincent · MuseBridge');
   assert.match(container.textContent, /not available yet/);
-  assert.ok(container.querySelector('textarea').disabled);
-  assert.ok([...container.querySelectorAll('button')].every((button) => button.disabled));
+  assert.equal(container.querySelector('textarea'), null);
+  assert.ok([...container.querySelectorAll('button')].some((button) => button.textContent === 'Try again'));
   assert.equal(container.querySelector('.vincent-preview'), null);
-  assert.deepEqual(requests, [], 'the landing page must not create an ordinary guide conversation');
+  assert.deepEqual(requests, ['/api/conversations'], 'only the dedicated v0.4 create is attempted');
   const back = [...container.querySelectorAll('a')].find((a) => a.textContent.endsWith('Back to artwork'));
   await act(async () => back.click());
   await flush();
