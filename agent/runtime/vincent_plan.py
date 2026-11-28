@@ -5,7 +5,10 @@ from copy import deepcopy
 import json
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+
 from agent.contracts.codec import v3_validator
+from agent.runtime.source_spans import literal_spans
 from agent.runtime.validation import ContractViolation
 from agent.runtime.vincent_search import query_fields, render_query
 
@@ -45,6 +48,25 @@ def _last_settled(payload):
     return next((t for t in reversed(payload["recent_turns"]) if t["answer_status"] == "answered"), None)
 
 
+def _repeat_material(payload):
+    """Bind every offered reference to its fitted turn or canonical cached record."""
+    previous = _last_settled(payload)
+    answer = (literal_spans(previous["answer_text"], f"t{previous['sequence']}.a")
+              if previous else {})
+    sources = {}
+    cards = []
+    for record in payload["cached_evidence"]:
+        ref = record["chunk_id"]
+        card = {"ref": ref, "source": record["source_title"], "kind": record["source_kind"]}
+        for label, field, prefix in (("passage", "excerpt", "p"), ("locator", "source_locator", "l")):
+            spans = literal_spans(record[field], f"{ref}:{prefix}")
+            card[label] = spans
+            for key, text in spans.items():
+                sources[key] = {"chunk_id": ref, "field": field, "text": text}
+        cards.append(card)
+    return answer, sources, cards
+
+
 def _schema(payload):
     # Language instructions/translation are the existing exact-source wire types.
     defs = v3_validator().schema("LanguageDecision")["$defs"]
@@ -73,11 +95,13 @@ def _schema(payload):
     if not payload["complete_scope"]:
         lookup += [_route("search", **query_fields()),
                    _route("search_multiple", requests=requests, queries=_array(linked, 1, 2))]
-    if payload["cached_evidence"] and _last_settled(payload) is not None:
-        witness = _obj(answer_quote=_TEXT, passage=_choice(*(r["chunk_id"] for r in payload["cached_evidence"])),
-                       source_quote=_TEXT, establishes=_INTENT)
-        lookup += [_route("repeat_verified", visitor_request=fragment, support=_array(witness, 1, 4)),
-                   _route("repeat_verified_multiple", visitor_request=fragment, requests=requests,
+    answer_spans, source_spans, _ = _repeat_material(payload)
+    repeats = []
+    if answer_spans and source_spans:
+        witness = _obj(answer_span=_choice(*answer_spans), source_span=_choice(*source_spans), establishes=_INTENT)
+        visitor_request = {"const": payload["original_question"]}
+        repeats += [_route("repeat_verified", visitor_request=visitor_request, support=_array(witness, 1, 4)),
+                   _route("repeat_verified_multiple", visitor_request=visitor_request, requests=requests,
                           support=_array(_obj(part={"type": "integer", "minimum": 1, "maximum": 4},
                                               witness=witness), 1, 8))]
     if payload["complete_scope"] and payload["cached_evidence"]:
@@ -94,8 +118,12 @@ def _schema(payload):
         _obj(**base_part, kind=_choice(*("clarify_" + kind for kind in _KINDS)), pending_source=pending_source),
     ]}
     terminal_branches.append(_route("reply_multiple", requests=_array(_ref("ReplyPart"), 2, 4)))
-    defs["VincentPlan"] = _obj(intent=_INTENT, next={"oneOf": lookup + terminal_branches},
-                              language=_ref("LanguageDecision"))
+    branches = [_obj(intent=_INTENT, request_kind={"const": "new_request"},
+                     next={"oneOf": lookup + terminal_branches}, language=_ref("LanguageDecision"))]
+    if repeats:
+        branches.append(_obj(intent=_INTENT, request_kind={"const": "restate_last_answer"},
+                             next={"oneOf": repeats}, language=_ref("LanguageDecision")))
+    defs["VincentPlan"] = {"oneOf": branches}
     return {"$schema": "https://json-schema.org/draft/2020-12/schema",
             "$ref": "#/$defs/VincentPlan", "$defs": defs}
 
@@ -104,6 +132,7 @@ def model_call(payload):
     """Return the exact planner prompt and model-output schema for this fitted turn."""
     schema = _schema(payload)
     context = payload["conversation_context"]
+    answer_spans, _, cards = _repeat_material(payload)
     data = {
         "scope": payload["scope"],
         "artwork": payload["artwork_context"],
@@ -114,10 +143,8 @@ def model_call(payload):
         "conversation_context": context,
         "recent_turns": [{key: turn[key] for key in ("sequence", "question", "answer_text")}
                          for turn in payload["recent_turns"]],
-        "repeatable_answer_sequence": (_last_settled(payload) or {}).get("sequence"),
-        "cached_evidence": [{"ref": item["chunk_id"], "source": item["source_title"], "kind": item["source_kind"],
-                             "locator": item["source_locator"], "passage": item["excerpt"]}
-                            for item in payload["cached_evidence"]],
+        "repeatable_answer": {"sequence": (_last_settled(payload) or {}).get("sequence"), "spans": answer_spans},
+        "cached_evidence": cards,
         "original_question": payload["original_question"],
     }
     policy = "\n\n".join((_PROMPTS / name).read_text(encoding="utf-8").strip()
@@ -140,6 +167,7 @@ def _request(index, fragment, intent, kind):
 def _check_witnesses(decision, requests, payload):
     cache = {record["chunk_id"]: record for record in payload["cached_evidence"]}
     previous = _last_settled(payload)
+    answer_spans, source_spans, _ = _repeat_material(payload)
     repeat_span = decision["visitor_request"]
     if previous is None or not repeat_span.strip() or repeat_span not in payload["original_question"]:
         raise ContractViolation("A repeat must point to the current visitor's request and a settled answer.")
@@ -149,12 +177,15 @@ def _check_witnesses(decision, requests, payload):
         witnesses = [(proof["part"], proof["witness"]) for proof in decision["support"]]
     covered = set()
     for part, proof in witnesses:
-        record = cache.get(proof["passage"])
-        answer_quote, quote = proof["answer_quote"], proof["source_quote"]
+        answer_quote = answer_spans.get(proof["answer_span"])
+        selected = source_spans.get(proof["source_span"])
+        if answer_quote is None or selected is None:
+            raise ContractViolation("A repeat must select references from the fitted answer and evidence.")
+        record = cache.get(selected["chunk_id"])
+        quote = selected["text"]
         if not answer_quote.strip() or answer_quote not in previous["answer_text"]:
             raise ContractViolation("The repeated finding must quote the last settled answer.")
-        if record is None or not quote.strip() or not any(
-                quote in record[field] for field in ("excerpt", "source_locator")):
+        if record is None or not quote.strip() or quote not in record[selected["field"]]:
             raise ContractViolation("A cache witness must quote its selected passage or locator exactly.")
         covered.add(part)
     expected = {i for i, item in enumerate(requests, 1)
@@ -265,6 +296,8 @@ def canonical_decision(raw, payload):
                 {"id": f"q{i}", "query": query, "request_ids": request_ids}
                 for i, (query, request_ids) in enumerate(queries, 1)]}
         if action in ("repeat_verified", "repeat_verified_multiple"):
+            if not Draft202012Validator(_schema(payload)).is_valid(raw):
+                raise ContractViolation("The repeat plan has invalid request, history or source references.")
             _check_witnesses(decision, requests, payload)
             return {**out, "action": "answer_from_context"}
         if action in ("review_complete_scope", "review_complete_scope_multiple"):

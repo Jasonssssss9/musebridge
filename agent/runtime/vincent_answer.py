@@ -4,12 +4,12 @@ The model writes every spoken line, its sources and the next memory. The adapter
 validates its selected persistent source IDs and expands the v3 decision fields.
 """
 import json
-import re
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
 from agent.runtime.errors import WorkflowError
+from agent.runtime.source_spans import literal_spans as _spans
 from agent.runtime.vincent_search import query_fields, render_query
 
 PROMPT = Path(__file__).resolve().parents[1] / "prompts" / "vincent" / "answer.md"
@@ -37,15 +37,6 @@ def _catalog_records(payload):
 def _request_ids(choices):
     return {"type": "array", "items": {"type": "string", "enum": choices},
             "minItems": 1, "maxItems": len(choices), "uniqueItems": True}
-
-
-def _spans(text, prefix):
-    """Number literal substrings of the record so the model need not transcribe quotations."""
-    pieces = []
-    for sentence in re.split(r"(?<=[.!?;])\s+", text.strip()):
-        clauses = re.split(r"(?<=[,:])\s+|\s+(?=—\s)", sentence) if len(sentence) > 220 else [sentence]
-        pieces.extend(clause for clause in clauses if clause)
-    return {f"{prefix}{n}": phrase for n, phrase in enumerate(pieces, 1)}
 
 
 def _cards(payload, fresh_ids=None):

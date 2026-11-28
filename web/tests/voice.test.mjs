@@ -37,9 +37,15 @@ class FakeAudio {
   pause() { this.paused = true; this.pauses++; }
 }
 
-function harness({ supported = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4'], micError = null, routes = {}, submit, welcomeUrl } = {}) {
+function harness({ supported = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4'], micError = null, routes = {}, submit, welcomeUrl, needsLiveTrackToFlush = false, omitStopEvent = false } = {}) {
   const h = { now: 0, timers: [], requests: [], tracks: [], submits: [], messages: [], revoked: [], urls: 0, revision: 1, ids: 0 };
   h.audio = new FakeAudio();
+  h.playedDuringCapture = [];
+  const play = h.audio.play.bind(h.audio);
+  h.audio.play = () => {
+    if (h.tracks.some((track) => !track.stopped)) h.playedDuringCapture.push(h.audio.src);
+    return play();
+  };
   class FakeRecorder {
     static isTypeSupported(type) { return supported.includes(type); }
     constructor(stream, options) { this.stream = stream; this.mimeType = options?.mimeType ?? ''; this.state = 'inactive'; this.listeners = {}; h.recorder = this; }
@@ -47,8 +53,10 @@ function harness({ supported = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4'], micE
     start() { this.state = 'recording'; }
     stop() {
       this.state = 'inactive';
+      if (omitStopEvent) return;
       setTimeout(() => {
-        (this.listeners.dataavailable ?? []).forEach((fn) => fn({ data: new Blob([h.clipBytes ?? 'audio-bytes']) }));
+        const lostTail = needsLiveTrackToFlush && this.stream.getTracks().some((track) => track.stopped);
+        (this.listeners.dataavailable ?? []).forEach((fn) => fn({ data: new Blob(lostTail ? [] : [h.clipBytes ?? 'audio-bytes']) }));
         (this.listeners.stop ?? []).forEach((fn) => fn());
       }, 0);
     }
@@ -163,6 +171,47 @@ test('recording again stops the answer before opening the microphone', async () 
   assert.equal(h.snap().turnId, null);
   h.audio.emit('playing'); // a late event from the old answer is ignored
   assert.equal(h.snap().phase, 'recording');
+});
+
+test('all recording chunks, including the final tail, reach transcription before microphone release', async () => {
+  const h = harness({ needsLiveTrackToFlush: true });
+  await h.controller.startRecording();
+  h.recorder.listeners.dataavailable.forEach((fn) => fn({ data: new Blob(['first-second;']) }));
+  h.recorder.listeners.dataavailable.forEach((fn) => fn({ data: new Blob(['next-seconds;']) }));
+  h.clipBytes = 'final-words';
+  h.advance(6000);
+  h.controller.stopRecording();
+  await settle();
+  const upload = h.requests.find((r) => r.path.endsWith('/transcriptions'));
+  assert.equal(await upload.body.text(), 'first-second;next-seconds;final-words');
+  assert.ok(h.tracks.every((track) => track.stopped));
+});
+
+test('recording after an answer never starts playback while the microphone is open', async () => {
+  const h = harness({ needsLiveTrackToFlush: true });
+  h.clipBytes = 'first-question';
+  await recordQuestion(h, 6000);
+  assert.equal(h.snap().phase, 'playing');
+  h.clipBytes = 'follow-up-question';
+  h.revision++;
+  await recordQuestion(h, 6000);
+  const uploads = h.requests.filter((r) => r.path.endsWith('/transcriptions'));
+  assert.deepEqual(await Promise.all(uploads.map((r) => r.body.text())), ['first-question', 'follow-up-question']);
+  assert.deepEqual(h.playedDuringCapture, [], 'even a silent unlock clip must not interrupt capture');
+  assert.ok(h.tracks.every((track) => track.stopped));
+});
+
+test('a recorder that never finishes releases the microphone and uploads nothing', async () => {
+  const h = harness({ omitStopEvent: true });
+  await h.controller.startRecording();
+  h.advance(6000);
+  h.controller.stopRecording();
+  h.advance(3000);
+  await settle();
+  assert.ok(h.tracks.every((track) => track.stopped));
+  assert.equal(h.snap().phase, 'error');
+  assert.equal(h.snap().error.stage, 'capture');
+  assert.equal(h.requests.length, 0);
 });
 
 test('desktop browsers upload WebM with Opus', async () => {

@@ -90,9 +90,10 @@ export interface VoiceEnvironment {
 export const MAX_RECORDING_MS = 20_000;
 export const MEDIA_TIMEOUT_MS = 35_000;
 const MIN_RECORDING_MS = 400;
+const RECORDER_FINISH_MS = 3000;
 const CACHED_ANSWERS = 6;
 
-/** Preferred capture formats, in order. Safari records MP4/AAC; Chrome and Firefox WebM/Opus. */
+/** Preferred capture formats, in order; use the first supported by this browser. */
 export const CAPTURE_TYPES = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'];
 
 class MediaFailure extends Error {
@@ -162,8 +163,10 @@ export class VoiceController {
   private chunks: Blob[] = [];
   private recordType = '';
   private recordStarted = 0;
+  private recordStopped: number | null = null;
   private autoStop: unknown = null;
   private ticker: unknown = null;
+  private recorderFinish: unknown = null;
   /** The last unsubmitted clip, kept only while transcription can be retried. */
   private clip: Blob | null = null;
   private bound: { clientMessageId: string; expectedRevision: number } | null = null;
@@ -270,7 +273,8 @@ export class VoiceController {
     if (this.disposed || phase === 'recording' || phase === 'transcribing' || phase === 'generating') return;
     this.stopAudio();
     this.playRequest++;
-    this.unlockAudio();
+    // Do not start even silent playback while acquiring or using the microphone.
+    // If the later answer cannot autoplay, the existing Play action resumes it.
     const epoch = ++this.epoch;
     this.clip = null; // a new recording replaces an unsubmitted clip
     this.bound = null;
@@ -323,11 +327,20 @@ export class VoiceController {
     this.chunks = [];
     this.recordType = type;
     recorder.addEventListener('dataavailable', (event: BlobEvent) => {
+      if (epoch !== this.epoch || this.recorder !== recorder || this.disposed) return;
       if (event.data && event.data.size > 0) this.chunks.push(event.data);
     });
-    recorder.addEventListener('stop', () => { void this.onRecorderStop(epoch); });
+    recorder.addEventListener('stop', () => { void this.onRecorderStop(epoch, recorder); });
+    recorder.addEventListener('error', () => this.failCapture(epoch, recorder));
     this.bound = bound;
-    recorder.start();
+    this.recordStopped = null;
+    try {
+      // Keep every fragment and the final tail; upload only after the stop event.
+      recorder.start(1000);
+    } catch {
+      this.failCapture(epoch, recorder);
+      return;
+    }
     this.recordStarted = this.env.now();
     this.set({ phase: 'recording', error: null, transcript: null, turnId: null, recordingSeconds: 0, welcome: false, unsent: null });
     this.tick(epoch);
@@ -347,25 +360,39 @@ export class VoiceController {
   /** Call from the Stop tap (also runs automatically at 20 seconds). Releases the microphone. */
   stopRecording(): void {
     if (this.snapshot.phase !== 'recording' || !this.recorder) return;
-    this.unlockAudio(); // still inside the visitor's tap
+    const recorder = this.recorder;
+    const epoch = this.epoch;
     this.clearTimers();
-    this.set({ phase: 'transcribing', recordingSeconds: (this.env.now() - this.recordStarted) / 1000 });
+    this.recordStopped = this.env.now();
+    this.set({ phase: 'transcribing', recordingSeconds: (this.recordStopped - this.recordStarted) / 1000 });
+    this.recorderFinish = this.env.setTimeout(() => this.failCapture(epoch, recorder), RECORDER_FINISH_MS);
     try {
-      if (this.recorder.state !== 'inactive') this.recorder.stop();
-      else void this.onRecorderStop(this.epoch);
+      if (recorder.state !== 'inactive') recorder.stop();
+      // An inactive recorder may still have its final data/stop events queued.
     } catch {
-      void this.onRecorderStop(this.epoch);
+      this.failCapture(epoch, recorder);
     }
-    this.releaseMicrophone();
+    // Keep the tracks alive until the recorder has delivered the final data.
   }
 
-  private async onRecorderStop(epoch: number): Promise<void> {
-    if (epoch !== this.epoch || this.disposed) return;
-    const recorder = this.recorder;
+  private failCapture(epoch: number, recorder: MediaRecorder): void {
+    if (epoch !== this.epoch || this.recorder !== recorder || this.disposed) return;
+    this.clearTimers();
+    this.recorder = null;
+    try { if (recorder.state !== 'inactive') recorder.stop(); } catch { /* release below */ }
+    this.releaseMicrophone();
+    this.chunks = [];
+    this.bound = null;
+    this.fail(failure('capture', 'The recording did not finish correctly. Record your question again.', false, 'recording_failed'));
+  }
+
+  private async onRecorderStop(epoch: number, recorder: MediaRecorder): Promise<void> {
+    if (epoch !== this.epoch || this.recorder !== recorder || this.disposed) return;
+    this.clearTimers();
     this.recorder = null;
     this.releaseMicrophone();
-    const elapsed = this.env.now() - this.recordStarted;
-    const type = uploadType(recorder?.mimeType ?? '', this.recordType);
+    const elapsed = (this.recordStopped ?? this.env.now()) - this.recordStarted;
+    const type = uploadType(recorder.mimeType, this.recordType);
     const clip = new Blob(this.chunks, { type });
     this.chunks = [];
     if (clip.size === 0 || elapsed < MIN_RECORDING_MS) {
@@ -602,7 +629,8 @@ export class VoiceController {
   private clearTimers(): void {
     if (this.autoStop !== null) this.env.clearTimeout(this.autoStop);
     if (this.ticker !== null) this.env.clearTimeout(this.ticker);
-    this.autoStop = this.ticker = null;
+    if (this.recorderFinish !== null) this.env.clearTimeout(this.recorderFinish);
+    this.autoStop = this.ticker = this.recorderFinish = null;
   }
 
   private releaseMicrophone(): void {

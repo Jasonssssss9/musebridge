@@ -48,3 +48,21 @@ In the new conversations the model distinguished a pigment fading from every tra
 - The service verified the citation IDs and span membership. Contextual entailment, precise attribution and the decision to leave a question open still need semantic review.
 
 The code passed 406 Agent tests and 190 knowledge tests. The authenticated HTTP check passed all 11 assertions. These checks cover the private text path, including replay and version isolation.
+
+## Subsequent repair: history and source references in repeat plans
+
+The evaluation above describes its recorded candidate. A later mobile integration check exposed another failure in the repeat path: the planner could copy a correct material quotation but attach it to a letter record, or copy an answer older than the permitted settled turn. These inconsistent decisions correctly failed validation before retrieval or a visitor answer.
+
+The private Vincent planner now classifies `request_kind` before selecting its action. `new_request` permits search and the existing direct/clarification routes; `restate_last_answer` permits only the repeat routes. A factual question asked again is a new request even if an earlier answer or cached passage contains that fact. An explicit request to repeat or simplify the last answer can use verified context. The model makes this intent decision from the conversation; Python does not classify visitors by fixed keywords.
+
+Repeat plans select an `answer_span`, such as `t2.a1`, from the last settled answer in the fitted history and a `source_span`, such as `getty-103jnh-medium:p1`, from the fitted verified evidence. Each reference binds the exact text to its turn or record. The planner no longer supplies independent `answer_quote`, `passage` and `source_quote` fields. The program resolves the selected references and rejects unknown, stale or out-of-scope selections; it does not repair generated citations or replace missing evidence with a fixed answer. Span splitting is shared with the existing answer adapter.
+
+The public Go/Agent contracts and model-call budget are unchanged. Search and verified-context answers still pass through the answer assessment step. A valid reference proves where text came from, not that it entails the model's interpretation; choosing an irrelevant but real passage still requires semantic evaluation. This repair does not supersede the other quality failures listed above.
+
+The deterministic regression command is:
+
+```bash
+python -m unittest agent.tests.test_vincent_workflow agent.tests.test_vincent_answer
+```
+
+It covers complete literal references, stale history references, foreign or removed sources, rejection of the former mismatched-quotation shape, and full workflow execution for a repeated factual question versus an explicit restatement. Real-model checks for these cases are development regressions, not a new held-out quality claim.

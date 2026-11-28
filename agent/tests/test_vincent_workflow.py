@@ -27,7 +27,8 @@ from agent.workflows.museum_qa_v3 import MuseumQAWorkflowV3, create_vincent_work
 
 
 def plan(intent, action, **fields):
-    return {"intent": intent, "next": {"action": action, **fields},
+    return {"intent": intent, "request_kind": "restate_last_answer" if action.startswith("repeat_verified") else "new_request",
+            "next": {"action": action, **fields},
             "language": {"detected_language": "en", "explicit_instruction": None, "translation": None}}
 
 
@@ -92,7 +93,8 @@ class VincentWorkflowTests(IsolatedAsyncioTestCase):
         system = model.calls[0].messages[0]["content"]
         self.assertIn("repeat_verified", system)
         self.assertNotIn("With no available source, set citations to", system)
-        branches = model.calls[0].output_schema["$defs"]["VincentPlan"]["properties"]["next"]["oneOf"]
+        branches = [route for branch in model.calls[0].output_schema["$defs"]["VincentPlan"]["oneOf"]
+                    for route in branch["properties"]["next"]["oneOf"]]
         actions = [b["properties"]["action"]["const"] for b in branches]
         self.assertNotIn("repeat_verified", actions)
         self.assertIn("search", actions)
@@ -229,7 +231,7 @@ class VincentWorkflowTests(IsolatedAsyncioTestCase):
         payload = build_plan_input(self.run_request(repeat), self.manifest)
         record = dict(next(iter(self.manifest.records.values())))
         payload["cached_evidence"] = [record]
-        proof = {"passage": record["chunk_id"], "source_quote": record["excerpt"], "answer_quote": record["excerpt"],
+        proof = {"source_span": record["chunk_id"] + ":p1", "answer_span": "t1.a1",
                  "establishes": "Repeat the previously reported finding."}
         reuse = plan(prompt, "repeat_verified", visitor_request=repeat, support=[proof])
         # A verified passage alone never permits reuse.
@@ -237,9 +239,9 @@ class VincentWorkflowTests(IsolatedAsyncioTestCase):
         payload["recent_turns"] = [settled(record["excerpt"])]
         self.assertTrue(Draft202012Validator(model_call(payload)[0]).is_valid(reuse))
         self.assertEqual(canonical_decision(reuse, payload)["action"], "answer_from_context")
-        for key in ("answer_quote", "source_quote"):
+        for key in ("answer_span", "source_span"):
             other = deepcopy(reuse)
-            other["next"]["support"][0][key] = "A sentence never recorded."
+            other["next"]["support"][0][key] = "unoffered-reference"
             with self.assertRaises(ContractViolation):
                 canonical_decision(other, payload)
         other = deepcopy(reuse)
@@ -276,6 +278,99 @@ class VincentWorkflowTests(IsolatedAsyncioTestCase):
         self.assertEqual(public["queries"][0]["query"], query + " Consult the artist's letters.")
         self.assertEqual(public["requests"][0]["original_fragment"], question)
 
+    def test_repeat_references_bind_the_fitted_turn_and_exact_record_without_free_quotes(self):
+        run = self.run_request("Please put your last answer more simply.")
+        payload = build_plan_input(run, self.manifest)
+        medium = dict(self.manifest.records["getty-103jnh-medium"])
+        letter = dict(self.manifest.records["vincent-772-garden-colors"])
+        payload["cached_evidence"] = [letter, medium]
+        payload["recent_turns"] = [settled("Earlier information."),
+                                   {**settled("The museum lists oil on canvas."), "sequence": 2}]
+        schema, messages = model_call(payload)
+        data = json.loads(messages[1]["content"])
+        self.assertEqual(data["repeatable_answer"], {
+            "sequence": 2, "spans": {"t2.a1": "The museum lists oil on canvas."}})
+        cards = {card["ref"]: card for card in data["cached_evidence"]}
+        self.assertEqual(cards[medium["chunk_id"]]["passage"], {"getty-103jnh-medium:p1": "Oil on canvas"})
+        for record in (letter, medium):
+            for label, field in (("passage", "excerpt"), ("locator", "source_locator")):
+                self.assertTrue(all(text in record[field] for text in cards[record["chunk_id"]][label].values()))
+        proof = {"answer_span": "t2.a1", "source_span": "getty-103jnh-medium:p1", "establishes": "The listed medium."}
+        raw = plan("Restate the last answer.", "repeat_verified", visitor_request=run["question"], support=[proof])
+        for validator in (Draft202012Validator(schema), Draft202012Validator(grammar_schema(schema))):
+            self.assertTrue(validator.is_valid(raw))
+        self.assertEqual(canonical_decision(raw, payload)["action"], "answer_from_context")
+        invalid = []
+        for field, value in (("answer_span", "t1.a1"), ("source_span", "getty-103qt5-medium:p1"),
+                             ("source_span", "getty-103jnh-medium:p999")):
+            changed = deepcopy(raw)
+            changed["next"]["support"][0][field] = value
+            invalid.append(changed)
+        # The former failure cannot be expressed as a source plus a mismatched quotation.
+        changed = deepcopy(raw)
+        changed["next"]["support"][0] = {
+            "passage": letter["chunk_id"], "source_quote": "Oil on canvas",
+            "answer_quote": "The museum lists oil on canvas.", "establishes": "The listed medium."}
+        invalid.append(changed)
+        changed = deepcopy(raw)
+        changed["request_kind"] = "new_request"
+        invalid.append(changed)
+        for changed in invalid:
+            with self.subTest(change=changed):
+                self.assertFalse(Draft202012Validator(schema).is_valid(changed))
+                with self.assertRaises(ContractViolation):
+                    canonical_decision(changed, payload)
+        # Removing the fitted record also removes its reference, regardless of cache order.
+        payload["cached_evidence"] = [letter]
+        with self.assertRaises(ContractViolation):
+            canonical_decision(raw, payload)
+
+    async def test_repeated_factual_question_searches_and_explicit_restatement_reuses_verified_context(self):
+        for repeat in (False, True):
+            with self.subTest(repeat=repeat):
+                question = ("Please put your last answer more simply." if repeat else
+                            "Hello Vincent, can you tell me what materials you used for this painting?")
+                run = self.run_request(question)
+                medium = dict(self.manifest.records["getty-103jnh-medium"])
+                letter = dict(self.manifest.records["vincent-772-garden-colors"])
+                answers = (["We discussed the garden.", "The museum lists oil on canvas."] if repeat else
+                           ["The museum lists oil on canvas.", "We discussed the garden."])
+                run["context"]["recent_turns"] = [
+                    {"turn_id": f"11111111-1111-4111-8111-{i:012d}", "sequence": i,
+                     "question": "What does that source say?", "answer_text": text,
+                     "answer_language": "en", "answer_mode": "llm", "answer_status": "answered"}
+                    for i, text in enumerate(answers, 1)]
+                run["conversation_state"].update(revision=2, last_answer_language="en",
+                                                 verified_evidence=[letter, medium])
+                original = deepcopy(run)
+                intent = "Restate the last materials answer." if repeat else "Find the painting's materials."
+                selected = (plan(intent, "repeat_verified", visitor_request=question, support=[{
+                    "answer_span": "t2.a1", "source_span": "getty-103jnh-medium:p1",
+                    "establishes": "The museum's listed medium."}]) if repeat else
+                    plan(intent, "search", perspective="museum_record", query="What materials were used for Irises?"))
+                model = ScriptedModel(selected, {"action": "answer", "parts": {"r1": {
+                    "grounds": [{"source": medium["chunk_id"], "spans": ["p1"], "finding": "The listed medium is oil on canvas."}],
+                    "reply": "The museum lists oil on canvas."}}, "topic": "Painting materials",
+                    "remember": "The museum lists the medium as oil on canvas."})
+                calls = []
+
+                def send(request):
+                    calls.append(json.loads(request.content))
+                    return httpx.Response(200, json={"dataset_version": "getty-gallery-v2", "evidence": [medium]},
+                                          headers={"X-Request-ID": "repeat-binding", "X-Retrieval-Strategy": "openai-hybrid-v1"})
+
+                async with httpx.AsyncClient(transport=httpx.MockTransport(send)) as client:
+                    workflow = create_vincent_workflow(model=model, profile=FixtureProfile(), prompt_sizer=fixture_prompt_sizer,
+                        manifest=self.manifest, retrieval=vincent_retrieval(self.manifest, base_url="http://knowledge.test", client=client))
+                    result = await WorkflowExecutor(workflow, ModelIdentity("fixture", "a"*64))(
+                        run, request_id="repeat-binding", budget=TestBudget())
+                self.assertEqual(len(calls), 0 if repeat else 1)
+                self.assertEqual([call.operation for call in model.calls], ["plan", "assess"])
+                self.assertEqual(result["answer"]["status"], "answered")
+                self.assertEqual(result["answer"]["citations"], [medium])
+                check_run_result(run, result, validator=self.codec.validator, manifest=self.manifest)
+                self.assertEqual(run, original)
+
     def test_compound_cache_witnesses_bind_each_fact_and_direct_writer_sees_only_selected_values(self):
         first, second = "Repeat what you just said about its maker.", "Repeat the title too."
         run = self.run_request(first + " " + second)
@@ -283,8 +378,8 @@ class VincentWorkflowTests(IsolatedAsyncioTestCase):
         payload["cached_evidence"] = [dict(r) for r in list(self.manifest.records.values())[:2]]
         parts = [{"fragment": fragment, "intent": fragment, "kind": "artwork_fact"} for fragment in (first, second)]
         payload["recent_turns"] = [settled(" ".join(item["excerpt"] for item in payload["cached_evidence"]))]
-        support = [{"part": i, "witness": {"passage": item["chunk_id"], "source_quote": item["excerpt"],
-                                          "answer_quote": item["excerpt"], "establishes": parts[i-1]["intent"]}}
+        support = [{"part": i, "witness": {"source_span": item["chunk_id"] + ":p1",
+                                          "answer_span": "t1.a1", "establishes": parts[i-1]["intent"]}}
                    for i, item in enumerate(payload["cached_evidence"], 1)]
         model_plan = plan("Repeat both answers.", "repeat_verified_multiple", visitor_request=run["question"],
                           requests=parts, support=support)
